@@ -1,0 +1,5 @@
+[tools]
+linters = pep8
+
+[tool_pep8]
+ignore =
