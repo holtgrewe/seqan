@@ -56,87 +56,6 @@ int const Options::INVALID_DIAGONAL = seqan::MaxValue<int>::VALUE;
 
 //////////////////////////////////////////////////////////////////////////////////
 
-template <typename TSeqSet, typename TNameSet>
-bool _loadSequences(TSeqSet& sequences, 
-                    TNameSet& fastaIDs,
-                    const char *fileName)
-{
-    MultiFasta multiFasta;
-    if (!open(multiFasta.concat, fileName, OPEN_RDONLY)) return false;
-    AutoSeqFormat format;
-    guessFormat(multiFasta.concat, format); 
-    split(multiFasta, format);
-    unsigned seqCount = length(multiFasta);
-    resize(sequences, seqCount, Exact());
-    resize(fastaIDs, seqCount, Exact());
-    for(unsigned i = 0; i < seqCount; ++i) 
-    {
-        assignSeqId(fastaIDs[i], multiFasta[i], format);
-        assignSeq(sequences[i], multiFasta[i], format);
-    }
-    return (seqCount > 0);
-}
-
-// TODO(holtgrew): Make publically available.
-template<typename TStringSet, typename TCargo, typename TSpec>
-inline int
-globalAlignment(Graph<Alignment<TStringSet, TCargo, TSpec> >& g,
-                Lcs)
-{
-    return globalAlignment(g, stringSet(g), Lcs());
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-
-template<typename TAlphabet, typename TAlignConfig, typename TScore, typename TSeqFile, typename TMethod, typename TDiag, typename TOutputFormat, typename TOutfile>
-inline void
-pairwise_align(TScore const& sc,
-               TSeqFile& seqfile,
-               TMethod method,
-               TDiag low,
-               TDiag high,
-               bool banded,
-               TOutputFormat outputFormat,
-               TOutfile& outfile) 
-{
-    // Load the 2 sequences
-    typedef String<TAlphabet> TSequence;
-    StringSet<TSequence, Owner<> > sequenceSet;
-    StringSet<String<char> > sequenceNames;
-    _loadSequences(sequenceSet, sequenceNames, seqfile.c_str());
-
-    // Fix low and high diagonal.
-    low = _max(low, -1 * (int) length(sequenceSet[1]));
-    high = _min(high, (int) length(sequenceSet[0]));
-
-    // Align the sequences
-    Graph<Alignment<StringSet<TSequence, Dependent<> >, void, WithoutEdgeId> > gAlign(sequenceSet);
-    
-    int aliScore = 0;
-    // Banded alignment?
-    if (!banded) {
-        if (method == 0) aliScore = globalAlignment(gAlign, sc, TAlignConfig(), NeedlemanWunsch());
-        else if (method == 1) aliScore = globalAlignment(gAlign, sc, TAlignConfig(), Gotoh());
-        else if (method == 2) aliScore = localAlignment(gAlign, sc);
-        else if (method == 3) aliScore = globalAlignment(gAlign, Lcs());
-    } else {
-        if (method == 0) aliScore = globalAlignment(gAlign, sc, TAlignConfig(), low, high, NeedlemanWunsch());
-        else if (method == 1) aliScore = globalAlignment(gAlign, sc, TAlignConfig(), low, high, Gotoh());
-    }
-    
-    // Alignment output
-    std::cout << "Alignment score: " << aliScore << std::endl;
-    if (outputFormat == 0) {
-        FILE* strmWrite = fopen(outfile.c_str(), "w");
-        write(strmWrite, gAlign, sequenceNames, FastaFormat());
-        fclose(strmWrite);
-    } else if (outputFormat == 1) {
-        FILE* strmWrite = fopen(outfile.c_str(), "w");
-        write(strmWrite, gAlign, sequenceNames, MsfFormat());
-        fclose(strmWrite);
-    }
-}
-
 //////////////////////////////////////////////////////////////////////////////////
 
 template<typename TScore, typename TSc>
@@ -212,41 +131,41 @@ _initAlignParams(Options const & options, TScore& sc) {
     if (!empty(config))
     {
         if (config == "tttt")
-            pairwise_align<TAlphabet, AlignConfig<true, true, true, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<true, true, true, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "tttf")
-            pairwise_align<TAlphabet, AlignConfig<true, true, true, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<true, true, true, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "ttft")
-            pairwise_align<TAlphabet, AlignConfig<true, true, false, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<true, true, false, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "ttff")
-            pairwise_align<TAlphabet, AlignConfig<true, true, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<true, true, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "tftt")
-            pairwise_align<TAlphabet, AlignConfig<true, false, true, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<true, false, true, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "tftf")
-            pairwise_align<TAlphabet, AlignConfig<true, false, true, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<true, false, true, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "tfft")
-            pairwise_align<TAlphabet, AlignConfig<true, false, false, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<true, false, false, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "tfff")
-            pairwise_align<TAlphabet, AlignConfig<true, false, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<true, false, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "fttt")
-            pairwise_align<TAlphabet, AlignConfig<false, true, true, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<false, true, true, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "fttf")
-            pairwise_align<TAlphabet, AlignConfig<false, true, true, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<false, true, true, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "ftft")
-            pairwise_align<TAlphabet, AlignConfig<false, true, false, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<false, true, false, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "ftff")
-            pairwise_align<TAlphabet, AlignConfig<false, true, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<false, true, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "fftt")
-            pairwise_align<TAlphabet, AlignConfig<false, false, true, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<false, false, true, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "fftf")
-            pairwise_align<TAlphabet, AlignConfig<false, false, true, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<false, false, true, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "ffft")
-            pairwise_align<TAlphabet, AlignConfig<false, false, false, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<false, false, false, true> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
         else if (config == "ffff")
-            pairwise_align<TAlphabet, AlignConfig<false, false, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+            performPairwiseAlignment<TAlphabet, AlignConfig<false, false, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
     }
     else
     {
-        pairwise_align<TAlphabet, AlignConfig<false, false, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
+        performPairwiseAlignment<TAlphabet, AlignConfig<false, false, false, false> >(sc, seqfile, method, low, high, banded, options.outputFormat, outfile);
     }
 }
 

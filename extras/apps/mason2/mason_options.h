@@ -813,6 +813,9 @@ struct MasonFragmentSequencingOptions
     // Path to input file.
     seqan::CharString inputFileName;
 
+    // Whether the name of the input fragment is to be added to the meta line.
+    bool writeFragMeta;
+
     // Path to output sequence files for left (and single end) and right reads.
     seqan::CharString outFileNameLeft, outFileNameRight;
 
@@ -825,7 +828,7 @@ struct MasonFragmentSequencingOptions
     // Configuration of the Roche 454 read simulation.
     Roche454SequencingOptions rocheOptions;
 
-    MasonFragmentSequencingOptions() : verbosity(1), seed(0)
+    MasonFragmentSequencingOptions() : verbosity(1), seed(0), forceSingleEnd(false), writeFragMeta(false)
     {}
 
     // Add options to the argument parser.  Calls addOptions() on the nested *Options objects.

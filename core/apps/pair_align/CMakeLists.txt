@@ -29,7 +29,10 @@ include_directories (${SEQAN_INCLUDE_DIRS})
 add_definitions (${SEQAN_DEFINITIONS})
 
 # Update the list of file names below if you add source files to your application.
-add_executable (pair_align pair_align.cpp)
+add_executable (pair_align
+                pair_align.cpp
+                align_impl.h
+                )
 
 # Add dependencies found by find_package (SeqAn).
 target_link_libraries (pair_align ${SEQAN_LIBRARIES})
