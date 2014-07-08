@@ -1,0 +1,7 @@
+Name: bambi
+Author: Manuel Holtgrewe <manuel.holtgrewe@fu-berlin.de>
+Maintainer: Manuel Holtgrewe <manuel.holtgrewe@fu-berlin.de>
+License: GPL v3
+Copyright: 2008-2014, FU Berlin
+Status: under development
+Description: Tools for BAM processing in SeqAn.
