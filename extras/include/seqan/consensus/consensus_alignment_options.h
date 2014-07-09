@@ -95,7 +95,7 @@ struct ConsensusAlignmentOptions
 
     ConsensusAlignmentOptions() :
             contigID(INVALID), useContigID(true), usePositions(true), posDelta(30),
-            runRealignment(true)
+            runRealignment(true), verbosity(2), kMerSize(20), kMerMaxOcc(200)
     {}
 
     unsigned contigID;
@@ -103,6 +103,11 @@ struct ConsensusAlignmentOptions
     bool usePositions;
     unsigned posDelta;
     bool runRealignment;
+
+    int verbosity;
+
+    int kMerSize;
+    int kMerMaxOcc;
 };
 
 // ============================================================================

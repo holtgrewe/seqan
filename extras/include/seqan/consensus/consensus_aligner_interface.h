@@ -109,7 +109,9 @@ namespace seqan {
  * @section Using position information
  *
  * When position information is to be used then this will be used to generate fewer overlap alignments as described
- * above.
+ * above.  Note that there can only be one alignment for each read in the <tt>store.alignedReadStore</tt> and the
+ * end position must be greater than or equal to the begin position, i.e., the alignment must be on the forward
+ * strand.
  *
  * Using position information also requires contig ID information, so <tt>store.alignedReadStore</tt> should be filled.
  *
@@ -138,9 +140,7 @@ void consensusAlignment(FragmentStore<TSpec, TConfig> & store,
 
     if (options.runRealignment)
         for (unsigned contigID = 0; contigID < length(store.contigStore); ++contigID)
-        {
             reAlignment(store, contigID, /*method=*/1, /*bandwidth=*/10, /*includeReference=*/false);
-        }
 }
 
 }  // namespace seqan
