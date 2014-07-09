@@ -29,20 +29,26 @@ int main()
         appendAlignedRead(store, readID, 0, pos2, pos2 + READ_LENGTH);
     }
 
+    // Add contig for printing.
+    resize(store.contigStore, 1);
+    store.contigStore[0].seq = ref;
+
     // Print initial perturbated alignment.
+    std::cout << "Initial Alignment\n\n";
     AlignedReadLayout layout;
     layoutAlignment(layout, store);
-    printAlignment(out, Raw(), layout, store, /*contigID=*/0,
-                   /*beginPos=*/0, /*endPos=*/length(ref), 0, 30);
+    printAlignment(std::cout, Raw(), layout, store, /*contigID=*/0,
+                   /*beginPos=*/0, /*endPos=*/(int)length(ref), 0, 30);
 
     // Compute consensus alignment.
     ConsensusAlignmentOptions options;
     consensusAlignment(store, options);
 
     // Print final consensus alignment.
+    std::cout << "\n\nFinal Consensus Alignment\n\n";
     layoutAlignment(layout, store);
-    printAlignment(out, Raw(), layout, store, /*contigID=*/0,
-                   /*beginPos=*/0, /*endPos=*/length(ref), 0, 30);
+    printAlignment(std::cout, Raw(), layout, store, /*contigID=*/0,
+                   /*beginPos=*/0, /*endPos=*/(int)length(ref), 0, 30);
 
     return 0;
 }
