@@ -62,6 +62,7 @@
 // New, Store-Based Module
 // ==========================================================================
 
+#include <seqan/consensus/overlap_info_computation.h>
 #include <seqan/consensus/consensus_aligner.h>
 #include <seqan/consensus/consensus_aligner_interface.h>
 
