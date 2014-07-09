@@ -41,6 +41,7 @@
 #include <seqan/store.h>
 
 #include "consensus_alignment_options.h"
+#include "consensus_builder.h"
 
 namespace seqan {
 
@@ -79,10 +80,22 @@ private:
 template <typename TFragmentStore>
 inline void ConsensusAligner_<TFragmentStore>::run()
 {
+    if (options.verbosity >= 1)
+        std::cerr << "computing overlap infos...\n";
     // Build overlap infos, based on position and contig ID if configured to do so.
     std::vector<OverlapInfo_> overlapInfos;
     OverlapInfoComputation_<TFragmentStore> ovlInfoHelper(store, options);
     ovlInfoHelper.run(overlapInfos);
+    if (options.verbosity >= 1)
+        std::cerr << "=> " << overlapInfos.size() << " overlap infos\n";
+
+    // TODO(holtgrew): Pick pairwise best alignments.
+
+    if (options.verbosity >= 1)
+        std::cerr << "building consensus...\n";
+    // Consensus builder.
+    ConsensusBuilder_<TFragmentStore> consBuilder(options);
+    consBuilder.run(store, overlapInfos);
 }
 
 // ============================================================================

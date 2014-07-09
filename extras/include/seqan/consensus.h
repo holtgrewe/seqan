@@ -63,6 +63,7 @@
 // ==========================================================================
 
 #include <seqan/consensus/overlap_info_computation.h>
+#include <seqan/consensus/consensus_builder.h>
 #include <seqan/consensus/consensus_aligner.h>
 #include <seqan/consensus/consensus_aligner_interface.h>
 

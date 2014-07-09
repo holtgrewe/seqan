@@ -143,6 +143,7 @@ SEQAN_DEFINE_TEST(test_consensus_consensus_alignment_contig_ids)
 
     // Compute consensus alignment.
     seqan::ConsensusAlignmentOptions options;
+    options.usePositions = false;
     consensusAlignment(store, options);
 
     // -----------------------------------------------------------------------
@@ -218,6 +219,7 @@ SEQAN_DEFINE_TEST(test_consensus_consensus_alignment_no_contig_ids)
 
     // Compute consensus alignment.
     seqan::ConsensusAlignmentOptions options;
+    options.useContigID = false;
     consensusAlignment(store, options);
 
     // -----------------------------------------------------------------------
@@ -252,7 +254,7 @@ SEQAN_DEFINE_TEST(test_consensus_consensus_alignment_no_contig_ids)
 SEQAN_BEGIN_TESTSUITE(test_consensus)
 {
     SEQAN_CALL_TEST(test_consensus_consensus_alignment_coordinates);
-    SEQAN_CALL_TEST(test_consensus_consensus_alignment_no_contig_ids);
     SEQAN_CALL_TEST(test_consensus_consensus_alignment_contig_ids);
+    SEQAN_CALL_TEST(test_consensus_consensus_alignment_no_contig_ids);
 }
 SEQAN_END_TESTSUITE

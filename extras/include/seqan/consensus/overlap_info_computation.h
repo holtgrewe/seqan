@@ -116,6 +116,36 @@ private:
     void buildAllToAllOverlapInfos(std::vector<OverlapInfo_> & infos,
                                    std::vector<unsigned> const & readIDs) const;
 
+    template <typename TSequenceH, typename TSequenceV, typename TAlignConfig, typename TAlgoTag>
+    void _fixBandSize(int & lDiag,
+                      int & uDiag,
+                      TSequenceH const & seqH,
+                      TSequenceV const & seqV,
+                      TAlignConfig const & /*alignConfig*/,
+                      TAlgoTag const & /*algoTag*/) const
+    {
+        // typedef typename SubstituteAlignConfig_<TAlignConfig>::Type TFreeEndGaps;
+        typedef typename If<typename IsSameType<TAlgoTag, Gotoh>::Type, AffineGaps, LinearGaps>::Type TGapsType;
+        typedef typename SetupAlignmentProfile_<TAlgoTag, TAlignConfig, TGapsType, TracebackConfig_<SingleTrace, GapsLeft> >::Type TDPProfile;
+
+        if (uDiag < -(int)length(seqV))
+            uDiag = -(int)length(seqV);
+        if (lDiag > (int)length(seqH))
+            lDiag = length(seqV);
+
+        if (uDiag < 0 && !IsFreeEndGap_<TDPProfile, DPFirstColumn>::VALUE)
+            uDiag = 0;
+
+        if (lDiag > 0 && !IsFreeEndGap_<TDPProfile, DPFirstRow>::VALUE)
+            lDiag = 0;
+
+        if (uDiag + (int)length(seqV) < (int)length(seqH) && !IsFreeEndGap_<TDPProfile, DPLastRow>::VALUE)
+            uDiag = (int)length(seqH) - (int)length(seqV);
+
+        if (lDiag + (int)length(seqV) > (int)length(seqH) && !IsFreeEndGap_<TDPProfile, DPLastColumn>::VALUE)
+            lDiag = (int)length(seqH) - (int)length(seqV);
+    }
+
     // The FragmentStore to use for consensus computation.
     TFragmentStore const & store;
     // The configuration of the consensus alignment.
@@ -150,7 +180,10 @@ inline OverlapInfo_ OverlapInfoComputation_<TFragmentStore>::computeOverlapInfo(
     AlignConfig<true, true, true, true> alignConfig;
 
     // TODO(holtgrew): Fix bands, add bands.
-    globalAlignment(align, scoringScheme, alignConfig);
+    if (options.verbosity >= 2)
+        std::cerr << "global alignment with bands " << lDiag << ", " << uDiag << "\n";
+    _fixBandSize(lDiag, uDiag, store.readSeqStore[lhs], store.readSeqStore[rhs], alignConfig, NeedlemanWunsch());
+    globalAlignment(align, scoringScheme, alignConfig, lDiag, uDiag);
 
     if (options.verbosity >= 2)
         std::cerr << "before swapping\n" << align << "\n";
@@ -205,8 +238,8 @@ inline void OverlapInfoComputation_<TFragmentStore>::buildPositionBasedOverlapIn
 
     // Iterate over aligned read store, compute overlaps indicated in this multi-read alignment, and collect them.
     std::vector<OverlapInfo_> overlaps;  // will be expanded to alignments later
-    TAlignedReadStoreIter it = begin(store.alignedReadStore, Standard());
-    TAlignedReadStoreIter itEnd = end(store.alignedReadStore, Standard());
+    TAlignedReadStoreIter it = begin(sortedAlignedReads, Standard());
+    TAlignedReadStoreIter itEnd = end(sortedAlignedReads, Standard());
     for (; it != itEnd; ++it)
         // Consider all overlaps with it->readId right of it but overlapping.
         for (TAlignedReadStoreIter it2 = it; it2 != itEnd; ++it2)
@@ -216,13 +249,25 @@ inline void OverlapInfoComputation_<TFragmentStore>::buildPositionBasedOverlapIn
             if (it2->contigId != it->contigId || it2->beginPos > it->endPos + options.posDelta)
                 break;  // traversed contig or went too far to the right on same contig
             int pos = it2->beginPos - it->beginPos;
-            infos.push_back(computeOverlapInfo(it->readId, it2->readId,
-                                               pos - options.posDelta, pos + options.posDelta));
+            OverlapInfo_ info = computeOverlapInfo(it->readId, it2->readId,
+                                                   pos - options.posDelta, pos + options.posDelta);
+            int ovlLen = length(store.readSeqStore[info.seq0]) - info.pos1;
+            if (ovlLen < options.overlapMinLength || 100.0 * info.numErrors / ovlLen > options.overlapMaxErrorRate)
+            {
+                if (options.verbosity >= 2)
+                    std::cerr << "DISCARDING OVL\t" << store.readSeqStore[info.seq0] << "\tseq0=" << info.seq0
+                              << "\t" << store.readSeqStore[info.seq0] << "\tseq1=" << info.seq1
+                              << "\tlen0=" << info.len0 << "\tpos1=" << info.pos1
+                              << "\tnumErrors=" << info.numErrors << "\tovlLen=" << ovlLen << "\n";
+                continue;  // skip, does not pass quality control
+            }
+
+            infos.push_back(info);
             if (options.verbosity >= 2)
-                std::cerr << "OVERLAP\t" << store.readSeqStore[infos.back().seq0] << "\tseq0=" << infos.back().seq0
-                          << "\t" << store.readSeqStore[infos.back().seq0] << "\tseq1=" << infos.back().seq1
-                          << "\tlen0=" << infos.back().len0 << "\tpos1=" << infos.back().pos1
-                          << "\tnumErrors=" << infos.back().numErrors << "\n";
+                std::cerr << "OVERLAP\t" << store.readSeqStore[info.seq0] << "\tseq0=" << info.seq0
+                          << "\t" << store.readSeqStore[info.seq0] << "\tseq1=" << info.seq1
+                          << "\tlen0=" << info.len0 << "\tpos1=" << info.pos1
+                          << "\tnumErrors=" << info.numErrors << "\tovlLen=" << ovlLen << "\n";
         }
 }
 
@@ -296,18 +341,31 @@ inline void OverlapInfoComputation_<TFragmentStore>::buildAllToAllOverlapInfos(
             // TODO(holtgrew): Care about dupes, i.e. use >=.
             if (seq1 == seq0)
                 continue;  // Skip hits with self.
-            __int64 lDiag = filterFinder.curHit->hstkPos;
-            __int64 uDiag = filterFinder.curHit->hstkPos + filterFinder.curHit->bucketWidth - length(subSet[seq1]);
+            // TODO(holtgrew): bands not tight...
+            __int64 lDiag = beginPosition(filterFinder);//.curHit->hstkPos;
+            __int64 uDiag = endPosition(filterFinder);//filterFinder.curHit->hstkPos + filterFinder.curHit->bucketWidth - length(subSet[seq1]);
             SEQAN_ASSERT_GEQ(uDiag, lDiag);
 
-            infos.push_back(computeOverlapInfo(positionToId(subSet, seq0), positionToId(subSet, seq1),
-                                               lDiag, uDiag));
+            OverlapInfo_ info(computeOverlapInfo(positionToId(subSet, seq0), positionToId(subSet, seq1),
+                                                 lDiag, uDiag));
 
+            int ovlLen = length(store.readSeqStore[info.seq0]) - info.pos1;
+            if (ovlLen < options.overlapMinLength || 100.0 * info.numErrors / ovlLen > options.overlapMaxErrorRate)
+            {
+                if (options.verbosity >= 2)
+                    std::cerr << "DISCARDING OVL\t" << store.readSeqStore[info.seq0] << "\tseq0=" << info.seq0
+                              << "\t" << store.readSeqStore[info.seq0] << "\tseq1=" << info.seq1
+                              << "\tlen0=" << info.len0 << "\tpos1=" << info.pos1
+                              << "\tnumErrors=" << info.numErrors << "\tovlLen=" << ovlLen << "\n";
+                continue;  // skip, does not pass quality control
+            }
+
+            infos.push_back(info);
             if (options.verbosity >= 2)
-                std::cerr << "OVERLAP\t" << store.readSeqStore[infos.back().seq0] << "\tseq0=" << infos.back().seq0
-                          << "\t" << store.readSeqStore[infos.back().seq0] << "\tseq1=" << infos.back().seq1
-                          << "\tlen0=" << infos.back().len0 << "\tpos1=" << infos.back().pos1
-                          << "\tnumErrors=" << infos.back().numErrors << "\n";
+                std::cerr << "OVERLAP\t" << store.readSeqStore[info.seq0] << "\tseq0=" << info.seq0
+                          << "\t" << store.readSeqStore[info.seq0] << "\tseq1=" << info.seq1
+                          << "\tlen0=" << info.len0 << "\tpos1=" << info.pos1
+                          << "\tnumErrors=" << info.numErrors << "\n";
         }
     }
 }
