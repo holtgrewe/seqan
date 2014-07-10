@@ -40,6 +40,7 @@
 #include <seqan/realign.h>
 #include <seqan/sequence.h>
 #include <seqan/store.h>
+#include <seqan/seq_io.h>
 
 #include "seqcons_options.h"
 
@@ -54,6 +55,19 @@ bool endsWithIgnoreCase(std::string str, std::string suffix)
     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
     std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
     return seqan::endsWith(str, suffix);
+}
+
+// ---------------------------------------------------------------------------
+// Function trimAfterSpace()
+// ---------------------------------------------------------------------------
+
+void trimAfterSpace(seqan::CharString & s)
+{
+    unsigned i = 0;
+    for (; i < length(s); ++i)
+        if (isspace(s[i]))
+            break;
+    resize(s, i);
 }
 
 }
@@ -131,10 +145,46 @@ void SeqConsAppImpl::run()
 
 void SeqConsAppImpl::loadReads(char const * fileName)
 {
+    // Allocate space for one contig in the store.
+    resize(store.contigStore, 1);
+
+    // Load reads from sequence file.
+    seqan::SequenceStream in(fileName);
+    if (options.verbosity >= 1)
+        std::cerr << "  Loading reads from " << fileName << "...";
+    if (!isGood(in))
+        throw std::runtime_error("Problem opening input sequence file for reading.");
+
+    int maxPos = 0;
+    seqan::CharString id, seq;
+    while (!atEnd(in))
+    {
+        if (readRecord(id, seq, in) != 0)
+            throw std::runtime_error("Problem reading from input sequence file.");
+        trimAfterSpace(id);
+        __int64 readID = appendRead(store, seq, id);
+        appendAlignedRead(store, readID, /*contigID=*/0, /*beginPos=*/0, (int)length(seq));
+        maxPos = std::max(maxPos, (int)length(seq));
+    }
+
+    // Create sequence of Ns with sufficient size.
+    resize(store.contigStore[0].seq, 'N');
+
+    if (options.verbosity >= 1)
+        std::cerr << "OK\n";
 }
 
 void SeqConsAppImpl::loadAlignments(char const * fileName)
 {
+    if (options.verbosity >= 1)
+        std::cerr << "  Loading alignments from " << fileName << "...";
+    std::fstream f(fileName, std::ios_base::binary | std::ios::in);
+    if (!f.good())
+        throw std::runtime_error("Problem opening input alignment file for reading.");
+    if (read(f, store, seqan::Sam()) != 0)
+        throw std::runtime_error("Problem reading input alignment file.");
+    if (options.verbosity >= 1)
+        std::cerr << "OK\n";
 }
 
 void SeqConsAppImpl::performConsensusAlignment(bool useContigID, bool usePositions)
@@ -144,6 +194,8 @@ void SeqConsAppImpl::performConsensusAlignment(bool useContigID, bool usePositio
     caOptions.useContigID = useContigID;
     caOptions.usePositions = usePositions;
     caOptions.runRealignment = false;  // will run manually.
+    if (options.verbosity >= 2)
+        caOptions.verbosity = 2;
 
     caOptions.overlapMaxErrorRate = options.overlapMaxErrorRate;
     caOptions.overlapMinLength = options.overlapMinLength;

@@ -97,7 +97,7 @@ void SeqConsOptions::checkConsistency()
     // Position information is only available when input is in SAM format and is required for
     // position-/contig-based consensus and realignment.
     seqan::CharString inFileLowerCase = inputFile;
-    seqan::toLower(inputFile);
+    seqan::toLower(inFileLowerCase);
     if ((operation == POS_CONSENSUS || operation == CTG_CONSENSUS || operation == REALIGN) &&
         (!endsWith(inFileLowerCase, ".sam")))
         throw std::runtime_error("SAM input required for coordinates.");

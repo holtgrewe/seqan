@@ -78,14 +78,23 @@ int main(int argc, char const ** argv)
     }
     catch (std::runtime_error & e)
     {
-        std::cerr << "ERROR: Inconsistent command line options:\n"
+        std::cerr << "\nERROR: Inconsistent command line options:\n"
                   << "  " << e.what() << "\n";
         return 1;
     }
 
     // Run aplication.
-    SeqConsApp app(options);
-    app.run();
+    try
+    {
+        SeqConsApp app(options);
+        app.run();
+    }
+    catch (std::runtime_error & e)
+    {
+        std::cerr << "\nERROR: An error occured during the program's execution:\n"
+                  << "  " << e.what() << "\n";
+        return 1;
+    }
 
     std::cerr << "\nDone. Have a nice day.\n";
     return 0;
