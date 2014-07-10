@@ -73,8 +73,8 @@ namespace seqan {
  * @param[in]     options @link ConsensusAlignmentOptions @endlink with configuration.
  *
  * This function computes a consensus alignment for a set of nucleic sequences that are stored in a @link FragmentStore
- * @endlink.  Often, consensus sequences are reads, but they could also be RNA transcripts.  In the following
- * description, we call them reads, however.
+ * @endlink.  Often, consensus sequences are reads, but they could also be other sequences, such as RNA transcripts.
+ * However, in the following description we call them reads.
  *
  * This function uses the @link FragmentStore::contigStore @endlink, @link FragmentStore::alignedReadStore @endlink,
  * and @link FragmentStore::readSeqStore @endlink members of <tt>store</tt>.
@@ -91,35 +91,34 @@ namespace seqan {
  * The resulting MSA is then refined by @link reAlignment @endlink (see @link ConsensusAlignmentOptions::runRealignment
  * @endlink).
  *
+ * @section Using position information
+ *
+ * When position information is to be used then this will be used to generate fewer overlap alignments by only
+ * considering possible overlaps in windows around each read alignment as described above.  Note that there can only be
+ * at most one alignment for each read in the <tt>store.alignedReadStore</tt> and the end position must be greater than
+ * or equal to the begin position, i.e., the alignment must be on the forward strand.
+ *
+ * Using position information also requires contig ID information.
+ *
  * @section Using contigID information
  *
- * When contig ID is to be used by position information is not to be used then the function will compute pairwise
- * alignments between all pairs of reads having an entry <tt>store.alignedReadStore</tt> with the same contig.
- * Otherwise, an all-to-all comparison of all reads in <tt>store.readSeqStore</tt> will be performed.
+ * When contig ID information is to be used and position information is not to be used then the
+ * <tt>consensusAlignment()</tt> will compute pairwise alignments between all pairs of reads on the same contig.
  *
  * When contigID information is to be used then only the reads with an entry in <tt>store.alignedReadStore</tt> are
  * considered.
  *
- * When contigID information is not used the position information cannot be used.
+ * When contigID information is not used then an all-to-all pairwise alignment of all reads will be performed.
  *
- * <strong>Note</tt> that if reads having the same contig ID cannot be properly aligned and the MSA falls apart then the
- * reads for one "connected alignment component" are kept on the original contig while the rest are added to new contigs
- * that are appended to <tt>store.contigStore</tt>.
- *
- * @section Using position information
- *
- * When position information is to be used then this will be used to generate fewer overlap alignments as described
- * above.  Note that there can only be one alignment for each read in the <tt>store.alignedReadStore</tt> and the
- * end position must be greater than or equal to the begin position, i.e., the alignment must be on the forward
- * strand.
- *
- * Using position information also requires contig ID information, so <tt>store.alignedReadStore</tt> should be filled.
+ * <strong>Note</strong> that if reads having the same contig ID cannot be properly aligned and the MSA falls apart then
+ * the reads for one "connected alignment component" are kept on the original contig while the rest are added to new
+ * contigs that are appended to <tt>store.contigStore</tt>.
  *
  * @section Example
  *
- * The following example program takes a reference sequence and creates overlapping reads from it.  These are then
- * passed with approximate positions (adding and subtracting a few positions) into <tt>store</tt>.  The function
- * <tt>consensusAlignment</tt> is then used to compute a MSA and the consensus sequence is stored in
+ * The following example program takes a reference sequence and creates overlapping reads from it.  These are then added
+ * to <tt>store</tt> with approximate positions (adding and subtracting a few positions).  The function
+ * <tt>consensusAlignment()</tt> is then used to compute a MSA and the consensus sequence is stored in
  * <tt>store.contigStore[0].seq</tt>.
  *
  * @include demos/consensus/consensus_alignment.cpp

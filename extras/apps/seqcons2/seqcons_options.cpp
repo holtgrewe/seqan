@@ -100,7 +100,8 @@ void SeqConsOptions::checkConsistency()
     seqan::toLower(inFileLowerCase);
     if ((operation == POS_CONSENSUS || operation == CTG_CONSENSUS || operation == REALIGN) &&
         (!endsWith(inFileLowerCase, ".sam")))
-        throw std::runtime_error("SAM input required for coordinates.");
+        throw std::runtime_error("SAM input required for coordinates.  Either specify SAM file for the "
+                                 "input or use \"--method msa_consensus\".");
 }
 
 void SeqConsOptions::print(std::ostream & out) const
@@ -246,6 +247,19 @@ parseCommandLine(SeqConsOptions & options, int argc, char const ** argv)
             "The program can write out the consensus sequence in FASTA format and optionally the alignment of the "
             "input sequences against the consensus in SAM/BAM format.  When using the extension \\fI.txt\\fP, seqcons "
             "will write out the MSA as a plain text visualization.");
+
+    // Add Examples Section
+    addTextSection(parser, "Examples");
+    addListItem(parser,
+                "\\fBseqcons\\fP \\fB-m\\fP \\fImsa_consensus\\fP \\fB-i\\fP \\fIreads.fa\\fP \\fB-oa\\fP "
+                "\\fIout.sam\\fP \\fB-oc\\fP \\fIcons.fa\\fP",
+                "Compute MSA of the sequences in \\fIreads.fa\\fP.  The consensus sequence is written to "
+                "\\fIcons.fa\\fP and the alignment of the sequences in \\fIreads.fa\\fP is written to "
+                "\\fIout.sam\\fP.");
+    addListItem(parser,
+                "\\fBseqcons\\fP \\fB-m\\fP \\fIrealign\\fP \\fB-i\\fP \\fIin.sam\\fP \\fB-oa\\fP \\fIout.sam\\fP",
+                "Read in multi-read alignment from \\fIin.sam\\fP, refine it using Anson-Myers realignment and "
+                "write out the refined alignment to \\fIout.sam\\fP");
 
     // Parse command line.
     seqan::ArgumentParser::ParseResult res = seqan::parse(parser, argc, argv);
