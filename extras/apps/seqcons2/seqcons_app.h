@@ -32,61 +32,44 @@
 // Author: Manuel Holtgrewe <manuel.holtgrewe@fu-berlin.de>
 // ==========================================================================
 
-#include <stdexcept>
+#ifndef EXTRAS_APPS_SEQCONS2_SEQCONS_APP_H_
+#define EXTRAS_APPS_SEQCONS2_SEQCONS_APP_H_
 
-#include <seqan/arg_parse.h>
-#include <seqan/basic.h>
-#include <seqan/sequence.h>
+#include <memory>
 
-#include "seqcons_app.h"
-#include "seqcons_options.h"
+// ============================================================================
+// Forwards
+// ============================================================================
 
-// --------------------------------------------------------------------------
-// Function main()
-// --------------------------------------------------------------------------
+class SeqConsAppImpl;
+struct SeqConsOptions;
 
-// Program entry point.
+// ============================================================================
+// Tags, Classes, Enums
+// ============================================================================
 
-int main(int argc, char const ** argv)
+// ----------------------------------------------------------------------------
+// Class SeqConsApp
+// ----------------------------------------------------------------------------
+
+class SeqConsApp
 {
-    // Parse the command line.
-    seqan::ArgumentParser parser;
-    SeqConsOptions options;
-    seqan::ArgumentParser::ParseResult res = parseCommandLine(options, argc, argv);
+public:
+    SeqConsApp(SeqConsOptions const & options);
+    ~SeqConsApp();  // for pimpl
 
-    // If there was an error parsing or built-in argument parser functionality
-    // was triggered then we exit the program.  The return code is 1 if there
-    // were errors and 0 if there were none.
-    if (res != seqan::ArgumentParser::PARSE_OK)
-        return res == seqan::ArgumentParser::PARSE_ERROR;
+    void run();
 
-    std::cout << "SeqCons\n"
-              << "=======\n\n";
+private:
+    std::unique_ptr<SeqConsAppImpl> impl;
+};
 
-    // Print the command line arguments back to the user.
-    if (options.verbosity >= 1)
-    {
-        std::cout << "__OPTIONS____________________________________________________________________\n"
-                  << '\n';
-        options.print(std::cout);
-    }
+// ============================================================================
+// Metafunctions
+// ============================================================================
 
-    // Perform additional consistency checking of options.
-    try
-    {
-        options.checkConsistency();
-    }
-    catch (std::runtime_error & e)
-    {
-        std::cerr << "ERROR: Inconsistent command line options:\n"
-                  << "  " << e.what() << "\n";
-        return 1;
-    }
+// ============================================================================
+// Functions
+// ============================================================================
 
-    // Run aplication.
-    SeqConsApp app(options);
-    app.run();
-
-    std::cerr << "\nDone. Have a nice day.\n";
-    return 0;
-}
+#endif  // #ifndef EXTRAS_APPS_SEQCONS2_SEQCONS_APP_H_

@@ -94,13 +94,13 @@ char const * verbosityStr(int verbosity)
 
 void SeqConsOptions::checkConsistency()
 {
-    // Position information is only available when input is in SAM or BAM format and is required for
+    // Position information is only available when input is in SAM format and is required for
     // position-/contig-based consensus and realignment.
     seqan::CharString inFileLowerCase = inputFile;
     seqan::toLower(inputFile);
     if ((operation == POS_CONSENSUS || operation == CTG_CONSENSUS || operation == REALIGN) &&
-        (!endsWith(inFileLowerCase, ".sam") && !endsWith(inFileLowerCase, ".bam")))
-        throw std::runtime_error("SAM or BAM input required for coordinates.");
+        (!endsWith(inFileLowerCase, ".sam")))
+        throw std::runtime_error("SAM input required for coordinates.");
 }
 
 void SeqConsOptions::print(std::ostream & out) const
@@ -140,7 +140,7 @@ parseCommandLine(SeqConsOptions & options, int argc, char const ** argv)
 
     // Define usage line and long description.
     addUsageLine(parser,
-                 "\\fB-i\\fP \\fIINPUT.{fa,sam,bam}\\fP [\\fB-oa\\fP \\fIOUT_ALIGN.{fa,sam}\\fP] "
+                 "\\fB-i\\fP \\fIINPUT.{fa,sam}\\fP [\\fB-oa\\fP \\fIOUT_ALIGN.{fa,sam}\\fP] "
                  "[\\fB-oc\\fP \\fIOUT_CONSENSUS.fa\\fP]");
     addDescription(parser,
                    "Compute consensus from sequences with and without approximate alignment information.");
@@ -161,12 +161,12 @@ parseCommandLine(SeqConsOptions & options, int argc, char const ** argv)
     addOption(parser, seqan::ArgParseOption("i", "input-file", "Input file.", seqan::ArgParseOption::INPUTFILE,
                                             "INPUT"));
     setRequired(parser, "input-file", true);
-    setValidValues(parser, "input-file", "sam bam fa fasta");
+    setValidValues(parser, "input-file", "sam fa fasta");
 
     addOption(parser, seqan::ArgParseOption("oa", "output-alignment-file", "Output file with alignment.",
                                             seqan::ArgParseOption::OUTPUTFILE, "OUT_ALIGNMENT"));
     setRequired(parser, "output-alignment-file", false);
-    setValidValues(parser, "output-alignment-file", "sam bam fa fasta");
+    setValidValues(parser, "output-alignment-file", "sam fa fasta");
 
     addOption(parser, seqan::ArgParseOption("oc", "output-consensus-file", "Output file with consensus sequence.",
                                             seqan::ArgParseOption::OUTPUTFILE, "OUT_CONSENSUS"));
@@ -229,16 +229,16 @@ parseCommandLine(SeqConsOptions & options, int argc, char const ** argv)
     addListItem(parser, "\\fBnop\\fP",
                 "Perform no action, just perform file conversion if possible.");
     addListItem(parser, "\\fBrealign\\fP",
-                "Perform realignment, requires input to be a SAM or BAM file to provide approximate position "
+                "Perform realignment, requires input to be a SAM file to provide approximate position "
                 "information, creates consensus sequence after realignment.");
     addListItem(parser, "\\fBmsa_consensus\\fP",
                 "Perform MSA of the input ignoring any given coordinates, then realign.");
     addListItem(parser, "\\fBcontig_consensus\\fP",
                 "Perform MSA of the input, contig by contig, requires contig information, then realign. Input "
-                "must be SAM or BAM.");
+                "must be SAM.");
     addListItem(parser, "\\fBpos_consensus\\fP",
                 "Perform consensus of the input, then realign. Requires approximate coordinate information in "
-                "SAM or BAM file.");
+                "SAM file.");
 
     // Parse command line.
     seqan::ArgumentParser::ParseResult res = seqan::parse(parser, argc, argv);

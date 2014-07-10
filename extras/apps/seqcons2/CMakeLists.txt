@@ -38,6 +38,8 @@ add_definitions (${SEQAN_DEFINITIONS})
 # Update the list of file names below if you add source files to your application.
 add_executable (seqcons2
                 seqcons.cpp
+                seqcons_app.h
+                seqcons_app.cpp
                 seqcons_options.h
                 seqcons_options.cpp)
 

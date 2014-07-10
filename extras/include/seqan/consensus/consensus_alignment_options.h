@@ -96,19 +96,20 @@ struct ConsensusAlignmentOptions
     ConsensusAlignmentOptions() :
             contigID(INVALID), useContigID(true), usePositions(true), posDelta(30),
             runRealignment(true), verbosity(0), overlapMaxErrorRate(5), overlapMinLength(20),
-            kMerSize(20), kMerMaxOcc(200)
+            overlapMinCount(3), kMerSize(20), kMerMaxOcc(200)
     {}
 
     unsigned contigID;
     bool useContigID;
     bool usePositions;
-    unsigned posDelta;
+    unsigned posDelta;  // TODO(holtgrew): Rename to overlapWindowSize
     bool runRealignment;
 
     int verbosity;
 
     int overlapMaxErrorRate;
     int overlapMinLength;
+    int overlapMinCount;
     int kMerSize;
     int kMerMaxOcc;
 };
