@@ -96,12 +96,64 @@ private:
     // Perform realignment on store only.
     void performRealignment();
 
+    // Write out consensus sequence to file.
+    void writeConsensus();
+    // Write out alignments to file.
+    void writeAlignments();
+
     // The fragment store for the data.
     seqan::FragmentStore<> store;
 
     // Configuration.
     SeqConsOptions options;
 };
+
+void SeqConsAppImpl::writeConsensus()
+{
+    if (options.verbosity >= 1)
+        std::cerr << "Writing consensus to " << options.outputFileConsensus << " ...";
+    seqan::SequenceStream out(options.outputFileConsensus.c_str(), seqan::SequenceStream::WRITE);
+    if (!isGood(out))
+        throw std::runtime_error("Could not open consensus output file for writing.");
+    for (unsigned contigID = 0; contigID < length(store.contigStore); ++contigID)
+    {
+        std::stringstream ss;
+        ss << "consensus_" << contigID;
+        if (writeRecord(out, ss.str(), store.contigStore[contigID].seq) != 0)
+            throw std::runtime_error("Problem writing consensus sequence.");
+    }
+    if (options.verbosity >= 1)
+        std::cerr << " OK\n";
+}
+
+void SeqConsAppImpl::writeAlignments()
+{
+    if (options.verbosity >= 1)
+        std::cerr << "Writing alignments to " << options.outputFileAlignment << " ...";
+    std::fstream out(options.outputFileAlignment.c_str(), std::ios::binary | std::ios::out);
+
+    if (endsWithIgnoreCase(options.outputFileAlignment, ".txt"))
+    {
+        seqan::AlignedReadLayout layout;
+        layoutAlignment(layout, store);
+        for (unsigned contigID = 0; contigID < length(store.contigStore); ++contigID)
+        {
+            int endPos = 0;
+            for (unsigned i = 0; i < length(store.alignedReadStore); ++i)
+                if (store.alignedReadStore[i].contigId == contigID)
+                    endPos = std::max(endPos, (int)store.alignedReadStore[i].endPos);
+            out << ">consensus_" << contigID << "\n";
+            printAlignment(out, seqan::Raw(), layout, store, /*contigID=*/contigID,
+                           /*beginPos=*/0, /*endPos=*/endPos, 0, 100);
+        }
+    }
+    else  // ends in .sam
+    {
+        write(out, store, seqan::Sam());  // TODO(holtgrew): Should check errors but write() returns void.
+    }
+    if (options.verbosity >= 1)
+        std::cerr << " OK\n";
+}
 
 void SeqConsAppImpl::run()
 {
@@ -141,6 +193,15 @@ void SeqConsAppImpl::run()
             // do nothing, will just write out store
             break;
     }
+
+    // Write the consensus and/or the alignments.
+    if (options.verbosity >= 1)
+        std::cout << "\n__WRITING RESULT_____________________________________________________________\n"
+                  << '\n';
+    if (!options.outputFileConsensus.empty())
+        writeConsensus();
+    if (!options.outputFileAlignment.empty())
+        writeAlignments();
 }
 
 void SeqConsAppImpl::loadReads(char const * fileName)
@@ -151,7 +212,7 @@ void SeqConsAppImpl::loadReads(char const * fileName)
     // Load reads from sequence file.
     seqan::SequenceStream in(fileName);
     if (options.verbosity >= 1)
-        std::cerr << "  Loading reads from " << fileName << "...";
+        std::cerr << "Loading reads from " << fileName << "...";
     if (!isGood(in))
         throw std::runtime_error("Problem opening input sequence file for reading.");
 
@@ -194,8 +255,8 @@ void SeqConsAppImpl::performConsensusAlignment(bool useContigID, bool usePositio
     caOptions.useContigID = useContigID;
     caOptions.usePositions = usePositions;
     caOptions.runRealignment = false;  // will run manually.
-    if (options.verbosity >= 2)
-        caOptions.verbosity = 2;
+    if (options.verbosity >= 3)
+        caOptions.verbosity = 3;
 
     caOptions.overlapMaxErrorRate = options.overlapMaxErrorRate;
     caOptions.overlapMinLength = options.overlapMinLength;
@@ -208,8 +269,12 @@ void SeqConsAppImpl::performConsensusAlignment(bool useContigID, bool usePositio
     // Perform the consensus alignment.
     double startTime = seqan::sysTime();
     if (options.verbosity >= 1)
-        std::cerr << "Performing consensus computation...\n";
+        std::cerr << "Performing consensus computation...";
+    if (options.verbosity >= 3)
+        std::cerr << "\n";
     consensusAlignment(store, caOptions);
+    if (options.verbosity >= 1)
+        std::cerr << " OK\n";
     if (options.verbosity >= 2)
         std::cerr << "\t=> consensus step took " << seqan::sysTime() - startTime << "s\n";
 
@@ -221,9 +286,13 @@ void SeqConsAppImpl::performRealignment()
 {
     double startTime = seqan::sysTime();
     if (options.verbosity >= 1)
-        std::cerr << "Performing realignment...\n";
+        std::cerr << "Performing realignment...";
+    if (options.verbosity >= 3)
+        std::cerr << "\n";
     for (unsigned contigID = 0; contigID < length(store.contigStore); ++contigID)
         reAlignment(store, contigID, /*method=*/2, options.reAlignmentBandwidth, /*includeReference=*/false);
+    if (options.verbosity >= 1)
+        std::cerr << " OK\n";
     if (options.verbosity >= 2)
         std::cerr << "\t=> realignment took " << seqan::sysTime() - startTime << "s\n";
 }

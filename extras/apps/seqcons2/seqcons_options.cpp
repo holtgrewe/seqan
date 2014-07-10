@@ -166,7 +166,7 @@ parseCommandLine(SeqConsOptions & options, int argc, char const ** argv)
     addOption(parser, seqan::ArgParseOption("oa", "output-alignment-file", "Output file with alignment.",
                                             seqan::ArgParseOption::OUTPUTFILE, "OUT_ALIGNMENT"));
     setRequired(parser, "output-alignment-file", false);
-    setValidValues(parser, "output-alignment-file", "sam fa fasta");
+    setValidValues(parser, "output-alignment-file", "sam fa fasta txt");
 
     addOption(parser, seqan::ArgParseOption("oc", "output-consensus-file", "Output file with consensus sequence.",
                                             seqan::ArgParseOption::OUTPUTFILE, "OUT_CONSENSUS"));
@@ -224,7 +224,7 @@ parseCommandLine(SeqConsOptions & options, int argc, char const ** argv)
     setMinValue(parser, "realign-environment", "5");
     setDefaultValue(parser, "realign-environment", "20");
 
-    // Add Methods section.
+    // Add Methods Section
     addTextSection(parser, "Methods");
     addListItem(parser, "\\fBnop\\fP",
                 "Perform no action, just perform file conversion if possible.");
@@ -239,6 +239,13 @@ parseCommandLine(SeqConsOptions & options, int argc, char const ** argv)
     addListItem(parser, "\\fBpos_consensus\\fP",
                 "Perform consensus of the input, then realign. Requires approximate coordinate information in "
                 "SAM file.");
+
+    // Add Output Section
+    addTextSection(parser, "Output Formats");
+    addText(parser,
+            "The program can write out the consensus sequence in FASTA format and optionally the alignment of the "
+            "input sequences against the consensus in SAM/BAM format.  When using the extension \\fI.txt\\fP, seqcons "
+            "will write out the MSA as a plain text visualization.");
 
     // Parse command line.
     seqan::ArgumentParser::ParseResult res = seqan::parse(parser, argc, argv);

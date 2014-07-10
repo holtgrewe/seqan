@@ -60,13 +60,13 @@ int main(int argc, char const ** argv)
     if (res != seqan::ArgumentParser::PARSE_OK)
         return res == seqan::ArgumentParser::PARSE_ERROR;
 
-    std::cout << "SeqCons\n"
-              << "=======\n\n";
-
     // Print the command line arguments back to the user.
     if (options.verbosity >= 1)
     {
-        std::cout << "__OPTIONS____________________________________________________________________\n"
+        std::cout << "SeqCons\n"
+                  << "=======\n"
+                  << "\n"
+                  << "__OPTIONS____________________________________________________________________\n"
                   << '\n';
         options.print(std::cout);
     }
@@ -96,6 +96,7 @@ int main(int argc, char const ** argv)
         return 1;
     }
 
-    std::cerr << "\nDone. Have a nice day.\n";
+    if (options.verbosity >= 1)
+        std::cerr << "\nDone.  Have a nice day.\n";
     return 0;
 }
