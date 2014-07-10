@@ -302,10 +302,11 @@ inline void OverlapInfoComputation_<TFragmentStore>::buildAllToAllOverlapInfos(
     typedef typename Value<TReadSeqStore>::Type TReadSeq;
     typedef typename Value<TReadSeq>::Type TAlphabet;
     typedef StringSet<TReadSeq, Dependent<> > TStringSet;
+    typedef StringSet<TReadSeq> TSuperStringSet;  // owner
     typedef typename Iterator<TStringSet, Standard>::Type TStringSetIter;
 
     // Get copy of fragment store's read seq store.
-    TStringSet superSet;
+    TSuperStringSet superSet;
     for (unsigned i = 0; i < length(store.readSeqStore); ++i)
         appendValue(superSet, store.readSeqStore[i]);
 
@@ -319,7 +320,7 @@ inline void OverlapInfoComputation_<TFragmentStore>::buildAllToAllOverlapInfos(
     typedef IndexQGram<TShape, OpenAddressing>      TIndexSpec;
     typedef Index<TStringSet const, TIndexSpec>     TIndex;
     typedef Pattern<TIndex, Pigeonhole<> >          TFilterPattern;
-    typedef Finder<Dna5String const, Pigeonhole<> > TFilterFinder;
+    typedef Finder<TReadSeq const, Pigeonhole<> > TFilterFinder;
 
     double maxErrorRate = 1.0 / options.kMerSize;
 
