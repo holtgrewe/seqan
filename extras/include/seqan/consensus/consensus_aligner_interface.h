@@ -63,7 +63,7 @@ namespace seqan {
 // ----------------------------------------------------------------------------
 
 /*!
- * @fn consensusAlignment2
+ * @fn consensusAlignment
  * @headerfile <seqan/consensus.h>
  * @brief Compute consensus alignment.
  *
