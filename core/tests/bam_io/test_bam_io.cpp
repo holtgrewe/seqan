@@ -63,6 +63,7 @@ SEQAN_BEGIN_TESTSUITE(test_bam_io)
     SEQAN_CALL_TEST(test_bam_io_bam_alignment_record_has_flag_secondary);
     SEQAN_CALL_TEST(test_bam_io_bam_alignment_record_has_flag_qc_no_pass);
     SEQAN_CALL_TEST(test_bam_io_bam_alignment_record_has_flag_duplicate);
+    SEQAN_CALL_TEST(test_bam_io_bam_alignment_record_has_flag_supplementary);
 
     // Test BamHeader and BamHeaderRecord classes.
     SEQAN_CALL_TEST(test_bam_io_bam_header_class);
@@ -139,7 +140,8 @@ SEQAN_BEGIN_TESTSUITE(test_bam_io)
     SEQAN_CALL_TEST(test_bam_tags_dict_get_value_type_Bf);
     SEQAN_CALL_TEST(test_bam_tags_dict_erase_tag);
     SEQAN_CALL_TEST(test_bam_tags_dict_set_tag_value);
-
+    SEQAN_CALL_TEST(test_bam_tags_dict_append_tag_value);
+    
     // Test SAM I/O.
     SEQAN_CALL_TEST(test_bam_io_sam_read_header);
     SEQAN_CALL_TEST(test_bam_io_sam_read_alignment);

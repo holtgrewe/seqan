@@ -51,18 +51,27 @@ namespace SEQAN_NAMESPACE_MAIN
     template <typename Worker>
     struct Thread
     {
-//IOREV _notio_
         typedef HANDLE Handle;
 
         Handle hThread;
         DWORD  hThreadID;
         Worker worker;
 
-        Thread() {}
+        Thread() :
+            hThread()
+        {}
 
         template <typename TArg>
         Thread(TArg &arg):
-            worker(arg) {}
+            hThread(),
+            worker(arg)
+        {}
+
+        template <typename TArg>
+        Thread(TArg const &arg):
+            hThread(),
+            worker(arg)
+        {}
 
         ~Thread() {
             if (*this) {
@@ -107,7 +116,7 @@ namespace SEQAN_NAMESPACE_MAIN
         }
 
         static DWORD WINAPI _start(LPVOID _this) {
-            reinterpret_cast<Thread*>(_this)->worker.run(&reinterpret_cast<Thread*>(_this));
+            reinterpret_cast<Thread*>(_this)->worker();
 			return 0;	// return value should indicate success/failure
         }
     };
@@ -117,19 +126,28 @@ namespace SEQAN_NAMESPACE_MAIN
     template <typename Worker>
     struct Thread
     {
-//IOREV _notio_
-        typedef pthread_t* Handle;
+        pthread_t   data;
+        pthread_t   *hThread;
+        Worker      worker;
 
-        pthread_t data, *hThread;
-        Worker worker;
-
-        Thread() {}
+        Thread() :
+            hThread()
+        {}
 
         template <typename TArg>
         Thread(TArg &arg):
-            worker(arg) {}
+            hThread(),
+            worker(arg)
+        {}
 
-        ~Thread() {
+        template <typename TArg>
+        Thread(TArg const &arg):
+            hThread(),
+            worker(arg)
+        {}
+
+        ~Thread() 
+        {
             if (*this) {
                 cancel();
                 wait();
@@ -138,10 +156,7 @@ namespace SEQAN_NAMESPACE_MAIN
 
         inline bool open()
         {
-            if (!pthread_create(&data, NULL, _start, this) && (hThread = &data)) {
-                return true;
-            } else
-                return false;
+            return !pthread_create(&data, NULL, _start, this) && (hThread = &data);
         }
 
         inline bool close() {
@@ -176,7 +191,7 @@ namespace SEQAN_NAMESPACE_MAIN
         }
 
         static void* _start(void* _this) {
-            reinterpret_cast<Thread*>(_this)->worker.run(&reinterpret_cast<Thread*>(_this));
+            reinterpret_cast<Thread*>(_this)->worker();
 			return 0;
         }
     };
