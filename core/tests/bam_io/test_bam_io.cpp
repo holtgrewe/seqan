@@ -172,6 +172,7 @@ SEQAN_BEGIN_TESTSUITE(test_bam_io)
     SEQAN_CALL_TEST(test_bam_io_bam_file_bam_write_header);
     SEQAN_CALL_TEST(test_bam_io_bam_file_bam_write_records);
     SEQAN_CALL_TEST(test_bam_io_bam_file_bam_file_seek);
+    SEQAN_CALL_TEST(test_bam_io_bam_file_bam_file_random_seek);
 
     // Test BAM indices.
     SEQAN_CALL_TEST(test_bam_io_bam_index_bai);

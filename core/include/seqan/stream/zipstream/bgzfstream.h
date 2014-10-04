@@ -50,10 +50,7 @@ enum EStrategy
 	DefaultStrategy = 0
 };
 
-/** \brief A stream decorator that takes raw input and zips it to a ostream.
-
-The class wraps up the inflate method of the bgzf library 1.1.4 http://www.gzip.org/bgzf/
-*/
+// A stream decorator that takes raw input and zips it to a ostream.
 template<
 	typename Elem, 
 	typename Tr = std::char_traits<Elem>,
@@ -300,10 +297,7 @@ public:
 	ostream_reference get_ostream() const	{ return serializer.worker.ostream; };
 };
 
-/** \brief A stream decorator that takes compressed input and unzips it to a istream.
-
-The class wraps up the deflate method of the bgzf library 1.1.4 http://www.gzip.org/bgzf/
-*/
+// A stream decorator that takes compressed input and unzips it to a istream.
 template<
 	typename Elem, 
 	typename Tr = std::char_traits<Elem>,
@@ -723,7 +717,7 @@ public:
                             waitFor(job.readyEvent);
                     }
 
-                    SEQAN_ASSERT(job.fileOfs == destFileOfs);
+                    SEQAN_ASSERT_EQ(job.fileOfs, destFileOfs);
 
                     // reset buffer pointers
                     this->setg( 
@@ -746,10 +740,7 @@ public:
 	istream_reference get_istream()	{ return serializer.istream;};
 };
 
-/*! \brief Base class for zip ostreams
-
-Contains a basic_bgzf_streambuf.
-*/
+// Base class for zip ostreams
 template<
 	typename Elem, 
 	typename Tr = std::char_traits<Elem>,
@@ -793,10 +784,7 @@ private:
 	bgzf_streambuf_type m_buf;
 };
 
-/*! \brief Base class for unzip istreams
-
-Contains a basic_unbgzf_streambuf.
-*/
+// brief Base class for unzip istreams
 template<
 	typename Elem, 
 	typename Tr = std::char_traits<Elem>,
@@ -837,29 +825,7 @@ private:
 	unbgzf_streambuf_type m_buf;
 };
 
-/*! \brief A zipper ostream
-
-This class is a ostream decorator that behaves 'almost' like any other ostream.
-
-At construction, it takes any ostream that shall be used to output of the compressed data.
-
-When finished, you need to call the special method zflush or call the destructor 
-to flush all the intermidiate streams.
-
-Example:
-\code
-// creating the target zip string, could be a fstream
-ostringstream ostringstream_;
-// creating the zip layer
-bgzf_ostream zipper(ostringstream_);
-
-	
-// writing data	
-zipper<<f<<" "<<d<<" "<<ui<<" "<<ul<<" "<<us<<" "<<c<<" "<<dum;
-// zip ostream needs special flushing...
-zipper.zflush();
-\endcode
-*/
+// A zipper ostream
 template<
 	typename Elem, 
 	typename Tr = std::char_traits<Elem>,
@@ -905,23 +871,7 @@ private:
     static void put_long(ostream_reference out_, unsigned long x_);
 };
 
-/*! \brief A zipper istream
-
-This class is a istream decorator that behaves 'almost' like any other ostream.
-
-At construction, it takes any istream that shall be used to input of the compressed data.
-
-Simlpe example:
-\code
-// create a stream on zip string
-istringstream istringstream_( ostringstream_.str());
-// create unzipper istream
-bgzf_istream unzipper( istringstream_);
-
-// read and unzip
-unzipper>>f_r>>d_r>>ui_r>>ul_r>>us_r>>c_r>>dum_r;
-\endcode
-*/
+// A zipper istream
 template<
 	typename Elem, 
 	typename Tr = std::char_traits<Elem>,
