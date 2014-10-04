@@ -1,12 +1,23 @@
 language: cpp
+
+env:
+  global:
+  - secure: p7kbPK/4iO48rzwpDytFaq02GKaPLkIOR1yneWf8TOfP6qxk1jgFMfH6OKqfQUr8cERaDbtca8BrY2TXBFz8v6KO76AB3lAySZd7lsy8a+ykbNxOtegVfRig4RBOi9i33j8oDAHmRtci4eVG8P+h2rFjAT7eQbPoHldAFyV3Hx4=
+
 compiler:
-  - gcc
-  - clang
+- gcc
+- clang
+
 cache:
   apt: true
   directories:
   - _build
-before_script:
-  sudo apt-get install -qq cmake python python-nose zlib1g-dev libbz2-dev libboost-dev python-jinja2
+
+install:
+- sudo apt-get install -qq cmake python python-nose zlib1g-dev libbz2-dev libboost-dev python-jinja2
+
 script:
-  ./util/travis/linux-cibuild.sh
+- ./util/travis/linux-cibuild.sh
+
+after_success:
+- ./util/travis/coveralls.sh
