@@ -20,4 +20,4 @@ script:
 - ./util/travis/linux-cibuild.sh
 
 after_script:
-- ./util/travis/coveralls.sh
+- bash ./util/travis/coveralls.sh
