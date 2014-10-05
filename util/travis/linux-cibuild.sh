@@ -18,10 +18,10 @@ if [ "${CXX}" == "clang++" ]; then
   export CXXFLAGS="${CXXFLAGS} -DSEQAN_IGNORE_MISSING_OPENMP=1"
 fi
 
-# enable gcov flags for GCC.
-if [ "${CXX}" == "g++" ]; then
-  export CXXFLAGS="${CXXFLAGS} -fprofile-arcs -ftest-coverage"
-  export LDFLAGS="${LDFLAGS} -fprofile-arcs"
+# enable gcov flags for clang.
+if [ "${CXX}" == "clang++" ]; then
+  export CXXFLAGS="${CXXFLAGS} --coverage -g"
+  export LDFLAGS="${LDFLAGS} --coverage -g"
 fi
 
 ctest -V -S util/travis/linux-cibuild.cmake
