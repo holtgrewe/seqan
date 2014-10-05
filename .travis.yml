@@ -19,5 +19,5 @@ install:
 script:
 - ./util/travis/linux-cibuild.sh
 
-after_success:
+after_script:
 - ./util/travis/coveralls.sh

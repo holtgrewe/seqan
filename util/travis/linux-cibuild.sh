@@ -1,8 +1,10 @@
 #!/bin/bash
 
+trap popd EXIT  # call popd on exit of script
+
 # get some infos from git to embed it in the build name
 export SOURCE_DIRECTORY=`pwd`
-mkdir _build
+mkdir -p _build && pushd _build
 
 # define the build name
 if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
@@ -20,18 +22,18 @@ fi
 
 # enable gcov flags for GCC.
 if [ "${CXX}" == "g++" ]; then
-  export CXXFLAGS="${CXXFLAGS} -fprofile-arcs -ftest-coverage"
-  export LDFLAGS="${LDFLAGS} -fprofile-arcs"
+  export CXXFLAGS="${CXXFLAGS} --coverag"
+  export LDFLAGS="${LDFLAGS} --coverage"
 fi
 
-ctest -V -S util/travis/linux-cibuild.cmake
+ctest -V -S ../util/travis/linux-cibuild.cmake
 
 # we indicate build failures if ctest experienced any errors
 if [ -f ${SOURCE_DIRECTORY}/failed ]; then
   exit -1
 fi
 
-FAILED_TEST=$(find _build -name "Test.xml" -type f | xargs grep "<Test Status=\"failed\">" -c)
+FAILED_TEST=$(find . -name "Test.xml" -type f | xargs grep "<Test Status=\"failed\">" -c)
 
 if [ "${FAILED_TEST}" -gt "0" ]; then
     exit -1
