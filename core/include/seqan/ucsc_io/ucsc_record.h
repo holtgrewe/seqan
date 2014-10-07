@@ -57,7 +57,7 @@ public:
     __int64         cdsBegin;
     __int64         cdsEnd;
     String<__int64> exonBegin;
-    String<__int64> exonEnd;
+    String<__int64> exonEnds;
     CharString      proteinName;
 
     __uint64        annotationBeginPos;
@@ -99,7 +99,7 @@ inline void clear(UcscRecord & record)
     record.cdsBegin = -1;
     record.cdsEnd = -1;
     clear(record.exonBegin);
-    clear(record.exonEnd);
+    clear(record.exonEnds);
     clear(record.proteinName);
 
     record.annotationBeginPos = -1;

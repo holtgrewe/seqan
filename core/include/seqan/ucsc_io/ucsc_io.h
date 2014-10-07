@@ -175,7 +175,7 @@ readRecord(UcscRecord & record,
 
         unsigned long long tempEnd;
         tempEnd =  lexicalCast<__uint64>(ucscContext.buffer);
-        appendValue(record.exonEnd, tempEnd);
+        appendValue(record.exonEnds, tempEnd);
         skipOne(iter);
     }
     skipOne(iter, IsTab());
@@ -199,8 +199,8 @@ readRecord(UcscRecord & record,
         for (unsigned int i = 0; i < exons; ++i)
         {
             tmp = record.exonBegin[i];
-            record.exonBegin[i] = record.exonEnd[i];
-            record.exonEnd[i] = tmp;
+            record.exonBegin[i] = record.exonEnds[i];
+            record.exonEnds[i] = tmp;
         }
     }
 }
@@ -280,7 +280,7 @@ writeRecord(TTarget & target,
     // write column 9: exon begin positions
     for (unsigned i = 0; i < length(record.exonBegin); ++i)
     {
-        appendNumber(target, _min(record.exonBegin[i], record.exonEnd[i]));
+        appendNumber(target, _min(record.exonBegin[i], record.exonEnds[i]));
         writeValue(target, ',');
     }
     writeValue(target, '\t');
@@ -288,7 +288,7 @@ writeRecord(TTarget & target,
     // write column 10: exon end positions
     for (unsigned i = 0; i < length(record.exonBegin); ++i)
     {
-        appendNumber(target, _max(record.exonBegin[i], record.exonEnd[i]));
+        appendNumber(target, _max(record.exonBegin[i], record.exonEnds[i]));
         writeValue(target, ',');
     }
     writeValue(target, '\t');
