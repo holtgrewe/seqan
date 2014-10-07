@@ -1,3 +1,6 @@
+os:
+# - linux
+  - osx
 language: cpp
 compiler:
   - gcc
@@ -7,6 +10,8 @@ cache:
   directories:
   - _build
 before_script:
-  sudo apt-get install -qq cmake python python-nose zlib1g-dev libbz2-dev libboost-dev python-jinja2
+  - [[ "${TRAVIS_OS_NAME}" == osx ]] && sudo brew install cmake python boost
+  - [[ "${TRAVIS_OS_NAME}" == osx ]] && sudo pip install nose jinja2
+  - [[ "${$TRAVIS_OS_NAME}" == linux ]] && sudo apt-get install -qq cmake python python-nose zlib1g-dev libbz2-dev libboost-dev python-jinja2
 script:
   ./util/travis/linux-cibuild.sh
