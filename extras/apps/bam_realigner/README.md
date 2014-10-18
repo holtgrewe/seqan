@@ -13,6 +13,7 @@ Building
 --------
 
     # git clone https://github.com/holtgrewe/seqan.git seqan-holtgrewe
+    # pushd seqan-holtgrewe ; git checkout feature/bam_realigner ; popd
     # mkdir -p seqan-holtgrewe-build/release && pushd seqan-holtgrewe-build/release
     # cmake ../../seqan-holtgrewe
     # make bam_realigner
