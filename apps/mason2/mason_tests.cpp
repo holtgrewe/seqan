@@ -469,17 +469,33 @@ void projectGapsTransitively(
     typedef typename Iterator<TGapsIn1 const, Standard>::Type TGapsIter1;
     typedef typename Iterator<TGapsIn2 const, Standard>::Type TGapsIter2;
 
-    // End iterators of the four gaps.
-    TGapsIter1 const refGaps1End = end(refGaps1, Standard());
-    TGapsIter1 const haploGaps1End = end(haploGaps1, Standard());
-    TGapsIter2 const haploGaps2End = end(haploGaps2, Standard());
-    TGapsIter2 const readGaps2End = end(readGaps2, Standard());
+    // Handle trailing and leading gaps.
+    int leadingRefGaps1Count = countLeadingGaps(refGaps1);
+    int trailingRefGaps1Count = countTrailingGaps(refGaps1);
+    int leadingHaploGaps1Count = countLeadingGaps(haploGaps1);
+    int trailingHaploGaps1Count = countTrailingGaps(haploGaps1);
+    int leadingHaploGaps2Count = countLeadingGaps(haploGaps2);
+    int trailingHaploGaps2Count = countTrailingGaps(haploGaps2);
+    int leadingReadGaps2Count = countLeadingGaps(readGaps2);
+    int trailingReadGaps2Count = countTrailingGaps(readGaps2);
 
-    // Iterators of the four gaps.
-    TGapsIter1 refGaps1Iter = begin(refGaps1, Standard());
-    TGapsIter1 haploGaps1Iter = begin(haploGaps1, Standard());
-    TGapsIter2 haploGaps2Iter = begin(haploGaps2, Standard());
-    TGapsIter2 readGaps2Iter = begin(readGaps2, Standard());
+    // Below, we move the iterators right of the leading gaps, adjust cigar for this here.
+    if (leadingHaploGaps1Count > 0)
+        _appendCigarOperation(cigar, CigarElement<>('D', leadingHaploGaps1Count));
+    if (leadingHaploGaps2Count > 0)
+        _appendCigarOperation(cigar, CigarElement<>('I', leadingHaploGaps2Count));
+
+    // Create end iterators of the four gaps.
+    TGapsIter1 refGaps1End = end(refGaps1, Standard()) - std::max(trailingRefGaps1Count, trailingHaploGaps1Count);
+    TGapsIter1 haploGaps1End = end(haploGaps1, Standard()) - std::max(trailingRefGaps1Count, trailingHaploGaps1Count);
+    TGapsIter2 haploGaps2End = end(haploGaps2, Standard()) - std::max(trailingHaploGaps2Count, trailingReadGaps2Count);
+    TGapsIter2 readGaps2End = end(readGaps2, Standard()) - std::max(trailingHaploGaps2Count, trailingReadGaps2Count);
+
+    // Create iterators of the four gaps.
+    TGapsIter1 refGaps1Iter = begin(refGaps1, Standard()) + std::max(leadingRefGaps1Count, leadingHaploGaps1Count);
+    TGapsIter1 haploGaps1Iter = begin(haploGaps1, Standard()) + std::max(leadingRefGaps1Count, leadingHaploGaps1Count);
+    TGapsIter2 haploGaps2Iter = begin(haploGaps2, Standard()) + std::max(leadingHaploGaps2Count, leadingReadGaps2Count);
+    TGapsIter2 readGaps2Iter = begin(readGaps2, Standard()) + std::max(leadingHaploGaps2Count, leadingReadGaps2Count);
 
     // These flags indicate whether the iterator aligns against a gap before the next round.
     bool aliGap1 = !atEnd(refGaps1Iter) && isGap(refGaps1Iter);
@@ -515,6 +531,16 @@ void projectGapsTransitively(
         aliGap2 = !atEnd(readGaps2Iter) && isGap(readGaps2Iter);
     }
 
+    // Adjust cigar for trailing gaps.
+    if (trailingHaploGaps1Count > 0)
+        _appendCigarOperation(cigar, CigarElement<>('D', trailingHaploGaps1Count));
+    if (trailingHaploGaps2Count > 0)
+        _appendCigarOperation(cigar, CigarElement<>('I', trailingHaploGaps2Count));
+
+    // for (unsigned i = 0; i < length(cigar); ++i)
+    //     std::cerr << cigar[i].count << cigar[i].operation << " ";
+    // std::cerr << "\n";
+
     // Build resulting gaps.
     clearGaps(outRefGaps);
     clearClipping(outRefGaps);
@@ -523,8 +549,11 @@ void projectGapsTransitively(
 
     clearGaps(outReadGaps);
     clearClipping(outReadGaps);
-    setClippedEndPosition(outReadGaps, endPosition(refGaps1));
-    setClippedBeginPosition(outReadGaps, beginPosition(refGaps1));
+    setClippedEndPosition(outReadGaps, endPosition(readGaps2));
+    setClippedBeginPosition(outReadGaps, beginPosition(readGaps2));
+
+    // std::cerr << "REF \t" << outRefGaps << "\n";
+    // std::cerr << "READ\t" << outReadGaps << "\n";
 
     TGapsIterOut itRefOut = begin(outRefGaps, Standard());
     TGapsIterOut itReadOut = begin(outReadGaps, Standard());
@@ -577,8 +606,8 @@ SEQAN_DEFINE_TEST(mason_tests_project_gaps_transitively_case1)
 
     Align<DnaString> result;
     resize(rows(result), 2);
-    assignSource(row(result, 0), "AACTTG");
-    assignSource(row(result, 1), "ATTACG");
+    assignSource(row(result, 0), source(row(refAndHaplo, 0)));
+    assignSource(row(result, 1), source(row(haploAndRead, 1)));
     projectGapsTransitively(row(result, 0), row(result, 1), row(refAndHaplo, 0), row(refAndHaplo, 1),
                             row(haploAndRead, 0), row(haploAndRead, 1));
 
@@ -623,8 +652,8 @@ SEQAN_DEFINE_TEST(mason_tests_project_gaps_transitively_case2)
 
     Align<DnaString> result;
     resize(rows(result), 2);
-    assignSource(row(result, 0), "AACTTG");
-    assignSource(row(result, 1), "ATTACG");
+    assignSource(row(result, 0), source(row(refAndHaplo, 0)));
+    assignSource(row(result, 1), source(row(haploAndRead, 1)));
     projectGapsTransitively(row(result, 0), row(result, 1), row(refAndHaplo, 0), row(refAndHaplo, 1),
                             row(haploAndRead, 0), row(haploAndRead, 1));
 
@@ -633,6 +662,57 @@ SEQAN_DEFINE_TEST(mason_tests_project_gaps_transitively_case2)
     // std::cerr << ss.str();
     char const * EXPECTED = "A--ACTT-G\n"
                             "ATTA---CG\n";
+    SEQAN_ASSERT(ss.str() == EXPECTED);
+}
+
+SEQAN_DEFINE_TEST(mason_tests_project_gaps_transitively_case3)
+{
+    // REF    AAAC-TTGG
+    // HAPLO  -AA-C--G-
+    //
+    // HAPLO  -A--AC-G-
+    // READ   AATTA-CGG
+    using namespace seqan;
+
+    Align<DnaString> refAndHaplo;
+    resize(rows(refAndHaplo), 2);
+    assignSource(row(refAndHaplo, 0), "AAACTTGG");
+    assignSource(row(refAndHaplo, 1), "AACG");
+    insertGaps(row(refAndHaplo, 0), 4, 1);
+    insertGaps(row(refAndHaplo, 1), 4, 1);
+    insertGaps(row(refAndHaplo, 1), 3, 2);
+    insertGaps(row(refAndHaplo, 1), 2, 1);
+    insertGaps(row(refAndHaplo, 1), 0, 1);
+
+    Align<DnaString> haploAndRead;
+    resize(rows(haploAndRead), 2);
+    assignSource(row(haploAndRead, 0), "AACG");
+    assignSource(row(haploAndRead, 1), "AATTACGG");
+    insertGaps(row(haploAndRead, 0), 4, 1);
+    insertGaps(row(haploAndRead, 0), 3, 1);
+    insertGaps(row(haploAndRead, 0), 1, 2);
+    insertGaps(row(haploAndRead, 0), 0, 1);
+    insertGaps(row(haploAndRead, 1), 5, 1);
+
+    // std::cerr << "REF  \t" << row(refAndHaplo, 0) << "\n"
+    //           << "HAPLO\t" << row(refAndHaplo, 1) << "\n"
+    //           << "\n"
+    //           << "HAPLO\t" << row(haploAndRead, 0) << "\n"
+    //           << "READ \t" << row(haploAndRead, 1) << "\n"
+    //           << "\n";
+
+    Align<DnaString> result;
+    resize(rows(result), 2);
+    assignSource(row(result, 0), source(row(refAndHaplo, 0)));
+    assignSource(row(result, 1), source(row(haploAndRead, 1)));
+    projectGapsTransitively(row(result, 0), row(result, 1), row(refAndHaplo, 0), row(refAndHaplo, 1),
+                            row(haploAndRead, 0), row(haploAndRead, 1));
+
+    std::stringstream ss;
+    ss << row(result, 0) << "\n" << row(result, 1) << "\n";
+    // std::cerr << ss.str();
+    char const * EXPECTED = "A-A--ACTT-GG-\n"
+                            "-AATTA---CG-G\n";
     SEQAN_ASSERT(ss.str() == EXPECTED);
 }
 
@@ -650,5 +730,6 @@ SEQAN_BEGIN_TESTSUITE(mason_tests)
 
     SEQAN_CALL_TEST(mason_tests_project_gaps_transitively_case1);
     SEQAN_CALL_TEST(mason_tests_project_gaps_transitively_case2);
+    SEQAN_CALL_TEST(mason_tests_project_gaps_transitively_case3);
 }
 SEQAN_END_TESTSUITE
