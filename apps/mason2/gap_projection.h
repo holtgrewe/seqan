@@ -118,11 +118,24 @@ void projectGapsTransitively(
     int leadingReadGaps2Count = countLeadingGaps(readGaps2);
     int trailingReadGaps2Count = countTrailingGaps(readGaps2);
 
+    // std::cerr << "GAPS\t" << leadingRefGaps1Count << "\t"
+    //           << trailingRefGaps1Count << "\t"
+    //           << leadingHaploGaps1Count << "\t"
+    //           << trailingHaploGaps1Count << "\t"
+    //           << leadingHaploGaps2Count << "\t"
+    //           << trailingHaploGaps2Count << "\t"
+    //           << leadingReadGaps2Count << "\t"
+    //           << trailingReadGaps2Count << "\n";
+
     // Below, we move the iterators right of the leading gaps, adjust cigar for this here.
     if (leadingHaploGaps1Count > 0)
         _appendCigarOperation(cigar, CigarElement<>('D', leadingHaploGaps1Count));
     if (leadingHaploGaps2Count > 0)
         _appendCigarOperation(cigar, CigarElement<>('I', leadingHaploGaps2Count));
+    if (countGaps(refGaps1, 0) > countGaps(readGaps2, 0))
+        _appendCigarOperation(cigar, CigarElement<>('I', countLeadingGaps(refGaps1) - countLeadingGaps(readGaps2)));
+    if (countLeadingGaps(readGaps2) > countLeadingGaps(refGaps1))
+        _appendCigarOperation(cigar, CigarElement<>('D', countLeadingGaps(readGaps2) - countLeadingGaps(refGaps1)));
 
     // Create end iterators of the four gaps.
     TGapsIter1 refGaps1End = end(refGaps1, Standard()) - std::max(trailingRefGaps1Count, trailingHaploGaps1Count);
@@ -131,14 +144,14 @@ void projectGapsTransitively(
     TGapsIter2 readGaps2End = end(readGaps2, Standard()) - std::max(trailingHaploGaps2Count, trailingReadGaps2Count);
 
     // Create iterators of the four gaps.
-    TGapsIter1 refGaps1Iter = begin(refGaps1, Standard()) + std::max(leadingRefGaps1Count, leadingHaploGaps1Count);
-    TGapsIter1 haploGaps1Iter = begin(haploGaps1, Standard()) + std::max(leadingRefGaps1Count, leadingHaploGaps1Count);
-    TGapsIter2 haploGaps2Iter = begin(haploGaps2, Standard()) + std::max(leadingHaploGaps2Count, leadingReadGaps2Count);
-    TGapsIter2 readGaps2Iter = begin(readGaps2, Standard()) + std::max(leadingHaploGaps2Count, leadingReadGaps2Count);
+    int leadingShift = std::max(leadingRefGaps1Count, leadingReadGaps2Count);
+    TGapsIter1 refGaps1Iter = begin(refGaps1, Standard()) + leadingShift + leadingHaploGaps1Count;
+    TGapsIter1 haploGaps1Iter = begin(haploGaps1, Standard()) + leadingShift + leadingHaploGaps1Count;
+    TGapsIter2 haploGaps2Iter = begin(haploGaps2, Standard()) + leadingShift + leadingHaploGaps2Count;
+    TGapsIter2 readGaps2Iter = begin(readGaps2, Standard()) + leadingShift + leadingHaploGaps2Count;
 
     // These flags indicate whether the iterator aligns against a gap before the next round.
-    bool aliGap1 = !atEnd(refGaps1Iter) && isGap(refGaps1Iter);
-    bool aliGap2 = !atEnd(readGaps2Iter) && isGap(readGaps2Iter);
+    bool aliGap1 = false, aliGap2 = false;
 
     while (refGaps1Iter != refGaps1End) {
         SEQAN_ASSERT(haploGaps1Iter != haploGaps1End);
@@ -152,6 +165,27 @@ void projectGapsTransitively(
 
         // std::cerr << "placed1=" << placed1 << "\tplaced2=" << placed2;
         // std::cerr << "\taliGap1=" << aliGap1 << "\taliGap2=" << aliGap2 << "\n";
+        // std::cerr << "SEQS\t";
+        // if (isGap(refGaps1Iter))
+        //     std::cerr << "-";
+        // else
+        //     std::cerr << *refGaps1Iter;
+        // std::cerr << " ";
+        // if (isGap(haploGaps1Iter))
+        //     std::cerr << "-";
+        // else
+        //     std::cerr << *haploGaps1Iter;
+        // std::cerr << "\t";
+        // if (isGap(haploGaps2Iter))
+        //     std::cerr << "-";
+        // else
+        //     std::cerr << *haploGaps2Iter;
+        // std::cerr << " ";
+        // if (isGap(readGaps2Iter))
+        //     std::cerr << "-";
+        // else
+        //     std::cerr << *readGaps2Iter;
+        // std::cerr << "\n";
 
         // Place character for alignment.
         if (!aliGap1 && !aliGap2)
@@ -161,11 +195,17 @@ void projectGapsTransitively(
         else if (aliGap1 && !aliGap2)
             _appendCigarOperation(cigar, CigarElement<>('I', 1));
 
-        // Add insertion/deletion characters.
-        _appendCigarOperation(cigar, CigarElement<>('D', placed1 - 1));
-        _appendCigarOperation(cigar, CigarElement<>('I', placed2 - 1));
+        // std::cerr << "CIGAR\t";
+        // for (unsigned i = 0; i < length(cigar); ++i)
+        //     std::cerr << cigar[i].count << cigar[i].operation << " ";
+        // std::cerr << "\n";
 
-        // Update gaps.
+        // Add insertion/deletion characters.
+        if (placed1 > 0u)
+            _appendCigarOperation(cigar, CigarElement<>('D', placed1 - 1));
+        if (placed2 > 0u)
+            _appendCigarOperation(cigar, CigarElement<>('I', placed2 - 1));
+
         aliGap1 = !atEnd(refGaps1Iter) && isGap(refGaps1Iter);
         aliGap2 = !atEnd(readGaps2Iter) && isGap(readGaps2Iter);
     }
@@ -175,6 +215,10 @@ void projectGapsTransitively(
         _appendCigarOperation(cigar, CigarElement<>('D', trailingHaploGaps1Count));
     if (trailingHaploGaps2Count > 0)
         _appendCigarOperation(cigar, CigarElement<>('I', trailingHaploGaps2Count));
+    if (countTrailingGaps(refGaps1) > countTrailingGaps(readGaps2))
+        _appendCigarOperation(cigar, CigarElement<>('I', countTrailingGaps(refGaps1) - countTrailingGaps(readGaps2)));
+    if (countTrailingGaps(readGaps2) > countTrailingGaps(refGaps1))
+        _appendCigarOperation(cigar, CigarElement<>('D', countTrailingGaps(readGaps2) - countTrailingGaps(refGaps1)));
 
     // for (unsigned i = 0; i < length(cigar); ++i)
     //     std::cerr << cigar[i].count << cigar[i].operation << " ";

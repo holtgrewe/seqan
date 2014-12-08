@@ -218,9 +218,15 @@ public:
         if (info.isForward == isRC)
             record.flag |= seqan::BAM_FLAG_RC;
 
-        // Perform the alignment to compute the edit distance and the CIGAR string.
-        int editDistance = 0;
-        _alignAndSetCigar(record, editDistance, buffer, seq, intOriginal.first, intOriginal.second);
+        // Extract alignment from projected alignment into record.cigar and compute MD string.
+        getCigarString(record.cigar, refGaps, readGaps, seqan::maxValue<int>());
+        getMDString2(/*mdString=*/buffer, refGaps, readGaps);
+
+        // Convert leading and trailing insertions in record.cigar to clipping.
+        if (!empty(record.cigar) && front(record.cigar).operation == 'I')
+            front(record.cigar).operation = 'S';
+        if (!empty(record.cigar) && back(record.cigar).operation == 'I')
+            back(record.cigar).operation = 'S';
 
         // Set the remaining flags.
         record.rID = rID;
@@ -231,6 +237,7 @@ public:
         _flipState(info.isForward == isRC);  // restore state if previously flipped
 
         // Fill BAM tags.
+        int editDistance = 0;  // TODO(holtgrew): Compute from gapsContig/gapsRead after fixing of projectGapsTransitively.
         _fillTags(record, info, editDistance, buffer);
     }
 
@@ -245,6 +252,7 @@ public:
         }
     }
 
+    // TODO(holtgrew): Currently unused, could be used to give alternative minimized alignment.
     // Perform the realignment and set cigar string.
     void _alignAndSetCigar(seqan::BamAlignmentRecord & record,
                            int & editDistance,

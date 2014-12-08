@@ -585,12 +585,12 @@ SEQAN_DEFINE_TEST(mason_tests_project_gaps_transitively_case4)
     insertGaps(row(haploAndRead, 1), 4, 1);
     insertGaps(row(haploAndRead, 1), 0, 1);
 
-    std::cerr << "REF  \t" << row(refAndHaplo, 0) << "\n"
-              << "HAPLO\t" << row(refAndHaplo, 1) << "\n"
-              << "\n"
-              << "HAPLO\t" << row(haploAndRead, 0) << "\n"
-              << "READ \t" << row(haploAndRead, 1) << "\n"
-              << "\n";
+    // std::cerr << "REF  \t" << row(refAndHaplo, 0) << "\n"
+    //           << "HAPLO\t" << row(refAndHaplo, 1) << "\n"
+    //           << "\n"
+    //           << "HAPLO\t" << row(haploAndRead, 0) << "\n"
+    //           << "READ \t" << row(haploAndRead, 1) << "\n"
+    //           << "\n";
 
     Align<DnaString> result;
     resize(rows(result), 2);
@@ -601,7 +601,7 @@ SEQAN_DEFINE_TEST(mason_tests_project_gaps_transitively_case4)
 
     std::stringstream ss;
     ss << row(result, 0) << "\n" << row(result, 1) << "\n";
-    std::cerr << ss.str();
+    // std::cerr << ss.str();
     char const * EXPECTED = "A--ACTT-G\n"
                             "ATTA---CG\n";
     SEQAN_ASSERT(ss.str() == EXPECTED);
@@ -633,12 +633,12 @@ SEQAN_DEFINE_TEST(mason_tests_project_gaps_transitively_case5)
     insertGaps(row(haploAndRead, 0), 2, 3);
     insertGaps(row(haploAndRead, 1), 6, 1);
 
-    std::cerr << "REF  \t" << row(refAndHaplo, 0) << "\n"
-              << "HAPLO\t" << row(refAndHaplo, 1) << "\n"
-              << "\n"
-              << "HAPLO\t" << row(haploAndRead, 0) << "\n"
-              << "READ \t" << row(haploAndRead, 1) << "\n"
-              << "\n";
+    // std::cerr << "REF  \t" << row(refAndHaplo, 0) << "\n"
+    //           << "HAPLO\t" << row(refAndHaplo, 1) << "\n"
+    //           << "\n"
+    //           << "HAPLO\t" << row(haploAndRead, 0) << "\n"
+    //           << "READ \t" << row(haploAndRead, 1) << "\n"
+    //           << "\n";
 
     Align<DnaString> result;
     resize(rows(result), 2);
@@ -649,9 +649,9 @@ SEQAN_DEFINE_TEST(mason_tests_project_gaps_transitively_case5)
 
     std::stringstream ss;
     ss << row(result, 0) << "\n" << row(result, 1) << "\n";
-    std::cerr << ss.str();
-    char const * EXPECTED = "-AAC----TTG-\n"
-                            "AAA-TTAG---G\n";
+    // std::cerr << ss.str();
+    char const * EXPECTED = "-A---ACTTG-\n"
+                            "AAATTA---GG\n";
     SEQAN_ASSERT(ss.str() == EXPECTED);
 }
 

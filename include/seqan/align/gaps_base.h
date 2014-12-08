@@ -534,7 +534,7 @@ template <typename TGaps>
 inline typename Size<TGaps>::Type
 countLeadingGaps(TGaps const & gaps)
 {
-    return toViewPosition(gaps, 0);
+    return countGaps(gaps, 0);
 }
 
 // ----------------------------------------------------------------------------
@@ -556,7 +556,7 @@ template <typename TGaps>
 inline typename Size<TGaps>::Type
 countTrailingGaps(TGaps const & gaps)
 {
-    return length(gaps) - toViewPosition(gaps, length(source(gaps)) - 1) - 1;
+    return length(gaps) - toViewPosition(gaps, endPosition(gaps) - 1) - 1;
 }
 
 // ----------------------------------------------------------------------------
