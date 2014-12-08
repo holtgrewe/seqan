@@ -40,6 +40,7 @@
 #include <vector>
 #include <utility>
 
+#include "gap_projection.h"
 #include "fragment_generation.h"
 #include "sequencing.h"
 #include "mason_options.h"
@@ -83,6 +84,8 @@ public:
     // Reference name and sequence.
     seqan::CharString const & refName;
     seqan::Dna5String /*const*/ & refSeq;
+    // Haplotype sequence.
+    seqan::Dna5String /*const*/ & haploSeq;
     // ID of reference, haplotype, and fragment.
     int rID, hID, fID;
 
@@ -94,9 +97,10 @@ public:
                            PositionMap const & posMap,
                            seqan::CharString const & refName,
                            seqan::Dna5String /*const*/ & refSeq,
+                           seqan::Dna5String /*const*/ & haploSeq,
                            int rID, int hID, int fID) :
             info(info), seq(seq), ss(ss), buffer(buffer), qual(qual), posMap(posMap), refName(refName), refSeq(refSeq),
-            rID(rID), hID(hID), fID(fID)
+            haploSeq(haploSeq), rID(rID), hID(hID), fID(fID)
     {}
 
     // Fills all members of record except for qName which uses shared logic in ReadSimulatorThread.
@@ -171,10 +175,44 @@ public:
         bool isRC = intSmallVar.first > intSmallVar.second;
         if (isRC)
             std::swap(intSmallVar.first, intSmallVar.second);
+        _flipState(info.isForward == isRC);  // possibly flip state
         // Convert from small variant coordinate system to original interval.
         std::pair<int, int> intOriginal = posMap.toOriginalInterval(intSmallVar.first, intSmallVar.second);
 
-        _flipState(info.isForward == isRC);  // possibly flip state
+        // Build gaps for alignments of haplotype to reference and from read to haplotype.
+        typedef seqan::Gaps<seqan::Dna5String, seqan::AnchorGaps<> > TGaps;
+        TGaps refGaps1(refSeq, posMap.refGapAnchors);
+        TGaps haploGaps1(haploSeq, posMap.smallVarGapAnchors);
+        // Compute shifted positions (intSmallVar is in sequence space and not gap space).
+        std::pair<int, int> intSmallVarGaps(toViewPosition(haploGaps1, intSmallVar.first),
+                                            toViewPosition(haploGaps1, intSmallVar.second));
+        // Clip the gaps objects accordingly.
+        setClippedEndPosition(refGaps1, intSmallVarGaps.second);
+        setClippedBeginPosition(refGaps1, intSmallVarGaps.first);
+        setClippedEndPosition(haploGaps1, intSmallVarGaps.second);
+        setClippedBeginPosition(haploGaps1, intSmallVarGaps.first);
+
+        std::cerr << "\nREF   \t" << refGaps1 << "\n"
+                  << "HAPLO \t" << haploGaps1 << "\n\n";
+
+        TGaps haploGaps2(haploSeq);
+        setClippedEndPosition(haploGaps2, intSmallVar.second);
+        setClippedBeginPosition(haploGaps2, intSmallVar.first);
+        cigarToGapAnchorContig(info.cigar, haploGaps2);
+        TGaps readGaps2(seq);
+        cigarToGapAnchorRead(info.cigar, readGaps2);
+
+        std::cerr << "HAPLO\t" << haploGaps2 << "\n"
+                  << "READ \t" << readGaps2  << "\n\n";
+
+        // Create alignment of read to reference by projecting through the read/haplotype and ref/haplotype
+        // alignment.
+        TGaps refGaps(refSeq);
+        TGaps readGaps(seq);
+        projectGapsTransitively(refGaps, readGaps, refGaps1, haploGaps1, haploGaps2, readGaps2);
+
+        std::cerr << "REF \t" << refGaps << "\n"
+                  << "READ\t" << readGaps << "\n\n-----------------\n\n";
 
         // Set the RC flag in the record.
         if (info.isForward == isRC)
@@ -771,7 +809,7 @@ public:
             {
                 // Build the alignment record itself.
                 SingleEndRecordBuilder builder(infos[i], seqs[i], ss, buffer, quals[i],
-                                               posMap, refName, refSeq, rID, hID, fragmentIds[i]);
+                                               posMap, refName, refSeq, seq, rID, hID, fragmentIds[i]);
                 builder.build(alignmentRecords[i]);
                 // Set query name.
                 _setId(alignmentRecords[i].qName, ss, fragmentIds[i], 1, infos[i], true);

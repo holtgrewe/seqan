@@ -55,6 +55,7 @@ add_library (mason_sim
              external_split_merge.h
              external_split_merge.cpp
              fragment_generation.h
+             gap_projection.h
              genomic_variants.h
              genomic_variants.cpp
              individual_genome.h
