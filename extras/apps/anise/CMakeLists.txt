@@ -229,6 +229,10 @@ add_executable (anise
 target_link_libraries (anise progress_indicator anise_rep_solv anise_asm anise_rep_sep anise_scaffolder
                              ${SEQAN_LIBRARIES})
 
+add_executable(rep_sep_demo rep_sep_demo.cpp)                         
+target_link_libraries (rep_sep_demo progress_indicator anise_rep_solv anise_asm anise_rep_sep anise_scaffolder
+                             ${SEQAN_LIBRARIES})
+
 add_executable (basil
                 basil/bam_filter_pipeline.cpp
                 basil/bam_filter_pipeline.h

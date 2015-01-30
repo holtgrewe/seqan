@@ -132,10 +132,12 @@ void ClusterGlobalizer::run(unsigned k, std::map<unsigned, unsigned> const & loc
     performGlobalClassAssignment(partition);
     if (logging)
     {
+        std::cerr << "END OF ROUND****************************begin of output********\n";
         printPartition(partition, "partition");
         std::cerr << "globalPartition.size() == " << globalPartition.size() << "\n";
         printPartition(globalPartition, "global partition");
         conflictStore.print(std::cerr);
+        std::cerr << "END OF ROUND****************************end of output********\n";
     }
 }
 
