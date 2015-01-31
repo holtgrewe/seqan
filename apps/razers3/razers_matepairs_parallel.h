@@ -100,7 +100,7 @@ public:
     typedef typename Value<TMatches>::Type TMatch;
 
     // The id of this thread.
-    unsigned threadId;
+    unsigned threadID;
 
     // Each thread needs its local options since the compactionThreshold is changed.
     // TODO(holtgrew): Change overall program structure so this is factorized out of the options struct.
@@ -245,10 +245,10 @@ public:
     typedef THitString_ THitString;
     typedef std::shared_ptr<THitString> THitStringPtr;
 
-    int threadId;
+    int threadID;
     TVerificationResults * verificationResults;
     TFragmentStore * globalStore;
-    unsigned contigId;
+    unsigned contigID;
     char orientation;
     // Hit strings of previous window for the left finder.
     THitStringPtr prevHitsPtrL;
@@ -265,8 +265,8 @@ public:
 
     Job() {}
 
-    Job(int threadId_, TVerificationResults & verificationResults_, TFragmentStore & globalStore_, unsigned contigId_, char orientation_, THitStringPtr & prevHitsPtrL_, size_t prevHitsLBegin_, size_t prevHitsLEnd_, THitStringPtr & hitsPtrL_, size_t hitsLBegin_, size_t hitsLEnd_, THitStringPtr & hitsPtrR_, size_t hitsRBegin_, size_t hitsREnd_, __int64 rightWindowBegin_, TOptions & options_, TFilterPattern & filterPatternL_, TFilterPattern & filterPatternR_) :
-        threadId(threadId_), verificationResults(&verificationResults_), globalStore(&globalStore_), contigId(contigId_), orientation(orientation_), prevHitsPtrL(prevHitsPtrL_), prevHitsLBegin(prevHitsLBegin_), prevHitsLEnd(prevHitsLEnd_), hitsPtrL(hitsPtrL_), hitsLBegin(hitsLBegin_), hitsLEnd(hitsLEnd_), hitsPtrR(hitsPtrR_), hitsRBegin(hitsRBegin_), hitsREnd(hitsREnd_), rightWindowBegin(rightWindowBegin_), options(&options_), filterPatternL(&filterPatternL_), filterPatternR(&filterPatternR_)
+    Job(int threadID_, TVerificationResults & verificationResults_, TFragmentStore & globalStore_, unsigned contigID_, char orientation_, THitStringPtr & prevHitsPtrL_, size_t prevHitsLBegin_, size_t prevHitsLEnd_, THitStringPtr & hitsPtrL_, size_t hitsLBegin_, size_t hitsLEnd_, THitStringPtr & hitsPtrR_, size_t hitsRBegin_, size_t hitsREnd_, __int64 rightWindowBegin_, TOptions & options_, TFilterPattern & filterPatternL_, TFilterPattern & filterPatternR_) :
+        threadID(threadID_), verificationResults(&verificationResults_), globalStore(&globalStore_), contigID(contigID_), orientation(orientation_), prevHitsPtrL(prevHitsPtrL_), prevHitsLBegin(prevHitsLBegin_), prevHitsLEnd(prevHitsLEnd_), hitsPtrL(hitsPtrL_), hitsLBegin(hitsLBegin_), hitsLEnd(hitsLEnd_), hitsPtrR(hitsPtrR_), hitsRBegin(hitsRBegin_), hitsREnd(hitsREnd_), rightWindowBegin(rightWindowBegin_), options(&options_), filterPatternL(&filterPatternL_), filterPatternR(&filterPatternR_)
     {
         SEQAN_ASSERT_LEQ(hitsLBegin, length(*hitsPtrL));
         SEQAN_ASSERT_LEQ(hitsLEnd, length(*hitsPtrL));
@@ -300,9 +300,9 @@ setMaxErrors(FilterPatternLSetMaxErrorsWrapper<TThreadLocalStorage> & wrapper,
              TMaxErrors maxErrors)
 {
     // std::cerr << std::endl << "SET MAX ERRORS LEFT" << std::endl;
-    SEQAN_ASSERT_LT(pairNo, wrapper.tls.splitters[wrapper.tls.threadId + 1]);
-    SEQAN_ASSERT_GEQ(pairNo, wrapper.tls.splitters[wrapper.tls.threadId]);
-    setMaxErrors(wrapper.tls.filterPatternL, pairNo - wrapper.tls.splitters[wrapper.tls.threadId], maxErrors);
+    SEQAN_ASSERT_LT(pairNo, wrapper.tls.splitters[wrapper.tls.threadID + 1]);
+    SEQAN_ASSERT_GEQ(pairNo, wrapper.tls.splitters[wrapper.tls.threadID]);
+    setMaxErrors(wrapper.tls.filterPatternL, pairNo - wrapper.tls.splitters[wrapper.tls.threadID], maxErrors);
 }
 
 // Allow disabling reads in compactPairMatches() for left-mate read set.
@@ -315,9 +315,9 @@ setMaxErrors(FilterPatternRSetMaxErrorsWrapper<TThreadLocalStorage> & wrapper,
              TMaxErrors maxErrors)
 {
     // std::cerr << std::endl << "SET MAX ERRORS RIGHT" << std::endl;
-    SEQAN_ASSERT_LT(pairNo, wrapper.tls.splitters[wrapper.tls.threadId + 1]);
-    SEQAN_ASSERT_GEQ(pairNo, wrapper.tls.splitters[wrapper.tls.threadId]);
-    setMaxErrors(wrapper.tls.filterPatternR, pairNo - wrapper.tls.splitters[wrapper.tls.threadId], maxErrors);
+    SEQAN_ASSERT_LT(pairNo, wrapper.tls.splitters[wrapper.tls.threadID + 1]);
+    SEQAN_ASSERT_GEQ(pairNo, wrapper.tls.splitters[wrapper.tls.threadID]);
+    setMaxErrors(wrapper.tls.filterPatternR, pairNo - wrapper.tls.splitters[wrapper.tls.threadID], maxErrors);
 }
 
 template <typename TFragmentStore>
@@ -353,7 +353,7 @@ void initializeThreadLocalStoragesPaired(TThreadLocalStorages & threadLocalStora
         TThreadLocalStorage & tls = threadLocalStorages[i];
 
         // Initialize properties that are simple to set.
-        tls.threadId = i;
+        tls.threadID = i;
         tls.globalStore = &store;
         tls.shape = shape;
         tls.options = options;  // TODO(holtgrew): Copy for stats and threshold, really good?
@@ -377,8 +377,8 @@ void initializeThreadLocalStoragesPaired(TThreadLocalStorages & threadLocalStora
         unsigned offset = splitters[i];
         for (unsigned j = 0; j < pairCount; ++j)
         {
-            assign(readSetL[j], store.readSeqStore[store.matePairStore[offset + j].readId[0]]);
-            assign(readSetR[j], store.readSeqStore[store.matePairStore[offset + j].readId[1]]);
+            assign(readSetL[j], store.readSeqStore[store.matePairStore[offset + j].readID[0]]);
+            assign(readSetR[j], store.readSeqStore[store.matePairStore[offset + j].readID[1]]);
         }
         reverseComplement(readSetR);
 
@@ -423,7 +423,7 @@ void initializeThreadLocalStoragesPaired(TThreadLocalStorages & threadLocalStora
         _applyFilterOptions(filterPatternL, options);
         _applyFilterOptions(filterPatternR, options);
         filterPatternL.params.printDots = false;
-        filterPatternR.params.printDots = (tls.threadId == 0) && (tls.options._debugLevel > 0);
+        filterPatternR.params.printDots = (tls.threadID == 0) && (tls.options._debugLevel > 0);
     }
 }
 
@@ -446,7 +446,7 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
     // typedef typename Value<TAlignQualityStore>::Type		TAlignQuality;
     typedef typename TThreadLocalStorage::TReadSet TReadSet;
     //typedef Index<TReadSet, IndexQGram<TShape>  >   TReadIndex;
-    // typedef typename Id<TAlignedRead>::Type					TId;
+    // typedef typename ID<TAlignedRead>::Type					TID;
 
     typedef typename TFragmentStore::TContigSeq             TGenome;
     typedef typename Size<TGenome>::Type                    TSize;
@@ -487,7 +487,7 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
     clear(*localMatches);
 
     // Thread-wide offset for reads.
-    unsigned threadIdOffset = splitters[job.threadId];
+    unsigned threadIDOffset = splitters[job.threadID];
 
     // Initialize verifiers.
     tls.verifierL.matches = localMatches;
@@ -536,7 +536,7 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
     clear(tls.fifoLastPotMatchNo);
     resize(tls.fifoLastPotMatchNo, length(indexText(host(filterPatternL))), (__int64) - 2, Exact());
 
-    TGenome & genome = tls.globalStore->contigStore[job.contigId].seq;
+    TGenome & genome = tls.globalStore->contigStore[job.contigID].seq;
 
     TSize gLength = length(genome);
 
@@ -579,11 +579,11 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
             fL.i1 = tls.fifoLastPotMatchNo[it->ndlSeqNo];
             tls.fifoLastPotMatchNo[it->ndlSeqNo] = tls.fifoLastNo++;
 
-            fL.i2.readId = tls.globalStore->matePairStore[threadIdOffset + it->ndlSeqNo].readId[0] | NOT_VERIFIED;
+            fL.i2.readID = tls.globalStore->matePairStore[threadIDOffset + it->ndlSeqNo].readID[0] | NOT_VERIFIED;
             fL.i2.beginPos = static_cast<TSignedGPos>(it->hstkPos);
             fL.i2.endPos = gPair.i2;
 
-            // std::cerr << "\nPREV SWIFT\tL\t" << tls.globalStore->matePairStore[it->ndlSeqNo].readId[0] << "\t" << tls.globalStore->readNameStore[tls.globalStore->matePairStore[it->ndlSeqNo].readId[0]] << "\t" << fL.i2.beginPos << "\t" << fL.i2.endPos << std::endl;
+            // std::cerr << "\nPREV SWIFT\tL\t" << tls.globalStore->matePairStore[it->ndlSeqNo].readID[0] << "\t" << tls.globalStore->readNameStore[tls.globalStore->matePairStore[it->ndlSeqNo].readID[0]] << "\t" << fL.i2.beginPos << "\t" << fL.i2.endPos << std::endl;
 
             pushBack(tls.fifo, fL);
         }
@@ -599,20 +599,20 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
     {
         ++options.countFiltration;
 #if 0
-        CharString pref = prefix(tls.globalStore->readNameStore[2 * (threadIdOffset + itR->ndlSeqNo) + 1], length("EAS20_8_6_1_248_1397"));
+        CharString pref = prefix(tls.globalStore->readNameStore[2 * (threadIDOffset + itR->ndlSeqNo) + 1], length("EAS20_8_6_1_248_1397"));
         CharString s = "EAS20_8_6_1_248_1397";
         if (pref == s)
             std::cerr << "GOTCHA" << std::endl;
         // SEQAN_OMP_PRAGMA(critical)
         // {
-        //     std::cerr << tls.globalStore->readNameStore[2 * (threadIdOffset + itR->ndlSeqNo) + 1] << std::endl;
+        //     std::cerr << tls.globalStore->readNameStore[2 * (threadIDOffset + itR->ndlSeqNo) + 1] << std::endl;
         // }
 #endif
 #ifdef RAZERS_DEBUG_MATEPAIRS
-        std::cerr << "\nSWIFT\tR\t" << itR->ndlSeqNo << "\t" << tls.globalStore->readNameStore[2 * (threadIdOffset + itR->ndlSeqNo) + 1] << "\t" << scanShift + itR->hstkPos << "\t" << scanShift + itR->hstkPos + itR->bucketWidth << std::endl;
+        std::cerr << "\nSWIFT\tR\t" << itR->ndlSeqNo << "\t" << tls.globalStore->readNameStore[2 * (threadIDOffset + itR->ndlSeqNo) + 1] << "\t" << scanShift + itR->hstkPos << "\t" << scanShift + itR->hstkPos + itR->bucketWidth << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
 
-        unsigned matePairId = itR->ndlSeqNo;
+        unsigned matePairID = itR->ndlSeqNo;
         TGPos rEndPos = itR->hstkPos + itR->bucketWidth + scanShift;
         TGPos doubleParWidth = 2 * itR->bucketWidth;
 
@@ -620,10 +620,10 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
         while (!empty(tls.fifo) && (TSignedGPos)front(tls.fifo).i2.endPos + maxDistance + (TSignedGPos)doubleParWidth < (TSignedGPos)rEndPos)
         {
 #ifdef RAZERS_DEBUG_MATEPAIRS
-            if ((front(tls.fifo).i2.readId & ~NOT_VERIFIED) > length(tls.globalStore->readNameStore))
-                std::cerr << "\nPOP\tL\t" << "[bad read #" << (front(tls.fifo).i2.readId & ~NOT_VERIFIED) << "]\t" << front(tls.fifo).i2.beginPos << "\t" << front(tls.fifo).i2.endPos << std::endl;
+            if ((front(tls.fifo).i2.readID & ~NOT_VERIFIED) > length(tls.globalStore->readNameStore))
+                std::cerr << "\nPOP\tL\t" << "[bad read #" << (front(tls.fifo).i2.readID & ~NOT_VERIFIED) << "]\t" << front(tls.fifo).i2.beginPos << "\t" << front(tls.fifo).i2.endPos << std::endl;
             else
-                std::cerr << "\nPOP\tL\t" << tls.globalStore->readNameStore[front(tls.fifo).i2.readId & ~NOT_VERIFIED] << "\t" << front(tls.fifo).i2.beginPos << "\t" << front(tls.fifo).i2.endPos << std::endl;
+                std::cerr << "\nPOP\tL\t" << tls.globalStore->readNameStore[front(tls.fifo).i2.readID & ~NOT_VERIFIED] << "\t" << front(tls.fifo).i2.beginPos << "\t" << front(tls.fifo).i2.endPos << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
             popFront(tls.fifo);
             ++tls.fifoFirstNo;
@@ -638,7 +638,7 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
             {
                 ++options.countFiltration;
 #ifdef RAZERS_DEBUG_MATEPAIRS
-                std::cerr << "\nSWIFT\tL\t" << itL->ndlSeqNo << "\t" << tls.globalStore->readNameStore[2 * (threadIdOffset + itL->ndlSeqNo)] << "\t" << itL->hstkPos << "\t" << itL->hstkPos + itL->bucketWidth << std::endl;
+                std::cerr << "\nSWIFT\tL\t" << itL->ndlSeqNo << "\t" << tls.globalStore->readNameStore[2 * (threadIDOffset + itL->ndlSeqNo)] << "\t" << itL->hstkPos << "\t" << itL->hstkPos + itL->bucketWidth << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
                 gPair = Pair<TGPos, TGPos>(_max(static_cast<TSignedGPos>(0), static_cast<TSignedGPos>(itL->hstkPos)), _min(itL->hstkPos + itL->bucketWidth, static_cast<TSignedGPos>(length(genome))));
                 if ((TSignedGPos)gPair.i2 + maxDistance + (TSignedGPos)doubleParWidth >= (TSignedGPos)rEndPos)
@@ -648,7 +648,7 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
                     tls.fifoLastPotMatchNo[itL->ndlSeqNo] = tls.fifoLastNo++;
 
                     // Translate from thread-local to global id.
-                    fL.i2.readId = (tls.globalStore->matePairStore[(threadIdOffset + itL->ndlSeqNo)].readId[0]) | NOT_VERIFIED;
+                    fL.i2.readID = (tls.globalStore->matePairStore[(threadIDOffset + itL->ndlSeqNo)].readID[0]) | NOT_VERIFIED;
                     fL.i2.beginPos = gPair.i1;
                     fL.i2.endPos = gPair.i2;
 
@@ -669,21 +669,21 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
 
         bool rightVerified = false;
         TDequeueIterator it;
-        unsigned leftReadId = tls.globalStore->matePairStore[(threadIdOffset + matePairId)].readId[0];
+        unsigned leftReadID = tls.globalStore->matePairStore[(threadIDOffset + matePairID)].readID[0];
         __int64 last = (__int64) - 1;
         __int64 lastValid = (__int64) - 1;
         __int64 i;
-        for (i = tls.fifoLastPotMatchNo[matePairId]; tls.fifoFirstNo <= i; last = i, i = (*it).i1)
+        for (i = tls.fifoLastPotMatchNo[matePairID]; tls.fifoFirstNo <= i; last = i, i = (*it).i1)
         {
             it = &value(tls.fifo, i - tls.fifoFirstNo);
 
             // search left mate
-            //			if (((*it).i2.readId & ~NOT_VERIFIED) == leftReadId)
+            //			if (((*it).i2.readID & ~NOT_VERIFIED) == leftReadID)
             //			        ^== we need not to test anymore, as only corr. left mates are traversed
-            //						via the linked list beginning from lastPotMatchNo[matePairId]
+            //						via the linked list beginning from lastPotMatchNo[matePairID]
             {
                 // verify left mate (equal seqNo), if not done already
-                if ((*it).i2.readId & NOT_VERIFIED)
+                if ((*it).i2.readID & NOT_VERIFIED)
                 {
                     if ((TSignedGPos)(*it).i2.endPos + minDistance < (TSignedGPos)(rEndPos + doubleParWidth))
                     {
@@ -691,7 +691,7 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
                         verifierL.patternState.leftClip = ((*it).i2.beginPos >= 0) ? 0 : -(*it).i2.beginPos;  // left clip if match begins left of the genome
 #endif
 #ifdef RAZERS_DEBUG_MATEPAIRS
-                        std::cerr << "\nVERIFY\tL\t" << matePairId << "\t" << tls.globalStore->readNameStore[2 * (threadIdOffset + matePairId)] << "\t" << (TSignedGPos)(*it).i2.beginPos << "\t" << (*it).i2.endPos << std::endl;
+                        std::cerr << "\nVERIFY\tL\t" << matePairID << "\t" << tls.globalStore->readNameStore[2 * (threadIDOffset + matePairID)] << "\t" << (TSignedGPos)(*it).i2.beginPos << "\t" << (*it).i2.endPos << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
                         ++options.countVerification;
 //                        if (i==0)
@@ -702,18 +702,18 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
                             verifierL.sinkPos = (TSignedGPos)(itR->hstkPos + itR->bucketWidth) - options.libraryLength;
 
                         if (matchVerify(verifierL, infix(genome, ((*it).i2.beginPos >= 0) ? (TSignedGPos)(*it).i2.beginPos : (TSignedGPos)0, (TSignedGPos)(*it).i2.endPos),
-                                        leftReadId, readSetL[matePairId], TRazerSMode()))
+                                        leftReadID, readSetL[matePairID], TRazerSMode()))
                         {
 #ifdef RAZERS_DEBUG_MATEPAIRS
                             std::cerr << "  YES: " << verifierL.m.beginPos << "\t" << verifierL.m.endPos << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
 //                            std::cerr << "  Left+ " << verifierL.m.endPos << std::endl;
-                            verifierL.m.readId = (*it).i2.readId & ~NOT_VERIFIED;       // has been verified positively
+                            verifierL.m.readID = (*it).i2.readID & ~NOT_VERIFIED;       // has been verified positively
                             (*it).i2 = verifierL.m;
                         }
                         else
                         {
-                            (*it).i2.readId = ~NOT_VERIFIED;                // has been verified negatively
+                            (*it).i2.readID = ~NOT_VERIFIED;                // has been verified negatively
 #ifdef RAZERS_DEBUG_MATEPAIRS
                             std::cerr << "  NO" << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
@@ -732,7 +732,7 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
                 {
                     SEQAN_ASSERT_NEQ(lastValid, i);
                     if (lastValid == (__int64) - 1)
-                        tls.fifoLastPotMatchNo[matePairId] = i;
+                        tls.fifoLastPotMatchNo[matePairID] = i;
                     else
                         value(tls.fifo, lastValid - tls.fifoFirstNo).i1 = i;
                 }
@@ -741,12 +741,12 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
                 if (!rightVerified)                                         // here a verfied left match is available
                 {
 #ifdef RAZERS_DEBUG_MATEPAIRS
-                    std::cerr << "\nVERIFY\tR\t" << matePairId << "\t" << tls.globalStore->readNameStore[2 * (threadIdOffset + matePairId) + 1] << "\t" << itR->hstkPos << "\t" << itR->hstkPos + itR->bucketWidth << std::endl;
+                    std::cerr << "\nVERIFY\tR\t" << matePairID << "\t" << tls.globalStore->readNameStore[2 * (threadIDOffset + matePairID) + 1] << "\t" << itR->hstkPos << "\t" << itR->hstkPos + itR->bucketWidth << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
                     ++options.countVerification;
 //                    if (pref == s)
-//                        std::cerr << "\nVERIFY\tR\t" << matePairId << "\t" << tls.globalStore->readNameStore[2 * (threadIdOffset + matePairId) + 1] << "\t" << itR->hstkPos << "\t" << itR->hstkPos + itR->bucketWidth << std::endl;
-                    if (matchVerify(verifierR, swiftInfix(*itR, tls.genomeInf), 2 * (threadIdOffset + matePairId) + 1, readSetR[matePairId], TRazerSMode()))
+//                        std::cerr << "\nVERIFY\tR\t" << matePairID << "\t" << tls.globalStore->readNameStore[2 * (threadIDOffset + matePairID) + 1] << "\t" << itR->hstkPos << "\t" << itR->hstkPos + itR->bucketWidth << std::endl;
+                    if (matchVerify(verifierR, swiftInfix(*itR, tls.genomeInf), 2 * (threadIDOffset + matePairID) + 1, readSetR[matePairID], TRazerSMode()))
                     {
 #ifdef RAZERS_DEBUG_MATEPAIRS
                         std::cerr << "  YES: " << verifierR.m.beginPos << "\t" << verifierR.m.endPos << std::endl;
@@ -769,14 +769,14 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
                 }
 
                 /*
-                  if ((*it).i2.readId == leftReadId)
+                  if ((*it).i2.readID == leftReadID)
                   {
                   bestLeft = it;
                   bestLeftScore = (*it).i3.score;
                   break;
                   }
                 */
-                if ((*it).i2.readId == leftReadId)
+                if ((*it).i2.readID == leftReadID)
                 {
                     int score = (*it).i2.score;
                     if (bestLeftScore <= score)
@@ -816,7 +816,7 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
         {
             SEQAN_ASSERT_NEQ(lastValid, i);
             if (lastValid == (__int64) - 1)
-                tls.fifoLastPotMatchNo[matePairId] = i;
+                tls.fifoLastPotMatchNo[matePairID] = i;
             else
                 value(tls.fifo, lastValid - tls.fifoFirstNo).i1 = i;
         }
@@ -827,9 +827,9 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
             fL.i2 = (*bestLeft).i2;
 
             // transform mate readNo to global readNo
-            TMatePair & mp     = tls.globalStore->matePairStore[(threadIdOffset + matePairId)];
-            fL.i2.readId      = mp.readId[0];
-            mR.readId         = mp.readId[1];
+            TMatePair & mp     = tls.globalStore->matePairStore[(threadIDOffset + matePairID)];
+            fL.i2.readID      = mp.readID[0];
+            mR.readID         = mp.readID[1];
             mR.orientation    = (job.orientation == 'F') ? 'R' : 'F';
             fL.i2.orientation = job.orientation;
 
@@ -851,16 +851,16 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
             }
 
             // set a unique pair id
-            fL.i2.pairMatchId = mR.pairMatchId = options.nextPairMatchId * options.threadCount + tls.threadId;
-            if (++options.nextPairMatchId == TMatch::INVALID_ID)
-                options.nextPairMatchId = 0;
+            fL.i2.pairMatchID = mR.pairMatchID = options.nextPairMatchID * options.threadCount + tls.threadID;
+            if (++options.nextPairMatchID == TMatch::INVALID_ID)
+                options.nextPairMatchID = 0;
 
             // score the whole match pair
             fL.i2.pairScore = mR.pairScore = fL.i2.score + mR.score;
             fL.i2.libDiff = mR.libDiff = bestLibSizeError;
 
             // both mates match with correct library size
-            /*								std::cout << "found " << matePairId << " on " << orientation << contigId;
+            /*								std::cout << "found " << matePairID << " on " << orientation << contigID;
                                             std::cout << " dist:" << dist;
                                             if (orientation=='F')
                                             std::cout << " \t_" << fL.i2.beginPos+1 << "_" << mR.endPos;
@@ -882,8 +882,8 @@ void workVerification(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore
 //                        }
 
 #ifdef RAZERS_DEBUG_MATEPAIRS
-                std::cerr << "\nHIT\tL\t" << fL.i2.readId << "\t" << tls.globalStore->readNameStore[fL.i2.readId] << "\t" << fL.i2.beginPos << "\t" << fL.i2.endPos << std::endl;
-                std::cerr << "\nHIT\tR\t" << mR.readId << "\t" << tls.globalStore->readNameStore[mR.readId] << "\t" << mR.beginPos << "\t" << mR.endPos << std::endl;
+                std::cerr << "\nHIT\tL\t" << fL.i2.readID << "\t" << tls.globalStore->readNameStore[fL.i2.readID] << "\t" << fL.i2.beginPos << "\t" << fL.i2.endPos << std::endl;
+                std::cerr << "\nHIT\tR\t" << mR.readID << "\t" << tls.globalStore->readNameStore[mR.readID] << "\t" << mR.beginPos << "\t" << mR.endPos << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
             }
             // }
@@ -907,7 +907,7 @@ writeBackToLocal(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore, TFi
 #ifdef RAZERS_PROFILE
     timelineBeginTask(TASK_WRITEBACK);
 #endif  // #ifdef RAZERS_PROFILE
-    if (tls.threadId == 0u && tls.options._debugLevel >= 3)
+    if (tls.threadID == 0u && tls.options._debugLevel >= 3)
         fprintf(stderr, "[writeback]");
     typedef typename Size<typename TFragmentStore::TAlignedReadStore>::Type TAlignedReadStoreSize;
     //typedef ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore, TFilterFinderL, TFilterFinderR, TFilterPattern, TShape, TOptions, TCounts, TRazerSMode> > TThreadLocalStorage;
@@ -945,13 +945,13 @@ writeBackToLocal(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore, TFi
         if (it->isRegistered)
             continue;
         it->isRegistered = true;
-        registerRead(*tls.matchFilter, it->readId / 2, it->pairScore);
+        registerRead(*tls.matchFilter, it->readID / 2, it->pairScore);
 
 #if SEQAN_ENABLE_DEBUG
         TIterator it2 = it;
 #endif  // #if SEQAN_ENABLE_DEBUG
         ++it;  // Skip second mate.
-        SEQAN_ASSERT_EQ(it->readId / 2, it2->readId / 2);
+        SEQAN_ASSERT_EQ(it->readID / 2, it2->readID / 2);
     }
     // Limit/distable reads.
     unsigned disabled = 0;
@@ -959,7 +959,7 @@ writeBackToLocal(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore, TFi
     {
         if (it->orientation == '-')
             continue;  // Skip masked reads.
-        disabled += processRead(*tls.matchFilter, it->readId / 2);
+        disabled += processRead(*tls.matchFilter, it->readID / 2);
     }
     if (tls.options._debugLevel >= 2)
         fprintf(stderr, " [%u reads disabled]", disabled);
@@ -986,7 +986,7 @@ writeBackToLocal(ThreadLocalStorage<MapPairedReads<TMatches, TFragmentStore, TFi
             while (tls.options.compactThresh < oldSize)
                 tls.options.compactThresh *= tls.options.compactMult;
             // tls.options.compactThresh += (tls.options.compactThresh >> 1);  // if too many matches were removed
-            if (tls.threadId == 0u && tls.options._debugLevel >= 3)
+            if (tls.threadID == 0u && tls.options._debugLevel >= 3)
                 fprintf(stderr, "[raising threshold to %u]", unsigned(tls.options.compactThresh));
         }
 #ifdef RAZERS_PROFILE
@@ -1017,7 +1017,7 @@ template <
     typename TRazerSMode>
 void _mapMatePairReadsParallel(
     FragmentStore<TFSSpec, TFSConfig> & store,
-    unsigned                                  contigId,             // ... and its sequence number
+    unsigned                                  contigID,             // ... and its sequence number
     TThreadLocalStorages & threadLocalStorages,
     String<unsigned> const & splitters,
     TCounts & /*cnts*/,                                  // TODO(holtgrew): What about this?
@@ -1036,7 +1036,7 @@ void _mapMatePairReadsParallel(
     //typedef typename TThreadLocalStorage::TReadSet TReadSet;
     //typedef typename TThreadLocalStorage::TShape TShape;
     //typedef Index<TReadSet, IndexQGram<TShape>  >   TReadIndex;
-    //typedef typename Id<TAlignedRead>::Type                 TId;
+    //typedef typename ID<TAlignedRead>::Type                 TID;
 
     typedef typename TFragmentStore::TContigSeq             TGenome;
     //typedef typename Size<TGenome>::Type                    TSize;
@@ -1080,7 +1080,7 @@ void _mapMatePairReadsParallel(
     // iterate all genomic sequences
     if (options._debugLevel >= 1)
     {
-        std::cerr << std::endl << "Process genome seq #" << contigId;
+        std::cerr << std::endl << "Process genome seq #" << contigID;
         if (orientation == 'F')
             std::cerr << "[fwd]";
         else
@@ -1099,14 +1099,14 @@ void _mapMatePairReadsParallel(
     TGPos scanShift = (minDistance < 0) ? 0 : minDistance;
 
     // exit if contig is shorter than library size
-    TGenome & genome = store.contigStore[contigId].seq;
+    TGenome & genome = store.contigStore[contigID].seq;
     if (length(genome) <= scanShift)
         return;
 
     // -----------------------------------------------------------------------
     // Reverse-complement contig if necessary.
     // -----------------------------------------------------------------------
-    // lockContig(store, contigId);
+    // lockContig(store, contigID);
 #ifdef RAZERS_PROFILE
     timelineBeginTask(TASK_REVCOMP);
 #endif  // #ifdef RAZERS_PROFILE
@@ -1127,12 +1127,12 @@ void _mapMatePairReadsParallel(
         threadLocalStorages[i].verifierL.onReverseComplement = (orientation == 'R');
         threadLocalStorages[i].verifierL.genomeLength = length(genome);
         threadLocalStorages[i].verifierL.oneMatchPerBucket = true;
-        threadLocalStorages[i].verifierL.m.contigId = contigId;
+        threadLocalStorages[i].verifierL.m.contigID = contigID;
 
         threadLocalStorages[i].verifierR.onReverseComplement = (orientation == 'R');
         threadLocalStorages[i].verifierR.genomeLength = length(genome);
         threadLocalStorages[i].verifierR.oneMatchPerBucket = true;
-        threadLocalStorages[i].verifierR.m.contigId = contigId;
+        threadLocalStorages[i].verifierR.m.contigID = contigID;
 
         // threadLocalStorages[i].filterFinderL  = TFilterFinderL(genome, options.repeatLength, 1);
         typedef typename TFragmentStore::TContigSeq TGenome;
@@ -1155,7 +1155,7 @@ void _mapMatePairReadsParallel(
     timelineBeginTask(TASK_COPY_FINDER);
 #endif  // #ifdef RAZERS_PROFILE
 
-    threadLocalStorages[0].filterFinderL  = TFilterFinderL(store.contigStore[contigId].seq, options.repeatLength, 1);
+    threadLocalStorages[0].filterFinderL  = TFilterFinderL(store.contigStore[contigID].seq, options.repeatLength, 1);
     threadLocalStorages[0].filterFinderR  = TFilterFinderR(threadLocalStorages[0].genomeInf, options.repeatLength, 1);
 
 #ifdef RAZERS_PROFILE
@@ -1173,7 +1173,7 @@ void _mapMatePairReadsParallel(
 #ifdef RAZERS_PROFILE
         timelineBeginTask(TASK_COPY_FINDER);
 #endif  // #ifdef RAZERS_PROFILE
-        // tls.filterFinder = TFilterFinder(store.contigStore[contigId].seq, tls.options.repeatLength, 1);
+        // tls.filterFinder = TFilterFinder(store.contigStore[contigID].seq, tls.options.repeatLength, 1);
         if (omp_get_thread_num() != 0)
         {
             tls.filterFinderL = threadLocalStorages[0].filterFinderL;
@@ -1196,9 +1196,9 @@ void _mapMatePairReadsParallel(
         timelineBeginTask(TASK_FILTER);
 #endif  // #ifdef RAZERS_PROFILE
         if (!windowFindBegin(filterFinderL, filterPatternL, tls.options.errorRate))
-            std::cerr << "ERROR: windowFindBegin() failed for left reads in thread " << tls.threadId << std::endl;
+            std::cerr << "ERROR: windowFindBegin() failed for left reads in thread " << tls.threadID << std::endl;
         if (!windowFindBegin(filterFinderR, filterPatternR, tls.options.errorRate))
-            std::cerr << "ERROR: windowFindBegin() failed for right reads in thread " << tls.threadId << std::endl;
+            std::cerr << "ERROR: windowFindBegin() failed for right reads in thread " << tls.threadID << std::endl;
 #ifdef RAZERS_PROFILE
         timelineEndTask(TASK_FILTER);
 #endif  // #ifdef RAZERS_PROFILE
@@ -1278,7 +1278,7 @@ void _mapMatePairReadsParallel(
                     SEQAN_ASSERT_LEQ(leftHitsSplitters[i], leftHitsSplitters[i + 1]);
                     if (rightHitsSplitters[i] == rightHitsSplitters[i + 1] || (previousLeftHitsSplitters[i] == previousLeftHitsSplitters[i + 1] && leftHitsSplitters[i] == leftHitsSplitters[i + 1]))
                         continue;
-                    appendValue(jobs, TVerificationJob(tls.threadId, tls.verificationResults, store, contigId, orientation, previousLeftHits, previousLeftHitsSplitters[i], previousLeftHitsSplitters[i + 1], leftHits, leftHitsSplitters[i], leftHitsSplitters[i + 1], rightHits, rightHitsSplitters[i], rightHitsSplitters[i + 1], rightWindowBegin, *tls.globalOptions, tls.filterPatternL, tls.filterPatternR));
+                    appendValue(jobs, TVerificationJob(tls.threadID, tls.verificationResults, store, contigID, orientation, previousLeftHits, previousLeftHitsSplitters[i], previousLeftHitsSplitters[i + 1], leftHits, leftHitsSplitters[i], leftHitsSplitters[i + 1], rightHits, rightHitsSplitters[i], rightHitsSplitters[i + 1], rightWindowBegin, *tls.globalOptions, tls.filterPatternL, tls.filterPatternR));
                 }
 
                 pushFront(taskQueue, jobs);
@@ -1338,7 +1338,7 @@ void _mapMatePairReadsParallel(
 
     // NOTE: We never re-reverse complement since this function is only called
     // twice, in the right order regarding the orientation parameters.
-    // if (!unlockAndFreeContig(store, contigId))						// if the contig is still used
+    // if (!unlockAndFreeContig(store, contigID))						// if the contig is still used
     //  if (orientation == 'R')	reverseComplement(genome);	// we have to restore original orientation
 #ifdef RAZERS_PROFILE
     timelineEndTask(TASK_ON_CONTIG);
@@ -1424,16 +1424,16 @@ int _mapMatePairReadsParallel(
         for (int i = 0; i < pairCount; ++i)
         {
 #ifdef RAZERS_NOOUTERREADGAPS
-            if (!empty(store.readSeqStore[store.matePairStore[i].readId[0]]) && !empty(store.readSeqStore[store.matePairStore[i].readId[1]]))
+            if (!empty(store.readSeqStore[store.matePairStore[i].readID[0]]) && !empty(store.readSeqStore[store.matePairStore[i].readID[1]]))
             {
-                setHost(forwardPatternsL[i], prefix(store.readSeqStore[store.matePairStore[i].readId[0]], length(store.readSeqStore[store.matePairStore[i].readId[0]]) - 1));
-                tmps[omp_get_thread_num()] = prefix(store.readSeqStore[store.matePairStore[i].readId[1]], length(store.readSeqStore[store.matePairStore[i].readId[1]]) - 1);
+                setHost(forwardPatternsL[i], prefix(store.readSeqStore[store.matePairStore[i].readID[0]], length(store.readSeqStore[store.matePairStore[i].readID[0]]) - 1));
+                tmps[omp_get_thread_num()] = prefix(store.readSeqStore[store.matePairStore[i].readID[1]], length(store.readSeqStore[store.matePairStore[i].readID[1]]) - 1);
                 reverseComplement(tmps[omp_get_thread_num()]);
                 setHost(forwardPatternsR[i], tmps[omp_get_thread_num()]);
             }
 #else
-            setHost(forwardPatternsL[i], store.readSeqStore[store.matePairStore[i].readId[0]]);
-            tmps[omp_get_thread_num()] = store.readSeqStore[store.matePairStore[i].readId[1]];
+            setHost(forwardPatternsL[i], store.readSeqStore[store.matePairStore[i].readID[0]]);
+            tmps[omp_get_thread_num()] = store.readSeqStore[store.matePairStore[i].readID[1]];
             reverseComplement(tmps[omp_get_thread_num()]);
             setHost(forwardPatternsR[i], tmps[omp_get_thread_num()]);
 #endif
@@ -1480,16 +1480,16 @@ int _mapMatePairReadsParallel(
     options.compactThresh = MaxValue<unsigned>::VALUE;
 
     SEQAN_PROTIMESTART(findTime);
-    for (int contigId = 0; contigId < (int)length(store.contigStore); ++contigId)
+    for (int contigID = 0; contigID < (int)length(store.contigStore); ++contigID)
     {
         // lock to prevent releasing and loading the same contig twice
         // (once per _mapSingleReadsToContig call)
-        lockContig(store, contigId);
+        lockContig(store, contigID);
         if (options.forward)
-            _mapMatePairReadsParallel(store, contigId, threadLocalStorages, splitters, cnts, 'F', options, mode);
+            _mapMatePairReadsParallel(store, contigID, threadLocalStorages, splitters, cnts, 'F', options, mode);
         if (options.reverse)
-            _mapMatePairReadsParallel(store, contigId, threadLocalStorages, splitters, cnts, 'R', options, mode);
-        unlockAndFreeContig(store, contigId);
+            _mapMatePairReadsParallel(store, contigID, threadLocalStorages, splitters, cnts, 'R', options, mode);
+        unlockAndFreeContig(store, contigID);
     }
 #ifdef RAZERS_PROFILE
     double endMapping = sysTime();

@@ -122,7 +122,7 @@ void ProjectSplicedRoi::_updateRanges(seqan::GffRecord const & record,
         std::cerr << "Updating " << name << "\t" << record.beginPos << "\t" << record.endPos << "\n";
 
     unsigned idx = 0;
-    if (getIdByName(groupNames, name, idx, groupNamesCache))
+    if (getIDByName(groupNames, name, idx, groupNamesCache))
     {
         ranges[idx].i1 = std::min(ranges[idx].i1, (int)record.beginPos);
         ranges[idx].i2 = std::max(ranges[idx].i2, (int)record.endPos);

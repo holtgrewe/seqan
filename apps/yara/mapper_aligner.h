@@ -185,8 +185,8 @@ inline void _alignMatchImpl(MatchesAligner<TSpec, Traits> & me, TMatchIt & match
     if (isInvalid(match)) return;
 
     unsigned errors = getMember(match, Errors());
-    TReadSeq const & readSeq = me.readSeqs[getReadSeqId(match, me.readSeqs)];
-    TContigInfix const & contigInfix = infix(me.contigSeqs[getMember(match, ContigId())],
+    TReadSeq const & readSeq = me.readSeqs[getReadSeqID(match, me.readSeqs)];
+    TContigInfix const & contigInfix = infix(me.contigSeqs[getMember(match, ContigID())],
                                              getMember(match, ContigBegin()),
                                              getMember(match, ContigEnd()));
 
@@ -207,7 +207,7 @@ inline void _alignMatchImpl(MatchesAligner<TSpec, Traits> & me, TMatchIt & match
         clipSemiGlobal(contigGaps, readGaps);
 
         // Shrink the match after realigning and clipping.
-        TContigPos contigBegin(getMember(match, ContigId()), getMember(match, ContigBegin()));
+        TContigPos contigBegin(getMember(match, ContigID()), getMember(match, ContigBegin()));
         contigBegin = posAdd(contigBegin, clippedBeginPosition(readGaps));
         TContigPos contigEnd = contigBegin;
         contigEnd = posAdd(contigEnd, length(readGaps));
@@ -220,10 +220,10 @@ inline void _alignMatchImpl(MatchesAligner<TSpec, Traits> & me, TMatchIt & match
 
     // Copy cigar to set.
     // TODO(esiragusa): use assign if possible.
-//    me.cigarSet[getReadId(match)] = me.cigar;
-    SEQAN_ASSERT_LEQ(length(me.cigar), length(me.cigarSet[getMember(match, ReadId())]));
-    std::copy(begin(me.cigar, Standard()), end(me.cigar, Standard()), begin(me.cigarSet[getMember(match, ReadId())], Standard()));
-    assignValue(me.cigarLimits, getMember(match, ReadId()) + 1, length(me.cigar));
+//    me.cigarSet[getReadID(match)] = me.cigar;
+    SEQAN_ASSERT_LEQ(length(me.cigar), length(me.cigarSet[getMember(match, ReadID())]));
+    std::copy(begin(me.cigar, Standard()), end(me.cigar, Standard()), begin(me.cigarSet[getMember(match, ReadID())], Standard()));
+    assignValue(me.cigarLimits, getMember(match, ReadID()) + 1, length(me.cigar));
 
 //    clear(me.md);
 //    getMDString(me.md, contigGaps, readGaps);

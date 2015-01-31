@@ -49,7 +49,7 @@ struct TransportObj_
     static int assignments;
     static int sets;
     static int moves;
-    static int nextId;
+    static int nextID;
 
     int id;
     int assignedFrom;
@@ -57,16 +57,16 @@ struct TransportObj_
     int movedFrom;
 
     TransportObj_()
-            : id(nextId++), assignedFrom(-1), setFrom(-1), movedFrom(-1)
+            : id(nextID++), assignedFrom(-1), setFrom(-1), movedFrom(-1)
     {}
 
     TransportObj_(TransportObj_ & other)
-            : id(nextId++), assignedFrom(other.id), setFrom(-1), movedFrom(-1)
+            : id(nextID++), assignedFrom(other.id), setFrom(-1), movedFrom(-1)
     {
     }
 
     TransportObj_(TransportObj_ & other, seqan::Move)
-            : id(nextId++), assignedFrom(-1), setFrom(-1), movedFrom(other.id)
+            : id(nextID++), assignedFrom(-1), setFrom(-1), movedFrom(other.id)
     {
         bool b = IsSameType<TSpec, MoveYes>::Type::VALUE;
         SEQAN_ASSERT(b);
@@ -74,7 +74,7 @@ struct TransportObj_
 
 #ifdef SEQAN_CXX11_STANDARD
     TransportObj_(TransportObj_ && other)
-            : id(nextId++), assignedFrom(-1), setFrom(-1), movedFrom(other.id)
+            : id(nextID++), assignedFrom(-1), setFrom(-1), movedFrom(other.id)
     {
         bool b = IsSameType<TSpec, MoveYes>::Type::VALUE;
         SEQAN_ASSERT(b);
@@ -119,7 +119,7 @@ int TransportObj_<TSpec>::sets = 0;
 template <typename TSpec>
 int TransportObj_<TSpec>::moves = 0;
 template <typename TSpec>
-int TransportObj_<TSpec>::nextId = 0;
+int TransportObj_<TSpec>::nextID = 0;
 
 template <typename TSpec>
 void resetTransportObjStatics(TSpec const &)

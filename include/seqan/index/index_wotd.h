@@ -452,31 +452,31 @@ SEQAN_CONCEPT_IMPL((Index<TText, IndexWotd<TSpec> > const), (StringTreeConcept))
 	}
 */
 	template < typename TSize >
-	inline typename Id< VertexWotdOriginal_<TSize> const >::Type
-	_getId(VertexWotdOriginal_<TSize> const &desc) 
+	inline typename ID< VertexWotdOriginal_<TSize> const >::Type
+	_getID(VertexWotdOriginal_<TSize> const &desc) 
 	{
 		return desc.node;
 	}
 
 	template < typename TSize >
-	inline typename Id< VertexWotdOriginal_<TSize> >::Type
-	_getId(VertexWotdOriginal_<TSize> &desc) 
+	inline typename ID< VertexWotdOriginal_<TSize> >::Type
+	_getID(VertexWotdOriginal_<TSize> &desc) 
 	{
-		return _getId(const_cast<VertexWotdOriginal_<TSize> const &>(desc));
+		return _getID(const_cast<VertexWotdOriginal_<TSize> const &>(desc));
 	}
 
 	template < typename TSize >
-	inline typename Id< VertexWotdModified_<TSize> const >::Type
-	_getId(VertexWotdModified_<TSize> const &desc) 
+	inline typename ID< VertexWotdModified_<TSize> const >::Type
+	_getID(VertexWotdModified_<TSize> const &desc) 
 	{
 		return desc.node;
 	}
 
 	template < typename TSize >
-	inline typename Id< VertexWotdModified_<TSize> >::Type
-	_getId(VertexWotdModified_<TSize> &desc) 
+	inline typename ID< VertexWotdModified_<TSize> >::Type
+	_getID(VertexWotdModified_<TSize> &desc) 
 	{
-		return _getId(const_cast<VertexWotdModified_<TSize> const &>(desc));
+		return _getID(const_cast<VertexWotdModified_<TSize> const &>(desc));
 	}
 
 //////////////////////////////////////////////////////////////////////////////

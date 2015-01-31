@@ -131,7 +131,7 @@ public:
 
         // Mark clear single-end fields.
         record.flag = 0;
-        record.rNextId = seqan::BamAlignmentRecord::INVALID_REFID;
+        record.rNextID = seqan::BamAlignmentRecord::INVALID_REFID;
         record.pNext = seqan::BamAlignmentRecord::INVALID_POS;
         record.tLen = seqan::BamAlignmentRecord::INVALID_LEN;
 
@@ -385,9 +385,9 @@ public:
                 recordR.tLen = seqan::BamAlignmentRecord::INVALID_LEN;
             }
 
-            recordL.rNextId = recordR.rID;
+            recordL.rNextID = recordR.rID;
             recordL.pNext = recordR.beginPos;
-            recordR.rNextId = recordL.rID;
+            recordR.rNextID = recordL.rID;
             recordR.pNext = recordL.beginPos;
 
             if (hasFlagRC(recordL))
@@ -433,11 +433,11 @@ public:
 
         // Mark clear single-end fields.
         recordL.flag = 0;
-        recordL.rNextId = seqan::BamAlignmentRecord::INVALID_REFID;
+        recordL.rNextID = seqan::BamAlignmentRecord::INVALID_REFID;
         recordL.pNext = seqan::BamAlignmentRecord::INVALID_POS;
         recordL.tLen = seqan::BamAlignmentRecord::INVALID_LEN;
         recordR.flag = 0;
-        recordR.rNextId = seqan::BamAlignmentRecord::INVALID_REFID;
+        recordR.rNextID = seqan::BamAlignmentRecord::INVALID_REFID;
         recordR.pNext = seqan::BamAlignmentRecord::INVALID_POS;
         recordR.tLen = seqan::BamAlignmentRecord::INVALID_LEN;
 
@@ -613,7 +613,7 @@ public:
     TRng rng, methRng;
 
     // The ids of the fragments.
-    std::vector<int> fragmentIds;
+    std::vector<int> fragmentIDs;
 
     // The fragment generator and fragment buffer.
     std::vector<Fragment> fragments;
@@ -660,18 +660,18 @@ public:
         seqSimulator = ptr.release();
     }
 
-    void _setId(seqan::CharString & str, std::stringstream & ss, int fragId, int num,
+    void _setID(seqan::CharString & str, std::stringstream & ss, int fragID, int num,
                 SequencingSimulationInfo const & info, bool forceNoEmbed = false)
     {
         ss.clear();
         ss.str("");
         ss << options->seqOptions.readNamePrefix;
         if (num == 0 || forceNoEmbed)
-            ss << (fragId + 1);
+            ss << (fragID + 1);
         else if (num == 1)
-            ss << (fragId + 1) << "/1";
+            ss << (fragID + 1) << "/1";
         else  // num == 2
-            ss << (fragId + 1) << "/2";
+            ss << (fragID + 1) << "/2";
         if (options->seqOptions.embedReadInfo && !forceNoEmbed)
         {
             ss << ' ';
@@ -690,7 +690,7 @@ public:
         std::stringstream ss;
         seqan::CharString buffer;
 
-        for (unsigned i = 0; i < 2 * fragmentIds.size(); i += 2)
+        for (unsigned i = 0; i < 2 * fragmentIDs.size(); i += 2)
         {
             TFragment frag(seq, fragments[i / 2].beginPos, fragments[i / 2].endPos);
             seqSimulator->simulatePairedEnd(seqs[i], quals[i], infos[i],
@@ -699,8 +699,8 @@ public:
             infos[i].rID = infos[i + 1].rID = rID;
             infos[i].hID = infos[i + 1].hID = hID;
             // Set the sequence ids.
-            _setId(ids[i], ss, fragmentIds[i / 2], 1, infos[i]);
-            _setId(ids[i + 1], ss, fragmentIds[i / 2], 2, infos[i + 1]);
+            _setID(ids[i], ss, fragmentIDs[i / 2], 1, infos[i]);
+            _setID(ids[i + 1], ss, fragmentIDs[i / 2], 2, infos[i + 1]);
             // Compute number of bases overlapping with SNPs/indels.
             int beginPos = infos[i].beginPos, endPos = infos[i].beginPos + infos[i].lengthInRef();
             infos[i].snpCount = countSmallVars(varInfos, beginPos, endPos, SmallVarInfo::SNP);
@@ -719,11 +719,11 @@ public:
                 // Build the alignment records themselves.
                 PairedEndRecordBuilder builder(infos[i], infos[i + 1], seqs[i], seqs[i + 1], ss, buffer,
                                                quals[i], quals[i + 1], posMap, refName, refSeq,
-                                               rID, hID, fragmentIds[i / 2]);
+                                               rID, hID, fragmentIDs[i / 2]);
                 builder.build(alignmentRecords[i], alignmentRecords[i + 1]);
                 // Set qName members of alignment records.
-                _setId(alignmentRecords[i].qName, ss, fragmentIds[i / 2], 1, infos[i], true);
-                _setId(alignmentRecords[i + 1].qName, ss, fragmentIds[i / 2], 2, infos[i + 1], true);
+                _setID(alignmentRecords[i].qName, ss, fragmentIDs[i / 2], 1, infos[i], true);
+                _setID(alignmentRecords[i + 1].qName, ss, fragmentIDs[i / 2], 2, infos[i + 1], true);
             }
         }
     }
@@ -757,11 +757,11 @@ public:
         std::stringstream ss;
         seqan::CharString buffer;
 
-        for (unsigned i = 0; i < fragmentIds.size(); ++i)
+        for (unsigned i = 0; i < fragmentIDs.size(); ++i)
         {
             TFragment frag(seq, fragments[i].beginPos, fragments[i].endPos);
             seqSimulator->simulateSingleEnd(seqs[i], quals[i], infos[i], frag, methLevels);
-            _setId(ids[i], ss, fragmentIds[i], 0, infos[i]);
+            _setID(ids[i], ss, fragmentIDs[i], 0, infos[i]);
             int beginPos = infos[i].beginPos, endPos = infos[i].beginPos + infos[i].lengthInRef();
             infos[i].snpCount = countSmallVars(varInfos, beginPos, endPos, SmallVarInfo::SNP);
             infos[i].indelCount =
@@ -771,10 +771,10 @@ public:
             {
                 // Build the alignment record itself.
                 SingleEndRecordBuilder builder(infos[i], seqs[i], ss, buffer, quals[i],
-                                               posMap, refName, refSeq, rID, hID, fragmentIds[i]);
+                                               posMap, refName, refSeq, rID, hID, fragmentIDs[i]);
                 builder.build(alignmentRecords[i]);
                 // Set query name.
-                _setId(alignmentRecords[i].qName, ss, fragmentIds[i], 1, infos[i], true);
+                _setID(alignmentRecords[i].qName, ss, fragmentIDs[i], 1, infos[i], true);
             }
         }
     }
@@ -789,10 +789,10 @@ public:
              int rID, int hID)
     {
         // Sample fragments.
-        fragSampler->generateMany(fragments, rID, length(seq), gapIntervals, fragmentIds.size());
+        fragSampler->generateMany(fragments, rID, length(seq), gapIntervals, fragmentIDs.size());
 
         // Simulate reads.
-        int seqCount = (options->seqOptions.simulateMatePairs ? 2 : 1) * fragmentIds.size();
+        int seqCount = (options->seqOptions.simulateMatePairs ? 2 : 1) * fragmentIDs.size();
         resize(ids, seqCount);
         resize(seqs, seqCount);
         resize(quals, seqCount);
@@ -842,14 +842,14 @@ public:
     // Helper for distributing reads/pairs to contigs/haplotypes.
     ContigPicker contigPicker;
     // Helper for storing the read ids for each contig/haplotype pair.
-    IdSplitter fragmentIdSplitter;
+    IDSplitter fragmentIDSplitter;
     // Helper for storing the simulated reads for each contig/haplotype pair.  We will write out SAM files with the
     // alignment information relative to the materialized sequence.
-    IdSplitter fragmentSplitter;
+    IDSplitter fragmentSplitter;
     // Helper for joining the FASTQ files.
     std::SEQAN_AUTO_PTR_NAME<FastxJoiner<seqan::Fastq> > fastxJoiner;
     // Helper for storing SAM records for each contig/haplotype pair.  In the end, we will join this again.
-    IdSplitter alignmentSplitter;
+    IDSplitter alignmentSplitter;
     // Helper for joining the SAM files.
     std::SEQAN_AUTO_PTR_NAME<SamJoiner> alignmentJoiner;
 
@@ -896,8 +896,8 @@ public:
             delete seqFileOuts[i];
         seqFileOuts.clear();
 
-        for (unsigned i = 0; i < fragmentIdSplitter.files.size(); ++i)
-            fragmentIdSplitter.files[i]->flush();
+        for (unsigned i = 0; i < fragmentIDSplitter.files.size(); ++i)
+            fragmentIDSplitter.files[i]->flush();
     }
 
     int run()
@@ -971,18 +971,18 @@ public:
                 for (int tID = 0; tID < options.numThreads; ++tID)
                 {
                     // Read in the ids of the fragments to simulate.
-                    threads[tID].fragmentIds.resize(options.chunkSize);  // make space
+                    threads[tID].fragmentIDs.resize(options.chunkSize);  // make space
                     threads[tID].methLevels = &levels;
 
                     // Load the fragment ids to simulate for.
-                    fragmentIdSplitter.files[rID * haplotypeCount + hID]->read(
-                        reinterpret_cast<char *>(&threads[tID].fragmentIds[0]),
+                    fragmentIDSplitter.files[rID * haplotypeCount + hID]->read(
+                        reinterpret_cast<char *>(&threads[tID].fragmentIDs[0]),
                         sizeof(int) * options.chunkSize);
-                    int numRead = fragmentIdSplitter.files[rID * haplotypeCount + hID]->gcount() / 4;
+                    int numRead = fragmentIDSplitter.files[rID * haplotypeCount + hID]->gcount() / 4;
                     contigFragmentCount += numRead;
                     if (numRead == 0)
                         doBreak = true;
-                    threads[tID].fragmentIds.resize(numRead);
+                    threads[tID].fragmentIDs.resize(numRead);
                 }
 
                 // Build gap intervals.
@@ -1073,9 +1073,9 @@ public:
         std::cerr << "Distributing fragments to " << seqCount << " contigs (" << haplotypeCount
                   << " haplotypes each) ...";
         for (int i = 0; i < options.numFragments; ++i)
-            fragmentIdSplitter.files[contigPicker.toId(contigPicker.pick())]->write(
+            fragmentIDSplitter.files[contigPicker.toID(contigPicker.pick())]->write(
                 reinterpret_cast<char *>(&i), sizeof(int));
-        fragmentIdSplitter.reset();
+        fragmentIDSplitter.reset();
         std::cerr << " OK\n";
 
         // (2) Simulate the reads in the order of contigs/haplotypes.
@@ -1089,7 +1089,7 @@ public:
     void _initAlignmentSplitter()
     {
         // Open alignment splitters.
-        alignmentSplitter.numContigs = fragmentIdSplitter.numContigs;
+        alignmentSplitter.numContigs = fragmentIDSplitter.numContigs;
         alignmentSplitter.open();
         // Construct output BAM files.
         for (unsigned i = 0; i < alignmentSplitter.files.size(); ++i)
@@ -1107,7 +1107,7 @@ public:
                 else
                     appendName(contigNamesCache(context(*bamFileOuts[j])), sequenceName(vcfMat.faiIndex, i));
             unsigned idx = 0;
-            if (!getIdByName(idx, vcfMat.faiIndex, contigNames(context(*bamFileOuts[0]))[i]))
+            if (!getIDByName(idx, vcfMat.faiIndex, contigNames(context(*bamFileOuts[0]))[i]))
             {
                 std::stringstream ss;
                 ss << "Could not find " << contigNames(context(*bamFileOuts[0]))[i] << " from VCF file in FAI index.";
@@ -1142,10 +1142,10 @@ public:
                 contigPicker.lengthSums[i] += contigPicker.lengthSums[i - 1];
         }
         // Fragment id splitter.
-        fragmentIdSplitter.numContigs = numSeqs(vcfMat.faiIndex) * vcfMat.numHaplotypes;
-        fragmentIdSplitter.open();
+        fragmentIDSplitter.numContigs = numSeqs(vcfMat.faiIndex) * vcfMat.numHaplotypes;
+        fragmentIDSplitter.open();
         // Splitter for sequence.
-        fragmentSplitter.numContigs = fragmentIdSplitter.numContigs;
+        fragmentSplitter.numContigs = fragmentIDSplitter.numContigs;
         fragmentSplitter.open();
         for (unsigned i = 0; i < fragmentSplitter.files.size(); ++i)
             seqFileOuts.push_back(new seqan::SeqFileOut(*fragmentSplitter.files[i], seqan::Fastq()));

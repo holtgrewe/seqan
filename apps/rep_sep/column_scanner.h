@@ -14,7 +14,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ==========================================================================
-  $Id$
+  $ID$
  ==========================================================================*/
 
 #ifndef REPSEP_HEADER_COLUMN_SCANNER_H
@@ -47,16 +47,16 @@ struct SimpleColumn{
     SimpleColumnConfig parameters;
 };
 
-template <typename TSpec, typename TConfig, typename TId, typename TConsensusCharacter, typename TCandidateColumn>
+template <typename TSpec, typename TConfig, typename TID, typename TConsensusCharacter, typename TCandidateColumn>
 bool isCandidate(FragmentStore<TSpec, TConfig> const& fragStore,
-           TId const contigId,
+           TID const contigID,
            TConsensusCharacter const consensus,
            TCandidateColumn & candidate,
            SimpleColumn const algo_spec)
 {
     // Get rid of unused variable warnings.
     (void)fragStore;
-    (void)contigId;
+    (void)contigID;
 
 	typedef FragmentStore<TSpec, TConfig> TFragmentStore;
 	typedef typename Size<TFragmentStore>::Type TSize;
@@ -99,9 +99,9 @@ bool isCandidate(FragmentStore<TSpec, TConfig> const& fragStore,
     return ( p <= algo_spec.parameters.test_level );
 }
 
-template <typename TSpec, typename TConfig, typename TId, typename TCandidateColumn>
+template <typename TSpec, typename TConfig, typename TID, typename TCandidateColumn>
 void refineCandidates(FragmentStore<TSpec, TConfig> const& /*fragStore*/,
-           TId const /*contigId*/,
+           TID const /*contigID*/,
            StringSet<TCandidateColumn> & /*candidate_set*/,
            SimpleColumn const)
 {

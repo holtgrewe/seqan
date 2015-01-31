@@ -169,7 +169,7 @@ struct IsSequence<std::basic_string<TChar, TCharTraits, TAlloc> > : True {};
 
 template <typename TChar, typename TCharTraits, typename TAlloc>
 inline void const *
-getObjectId(std::basic_string<TChar, TCharTraits, TAlloc> const & me)
+getObjectID(std::basic_string<TChar, TCharTraits, TAlloc> const & me)
 {
     SEQAN_CHECKPOINT;
     if (me.empty())

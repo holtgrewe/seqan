@@ -182,8 +182,8 @@ inline void _glueTracebacks(TTraceSet & globalTraces, TTraceSet & localTraces)
             // First, smooth the actual path we are currently gluing.
             _smoothGluePoint(globalTraces[j], numOfCurrElements);
             // Second, smooth all paths that have been added to the global traceback.
-            for (unsigned traceId = oldNumOfGlobalTraces; traceId < oldNumOfGlobalTraces + numOfAddedTraces; ++traceId)
-                _smoothGluePoint(globalTraces[traceId], numOfCurrElements);
+            for (unsigned traceID = oldNumOfGlobalTraces; traceID < oldNumOfGlobalTraces + numOfAddedTraces; ++traceID)
+                _smoothGluePoint(globalTraces[traceID], numOfCurrElements);
             oldNumOfGlobalTraces += numOfAddedTraces;
         }
     }

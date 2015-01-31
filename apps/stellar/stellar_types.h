@@ -101,18 +101,18 @@ struct QueryMatches {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Container for storing a local alignment match
-template<typename TSequence_, typename TId_>
+template<typename TSequence_, typename TID_>
 struct StellarMatch {
 	typedef TSequence_							TSequence;
-	typedef TId_								TId;
+	typedef TID_								TID;
 	typedef typename Position<TSequence>::Type	TPos;
 
 	typedef Align<TSequence, ArrayGaps>			TAlign;
 	typedef typename Row<TAlign>::Type			TRow;
 
-	static const TId INVALID_ID;
+	static const TID INVALID_ID;
 
-	TId id;			// database ID
+	TID id;			// database ID
 	bool orientation;
 	TPos begin1;
 	TPos end1;
@@ -125,8 +125,8 @@ struct StellarMatch {
 	StellarMatch() : id(), orientation(false), begin1(0), end1(0), begin2(0), end2(0)
 	{}
 
-	template <typename TAlign, typename TId>
-	StellarMatch(TAlign & _align, TId _id, bool _orientation)
+	template <typename TAlign, typename TID>
+	StellarMatch(TAlign & _align, TID _id, bool _orientation)
 	{
 		id = _id;
 		orientation = _orientation;
@@ -141,9 +141,9 @@ struct StellarMatch {
 	}
 };
 
-template <typename TSequence, typename TId> 
-const TId
-StellarMatch<TSequence, TId>::INVALID_ID = "###########";
+template <typename TSequence, typename TID> 
+const TID
+StellarMatch<TSequence, TID>::INVALID_ID = "###########";
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -228,10 +228,10 @@ struct LessLength : public ::std::binary_function <TMatch, TMatch, bool> {
 ///////////////////////////////////////////////////////////////////////////////
 // Determines whether match1 is upstream of match2 in specified row.
 //  If matches overlap, the non-overlapping parts have to be longer than minLenght.
-template<typename TSequence, typename TId, typename TRowNo, typename TSize>
+template<typename TSequence, typename TID, typename TRowNo, typename TSize>
 inline bool
-_isUpstream(StellarMatch<TSequence, TId> & match1, StellarMatch<TSequence, TId> & match2, TRowNo row, TSize minLength) {
-	typedef typename StellarMatch<TSequence, TId>::TPos TPos;
+_isUpstream(StellarMatch<TSequence, TID> & match1, StellarMatch<TSequence, TID> & match2, TRowNo row, TSize minLength) {
+	typedef typename StellarMatch<TSequence, TID>::TPos TPos;
 
 	TPos e1, b2;
 	if (row == 0) {
@@ -273,9 +273,9 @@ sortMatches(TMatches & stellarMatches, TFunctorLess const & less) {
 
 ///////////////////////////////////////////////////////////////////////////////
 // returns the length of the longer row from StellarMatch
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 inline typename Size<TSequence>::Type
-length(StellarMatch<TSequence, TId> & match) {
+length(StellarMatch<TSequence, TID> & match) {
 	return _max(length(match.row1), length(match.row2));
 }
 

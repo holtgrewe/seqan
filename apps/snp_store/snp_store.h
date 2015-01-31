@@ -111,13 +111,13 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
         String<CharString>  readFNames;         // list of read file names
         String<CharString>  qualityFNames;      // list of quality file names
 
-        CharString          outputSNP;          // name of snp result file
+        CharString          outputSnp;          // name of snp result file
         CharString          outputIndel;        // name of indel result file
         CharString          outputLog;          // name of log output file
 
         CharString          inputPositionFile;  // name of position analysis input file
         CharString          outputPosition;     // name of position analysis output file
-        CharString          outputCNV;          // name of cnv result file
+        CharString          outputCnv;          // name of cnv result file
 
         bool        showQualityStrings;         // output ascii qualities in SNP output
 
@@ -220,12 +220,12 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
             readFNames = "";
             qualityFNames = "";
             showQualityStrings = true;
-            outputSNP = "";
+            outputSnp = "";
             inputPositionFile = "";
             outputPosition = "";
             outputLog = "";
             outputIndel = "";
-            outputCNV = "";
+            outputCnv = "";
 
             dontClip = false;
             keepCigars = false;
@@ -324,9 +324,9 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
 
 //      TGPos       Batch   gBegin;         // begin position of the match in the genome            --> beginPos
         TGPos           gEnd;           // end position of the match in the genome              --> endPos
-        unsigned        rseqNo;         // read seqNo                                           --> readId
+        unsigned        rseqNo;         // read seqNo                                           --> readID
 
-        unsigned        gseqNo:15;      // genome seqNo     <32K sequences                      --> contigId
+        unsigned        gseqNo:15;      // genome seqNo     <32K sequences                      --> contigID
         unsigned        hasIndel:1;     // is 1 if read match contains indels, 0 else           --> gaps
 
         unsigned        editDist:3;     // Levenshtein distance <8                              --> errors
@@ -368,8 +368,8 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
 
 
             // contig number
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // begin position
             typename TMatch::TPos ba = _min(a.beginPos, a.endPos);
@@ -431,8 +431,8 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
             typedef typename Value<TMatches>::Type TMatch;
 
             // contig number
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // begin position
             typename TMatch::TPos ba = _min(a.beginPos, a.endPos);
@@ -465,12 +465,12 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
 
 
     template <typename TReadMatch>
-    struct LessId : public ::std::binary_function < TReadMatch, TReadMatch, bool >
+    struct LessID : public ::std::binary_function < TReadMatch, TReadMatch, bool >
     {
         inline bool operator() (TReadMatch const &a, TReadMatch const &b) const
         {
             // genome sequence
-            return (a.readId < b.readId);
+            return (a.readID < b.readID);
 
         }
     };
@@ -483,8 +483,8 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
         inline bool operator() (TReadMatch const &a, TReadMatch const &b) const
         {
             // genome sequence
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // begin position
             if (std::min(a.beginPos, a.endPos) < std::min(b.beginPos, b.endPos))
@@ -493,7 +493,7 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
                 return false;
 
             // Break tie by read id.
-            return a.readId < b.readId;
+            return a.readID < b.readID;
         }
     };
 
@@ -506,14 +506,14 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
         inline bool operator() (TReadMatch const &a, TReadMatch const &b) const
         {
             // genome sequence
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // end position
             if (std::max(a.endPos,a.beginPos) < std::max(b.endPos,b.beginPos)) return true;
             if (std::max(a.endPos,a.beginPos) > std::max(b.endPos,b.beginPos)) return false;
 
-            return a.readId < b.readId;
+            return a.readID < b.readID;
         }
     };
 
@@ -525,8 +525,8 @@ struct FragmentStoreConfig<SnpStoreGroupSpec_> :
         inline bool operator() (TReadMatch const &a, TReadMatch const &b) const
         {
             // genome sequence
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // end position
             if (_max(a.endPos,a.beginPos) < _max(b.endPos,b.beginPos)) return true;
@@ -612,7 +612,7 @@ typename TFragmentStore,
 typename TReadCounts,
 typename TCigarStr,
 typename TGenome,
-typename TGenomeIdMap,
+typename TGenomeIDMap,
 typename TContigPos,
 typename TSize,
 typename TValue,
@@ -625,11 +625,11 @@ int readMatchesFromGFF_Batch(
                              String<Pair<int,int> >         &readClips,
                              StringSet<TCigarStr>           &readCigars,
                              TGenome                    &genome,
-                             TGenomeIdMap               &gIdStringToIdNumMap,
+                             TGenomeIDMap               &gIDStringToIDNumMap,
                              TSize                  currSeqNo,
                              TContigPos             currentBegin,
                              TContigPos             currentEnd,
-                             TValue                 &highestChrId,
+                             TValue                 &highestChrID,
                              TOptions               &options,
                              bool setZero = true)
 {
@@ -646,7 +646,7 @@ int readMatchesFromGFF_Batch(
     typedef typename Value<TCigarStr>::Type         TCigar;
     //typedef typename Value<TReads>::Type            TRead;
     //typedef typename TFragmentStore::TContigStore       TGenomeSet;
-    typedef typename Id<TFragmentStore>::Type       TId;
+    typedef typename ID<TFragmentStore>::Type       TID;
     //typedef typename Iterator<TMatches,Standard>::Type  TMatchIterator;
 
 
@@ -659,7 +659,7 @@ int readMatchesFromGFF_Batch(
     TContigPos genomeLen = length(genome);
 
     // general stuff that is needed
-    typename TGenomeIdMap::const_iterator it;
+    typename TGenomeIDMap::const_iterator it;
     unsigned rSeq = readCount;
     Dna5String gInf;
     String<Dna5Q> curr_read;
@@ -679,7 +679,7 @@ int readMatchesFromGFF_Batch(
 
         typename std::ifstream::pos_type lineStart = position(fileIter);
 
-        TId contigId;
+        TID contigID;
 
         // clear temporary variables
         clear(temp_str);
@@ -703,34 +703,34 @@ int readMatchesFromGFF_Batch(
         readUntil(temp_str, fileIter, NotFunctor<IsGraph>());
 
         //check if the genomeID is in our map of relevant genomeIDs, otherwise skip match
-        it = gIdStringToIdNumMap.find(temp_str);
+        it = gIDStringToIDNumMap.find(temp_str);
         if(options._debugLevel > 1)
             ::std::cout << temp_str << "\t";
-        if(it != gIdStringToIdNumMap.end()) contigId = it->second;
+        if(it != gIDStringToIDNumMap.end()) contigID = it->second;
         else
         {
             skipLine(fileIter);
             continue;
         }
-        if((int)contigId < (int)highestChrId)
+        if((int)contigID < (int)highestChrID)
         {
             std::cerr << "Read files need to be sorted according to chromosomes in genome file.\n";
             return CALLSNPS_GFF_FAILED;
         }
 
-        highestChrId = contigId;
-        if(contigId < currSeqNo)    // havent reached the sequence of interest yet
+        highestChrID = contigID;
+        if(contigID < currSeqNo)    // havent reached the sequence of interest yet
         {
             skipLine(fileIter);
             continue;
         }
 
-        if(contigId > currSeqNo)    // have passed the seq of interest
+        if(contigID > currSeqNo)    // have passed the seq of interest
         {
             setPosition(fileIter, lineStart);
             break;
         }
-        if(setZero) contigId = 0; // if we only store one chromosome at a time
+        if(setZero) contigID = 0; // if we only store one chromosome at a time
 
         // skip whitespaces and read entry in column 2
         skipUntil(fileIter, NotFunctor<IsWhitespace>());
@@ -1131,10 +1131,10 @@ int readMatchesFromGFF_Batch(
             }
 #ifdef READ_NAME_AWARE
             if(!options.storeReadNames) clear(readName);
-            TId readId;
-            if(options.storeReadNames && !getIdByName(fragmentStore.readNameStore, readName, readId, fragmentStore.readNameStoreCache))
+            TID readID;
+            if(options.storeReadNames && !getIDByName(fragmentStore.readNameStore, readName, readID, fragmentStore.readNameStoreCache))
             {
-                readId = length(fragmentStore.readSeqStore);
+                readID = length(fragmentStore.readSeqStore);
                 appendValue(fragmentStore.readSeqStore,curr_read,Generous());
                 appendValue(fragmentStore.readNameStore, readName, Generous());
             }
@@ -1143,7 +1143,7 @@ int readMatchesFromGFF_Batch(
 
             }
 #else
-            TId readId = length(fragmentStore.readSeqStore);
+            TID readID = length(fragmentStore.readSeqStore);
             appendValue(fragmentStore.readSeqStore,curr_read,Generous());
             if(!options.storeReadNames) clear(readName);
             appendValue(fragmentStore.readNameStore, readName, Generous());
@@ -1166,7 +1166,7 @@ int readMatchesFromGFF_Batch(
 
             // create match m
             TMatch m;
-            m.id = readId; //length(fragmentStore.alignedReadStore);
+            m.id = readID; //length(fragmentStore.alignedReadStore);
             if(orientation == 'F')
             {
                 m.beginPos = beginPos;
@@ -1177,8 +1177,8 @@ int readMatchesFromGFF_Batch(
                 m.beginPos = endPos;
                 m.endPos = beginPos;
             }
-            m.contigId = contigId;
-            m.readId = m.id;
+            m.contigID = contigID;
+            m.readID = m.id;
 
             // corresponding match quality attributes are stored in q
             TMatchQuality q;
@@ -1197,7 +1197,7 @@ int readMatchesFromGFF_Batch(
                 q.pairScore = 0;
 
             typename Value<TReadStore>::Type r;
-            r.matePairId = TReadStoreElement::INVALID_ID;
+            r.matePairID = TReadStoreElement::INVALID_ID;
             if(readCount > 0) appendValue(readCounts, readCount, Generous());
 
             appendValue(fragmentStore.readStore, r, Generous());
@@ -1212,7 +1212,7 @@ int readMatchesFromGFF_Batch(
             ++rSeq;
             if(options._debugLevel > 1)
             {
-                ::std::cout<<"Parsed: id= " <<m.readId<<" name="<<readName<<"="<<curr_read<<" with edit="<<editDist<<" at position "<< beginPos<<"\n";
+                ::std::cout<<"Parsed: id= " <<m.readID<<" name="<<readName<<"="<<curr_read<<" with edit="<<editDist<<" at position "<< beginPos<<"\n";
                 ::std::cout << "mScore=" << mScore << " m.beginPos=" << m.beginPos << " m.endPos=" << m.endPos << std::endl;
                 if(q.pairScore==1) ::std::cout << "indel! pairScore=" << q.pairScore <<std::endl;
                 if(q.pairScore==0) ::std::cout << "no indel! pairScore=" << q.pairScore <<std::endl;
@@ -1243,10 +1243,10 @@ _printRecord(TFile &file, BamAlignmentRecord &record)
 {
     file << "QueryName = " << record.qName << std::endl;
     file << "Flag      = " << record.flag << std::endl;
-    file << "RefId     = " << record.rID << std::endl;
+    file << "RefID     = " << record.rID << std::endl;
     file << "MapQ      = " << record.mapQ << std::endl;
     file << "bin       = " << record.bin << std::endl;
-    file << "rNextId   = " << record.rNextId << std::endl;
+    file << "rNextID   = " << record.rNextID << std::endl;
     file << "pNext     = " << record.pNext << std::endl;
     file << "tLen      = " << record.tLen << std::endl;
     file << "seq       = " << record.seq << std::endl;
@@ -1324,7 +1324,7 @@ typename TFragmentStore,
 typename TReadCounts,
 typename TCigarStr,
 typename TGenome,
-typename TGenomeIdMap,
+typename TGenomeIDMap,
 typename TContigPos,
 typename TSize,
 typename TValue,
@@ -1338,11 +1338,11 @@ int readMatchesFromSamBam_Batch(
                          String<Pair<int,int> >     &readClips,
                          StringSet<TCigarStr>       &readCigars,
                          TGenome                    &genome,
-                         TGenomeIdMap               &gIdStringToIdNumMap,
+                         TGenomeIDMap               &gIDStringToIDNumMap,
                          TSize                  currSeqNo,
                          TContigPos             currentBegin,
                          TContigPos             currentEnd,
-                         TValue                 &highestChrId,
+                         TValue                 &highestChrID,
                          TOptions               &options,
                          bool                   firstCall,
                          bool                   setZero = true)
@@ -1360,7 +1360,7 @@ int readMatchesFromSamBam_Batch(
     //typedef typename Value<TCigarStr>::Type         TCigar;
     typedef typename Value<TReads>::Type            TRead;
     //typedef typename TFragmentStore::TContigStore       TGenomeSet;
-    typedef typename Id<TFragmentStore>::Type       TId;
+    typedef typename ID<TFragmentStore>::Type       TID;
     //typedef typename Iterator<TMatches,Standard>::Type  TMatchIterator;
 
 
@@ -1373,7 +1373,7 @@ int readMatchesFromSamBam_Batch(
     TContigPos genomeLen = length(genome);
 
     // general stuff that is needed
-    typename TGenomeIdMap::const_iterator it;
+    typename TGenomeIDMap::const_iterator it;
     unsigned rSeq = readCount;
     Dna5String gInf;
     String<Dna5Q> curr_read;
@@ -1410,7 +1410,7 @@ int readMatchesFromSamBam_Batch(
             clear(record); continue;
         }
 
-        TId contigId;
+        TID contigID;
 
         // clear temporary variables
         clear(temp_str);
@@ -1430,24 +1430,24 @@ int readMatchesFromSamBam_Batch(
 
         // problem: contigNameStore is not filled --> what is rID set to? can i get the original string?? -> extra BamAlignmentRecord spec?
         //check if the genomeID is in our map of relevant genomeIDs, otherwise skip match
-        it = gIdStringToIdNumMap.find(contigNames(context(bamFileIn))[record.rID]);
+        it = gIDStringToIDNumMap.find(contigNames(context(bamFileIn))[record.rID]);
         if(options._debugLevel > 1)
             ::std::cout << record.rID << "\t";
-        if(it != gIdStringToIdNumMap.end())
-            contigId = it->second;
+        if(it != gIDStringToIDNumMap.end())
+            contigID = it->second;
         else // check if there is "chr"
         {
             if(prefix(contigNames(context(bamFileIn))[record.rID],3) == "chr")
-                it = gIdStringToIdNumMap.find(suffix(contigNames(context(bamFileIn))[record.rID],3));
-            if(it != gIdStringToIdNumMap.end())
-                contigId = it->second;
+                it = gIDStringToIDNumMap.find(suffix(contigNames(context(bamFileIn))[record.rID],3));
+            if(it != gIDStringToIDNumMap.end())
+                contigID = it->second;
             else
             {
                 CharString temp = "chr";
                 append(temp,contigNames(context(bamFileIn))[record.rID]);
-                it = gIdStringToIdNumMap.find(temp);
-                if(it != gIdStringToIdNumMap.end())
-                    contigId = it->second;
+                it = gIDStringToIDNumMap.find(temp);
+                if(it != gIDStringToIDNumMap.end())
+                    contigID = it->second;
                 else
                 {
                     clear(record);
@@ -1456,26 +1456,26 @@ int readMatchesFromSamBam_Batch(
             }
         }
 
-        if((int)contigId < (int)highestChrId)
+        if((int)contigID < (int)highestChrID)
         {
             std::cerr << "Read files need to be sorted according to chromosomes in genome file.\n";
             return CALLSNPS_GFF_FAILED;
         }
 
-        highestChrId = contigId;
-        if(contigId < currSeqNo)    // havent reached the sequence of interest yet
+        highestChrID = contigID;
+        if(contigID < currSeqNo)    // havent reached the sequence of interest yet
         {
             clear(record);
             continue;
         }
 
-        if(contigId > currSeqNo)    // have passed the seq of interest
+        if(contigID > currSeqNo)    // have passed the seq of interest
         {
 //          streamSeek(reader,lineStart);
 //            (reader._file).seekp(lineStart);
             break;
         }
-        if(setZero) contigId = 0; // if we only store one chromosome at a time
+        if(setZero) contigID = 0; // if we only store one chromosome at a time
 
         // skip whitespaces and read entry in column 2
 
@@ -1628,10 +1628,10 @@ int readMatchesFromSamBam_Batch(
             }
 #ifdef READ_NAME_AWARE
             if(!options.storeReadNames) clear(readName);
-            TId readId;
-            if(options.storeReadNames && !getIdByName(fragmentStore.readNameStore, readName, readId, fragmentStore.readNameStoreCache))
+            TID readID;
+            if(options.storeReadNames && !getIDByName(fragmentStore.readNameStore, readName, readID, fragmentStore.readNameStoreCache))
             {
-                readId = length(fragmentStore.readSeqStore);
+                readID = length(fragmentStore.readSeqStore);
                 appendValue(fragmentStore.readSeqStore,curr_read,Generous());
                 appendValue(fragmentStore.readNameStore, readName, Generous());
             }
@@ -1640,7 +1640,7 @@ int readMatchesFromSamBam_Batch(
 
             }
 #else
-            TId readId = length(fragmentStore.readSeqStore);
+            TID readID = length(fragmentStore.readSeqStore);
             appendValue(fragmentStore.readSeqStore,curr_read,Generous());
             if(!options.storeReadNames) clear(readName);
             appendValue(fragmentStore.readNameStore, readName, Generous());
@@ -1663,7 +1663,7 @@ int readMatchesFromSamBam_Batch(
 
             // create match m
             TMatch m;
-            m.id = readId; //length(fragmentStore.alignedReadStore);
+            m.id = readID; //length(fragmentStore.alignedReadStore);
             if(orientation == 'F')
             {
                 m.beginPos = beginPos;
@@ -1674,8 +1674,8 @@ int readMatchesFromSamBam_Batch(
                 m.beginPos = endPos;
                 m.endPos = beginPos;
             }
-            m.contigId = contigId;
-            m.readId = m.id;
+            m.contigID = contigID;
+            m.readID = m.id;
 
             // corresponding match quality attributes are stored in q
             TMatchQuality q;
@@ -1694,7 +1694,7 @@ int readMatchesFromSamBam_Batch(
                 q.pairScore = 0;
 
             typename Value<TReadStore>::Type r;
-            r.matePairId = TReadStoreElement::INVALID_ID;
+            r.matePairID = TReadStoreElement::INVALID_ID;
             if(readCount > 0) appendValue(readCounts, readCount, Generous());
 
             appendValue(fragmentStore.readStore, r, Generous());
@@ -1709,7 +1709,7 @@ int readMatchesFromSamBam_Batch(
             ++rSeq;
             if(options._debugLevel > 1)
             {
-                ::std::cout<<"Parsed: id= " <<m.readId<<" name="<<readName<<"="<<curr_read<<" with edit="<<editDist<<" at position "<< beginPos<<"\n";
+                ::std::cout<<"Parsed: id= " <<m.readID<<" name="<<readName<<"="<<curr_read<<" with edit="<<editDist<<" at position "<< beginPos<<"\n";
                 ::std::cout << "mScore=" << mScore << " m.beginPos=" << m.beginPos << "m.endPos="<<m.endPos<<std::endl;
                 if(q.pairScore==1) ::std::cout << "indel! pairScore=" << q.pairScore <<std::endl;
                 if(q.pairScore==0) ::std::cout << "no indel! pairScore=" << q.pairScore <<std::endl;
@@ -1741,7 +1741,7 @@ int readMatchesFromSamBam_Batch(
 // simple position stats analysis
 template <typename TPositions, typename TOptions>
 bool loadPositions(TPositions & positions,
-                   ::std::map<CharString,unsigned> &gIdStringToIdNumMap,
+                   ::std::map<CharString,unsigned> &gIDStringToIDNumMap,
                    char const * filename,
                    TOptions & options)
 {
@@ -1750,11 +1750,11 @@ bool loadPositions(TPositions & positions,
     if(!file.is_open())
         return 1;
 
-    CharString chrId;
+    CharString chrID;
 
     int numPos = 0;
     typename ::std::map<CharString,unsigned>::const_iterator it;
-    unsigned contigId;
+    unsigned contigID;
     typename DirectionIterator<std::ifstream, Input>::Type fileIter = directionIterator(file, Input());
     while (!atEnd(fileIter))
     {
@@ -1762,30 +1762,30 @@ bool loadPositions(TPositions & positions,
 
         // Skip whitespaces just in case (actually there shouldnt be a whitespace at the beginning of a line)
         // and read entry in column 1  --> genomeID
-        clear(chrId);
-        readUntil(chrId, fileIter, IsWhitespace());
+        clear(chrID);
+        readUntil(chrID, fileIter, IsWhitespace());
 
         // Check if the genomeID is in our map of relevant genomeIDs, otherwise skip position.
-        it = gIdStringToIdNumMap.find(chrId);
+        it = gIDStringToIDNumMap.find(chrID);
         if (options._debugLevel > 1)
-            ::std::cout << chrId << "\t";
-        if (it != gIdStringToIdNumMap.end())
+            ::std::cout << chrID << "\t";
+        if (it != gIDStringToIDNumMap.end())
         {
-            contigId = it->second;
+            contigID = it->second;
         }
         else
         {
             skipLine(fileIter);
             continue;
         }
-        SEQAN_ASSERT_GT(length(positions), contigId);
+        SEQAN_ASSERT_GT(length(positions), contigID);
         skipUntil(fileIter, NotFunctor<IsWhitespace>());
         seqan::CharString buffer;
         skipUntil(fileIter, NotFunctor<IsDigit>());
         unsigned pos = 0;
         lexicalCastWithException(pos, buffer);
         pos -= options.positionFormat;
-        appendValue(positions[contigId],pos);
+        appendValue(positions[contigID],pos);
         ++numPos;
         skipLine(fileIter);
     }
@@ -3003,9 +3003,9 @@ _dumpMatches(TFragmentStore &fragmentStore, TStr str)
     {
         char ori = (fragmentStore.alignedReadStore[i].beginPos < fragmentStore.alignedReadStore[i].endPos) ? 'F' : 'R';
         std::cout << "--"<<str<<"Match number " << i << ":\n";
-        std::cout << "--"<<str<<"MatchId  = " << fragmentStore.alignedReadStore[i].id << "\n";
-        std::cout << "--"<<str<<"ReadId   = " << fragmentStore.alignedReadStore[i].readId << "\n";
-        std::cout << "--"<<str<<"ContigId = " << fragmentStore.alignedReadStore[i].contigId << std::flush << "\n";
+        std::cout << "--"<<str<<"MatchID  = " << fragmentStore.alignedReadStore[i].id << "\n";
+        std::cout << "--"<<str<<"ReadID   = " << fragmentStore.alignedReadStore[i].readID << "\n";
+        std::cout << "--"<<str<<"ContigID = " << fragmentStore.alignedReadStore[i].contigID << std::flush << "\n";
         std::cout << "--"<<str<<"gBegin   = " << _min(fragmentStore.alignedReadStore[i].beginPos, fragmentStore.alignedReadStore[i].endPos) << "\n";
         std::cout << "--"<<str<<"gEnd     = " << _max(fragmentStore.alignedReadStore[i].beginPos, fragmentStore.alignedReadStore[i].endPos) << "\n";
         std::cout << "--"<<str<<"orient   = " << ori << std::flush << std::endl;
@@ -3014,16 +3014,16 @@ _dumpMatches(TFragmentStore &fragmentStore, TStr str)
             std::cout << "--"<<str<<"EditDist = " << (int) fragmentStore.alignQualityStore[fragmentStore.alignedReadStore[i].id].errors << "\n";
             std::cout << "--"<<str<<"AvgQ     = " << (int)fragmentStore.alignQualityStore[fragmentStore.alignedReadStore[i].id].score << "\n";
         }
-        std::cout << "--"<<str<<"Readseq  = " << fragmentStore.readSeqStore[fragmentStore.alignedReadStore[i].readId] << std::flush << "\n";
+        std::cout << "--"<<str<<"Readseq  = " << fragmentStore.readSeqStore[fragmentStore.alignedReadStore[i].readID] << std::flush << "\n";
 
     }
 }
 
 
-template<typename TFragmentStore, typename TId, typename TOptions>
+template<typename TFragmentStore, typename TID, typename TOptions>
 void
 realignReferenceToReadProfile(TFragmentStore & fragmentStore,
-                              TId refId,
+                              TID refID,
                               TOptions & options)
 {
 // fragment store types
@@ -3085,8 +3085,8 @@ realignReferenceToReadProfile(TFragmentStore & fragmentStore,
         it += _min(matchIt->beginPos,matchIt->endPos);
 
         if(matchIt->beginPos > matchIt->endPos)
-            reverseComplement(fragmentStore.readSeqStore[matchIt->readId]);
-        TRead& readSeq = fragmentStore.readSeqStore[matchIt->readId];
+            reverseComplement(fragmentStore.readSeqStore[matchIt->readID]);
+        TRead& readSeq = fragmentStore.readSeqStore[matchIt->readID];
 
         TReadIter itRead = begin(readSeq, Standard() );
         TReadIter itReadEnd = end(readSeq, Standard() );
@@ -3127,14 +3127,14 @@ realignReferenceToReadProfile(TFragmentStore & fragmentStore,
                 ++(value(it++)).count[ordValue(*itRead)];
         }
         if(matchIt->beginPos > matchIt->endPos)
-            reverseComplement(fragmentStore.readSeqStore[matchIt->readId]);
+            reverseComplement(fragmentStore.readSeqStore[matchIt->readID]);
 
     }
 
     // put reference sequence into ProfileString
-    TReadIter refSeqIt = begin(fragmentStore.readSeqStore[refId],Standard());
+    TReadIter refSeqIt = begin(fragmentStore.readSeqStore[refID],Standard());
     TProfileString refProfile;
-    resize(refProfile, length(fragmentStore.readSeqStore[refId]), TProfile());
+    resize(refProfile, length(fragmentStore.readSeqStore[refID]), TProfile());
     TProfIter refIt = begin(refProfile,Standard());
     for(; refIt != end(refProfile,Standard()); ++refIt, ++refSeqIt)
         (*refIt).count[0] = ordValue(*refSeqIt);
@@ -3177,7 +3177,7 @@ realignReferenceToReadProfile(TFragmentStore & fragmentStore,
 
 
     //// Debug code
-//  Graph<Alignment<TStringSet, void, WithoutEdgeId> > g1(pairSet);
+//  Graph<Alignment<TStringSet, void, WithoutEdgeID> > g1(pairSet);
 //  int sc1 = globalAlignment(g1, consScore, AlignConfig<false,true,true,false>(), leftDiag, rightDiag, Gotoh());
 //  std::cout << sc1 << std::endl;
 //  std::cout << g1 << std::endl;
@@ -3186,8 +3186,8 @@ realignReferenceToReadProfile(TFragmentStore & fragmentStore,
  //   Score<int> scoreType = Score<int>(0, -1, -2, -10);    // (match, mismatch,gapExtend,gapOpen)
     //StringSet<TRead, Dependent<> > pairSet2;
  //   appendValue(pairSet2, fragmentStore.contigStore[0].seq);
- //   appendValue(pairSet2, fragmentStore.readSeqStore[refId]);
-    //Graph<Alignment<StringSet<TRead, Dependent<> >, void, WithoutEdgeId> > g2(pairSet2);
+ //   appendValue(pairSet2, fragmentStore.readSeqStore[refID]);
+    //Graph<Alignment<StringSet<TRead, Dependent<> >, void, WithoutEdgeID> > g2(pairSet2);
     //int sc2 = globalAlignment(g2, scoreType, AlignConfig<false,true,true,false>(), leftDiag, rightDiag, Gotoh());
     //std::cout << sc2 << std::endl;
     //std::cout << g2 << std::endl;
@@ -3277,7 +3277,7 @@ realignReferenceToReadProfile(TFragmentStore & fragmentStore,
 
     TFragmentString fragments2;
     //// Debug code
-    Graph<Alignment<TStringSet, void, WithoutEdgeId> > g3(pairSet3);
+    Graph<Alignment<TStringSet, void, WithoutEdgeID> > g3(pairSet3);
     //int sc3 =
     globalAlignment(g3, consScore3, AlignConfig<false,true,true,false>(), leftDiag, rightDiag, Gotoh());
     //std::cout << sc3 << std::endl;
@@ -3290,10 +3290,10 @@ realignReferenceToReadProfile(TFragmentStore & fragmentStore,
 
 
 
-template<typename TFragmentStore, typename TId, typename TOptions>
+template<typename TFragmentStore, typename TID, typename TOptions>
 void
 realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
-                              TId refReadId,
+                              TID refReadID,
                               TOptions & options)
 {
 // fragment store types
@@ -3342,7 +3342,7 @@ realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
     TProfileString multiReadProfile;
     resize(multiReadProfile, maxPos - minPos, TProfile()); // get maxPos minPos
 
-    TId refMatchPosId = 0;
+    TID refMatchPosID = 0;
     bool refFound = false;
     TProfIter it = begin(multiReadProfile, Standard() );
     TProfIter itEnd = end(multiReadProfile, Standard());
@@ -3350,10 +3350,10 @@ realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
     TMatchIterator matchItEnd = end(matches, Standard() );
     int counter = 0;
     for(;matchIt != matchItEnd; ++matchIt) {
-        if (matchIt->readId == refReadId)
+        if (matchIt->readID == refReadID)
         {
             refFound = true;
-            refMatchPosId = (TId)counter;
+            refMatchPosID = (TID)counter;
             continue; // dont count the reference sequence in the multi-read-profile
         }
         ++counter;
@@ -3363,8 +3363,8 @@ realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
         it += _min(matchIt->beginPos,matchIt->endPos);
 
         if(matchIt->beginPos > matchIt->endPos)
-            reverseComplement(fragmentStore.readSeqStore[matchIt->readId]);
-        TRead& readSeq = fragmentStore.readSeqStore[matchIt->readId];
+            reverseComplement(fragmentStore.readSeqStore[matchIt->readID]);
+        TRead& readSeq = fragmentStore.readSeqStore[matchIt->readID];
 
         TReadIter itRead = begin(readSeq, Standard() );
         TReadIter itReadEnd = end(readSeq, Standard() );
@@ -3405,15 +3405,15 @@ realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
                 ++(value(it++)).count[ordValue(*itRead)];
         }
         if(matchIt->beginPos > matchIt->endPos)
-            reverseComplement(fragmentStore.readSeqStore[matchIt->readId]);
+            reverseComplement(fragmentStore.readSeqStore[matchIt->readID]);
 
     }
     SEQAN_ASSERT(refFound);
 
     // put reference sequence into ProfileString
-    TReadIter refSeqIt = begin(fragmentStore.readSeqStore[refReadId],Standard());
+    TReadIter refSeqIt = begin(fragmentStore.readSeqStore[refReadID],Standard());
     TProfileString refProfile;
-    resize(refProfile, length(fragmentStore.readSeqStore[refReadId]), TProfile());
+    resize(refProfile, length(fragmentStore.readSeqStore[refReadID]), TProfile());
     TProfIter refIt = begin(refProfile,Standard());
     for(; refIt != end(refProfile,Standard()); ++refIt, ++refSeqIt)
         (*refIt).count[0] = ordValue(*refSeqIt);
@@ -3536,7 +3536,7 @@ realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
     typedef String<Fragment<> > TFragmentString;
     TFragmentString fragments;
     //// Debug code
-//  Graph<Alignment<TStringSet, void, WithoutEdgeId> > g3(pairSet3);
+//  Graph<Alignment<TStringSet, void, WithoutEdgeID> > g3(pairSet3);
 //  int sc3 = globalAlignment(g3, consScore, AlignConfig<false,true,true,false>(), leftDiag, rightDiag, Gotoh());
 //  std::cout << sc3 << std::endl;
 //  std::cout << g3 << std::endl;
@@ -3601,9 +3601,9 @@ realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
     fragItEnd = end(fragments2, Standard());
 
 
-    TMatch& refAli = fragmentStore.alignedReadStore[refMatchPosId];
-    fragmentStore.alignedReadStore[refMatchPosId].beginPos = fragmentStore.alignedReadStore[refMatchPosId].endPos = 0;    // "disable read"
-    clear(fragmentStore.alignedReadStore[refMatchPosId].gaps);    // -> reference gaps are handled separately
+    TMatch& refAli = fragmentStore.alignedReadStore[refMatchPosID];
+    fragmentStore.alignedReadStore[refMatchPosID].beginPos = fragmentStore.alignedReadStore[refMatchPosID].endPos = 0;    // "disable read"
+    clear(fragmentStore.alignedReadStore[refMatchPosID].gaps);    // -> reference gaps are handled separately
 
     // add reference back to multi-read-alignment according to new alignment
     TReadPos profilePos = 0;    // corresponds to consPos in realigner code
@@ -3628,11 +3628,11 @@ realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
             }
             // equivalent to refPos + fraglen < nextRefPos
             while (referencePos < (TReadPos)fragIt->begin2) { // read stretch before matching fragment starts
-                SEQAN_ASSERT_LT(referencePos, (TReadPos)length(fragmentStore.readSeqStore[refReadId]));
+                SEQAN_ASSERT_LT(referencePos, (TReadPos)length(fragmentStore.readSeqStore[refReadID]));
                 // equivalent to profileDel
                 if (gapLen) {
                     diff += gapLen; // add gap of length gaplen to readGaps
-                    appendValue(fragmentStore.alignedReadStore[refMatchPosId].gaps, TGapAnchor(referencePos,referencePos + diff), Generous() );
+                    appendValue(fragmentStore.alignedReadStore[refMatchPosID].gaps, TGapAnchor(referencePos,referencePos + diff), Generous() );
                     gapLen = 0; // do this only once
                 }
                 //int numGaps =
@@ -3641,13 +3641,13 @@ realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
                 ++alignPos;
             }
             for (TSize i = 0; i<fragIt->len; ++i, ++profilePos, ++referencePos, ++alignPos) {
-                SEQAN_ASSERT_LT(referencePos, (TReadPos)length(fragmentStore.readSeqStore[refReadId]));
+                SEQAN_ASSERT_LT(referencePos, (TReadPos)length(fragmentStore.readSeqStore[refReadID]));
                 if (firstMatch) {
                     firstMatch = false;
-                    fragmentStore.alignedReadStore[refMatchPosId].beginPos = bandOffset + profilePos;
+                    fragmentStore.alignedReadStore[refMatchPosID].beginPos = bandOffset + profilePos;
                 } else if (gapLen) {
                     diff += gapLen;
-                    appendValue(fragmentStore.alignedReadStore[refMatchPosId].gaps, TGapAnchor(referencePos,referencePos + diff), Generous() );
+                    appendValue(fragmentStore.alignedReadStore[refMatchPosID].gaps, TGapAnchor(referencePos,referencePos + diff), Generous() );
                     gapLen = 0;
                 }
             }
@@ -3655,12 +3655,12 @@ realignReferenceToDiploidConsensusProfile(TFragmentStore & fragmentStore,
         } while (fragIt != fragItEnd);
     }
 
-    for (; referencePos < (TReadPos)length(fragmentStore.readSeqStore[refReadId]); ++referencePos) {
+    for (; referencePos < (TReadPos)length(fragmentStore.readSeqStore[refReadID]); ++referencePos) {
         //int numGaps =
         insertGap(matches, bandOffset + alignPos);
         ++alignPos;
     }
-    fragmentStore.alignedReadStore[refMatchPosId].endPos = fragmentStore.alignedReadStore[refMatchPosId].beginPos + referencePos + diff;
+    fragmentStore.alignedReadStore[refMatchPosID].endPos = fragmentStore.alignedReadStore[refMatchPosID].beginPos + referencePos + diff;
 
     SEQAN_CONSENSUS_OPEN_PENALTY_FACTOR = tmp;
 
@@ -3918,7 +3918,7 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
 
 
     unsigned numReads = length(matches)-1; // exclude reference sequence
-    unsigned refId = length(matchQualities); // reference id (there may be more matchQs than matches due to pile up correction)
+    unsigned refID = length(matchQualities); // reference id (there may be more matchQs than matches due to pile up correction)
 
 
 //
@@ -3926,9 +3926,9 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
     reAlign(fragmentStore,consScore,0,1,/*bandWidth*/5,false);
 #else
 //  reAlign(fragmentStore,consScore,0,1,/*bandWidth*/5,false);
-//  realignReferenceToDiploidConsensusProfileDeleteSeqErrors(fragmentStore,refId,options);
-    realignReferenceToDiploidConsensusProfile(fragmentStore,refId,options);
-//    realignReferenceToDiploidConsensusProfileDeleteSeqErrors(fragmentStore,refId,options);
+//  realignReferenceToDiploidConsensusProfileDeleteSeqErrors(fragmentStore,refID,options);
+    realignReferenceToDiploidConsensusProfile(fragmentStore,refID,options);
+//    realignReferenceToDiploidConsensusProfileDeleteSeqErrors(fragmentStore,refID,options);
 #endif
 
     if(options._debugLevel > 1) ::std::cout << "Finished realigning." << std::endl;
@@ -3990,7 +3990,7 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
     TMatch tempRef;
     while(matchIt != matchItEnd)
     {
-        if((*matchIt).readId == refId) // this is the reference
+        if((*matchIt).readID == refID) // this is the reference
         {
             refFound = true;
             tempRef = *matchIt;
@@ -4017,7 +4017,7 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
     matchItEnd  = end(matches, Standard());
     matchItEnd--; // exclude reference sequence
 
-    TRead       &reference = fragmentStore.readSeqStore[fragmentStore.alignedReadStore[numReads].readId]; // last read is reference sequence
+    TRead       &reference = fragmentStore.readSeqStore[fragmentStore.alignedReadStore[numReads].readID]; // last read is reference sequence
     TReadGaps   referenceGaps(reference, fragmentStore.alignedReadStore[numReads].gaps);
     TContigPos      refStart = (TContigPos)fragmentStore.alignedReadStore[numReads].beginPos;
     TContigGaps contigGaps(fragmentStore.contigStore[0].seq, fragmentStore.contigStore[0].gaps);
@@ -4138,7 +4138,7 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
 
             char orientation = ((*matchIt).beginPos > (*matchIt).endPos) ? 'R' : 'F';
 
-            TReadGaps readGaps(reads[(*matchIt).readId],(*matchIt).gaps);
+            TReadGaps readGaps(reads[(*matchIt).readID],(*matchIt).gaps);
             TReadGapIter rgIt = iter(readGaps,candidateViewPos - currViewBegin);
 
             // check out which position is hit in this read
@@ -4148,7 +4148,7 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
             {
                 readPos = positionGapToSeq(readGaps,candidateViewPos - currViewBegin);
                 if(orientation == 'R')
-                    readPos = length(reads[(*matchIt).readId]) - readPos - 1;
+                    readPos = length(reads[(*matchIt).readID]) - readPos - 1;
             }
 
 #ifdef SNPSTORE_DEBUG
@@ -4159,8 +4159,8 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
             if(readPos != -1) //-1 indicates gap in read
             {
 
-                if(orientation == 'R') candidateBase = f((Dna5)reads[(*matchIt).readId][readPos]);
-                else candidateBase = (Dna5)reads[(*matchIt).readId][readPos];
+                if(orientation == 'R') candidateBase = f((Dna5)reads[(*matchIt).readID][readPos]);
+                else candidateBase = (Dna5)reads[(*matchIt).readID][readPos];
 
                 if(refGap)
                 {
@@ -4168,7 +4168,7 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
                         ++numIndelsObservedF; // count insertions
                     else ++numIndelsObservedR;
                     if(options.minDifferentReadPos > 0)
-                        if((unsigned)(length(reads[(*matchIt).readId]) - readPos) > options.excludeBorderPos  &&
+                        if((unsigned)(length(reads[(*matchIt).readID]) - readPos) > options.excludeBorderPos  &&
                             (unsigned) readPos >= options.excludeBorderPos )
                         indelReadPosMap.insert(readPos);
                 }
@@ -4176,12 +4176,12 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
                 {
                     observedAtLeastOneMut = true;
                     if(options.minDifferentReadPos > 0)
-                        if((unsigned)(length(reads[(*matchIt).readId]) - readPos) > options.excludeBorderPos  &&
+                        if((unsigned)(length(reads[(*matchIt).readID]) - readPos) > options.excludeBorderPos  &&
                             (unsigned) readPos >= options.excludeBorderPos )
                         readPosMap.insert(readPos);
                 }
-                quality = getQualityValue(reads[(*matchIt).readId][readPos]) ;
-                if(options.newQualityCalibrationFactor > 0.0001 ) quality = calibrateQuality(reads[(*matchIt).readId], matchQualities[(*matchIt).id],quality,options);
+                quality = getQualityValue(reads[(*matchIt).readID][readPos]) ;
+                if(options.newQualityCalibrationFactor > 0.0001 ) quality = calibrateQuality(reads[(*matchIt).readID], matchQualities[(*matchIt).id],quality,options);
 
                 if(!options.useBaseQuality && quality > (int)matchQualities[(*matchIt).id].score)
                 {   // dont trust the quality of this position more
@@ -4210,14 +4210,14 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
                 {
                     readPos = positionGapToSeq(readGaps,candidateViewPos - currViewBegin);
 #ifdef SNPSTORE_DEBUG
-                    if(extraVVVV) std::cout <<"del readPos = " << readPos  << "readlength=" << length(reads[(*matchIt).readId]) << std::endl;
+                    if(extraVVVV) std::cout <<"del readPos = " << readPos  << "readlength=" << length(reads[(*matchIt).readID]) << std::endl;
 #endif
                     if(orientation == 'R')
-                        readPos = length(reads[(*matchIt).readId]) - readPos;
+                        readPos = length(reads[(*matchIt).readID]) - readPos;
 #ifdef SNPSTORE_DEBUG
-                    if(extraVVVV) std::cout <<"del readPos = " << readPos  << "readlength=" << length(reads[(*matchIt).readId]) << std::endl;
+                    if(extraVVVV) std::cout <<"del readPos = " << readPos  << "readlength=" << length(reads[(*matchIt).readID]) << std::endl;
 #endif
-                    quality = (getQualityValue(reads[(*matchIt).readId][readPos-1])  + getQualityValue(reads[(*matchIt).readId][readPos]) ) / 2;
+                    quality = (getQualityValue(reads[(*matchIt).readID][readPos-1])  + getQualityValue(reads[(*matchIt).readID][readPos]) ) / 2;
                     if(orientation == 'F')
                     {
                         indelQualF += quality;
@@ -4230,7 +4230,7 @@ convertMatchesToGlobalAlignment(fragmentStore, scoreType, Nothing());
                     }
                     if(options.minDifferentReadPos > 0)
                     {
-                        if((unsigned)(length(reads[(*matchIt).readId]) - readPos) > options.excludeBorderPos  &&
+                        if((unsigned)(length(reads[(*matchIt).readID]) - readPos) > options.excludeBorderPos  &&
                             (unsigned) readPos >= options.excludeBorderPos )
                         indelReadPosMap.insert(readPos);
                     }
@@ -4684,7 +4684,7 @@ void dumpSNPsBatch(
         if(extraV)
         {
             for (TMatchIterator tempIt = matchRangeBegin; tempIt != matchRangeEnd; ++tempIt)
-                ::std::cout << reads[(*tempIt).readId]<<"\n";
+                ::std::cout << reads[(*tempIt).readID]<<"\n";
         }
 #endif
         std::set<unsigned> readPosMap;
@@ -4708,7 +4708,7 @@ void dumpSNPsBatch(
                 ++matchIt;
                 continue;
             }
-            /*if(!empty(readCigars[(*matchIt).readId]))//splitRead, dont use for snp calling for now
+            /*if(!empty(readCigars[(*matchIt).readID]))//splitRead, dont use for snp calling for now
             {
                 ++matchIt;
                 continue;
@@ -4723,7 +4723,7 @@ void dumpSNPsBatch(
                 if (orientation == 'R')
                     reverseComplement(gInf);
 
-                assignSource(row(align, 0), reads[(*matchIt).readId]);
+                assignSource(row(align, 0), reads[(*matchIt).readID]);
                 assignSource(row(align, 1), gInf);
                 globalAlignment(align, scoreType);  //splitReads: get alignment from cigar string
             }
@@ -4741,20 +4741,20 @@ void dumpSNPsBatch(
 #endif
                 if(readPos != -1) //-1 indicates gap
                 {
-                    candidateBase = f((Dna5)reads[(*matchIt).readId][readPos]);
+                    candidateBase = f((Dna5)reads[(*matchIt).readID][readPos]);
 #ifdef SNPSTORE_DEBUG
                     if(extraV) std::cout << candidateBase << "candBase\n";
 #endif
-                    quality = getQualityValue(reads[(*matchIt).readId][readPos]) ;
+                    quality = getQualityValue(reads[(*matchIt).readID][readPos]) ;
                     if(candidateBase != refBase)
                     {
                         observedAtLeastOneMut = true;
                         if(options.minDifferentReadPos > 0)
-                            if((unsigned)(length(reads[(*matchIt).readId]) - readPos) > options.excludeBorderPos  && (unsigned) readPos >= options.excludeBorderPos )
+                            if((unsigned)(length(reads[(*matchIt).readID]) - readPos) > options.excludeBorderPos  && (unsigned) readPos >= options.excludeBorderPos )
                                 readPosMap.insert(readPos);
 
                     }
-                    if(options.newQualityCalibrationFactor > 0.0001) quality = calibrateQuality(reads[(*matchIt).readId], matchQualities[(*matchIt).id],quality,options);
+                    if(options.newQualityCalibrationFactor > 0.0001) quality = calibrateQuality(reads[(*matchIt).readID], matchQualities[(*matchIt).id],quality,options);
 
                     if(!options.useBaseQuality && quality > (int)matchQualities[(*matchIt).id].score)   // dont trust the quality of this position more
                     {                                                                               // than the average quality of this read
@@ -4765,7 +4765,7 @@ void dumpSNPsBatch(
                     //if(quality < 0 || quality > 40)::std::cout << "falschQ candPos = " << candidatePos + startCoord << std::endl;
 
                     unsigned tmpCount = 1;
-                    if(!empty(readCounts)) tmpCount = readCounts[(*matchIt).readId];
+                    if(!empty(readCounts)) tmpCount = readCounts[(*matchIt).readID];
                     for (unsigned k = 0; k < tmpCount; ++k)
                     {
                         columnQualityR[ordValue(candidateBase)] += quality;
@@ -4783,16 +4783,16 @@ void dumpSNPsBatch(
 
                 if(readPos != -1) //-1 indicates gap
                 {
-                    candidateBase = (Dna5)reads[(*matchIt).readId][readPos];
-                    quality = getQualityValue(reads[(*matchIt).readId][readPos]) ;
+                    candidateBase = (Dna5)reads[(*matchIt).readID][readPos];
+                    quality = getQualityValue(reads[(*matchIt).readID][readPos]) ;
                     if(candidateBase != refBase)
                     {
                         observedAtLeastOneMut = true;
                         if(options.minDifferentReadPos > 0)
-                            if((unsigned)(length(reads[(*matchIt).readId]) - readPos) > options.excludeBorderPos  && (unsigned) readPos >= options.excludeBorderPos )
+                            if((unsigned)(length(reads[(*matchIt).readID]) - readPos) > options.excludeBorderPos  && (unsigned) readPos >= options.excludeBorderPos )
                                 readPosMap.insert(readPos);
                     }
-                    if(options.newQualityCalibrationFactor > 0.0001) quality = calibrateQuality(reads[(*matchIt).readId], matchQualities[(*matchIt).id],quality,options);
+                    if(options.newQualityCalibrationFactor > 0.0001) quality = calibrateQuality(reads[(*matchIt).readID], matchQualities[(*matchIt).id],quality,options);
 
                     if(!options.useBaseQuality && quality > (int) matchQualities[(*matchIt).id].score)
                     {
@@ -4803,7 +4803,7 @@ void dumpSNPsBatch(
                     //if(quality < 0 || quality > 40)::std::cout << "falschQ candPos = " << candidatePos + startCoord << std::endl;
 
                     unsigned tmpCount = 1;
-                    if(!empty(readCounts)) tmpCount = readCounts[(*matchIt).readId];
+                    if(!empty(readCounts)) tmpCount = readCounts[(*matchIt).readID];
                     for (unsigned k = 0; k < tmpCount; ++k)
                     {
                         ++countF[ordValue(candidateBase)];
@@ -5004,21 +5004,21 @@ void dumpShortIndelPolymorphismsBatch(
     // collect potential indels
     for(;matchIt != matchItEnd; ++matchIt)
     {
-        if(matchQualities[(*matchIt).id].pairScore == 0 && empty(readCigars[(*matchIt).readId])) //if(length(cigar)>0)  dont skip!
+        if(matchQualities[(*matchIt).id].pairScore == 0 && empty(readCigars[(*matchIt).readID])) //if(length(cigar)>0)  dont skip!
             continue;
 
         String<Pair<int,Pair<int,int> > > readInserts;
         String<Pair<int,Pair<int,int> > > readDeletes;
 
-        TRead& read = reads[(*matchIt).readId];
+        TRead& read = reads[(*matchIt).readID];
         int readLen = length(read);
-        if(empty(readCigars[(*matchIt).readId]))// if this is not a split read --> do edit alignment
+        if(empty(readCigars[(*matchIt).readID]))// if this is not a split read --> do edit alignment
         {
 #ifdef SNPSTORE_DEBUG
             if(extraV) ::std::cout << "read is edit indel mapped" << std::endl;
             if(extraV) ::std::cout << "read=" << read << " beg,end="<<(*matchIt).beginPos << ","<<(*matchIt).endPos <<::std::endl;
 #endif
-            assignSource(row(align, 0), reads[(*matchIt).readId]);
+            assignSource(row(align, 0), reads[(*matchIt).readID]);
             assignSource(row(align, 1), infix(genome, _min((*matchIt).beginPos,(*matchIt).endPos), _max((*matchIt).beginPos,(*matchIt).endPos)));
             if ((*matchIt).beginPos > (*matchIt).endPos)
                 reverseComplement(source(row(align, 0))); // check if reversing read is better for gap placement
@@ -5030,7 +5030,7 @@ void dumpShortIndelPolymorphismsBatch(
 #endif
             // transform first and last read character to genomic positions
             unsigned viewPosReadFirst  = toViewPosition(row(align, 0), 0);
-            unsigned viewPosReadLast   = toViewPosition(row(align, 0), length(reads[(*matchIt).readId]) - 1);
+            unsigned viewPosReadLast   = toViewPosition(row(align, 0), length(reads[(*matchIt).readID]) - 1);
 
             getIndels(align,readInserts,readDeletes, viewPosReadFirst,viewPosReadLast+1);
 
@@ -5046,7 +5046,7 @@ void dumpShortIndelPolymorphismsBatch(
 
     //      if(extraV) ::std::cout << "read is split mapped" << std::endl;
             //this is where i have to get rid of adjacent insertions/deletions in edit-split-mapped reads
-            typename Value<TReadCigars>::Type &cigar = readCigars[(*matchIt).readId];
+            typename Value<TReadCigars>::Type &cigar = readCigars[(*matchIt).readID];
             int readPos = 0;
             int refPos = 0;
             if((*matchIt).endPos > (*matchIt).beginPos)
@@ -5182,7 +5182,7 @@ void dumpShortIndelPolymorphismsBatch(
                 }*/
 
             }
-            if(!empty(readCigars[(*matchIt).readId]))// if this is a split read --> increase counter
+            if(!empty(readCigars[(*matchIt).readID]))// if this is a split read --> increase counter
             {
                 splitCountIt = splitCounts.find(Pair<unsigned,int>(indelCandPos,-(int)(readInserts[i].i2).i2));
                 if(splitCountIt == splitCounts.end())
@@ -5239,7 +5239,7 @@ void dumpShortIndelPolymorphismsBatch(
                     strandIt->second.i2 = true;
 
             }
-            if(!empty(readCigars[(*matchIt).readId]))// if this is a split read --> increase counter
+            if(!empty(readCigars[(*matchIt).readID]))// if this is a split read --> increase counter
             {
                 splitCountIt = splitCounts.find(Pair<unsigned,int>(indelCandPos,(readDeletes[i].i2).i2));
                 if(splitCountIt == splitCounts.end())
@@ -5259,11 +5259,11 @@ void dumpShortIndelPolymorphismsBatch(
     matchIt = begin(matches, Standard());
     while(matchIt != matchItEnd)
     {
-        unsigned currSeqNo = (*matchIt).contigId;
+        unsigned currSeqNo = (*matchIt).contigID;
         TMatchIterator currSeqMatchItBegin = matchIt;
         while(matchIt != matchItEnd)
         {
-            if ((*matchIt).contigId != currSeqNo) break;
+            if ((*matchIt).contigID != currSeqNo) break;
             ++matchIt;
         }
         TMatchIterator currSeqMatchItEnd = matchIt;
@@ -5787,18 +5787,18 @@ void dumpPositionsRealignBatch(
 
 
     unsigned numReads = length(matches)-1; // exclude reference sequence
-    unsigned refId = length(matchQualities); // reference id (there may be more matchQs than matches due to pile up correction)
+    unsigned refID = length(matchQualities); // reference id (there may be more matchQs than matches due to pile up correction)
 
 
 //
 #ifndef  READS_454
     reAlign(fragmentStore,consScore,0,1,/*bandWidth*/5,false);
-    //realignReferenceToReadProfile(fragmentStore,refId,options);
-    //realignReferenceToDiploidConsensusProfile(fragmentStore,refId,options);
+    //realignReferenceToReadProfile(fragmentStore,refID,options);
+    //realignReferenceToDiploidConsensusProfile(fragmentStore,refID,options);
 #else
 //  reAlign(fragmentStore,consScore,0,1,/*bandWidth*/5,false);
-    realignReferenceToDiploidConsensusProfile(fragmentStore,refId,options);
-//    realignReferenceToDiploidConsensusProfileDeleteSeqErrors(fragmentStore,refId,options);
+    realignReferenceToDiploidConsensusProfile(fragmentStore,refID,options);
+//    realignReferenceToDiploidConsensusProfileDeleteSeqErrors(fragmentStore,refID,options);
 #endif
 
     if(options._debugLevel > 1) ::std::cout << "Finished realigning." << std::endl;
@@ -5828,7 +5828,7 @@ void dumpPositionsRealignBatch(
     TMatch tempRef;
     while(matchIt != matchItEnd)
     {
-        if((*matchIt).readId == refId) // this is the reference
+        if((*matchIt).readID == refID) // this is the reference
         {
             refFound = true;
             tempRef = *matchIt;
@@ -5850,7 +5850,7 @@ void dumpPositionsRealignBatch(
     matchItEnd  = end(matches, Standard());
     matchItEnd--; // exclude reference sequence
 
-    TRead       &reference = fragmentStore.readSeqStore[fragmentStore.alignedReadStore[numReads].readId]; // last read is reference sequence
+    TRead       &reference = fragmentStore.readSeqStore[fragmentStore.alignedReadStore[numReads].readID]; // last read is reference sequence
     TReadGaps   referenceGaps(reference, fragmentStore.alignedReadStore[numReads].gaps);
 //  TContigPos      refStart = (TContigPos)fragmentStore.alignedReadStore[numReads].beginPos;
 //  TContigGaps contigGaps(fragmentStore.contigStore[0].seq, fragmentStore.contigStore[0].gaps);
@@ -5932,7 +5932,7 @@ void dumpPositionsRealignBatch(
 
             char orientation = ((*matchIt).beginPos > (*matchIt).endPos) ? 'R' : 'F';
 
-            TReadGaps readGaps(reads[(*matchIt).readId],(*matchIt).gaps);
+            TReadGaps readGaps(reads[(*matchIt).readID],(*matchIt).gaps);
             TReadGapIter rgIt = iter(readGaps,candidateViewPos - currViewBegin);
 
             // check out which position is hit in this read
@@ -5942,7 +5942,7 @@ void dumpPositionsRealignBatch(
             {
                 readPos = positionGapToSeq(readGaps,candidateViewPos - currViewBegin);
                 if(orientation == 'R')
-                    readPos = length(reads[(*matchIt).readId]) - readPos - 1;
+                    readPos = length(reads[(*matchIt).readID]) - readPos - 1;
             }
 
 #ifdef SNPSTORE_DEBUG
@@ -5952,14 +5952,14 @@ void dumpPositionsRealignBatch(
             if(readPos != -1) //-1 indicates gap in read
             {
                 //if(options.minDifferentReadPos > 0)
-                //    if((unsigned)(length(reads[(*matchIt).readId]) - readPos) > options.excludeBorderPos  &&
+                //    if((unsigned)(length(reads[(*matchIt).readID]) - readPos) > options.excludeBorderPos  &&
                 //            (unsigned) readPos >= options.excludeBorderPos )
                 //        readPosMap.insert(readPos);
 
-                if(orientation == 'R') candidateBase = f((Dna5)reads[(*matchIt).readId][readPos]);
-                else candidateBase = (Dna5)reads[(*matchIt).readId][readPos];
+                if(orientation == 'R') candidateBase = f((Dna5)reads[(*matchIt).readID][readPos]);
+                else candidateBase = (Dna5)reads[(*matchIt).readID][readPos];
 
-                quality = getQualityValue(reads[(*matchIt).readId][readPos]) ;
+                quality = getQualityValue(reads[(*matchIt).readID][readPos]) ;
 
                 if(!options.useBaseQuality && quality > (int)matchQualities[(*matchIt).id].score)
                 {   // dont trust the quality of this position more
@@ -6139,7 +6139,7 @@ void dumpPosBatch(
         if(extraV)
         {
             for (TMatchIterator tempIt = matchRangeBegin; tempIt != matchRangeEnd; ++tempIt)
-                ::std::cout << reads[(*tempIt).readId]<<"\n";
+                ::std::cout << reads[(*tempIt).readID]<<"\n";
         }
 #endif
 //        std::set<unsigned> readPosMap;
@@ -6172,7 +6172,7 @@ void dumpPosBatch(
                 if (orientation == 'R')
                     reverseComplement(gInf);
 
-                assignSource(row(align, 0), reads[(*matchIt).readId]);
+                assignSource(row(align, 0), reads[(*matchIt).readID]);
                 assignSource(row(align, 1), gInf);
                 globalAlignment(align, scoreType);  //splitReads: get alignment from cigar string
             }
@@ -6191,14 +6191,14 @@ void dumpPosBatch(
                 if(readPos != -1) //-1 indicates gap
                 {
                     //if(options.minDifferentReadPos > 0)
-                    //    if((unsigned)(length(reads[(*matchIt).readId]) - readPos) > options.excludeBorderPos  &&
+                    //    if((unsigned)(length(reads[(*matchIt).readID]) - readPos) > options.excludeBorderPos  &&
                     //        (unsigned) readPos >= options.excludeBorderPos )
                     //        readPosMap.insert(readPos);
-                    candidateBase = f((Dna5)reads[(*matchIt).readId][readPos]);
+                    candidateBase = f((Dna5)reads[(*matchIt).readID][readPos]);
 #ifdef SNPSTORE_DEBUG
                     if(extraV) std::cout << candidateBase << "candBase\n";
 #endif
-                    quality = getQualityValue(reads[(*matchIt).readId][readPos]) ;
+                    quality = getQualityValue(reads[(*matchIt).readID][readPos]) ;
 
                     if(!options.useBaseQuality && quality > (int)matchQualities[(*matchIt).id].score)   // dont trust the quality of this position more
                     {                                                                               // than the average quality of this read
@@ -6209,7 +6209,7 @@ void dumpPosBatch(
                     //if(quality < 0 || quality > 40)::std::cout << "falschQ candPos = " << candidatePos + startCoord << std::endl;
 
                     unsigned tmpCount = 1;
-                    if(!empty(readCounts)) tmpCount = readCounts[(*matchIt).readId];
+                    if(!empty(readCounts)) tmpCount = readCounts[(*matchIt).readID];
                     for (unsigned k = 0; k < tmpCount; ++k)
                     {
                         columnQualityR[ordValue(candidateBase)] += quality;
@@ -6230,12 +6230,12 @@ void dumpPosBatch(
                 if(readPos != -1) //-1 indicates gap
                 {
                     //if(options.minDifferentReadPos > 0)
-                    //    if((unsigned)(length(reads[(*matchIt).readId]) - readPos) > options.excludeBorderPos  &&
+                    //    if((unsigned)(length(reads[(*matchIt).readID]) - readPos) > options.excludeBorderPos  &&
                     //        (unsigned) readPos >= options.excludeBorderPos )
                     //        readPosMap.insert(readPos);
 
-                    candidateBase = (Dna5)reads[(*matchIt).readId][readPos];
-                    quality = getQualityValue(reads[(*matchIt).readId][readPos]) ;
+                    candidateBase = (Dna5)reads[(*matchIt).readID][readPos];
+                    quality = getQualityValue(reads[(*matchIt).readID][readPos]) ;
 
                     if(!options.useBaseQuality && quality > (int) matchQualities[(*matchIt).id].score)
                     {
@@ -6246,7 +6246,7 @@ void dumpPosBatch(
                     //if(quality < 0 || quality > 40)::std::cout << "falschQ candPos = " << candidatePos + startCoord << std::endl;
 
                     unsigned tmpCount = 1;
-                    if(!empty(readCounts)) tmpCount = readCounts[(*matchIt).readId];
+                    if(!empty(readCounts)) tmpCount = readCounts[(*matchIt).readID];
                     for (unsigned k = 0; k < tmpCount; ++k)
                     {
                         ++countF[ordValue(candidateBase)];

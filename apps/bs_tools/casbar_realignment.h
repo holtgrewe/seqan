@@ -29,8 +29,8 @@ using namespace seqan;
 
 
             // contig number
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // begin position
             typename TMatch::TPos ba = _min(a.beginPos, a.endPos);
@@ -92,8 +92,8 @@ using namespace seqan;
             typedef typename Value<TMatches>::Type TMatch;
 
             // contig number
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // begin position
             typename TMatch::TPos ba = _min(a.beginPos, a.endPos);
@@ -126,12 +126,12 @@ using namespace seqan;
 
 
     template <typename TReadMatch>
-    struct LessId : public ::std::binary_function < TReadMatch, TReadMatch, bool >
+    struct LessID : public ::std::binary_function < TReadMatch, TReadMatch, bool >
     {
         inline bool operator() (TReadMatch const &a, TReadMatch const &b) const
         {
             // genome sequence
-            return (a.readId < b.readId);
+            return (a.readID < b.readID);
 
         }
     };
@@ -144,8 +144,8 @@ using namespace seqan;
         inline bool operator() (TReadMatch const &a, TReadMatch const &b) const
         {
             // genome sequence
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // begin position
             if (std::min(a.beginPos, a.endPos) < std::min(b.beginPos, b.endPos))
@@ -154,7 +154,7 @@ using namespace seqan;
                 return false;
 
             // Break tie by read id.
-            return a.readId < b.readId;
+            return a.readID < b.readID;
         }
     };
 
@@ -167,14 +167,14 @@ using namespace seqan;
         inline bool operator() (TReadMatch const &a, TReadMatch const &b) const
         {
             // genome sequence
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // end position
             if (std::max(a.endPos,a.beginPos) < std::max(b.endPos,b.beginPos)) return true;
             if (std::max(a.endPos,a.beginPos) > std::max(b.endPos,b.beginPos)) return false;
 
-            return a.readId < b.readId;
+            return a.readID < b.readID;
         }
     };
 
@@ -186,8 +186,8 @@ using namespace seqan;
         inline bool operator() (TReadMatch const &a, TReadMatch const &b) const
         {
             // genome sequence
-            if (a.contigId < b.contigId) return true;
-            if (a.contigId > b.contigId) return false;
+            if (a.contigID < b.contigID) return true;
+            if (a.contigID > b.contigID) return false;
 
             // end position
             if (_max(a.endPos,a.beginPos) < _max(b.endPos,b.beginPos)) return true;
@@ -248,8 +248,8 @@ void doRealigning(
     if(options._debugLevel > 1)::std::cout << "Realigning reads including reference..." << std::flush;
 
     // Would diploid consensus profile would be not that clear in bs case, hence we do not do that for the beginning!
-    //unsigned refId = length(matchQualities); // reference id (there may be more matchQs than matches due to pile up correction)
-    //realignReferenceToDiploidConsensusProfile(fragmentStore,refId,options);
+    //unsigned refID = length(matchQualities); // reference id (there may be more matchQs than matches due to pile up correction)
+    //realignReferenceToDiploidConsensusProfile(fragmentStore,refID,options);
 
     // sort reads according to begin position
     sortAlignedReads(fragmentStore.alignedReadStore, SortBeginPos());
@@ -262,7 +262,7 @@ void doRealigning(
     TMatch tempRef;
     while(matchIt != matchItEnd)
     {
-        if ((*matchIt).readId == length(fragmentStore.readSeqStore)-1)
+        if ((*matchIt).readID == length(fragmentStore.readSeqStore)-1)
         {
             refFound = true;
             tempRef = *matchIt;

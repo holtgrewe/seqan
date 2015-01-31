@@ -83,11 +83,11 @@ struct Options
 
 //int readFileMultiSeqFile(char const * filename, Options const & /*options*/)
 //{
-//    typedef StringSet<CharString> TSequenceIds;
+//    typedef StringSet<CharString> TSequenceIDs;
 //    typedef StringSet<TSequence> TSequences;
-//    typedef Iterator<TSequenceIds>::Type TSequenceIdsIter;
+//    typedef Iterator<TSequenceIDs>::Type TSequenceIDsIter;
 //    typedef Iterator<TSequences>::Type TSequencesIter;
-//    TSequenceIds sequenceIds;
+//    TSequenceIDs sequenceIDs;
 //    TSequences sequences;
 //
 //    double before = sysTime();
@@ -118,7 +118,7 @@ struct Options
 //    {
 //        assignSeq(seq, multiSeqFile[i], format);    // read sequence
 //        // assignQual(qual, multiSeqFile[i], format);  // read ascii quality values
-//        assignSeqId(id, multiSeqFile[i], format);   // read sequence id
+//        assignSeqID(id, multiSeqFile[i], format);   // read sequence id
 //
 //        // convert ascii to values from 0..62
 //        // store dna and quality together in Dna5Q
@@ -138,11 +138,11 @@ struct Options
 template <typename TSpec>
 int readFileMMapDocument(char const * filename, Options const & /*options*/, TSpec const & /*tag*/)
 {
-    typedef StringSet<CharString, TSpec> TSequenceIds;
+    typedef StringSet<CharString, TSpec> TSequenceIDs;
     typedef StringSet<TSequence, TSpec> TSequences;
-    typedef typename Iterator<TSequenceIds>::Type TSequenceIdsIter;
+    typedef typename Iterator<TSequenceIDs>::Type TSequenceIDsIter;
     typedef typename Iterator<TSequences>::Type TSequencesIter;
-    TSequenceIds sequenceIds;
+    TSequenceIDs sequenceIDs;
     TSequences sequences;
 
     double before = sysTime();
@@ -163,13 +163,13 @@ int readFileMMapDocument(char const * filename, Options const & /*options*/, TSp
     RecordReader<TMMapString, DoublePass<StringReader> > reader(myString, BUFFER_SIZE);
     */
     SeqFileIn reader(filename);
-    readRecords(sequenceIds, sequences, reader);
-    SEQAN_ASSERT_EQ(length(sequenceIds), length(sequences));
+    readRecords(sequenceIDs, sequences, reader);
+    SEQAN_ASSERT_EQ(length(sequenceIDs), length(sequences));
 
-    // TSequenceIdsIter itId = begin(sequenceIds);
+    // TSequenceIDsIter itID = begin(sequenceIDs);
     // TSequencesIter itSeq = begin(sequences);
-    // for (; !atEnd(itId); ++itId, ++itSeq) {
-    //std::cout << value(itId) << "\t" << value(itSeq) << "\n";
+    // for (; !atEnd(itID); ++itID, ++itSeq) {
+    //std::cout << value(itID) << "\t" << value(itSeq) << "\n";
     // }
 
     double after = sysTime();
@@ -187,11 +187,11 @@ int readFileMMapDocument(char const * filename, Options const & options)
     return 0;
 }
 
-int readFastaFile(StringSet<CharString> & sequenceIds,
+int readFastaFile(StringSet<CharString> & sequenceIDs,
                   StringSet<TSequence> & sequences,
                   SeqFileIn & file)
 {
-    (void)sequenceIds;
+    (void)sequenceIDs;
     (void)sequences;
 
     CharString meta;
@@ -203,11 +203,11 @@ int readFastaFile(StringSet<CharString> & sequenceIds,
 }
 
 template <typename TFile>
-int readFastaFile(StringSet<CharString> & sequenceIds,
+int readFastaFile(StringSet<CharString> & sequenceIDs,
                   StringSet<TSequence> & sequences,
                   TFile & file)
 {
-    (void)sequenceIds;
+    (void)sequenceIDs;
     (void)sequences;
 
     typename DirectionIterator<TFile, Input>::Type iter;
@@ -223,7 +223,7 @@ int readFastaFile(StringSet<CharString> & sequenceIds,
 
 void readFileMMap(char const * filename, Options const & /*options*/)
 {
-    StringSet<CharString> sequenceIds;
+    StringSet<CharString> sequenceIDs;
     StringSet<TSequence> sequences;
 
     double before = sysTime();
@@ -236,7 +236,7 @@ void readFileMMap(char const * filename, Options const & /*options*/)
         std::cerr << std::endl << "Could not open mmap file for reading." << std::endl;
         return;
     }
-    readFastaFile(sequenceIds, sequences, myString);
+    readFastaFile(sequenceIDs, sequences, myString);
 
     double after = sysTime();
     fprintf(stderr, "\t%f\n", after - before);
@@ -244,7 +244,7 @@ void readFileMMap(char const * filename, Options const & /*options*/)
 
 void readFileDefault(char const * filename, Options const & options)
 {
-    StringSet<CharString> sequenceIds;
+    StringSet<CharString> sequenceIDs;
     StringSet<TSequence> sequences;
 
     std::cerr << "READING\tRECORD\t" << std::flush;
@@ -258,7 +258,7 @@ void readFileDefault(char const * filename, Options const & options)
             std::cerr << std::endl << "ERROR: Could not open input file!" << std::endl;
             return;
         }
-        //readFastaFile(sequenceIds, sequences, f);
+        //readFastaFile(sequenceIDs, sequences, f);
         fclose(f);
     }
     else if (options.fstream)
@@ -270,7 +270,7 @@ void readFileDefault(char const * filename, Options const & options)
             std::cerr << std::endl << "ERROR: Could not open input file!" << std::endl;
             return;
         }
-        //readFastaFile(sequenceIds, sequences, f);
+        //readFastaFile(sequenceIDs, sequences, f);
 #if SEQAN_HAS_ZLIB
     }
     else if (options.gzip)
@@ -282,7 +282,7 @@ void readFileDefault(char const * filename, Options const & options)
             std::cerr << "Could not open input file!" << std::endl;
             return;
         }
-        readFastaFile(sequenceIds, sequences, f);
+        readFastaFile(sequenceIDs, sequences, f);
 #endif  // #if SEQAN_HAS_ZLIB
 #if SEQAN_HAS_BZIP2
     }
@@ -295,7 +295,7 @@ void readFileDefault(char const * filename, Options const & options)
             std::cerr << "Could not open input file!" << std::endl;
             return;
         }
-        //readFastaFile(sequenceIds, sequences, f);
+        //readFastaFile(sequenceIDs, sequences, f);
 #endif  // #if SEQAN_HAS_BZIP2
     }
     else
@@ -413,8 +413,8 @@ int main(int argc, char const ** argv)
             readFileDefault(toCString(inputFileName), options);
     }
 
-    // for (unsigned i = 0; i < length(sequenceIds); ++i) {
-    //     std::cerr << '>' << sequenceIds[i] << '\n';
+    // for (unsigned i = 0; i < length(sequenceIDs); ++i) {
+    //     std::cerr << '>' << sequenceIDs[i] << '\n';
     //     std::cerr << sequences[i] << '\n';
     // }
 

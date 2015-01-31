@@ -923,7 +923,7 @@ void testJournaledStringFuzzying(TStringJournalSpec const &)
     // Construct sequence journal on host.
     TJournaledString journaledString(host);
 
-//     unsigned nextId = 0;
+//     unsigned nextID = 0;
 //     std::cerr << "digraph {" << std::endl;
 
     // We will use a string stream to test the string result of tmp.
@@ -936,7 +936,7 @@ void testJournaledStringFuzzying(TStringJournalSpec const &)
 //         std::cout << "  tree = " << journaledString._journalEntries << std::endl;
 //         std::cout << "  orig = " << value(journaledString._host) << std::endl;
 //         std::cout << "  buff = " << journaledString._insertionBuffer << std::endl;
-//         journalTreeToDot(std::cerr, nextId, journaledString._journalEntries);
+//         journalTreeToDot(std::cerr, nextID, journaledString._journalEntries);
     }
 
     size_t expectedLength = length(string);

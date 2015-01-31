@@ -190,7 +190,7 @@ int main(int argc, char const ** argv)
     std::SEQAN_AUTO_PTR_NAME<SequencingSimulator> sim = simFactory.make();
 
     // Buffers for reading in fragments.
-    seqan::CharString fragId;
+    seqan::CharString fragID;
     seqan::Dna5String fragSeq;
     // Buffers for simulated reads.
     seqan::Dna5String seqL, seqR;
@@ -201,7 +201,7 @@ int main(int argc, char const ** argv)
     // We will use these string streams to generate the read identifier strings.
     std::stringstream ssL, ssR;
 
-    for (unsigned readId = 1; !atEnd(inFragments); ++readId)
+    for (unsigned readID = 1; !atEnd(inFragments); ++readID)
     {
         // Reset the string streams.
         ssL.str("");
@@ -210,36 +210,36 @@ int main(int argc, char const ** argv)
         ssR.clear();
 
         // Read fragment to simulate from.
-        readRecord(fragId, fragSeq, inFragments);
+        readRecord(fragID, fragSeq, inFragments);
 
         // Trim fragment identifier after first whitespace.
-        trimAfterSpace(fragId);
+        trimAfterSpace(fragID);
 
         if (empty(options.outFileNameRight))  // Single-end sequencing.
         {
             sim->simulateSingleEnd(seqL, qualsL, simInfoL, infix(fragSeq, 0, length(fragSeq)));
-            ssL << options.seqOptions.readNamePrefix << readId;
+            ssL << options.seqOptions.readNamePrefix << readID;
             if (options.seqOptions.embedReadInfo)
             {
                 ssL << ' ';
                 simInfoL.serialize(ssL);
-                ssL << " FRAG_ID=" << fragId;
+                ssL << " FRAG_ID=" << fragID;
             }
             writeRecord(outReads, ssL.str(), seqL, qualsL);
         }
         else  // Paired sequencing.
         {
             sim->simulatePairedEnd(seqL, qualsL, simInfoL, seqR, qualsR, simInfoR, infix(fragSeq, 0, length(fragSeq)));
-            ssL << options.seqOptions.readNamePrefix << readId;
-            ssR << options.seqOptions.readNamePrefix << readId;
+            ssL << options.seqOptions.readNamePrefix << readID;
+            ssR << options.seqOptions.readNamePrefix << readID;
             if (options.seqOptions.embedReadInfo)
             {
                 ssL << ' ';
                 simInfoL.serialize(ssL);
-                ssL << " FRAG_ID=" << fragId;
+                ssL << " FRAG_ID=" << fragID;
                 ssR << ' ';
                 simInfoR.serialize(ssR);
-                ssR << " FRAG_ID=" << fragId;
+                ssR << " FRAG_ID=" << fragID;
             }
 
             // std::cerr << seqL << "\t" << qualsL << "\n"

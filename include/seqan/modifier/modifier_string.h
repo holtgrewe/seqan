@@ -835,21 +835,21 @@ operator>>(TStream & source, ModifiedString<THost, TSpec> & target)
 }
 
 // --------------------------------------------------------------------------
-// Function getObjectId()
+// Function getObjectID()
 // --------------------------------------------------------------------------
 
 template <typename THost, typename TSpec>
 inline void const *
-getObjectId(ModifiedString<THost, TSpec> & me) 
+getObjectID(ModifiedString<THost, TSpec> & me) 
 {
-    return getObjectId(host(me));
+    return getObjectID(host(me));
 }
 
 template <typename THost, typename TSpec>
 inline void const *
-getObjectId(ModifiedString<THost, TSpec> const & me) 
+getObjectID(ModifiedString<THost, TSpec> const & me) 
 {
-    return getObjectId(host(me));
+    return getObjectID(host(me));
 }
 
 // --------------------------------------------------------------------------

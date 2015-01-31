@@ -74,11 +74,11 @@ class Fragment
 {
 public:
     // Index of contig to simulate on.
-    int rId;
+    int rID;
     // Begin and end position of the fragment.
     int beginPos, endPos;
 
-    Fragment() : rId(-1), beginPos(0), endPos(0)
+    Fragment() : rID(-1), beginPos(0), endPos(0)
     {}
 };
 
@@ -91,9 +91,9 @@ public:
 class FragmentSamplerImpl
 {
 public:
-    virtual void generate(Fragment & frag, int rId, unsigned contigLength,
+    virtual void generate(Fragment & frag, int rID, unsigned contigLength,
                           std::vector<std::pair<int, int> > const & gapIntervals) = 0;
-    virtual void generateMany(std::vector<Fragment> & frags, int rId, unsigned contigLength,
+    virtual void generateMany(std::vector<Fragment> & frags, int rID, unsigned contigLength,
                               std::vector<std::pair<int, int> > const & gapIntervals,
                               unsigned count) = 0;
 };
@@ -124,14 +124,14 @@ public:
             rng(rng), pdf(minLength, maxLength)
     {}
 
-    virtual void generate(Fragment & frag, int rId, unsigned contigLength,
+    virtual void generate(Fragment & frag, int rID, unsigned contigLength,
                           std::vector<std::pair<int, int> > const & gapIntervals);
 
-    virtual void generateMany(std::vector<Fragment> & frags, int rId, unsigned contigLength,
+    virtual void generateMany(std::vector<Fragment> & frags, int rID, unsigned contigLength,
                               std::vector<std::pair<int, int> > const & gapIntervals,
                               unsigned count);
 
-    void _generate(Fragment & frag, int rId, unsigned contigLength,
+    void _generate(Fragment & frag, int rID, unsigned contigLength,
                    std::vector<std::pair<int, int> > const & gapIntervals);
 };
 
@@ -160,13 +160,13 @@ public:
             rng(rng), pdf(meanLength, stdDevLength)
     {}
 
-    virtual void generate(Fragment & frag, int rId, unsigned contigLength,
+    virtual void generate(Fragment & frag, int rID, unsigned contigLength,
                           std::vector<std::pair<int, int> > const & gapIntervals);
 
-    virtual void generateMany(std::vector<Fragment> & frags, int rId, unsigned contigLength,
+    virtual void generateMany(std::vector<Fragment> & frags, int rID, unsigned contigLength,
                               std::vector<std::pair<int, int> > const & gapIntervals, unsigned count);
 
-    void _generate(Fragment & frag, int rId, unsigned contigLength,
+    void _generate(Fragment & frag, int rID, unsigned contigLength,
                    std::vector<std::pair<int, int> > const & gapIntervals);
 };
 
@@ -198,17 +198,17 @@ public:
     }
 
     // Generate a fragment given a contig id and the length of the contig.
-    void generate(Fragment & frag, int rId, unsigned contigLength,
+    void generate(Fragment & frag, int rID, unsigned contigLength,
                   std::vector<std::pair<int, int> > const & gapIntervals)
     {
-        impl->generate(frag, rId, contigLength, gapIntervals);
+        impl->generate(frag, rID, contigLength, gapIntervals);
     }
 
     // Generate multiple fragments.
-    void generateMany(std::vector<Fragment> & frags, int rId, unsigned contigLength,
+    void generateMany(std::vector<Fragment> & frags, int rID, unsigned contigLength,
                   std::vector<std::pair<int, int> > const & gapIntervals, unsigned count)
     {
-        impl->generateMany(frags, rId, contigLength, gapIntervals, count);
+        impl->generateMany(frags, rID, contigLength, gapIntervals, count);
     }
 };
 
@@ -307,22 +307,22 @@ void trimAfterSpace(seqan::CharString & s)
 
 // TODO(holtgrew): Too much redundancy here.
 
-void UniformFragmentSamplerImpl::generate(Fragment & frag, int rId, unsigned contigLength,
+void UniformFragmentSamplerImpl::generate(Fragment & frag, int rID, unsigned contigLength,
                                           std::vector<std::pair<int, int> > const & gapIntervals)
 {
-    _generate(frag, rId, contigLength, gapIntervals);
+    _generate(frag, rID, contigLength, gapIntervals);
 }
 
-void UniformFragmentSamplerImpl::generateMany(std::vector<Fragment> & frags, int rId, unsigned contigLength,
+void UniformFragmentSamplerImpl::generateMany(std::vector<Fragment> & frags, int rID, unsigned contigLength,
                                               std::vector<std::pair<int, int> > const & gapIntervals,
                                               unsigned count)
 {
     frags.resize(count);
     for (unsigned i = 0; i < count; ++i)
-        _generate(frags[0], rId, contigLength, gapIntervals);
+        _generate(frags[0], rID, contigLength, gapIntervals);
 }
 
-void UniformFragmentSamplerImpl::_generate(Fragment & frag, int rId, unsigned contigLength,
+void UniformFragmentSamplerImpl::_generate(Fragment & frag, int rID, unsigned contigLength,
                                            std::vector<std::pair<int, int> > const & gapIntervals)
 {
     int fragLength = 0;
@@ -337,7 +337,7 @@ void UniformFragmentSamplerImpl::_generate(Fragment & frag, int rId, unsigned co
         seqan::Pdf<seqan::Uniform<int> > posPdf(0, contigLength - fragLength);
         int beginPos = pickRandomNumber(rng, posPdf);
 
-        frag.rId = rId;
+        frag.rID = rID;
         frag.beginPos = beginPos;
         frag.endPos = beginPos + fragLength;
 
@@ -349,21 +349,21 @@ void UniformFragmentSamplerImpl::_generate(Fragment & frag, int rId, unsigned co
     }
 }
 
-void NormalFragmentSamplerImpl::generate(Fragment & frag, int rId, unsigned contigLength,
+void NormalFragmentSamplerImpl::generate(Fragment & frag, int rID, unsigned contigLength,
                                          std::vector<std::pair<int, int> > const & gapIntervals)
 {
-    _generate(frag, rId, contigLength, gapIntervals);
+    _generate(frag, rID, contigLength, gapIntervals);
 }
 
-void NormalFragmentSamplerImpl::generateMany(std::vector<Fragment> & frags, int rId, unsigned contigLength,
+void NormalFragmentSamplerImpl::generateMany(std::vector<Fragment> & frags, int rID, unsigned contigLength,
                                              std::vector<std::pair<int, int> > const & gapIntervals, unsigned count)
 {
     frags.resize(count);
     for (unsigned i = 0; i < count; ++i)
-        _generate(frags[i], rId, contigLength, gapIntervals);
+        _generate(frags[i], rID, contigLength, gapIntervals);
 }
 
-void NormalFragmentSamplerImpl::_generate(Fragment & frag, int rId, unsigned contigLength,
+void NormalFragmentSamplerImpl::_generate(Fragment & frag, int rID, unsigned contigLength,
                                           std::vector<std::pair<int, int> > const & gapIntervals)
 {
     int fragLength = 0;
@@ -379,7 +379,7 @@ void NormalFragmentSamplerImpl::_generate(Fragment & frag, int rId, unsigned con
         seqan::Pdf<seqan::Uniform<int> > posPdf(0, contigLength - fragLength);
         int beginPos = pickRandomNumber(rng, posPdf);
 
-        frag.rId = rId;
+        frag.rID = rID;
         frag.beginPos = beginPos;
         frag.endPos = beginPos + fragLength;
 

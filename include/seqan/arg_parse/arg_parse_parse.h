@@ -315,7 +315,7 @@ ArgumentParser::ParseResult parse(ArgumentParser & me,
     }
     else if (hasOption(me, "write-ctd") && isSet(me, "write-ctd"))
     {
-        if (writeCTD(me))
+        if (writeCtd(me))
             return ArgumentParser::PARSE_WRITE_CTD;
         else
             return ArgumentParser::PARSE_ERROR;

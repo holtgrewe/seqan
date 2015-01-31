@@ -106,7 +106,7 @@ int main(int argc, char const ** argv)
         BamTagsDict bamTags(record.tags);
 
         // Counter: Total reads, unaligned reads.
-        if (record.rId == BamAlignmentRecord::INVALID_REFID)
+        if (record.rID == BamAlignmentRecord::INVALID_REFID)
         {
             totalUnalignedReadCount += 1;
             continue;

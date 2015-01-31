@@ -94,7 +94,7 @@ getClrRange(FragmentStore<TSpec, TConfig> const& fragStore,
 	typedef typename Size<TFragmentStore>::Type TSize;
 	typedef typename Iterator<String<TGapAnchor> const, Standard>::Type TGapIter;
 	
-	TSize lenRead = length(fragStore.readSeqStore[alignEl.readId]);
+	TSize lenRead = length(fragStore.readSeqStore[alignEl.readID]);
 	TGapIter itGap = begin(alignEl.gaps, Standard());
 	TGapIter itGapEnd = end(alignEl.gaps, Standard());
 	
@@ -165,7 +165,7 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
 {
 	// Basic types
 	typedef FragmentStore<TSpec, TConfig> TFragmentStore;
-	typedef typename Id<TFragmentStore>::Type TId;
+	typedef typename ID<TFragmentStore>::Type TID;
 	typedef typename Size<TFragmentStore>::Type TSize;
 	//typedef typename Value<TFile>::Type TValue;
 
@@ -179,17 +179,17 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
 	typedef typename TFragmentStore::TContigSeq TContigSeq;
 
 	// All maps to mirror file ids to our ids
-	typedef std::map<TId, TSize> TIdMap;
+	typedef std::map<TID, TSize> TIDMap;
 	// The following maps the library/fragment/read id from AMOS into the fragment store's ids.
-	TIdMap libIdMap;
-	TIdMap frgIdMap;
-	TIdMap readIdMap;
+	TIDMap libIDMap;
+	TIDMap frgIDMap;
+	TIDMap readIDMap;
 	// For all paired reads (inferred from FRG), a mapping from the AMOS read id to the paired match id of the one
 	// alignment read from the AMOS file.  Note that this has the assumption that there is only one alignment per read
 	// in the AMOS file.
-	TIdMap readToPairMatchId;
+	TIDMap readToPairMatchID;
 	// The id of the next pair match.
-	unsigned nextPairMatchId = 0;
+	unsigned nextPairMatchID = 0;
 
     typename DirectionIterator<TFile, Input>::Type reader(file);
 
@@ -201,7 +201,7 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
     TReadSeq    readSeq;
     CharString  contigSeq;
     CharString  qual;
-    TId _id;
+    TID _id;
 
     while (!atEnd(reader))
     {
@@ -230,7 +230,7 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
                     readAmosKeyValue(fieldIdentifier, buffer, reader);
 
 					if (fieldIdentifier == "iid")
-                        _id = lexicalCast<TId>(buffer);
+                        _id = lexicalCast<TID>(buffer);
                     else if (fieldIdentifier == "eid")
                         eid = buffer;
                     else if (fieldIdentifier == "mea")
@@ -244,7 +244,7 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
                 skipOne(reader, EqualsChar<'}'>());
 
                 // Insert library information into the fragmentstore.
-				libIdMap.insert(std::make_pair(_id, length(fragStore.libraryStore)));
+				libIDMap.insert(std::make_pair(_id, length(fragStore.libraryStore)));
 				appendValue(fragStore.libraryStore, libEl, Generous());
 				appendValue(fragStore.libraryNameStore, eid, Generous());
 			}
@@ -261,22 +261,22 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
                     readAmosKeyValue(fieldIdentifier, buffer, reader);
 
 					if (fieldIdentifier == "iid")
-                        _id = lexicalCast<TId>(buffer);
+                        _id = lexicalCast<TID>(buffer);
                     else if (fieldIdentifier == "eid")
                         eid = buffer;
                     else if (fieldIdentifier == "lib")
-                        matePairEl.libId = lexicalCast<TId>(buffer);
+                        matePairEl.libID = lexicalCast<TID>(buffer);
                     else if (fieldIdentifier == "rds")
                     {
 						foundRds = true;
                         size_t comma = findFirst(buffer, EqualsChar<','>());
-                        matePairEl.readId[0] = lexicalCast<TId>(prefix(buffer, comma));
-                        matePairEl.readId[1] = lexicalCast<TId>(suffix(buffer, comma + 1));
+                        matePairEl.readID[0] = lexicalCast<TID>(prefix(buffer, comma));
+                        matePairEl.readID[1] = lexicalCast<TID>(suffix(buffer, comma + 1));
 
 						// Store mapping to pair match id.
-						readToPairMatchId[matePairEl.readId[0]] = nextPairMatchId;
-						readToPairMatchId[matePairEl.readId[1]] = nextPairMatchId;
-						nextPairMatchId++;
+						readToPairMatchID[matePairEl.readID[0]] = nextPairMatchID;
+						readToPairMatchID[matePairEl.readID[1]] = nextPairMatchID;
+						nextPairMatchID++;
                     }
                     // Always skip over the remainder of the line.
                     skipUntil(reader, NotFunctor<IsWhitespace>());
@@ -286,7 +286,7 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
 				// Only insert valid mate pairs
 				if (foundRds)
                 {
-					frgIdMap.insert(std::make_pair(_id, length(fragStore.matePairStore)));
+					frgIDMap.insert(std::make_pair(_id, length(fragStore.matePairStore)));
 					appendValue(fragStore.matePairStore, matePairEl, Generous());
 					appendValue(fragStore.matePairNameStore, eid, Generous());
 				}
@@ -294,21 +294,21 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
 			// Read block
             else if (blockIdentifier == "RED")
             {
-				// If matePairId is not updated, this yields to a singleton read below.
+				// If matePairID is not updated, this yields to a singleton read below.
 				clear(readSeq);
 				clear(qual);
-                TId matePairId = TReadStoreElement::INVALID_ID;
+                TID matePairID = TReadStoreElement::INVALID_ID;
                 while (!atEnd(reader) && value(reader) != '}')
                 {
                     // read "KEY:VALUE" pair
                     readAmosKeyValue(fieldIdentifier, buffer, reader);
 
 					if (fieldIdentifier == "iid")
-                        _id = lexicalCast<TId>(buffer);
+                        _id = lexicalCast<TID>(buffer);
                     else if (fieldIdentifier == "eid")
                         eid = buffer;
                     else if (fieldIdentifier == "frg")
-                        matePairId = lexicalCast<TId>(buffer);
+                        matePairID = lexicalCast<TID>(buffer);
                     else if (fieldIdentifier == "seq")
                     {
                         readUntil(readSeq, reader, EqualsChar<'.'>(), IsWhitespace());
@@ -328,8 +328,8 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
                 skipOne(reader, EqualsChar<'}'>());
 
 				// Insert the read
-				readIdMap.insert(std::make_pair(_id, length(fragStore.readStore)));
-				appendRead(fragStore, readSeq, matePairId);
+				readIDMap.insert(std::make_pair(_id, length(fragStore.readStore)));
+				appendRead(fragStore, readSeq, matePairID);
 				appendValue(fragStore.readNameStore, eid, Generous());
 			}
             // Contig block
@@ -363,7 +363,7 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
                             readAmosKeyValue(fieldIdentifier, buffer, reader);
 
                             if (fieldIdentifier == "src")
-                                alignEl.readId = lexicalCast<TId>(buffer);
+                                alignEl.readID = lexicalCast<TID>(buffer);
                             else if (fieldIdentifier == "off")
                             {
                                 if (buffer != "-")
@@ -396,8 +396,8 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
                         skipUntil(reader, NotFunctor<IsWhitespace>());
 
 						// Get the length of the read
-						TId readId = (readIdMap.find(alignEl.readId))->second;
-						TSize lenRead = length(value(fragStore.readSeqStore, readId));
+						TID readID = (readIDMap.find(alignEl.readID))->second;
+						TSize lenRead = length(value(fragStore.readSeqStore, readID));
 
 						// Create the gap anchors
 						typedef typename TFragmentStore::TContigGapAnchor TContigGapAnchor;
@@ -450,7 +450,7 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
 							alignEl.endPos = offsetPos;
 						}
 
-						// Append new align fragment, note: contigId must still be set
+						// Append new align fragment, note: contigID must still be set
 						alignEl.id = length(fragStore.alignedReadStore);
 						appendValue(fragStore.alignedReadStore, alignEl, Generous());
 					}
@@ -460,7 +460,7 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
                         readAmosKeyValue(fieldIdentifier, buffer, reader);
 
                         if (fieldIdentifier == "iid")
-                            _id = lexicalCast<TId>(buffer);
+                            _id = lexicalCast<TID>(buffer);
                         else if (fieldIdentifier == "eid")
                             eid = buffer;
                         else if (fieldIdentifier == "seq")
@@ -514,11 +514,11 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
 				if (gapOpen)
 				    appendValue(contigEl.gaps, TContigGapAnchor(ungappedPos, gappedPos), Generous());
 
-				// Set the contigId in all aligned reads
+				// Set the contigID in all aligned reads
 				TSize toAligned = length(fragStore.alignedReadStore);
-				TId newContigId = length(fragStore.contigStore);
+				TID newContigID = length(fragStore.contigStore);
 				for (; fromAligned < toAligned; ++fromAligned)
-					fragStore.alignedReadStore[fromAligned].contigId = newContigId;
+					fragStore.alignedReadStore[fromAligned].contigID = newContigID;
 
 				// Insert the contig
 				appendValue(fragStore.contigStore, contigEl, Generous());
@@ -540,69 +540,69 @@ read(FragmentStore<TSpec, TConfig>& fragStore,
 	}
 
 	// Renumber all ids
-	typedef typename TIdMap::const_iterator TIdMapIter;
+	typedef typename TIDMap::const_iterator TIDMapIter;
 	typedef typename Iterator<typename TFragmentStore::TMatePairStore>::Type TMateIter;
 	TMateIter mateIt = begin(fragStore.matePairStore);
 	TMateIter mateItEnd = end(fragStore.matePairStore);
 	for(;mateIt != mateItEnd; goNext(mateIt)) {
-		if (mateIt->libId != TMatePairElement::INVALID_ID) {
-			TIdMapIter libIdPos = libIdMap.find(mateIt->libId);
-			if (libIdPos != libIdMap.end())
-			    mateIt->libId = libIdPos->second;
+		if (mateIt->libID != TMatePairElement::INVALID_ID) {
+			TIDMapIter libIDPos = libIDMap.find(mateIt->libID);
+			if (libIDPos != libIDMap.end())
+			    mateIt->libID = libIDPos->second;
 			else
-			    mateIt->libId = TMatePairElement::INVALID_ID;
+			    mateIt->libID = TMatePairElement::INVALID_ID;
 		}
-		if (mateIt->readId[0] != TMatePairElement::INVALID_ID) {
-			TIdMapIter readIdPos = readIdMap.find(mateIt->readId[0]);
-			if (readIdPos != readIdMap.end())
-			    mateIt->readId[0] = readIdPos->second;
+		if (mateIt->readID[0] != TMatePairElement::INVALID_ID) {
+			TIDMapIter readIDPos = readIDMap.find(mateIt->readID[0]);
+			if (readIDPos != readIDMap.end())
+			    mateIt->readID[0] = readIDPos->second;
 			else
-			    mateIt->readId[0] = TMatePairElement::INVALID_ID;
+			    mateIt->readID[0] = TMatePairElement::INVALID_ID;
 		}
-		if (mateIt->readId[1]!= TMatePairElement::INVALID_ID) {
-			TIdMapIter readIdPos = readIdMap.find(mateIt->readId[1]);
-			if (readIdPos != readIdMap.end())
-			    mateIt->readId[1] = readIdPos->second;
+		if (mateIt->readID[1]!= TMatePairElement::INVALID_ID) {
+			TIDMapIter readIDPos = readIDMap.find(mateIt->readID[1]);
+			if (readIDPos != readIDMap.end())
+			    mateIt->readID[1] = readIDPos->second;
 			else
-			    mateIt->readId[0] = TMatePairElement::INVALID_ID;
+			    mateIt->readID[0] = TMatePairElement::INVALID_ID;
 		}
 	}
 
-	// Copy data from frgIdMap into the matePairId members of the readStore.
+	// Copy data from frgIDMap into the matePairID members of the readStore.
 	typedef typename Iterator<typename TFragmentStore::TReadStore>::Type TReadIter;
 	TReadIter readIt = begin(fragStore.readStore);
 	TReadIter readItEnd = end(fragStore.readStore);
 	for (;readIt != readItEnd; goNext(readIt))
 	{
-		if (readIt->matePairId != TReadStoreElement::INVALID_ID)
+		if (readIt->matePairID != TReadStoreElement::INVALID_ID)
 		{
-			TIdMapIter mateIdPos = frgIdMap.find(readIt->matePairId);
-			if (mateIdPos != frgIdMap.end())
-			    readIt->matePairId = mateIdPos->second;
+			TIDMapIter mateIDPos = frgIDMap.find(readIt->matePairID);
+			if (mateIDPos != frgIDMap.end())
+			    readIt->matePairID = mateIDPos->second;
 			else
-			    readIt->matePairId = TReadStoreElement::INVALID_ID;
+			    readIt->matePairID = TReadStoreElement::INVALID_ID;
 		}
 	}
 
-	// Copy data from readIdMap into the pairMatchId entries of the alignedReadStore.
+	// Copy data from readIDMap into the pairMatchID entries of the alignedReadStore.
 	typedef typename Iterator<typename TFragmentStore::TAlignedReadStore>::Type TAlignIter;
 	TAlignIter alignIt = begin(fragStore.alignedReadStore);
 	TAlignIter alignItEnd = end(fragStore.alignedReadStore);
 	for (;alignIt != alignItEnd; goNext(alignIt))
 	{
-		if (alignIt->readId != TAlignedElement::INVALID_ID)
+		if (alignIt->readID != TAlignedElement::INVALID_ID)
 		{
-			TIdMapIter readIdPos = readIdMap.find(alignIt->readId);
-			if (readIdPos != readIdMap.end())
+			TIDMapIter readIDPos = readIDMap.find(alignIt->readID);
+			if (readIDPos != readIDMap.end())
             {
-                //SEQAN_ASSERT(readToPairMatchId.find(alignIt->readId) != readToPairMatchId.end());
-                if (readToPairMatchId.find(alignIt->readId) != readToPairMatchId.end())
-                    alignIt->pairMatchId = readToPairMatchId[alignIt->readId];
-			    alignIt->readId = readIdPos->second;
+                //SEQAN_ASSERT(readToPairMatchID.find(alignIt->readID) != readToPairMatchID.end());
+                if (readToPairMatchID.find(alignIt->readID) != readToPairMatchID.end())
+                    alignIt->pairMatchID = readToPairMatchID[alignIt->readID];
+			    alignIt->readID = readIDPos->second;
             }
 			else
             {
-			    alignIt->readId = TAlignedElement::INVALID_ID;
+			    alignIt->readID = TAlignedElement::INVALID_ID;
             }
 		}
 	}
@@ -634,7 +634,7 @@ write(TTarget & target,
 {
     // Basic types
     typedef FragmentStore<TSpec, TConfig> TFragmentStore;
-    //typedef typename Id<TFragmentStore>::Type TId;
+    //typedef typename ID<TFragmentStore>::Type TID;
     typedef typename Size<TFragmentStore>::Type TSize;
     //typedef typename Value<TFile>::Type TValue;
 
@@ -690,14 +690,14 @@ write(TTarget & target,
             writeValue(iter, '\n');
         }
         write(iter, "lib:");
-        appendNumber(iter, mateIt->libId + 1);
+        appendNumber(iter, mateIt->libID + 1);
         writeValue(iter, '\n');
-        if (mateIt->readId[0] != TMatePairElement::INVALID_ID && mateIt->readId[1] != TMatePairElement::INVALID_ID)
+        if (mateIt->readID[0] != TMatePairElement::INVALID_ID && mateIt->readID[1] != TMatePairElement::INVALID_ID)
         {
             write(iter, "rds:");
-            appendNumber(iter, mateIt->readId[0] + 1);
+            appendNumber(iter, mateIt->readID[0] + 1);
             writeValue(iter, ',');
-            appendNumber(iter, mateIt->readId[1] + 1);
+            appendNumber(iter, mateIt->readID[1] + 1);
             writeValue(iter, '\n');
         }
         write(iter, "}\n");
@@ -715,7 +715,7 @@ write(TTarget & target,
         typename TFragmentStore::TReadPos begClr = 0;
         typename TFragmentStore::TReadPos endClr = 0;
         getClrRange(fragStore, value(alignIt), begClr, endClr);
-        clrRange[alignIt->readId] = TClrRange(begClr, endClr);
+        clrRange[alignIt->readID] = TClrRange(begClr, endClr);
     }
 
     // Write reads
@@ -745,10 +745,10 @@ write(TTarget & target,
         ModifiedString<TReadSeq const, ModView<TQualityExtractor> > quals(fragStore.readSeqStore[idCount]);
         writeWrappedString(iter, quals, 60);
         write(iter,  ".\n");
-        if (readIt->matePairId != TReadStoreElement::INVALID_ID)
+        if (readIt->matePairID != TReadStoreElement::INVALID_ID)
         {
             write(iter, "frg:");
-            appendNumber(iter, readIt->matePairId + 1);
+            appendNumber(iter, readIt->matePairID + 1);
             writeValue(iter, '\n');
         }
         if (clrRange[idCount].i1 != clrRange[idCount].i2)
@@ -762,8 +762,8 @@ write(TTarget & target,
         write(iter, "}\n");
     }
 
-    // Sort aligned reads according to contigId
-    sortAlignedReads(fragStore.alignedReadStore, SortContigId());
+    // Sort aligned reads according to contigID
+    sortAlignedReads(fragStore.alignedReadStore, SortContigID());
 
     // Write Contigs
     typedef typename Iterator<typename TFragmentStore::TContigStore, Standard>::Type TContigIter;
@@ -832,20 +832,20 @@ write(TTarget & target,
         writeWrappedString(iter, qlt, 60);
         write(iter, ".\n");
 
-        while (alignIt != alignItEnd && idCount < alignIt->contigId)
+        while (alignIt != alignItEnd && idCount < alignIt->contigID)
             goNext(alignIt);
 
-        for (; alignIt != alignItEnd && idCount == alignIt->contigId; goNext(alignIt))
+        for (; alignIt != alignItEnd && idCount == alignIt->contigID; goNext(alignIt))
         {
             write(iter, "{TLE\nsrc:");
-            appendNumber(iter, alignIt->readId + 1);
+            appendNumber(iter, alignIt->readID + 1);
             writeValue(iter, '\n');
             typedef typename Iterator<String<typename TFragmentStore::TReadGapAnchor> >::Type TReadGapsIter;
             TReadGapsIter itGaps = begin(alignIt->gaps);
             TReadGapsIter itGapsEnd = end(alignIt->gaps);
 
             // Create the gaps string and the clear ranges
-            typename TFragmentStore::TReadPos lenRead = length(value(fragStore.readSeqStore, alignIt->readId));
+            typename TFragmentStore::TReadPos lenRead = length(value(fragStore.readSeqStore, alignIt->readID));
             TSize clr1 = 0;
             TSize clr2 = lenRead;
             // Create first clear range
@@ -955,7 +955,7 @@ bool loadContigs(FragmentStore<TFSSpec, TFSConfig> &store, StringSet<CharString>
 
         TContigFile contigFile;
 		contigFile.fileName = fileNameList[f];
-		contigFile.firstContigId = length(store.contigStore);
+		contigFile.firstContigID = length(store.contigStore);
 		appendValue(store.contigFileStore, contigFile, Generous());
 
 		while (!atEnd(seqFile))
@@ -964,7 +964,7 @@ bool loadContigs(FragmentStore<TFSSpec, TFSConfig> &store, StringSet<CharString>
 
             TContig & contig = back(store.contigStore);
 			contig.usage = 0;
-			contig.fileId = length(store.contigFileStore) - 1;
+			contig.fileID = length(store.contigFileStore) - 1;
 			contig.fileBeginPos = position(seqFile);
 
 			if (loadSeqs)
@@ -1006,16 +1006,16 @@ bool loadContigs(FragmentStore<TFSSpec, TFSConfig> &store, TFileNames const &fil
  * @fn FragmentStore#loadContig
  * @brief Manually load a contig sequence.
  *
- * @signature bool loadContig(store, contigId);
+ * @signature bool loadContig(store, contigID);
  *
  * @param[in,out] store    The FragmentStore to load the contig for.
- * @param[in]     contigId The id of the contig that was created earlier by @link FragmentStore#loadContigs @endlink.
+ * @param[in]     contigID The id of the contig that was created earlier by @link FragmentStore#loadContigs @endlink.
  *
  * @return bool true on success, false on failure.
  */
 
-template <typename TSpec, typename TConfig, typename TId>
-bool loadContig(FragmentStore<TSpec, TConfig> &store, TId _id)
+template <typename TSpec, typename TConfig, typename TID>
+bool loadContig(FragmentStore<TSpec, TConfig> &store, TID _id)
 {
 	typedef FragmentStore<TSpec, TConfig>				TFragmentStore;
 	typedef typename TFragmentStore::TContigStore		TContigStore;
@@ -1023,12 +1023,12 @@ bool loadContig(FragmentStore<TSpec, TConfig> &store, TId _id)
 	typedef typename Value<TContigStore>::Type			TContig;
 	typedef typename Value<TContigFileStore>::Type		TContigFile;
 
-	if ((TId)length(store.contigStore) <= _id) return false;
+	if ((TID)length(store.contigStore) <= _id) return false;
 	TContig &contig = store.contigStore[_id];
 
-	if (contig.fileId >= length(store.contigFileStore)) return false;
+	if (contig.fileID >= length(store.contigFileStore)) return false;
 	
-	TContigFile &contigFile = store.contigFileStore[contig.fileId];
+	TContigFile &contigFile = store.contigFileStore[contig.fileID];
     CharString meta;                                // dummy (seq name is already in the name store)
 
     SeqFileIn seqFile(toCString(contigFile.fileName));
@@ -1046,22 +1046,22 @@ bool loadContig(FragmentStore<TSpec, TConfig> &store, TId _id)
  *
  * This function increases the contig usage counter by 1 and ensures that the contig sequence is loaded.
  *
- * @signature bool lockContig(store, contigId);
+ * @signature bool lockContig(store, contigID);
  *
  * @param[in,out] store    The FragmentStore to lock the contig for.
- * @param[in]     contigId The id of the contig that was created earlier by @link FragmentStore#loadContigs @endlink.
+ * @param[in]     contigID The id of the contig that was created earlier by @link FragmentStore#loadContigs @endlink.
  *
  * @return bool true on success, false on failure.
  */
 
-template <typename TSpec, typename TConfig, typename TId>
-bool lockContig(FragmentStore<TSpec, TConfig> &store, TId _id)
+template <typename TSpec, typename TConfig, typename TID>
+bool lockContig(FragmentStore<TSpec, TConfig> &store, TID _id)
 {
 	typedef FragmentStore<TSpec, TConfig>				TFragmentStore;
 	typedef typename TFragmentStore::TContigStore		TContigStore;
 	typedef typename Value<TContigStore>::Type			TContig;
 
-	if ((TId)length(store.contigStore) <= _id) return false;
+	if ((TID)length(store.contigStore) <= _id) return false;
 	TContig &contig = store.contigStore[_id];
 
 	if (contig.usage++ > 0 || !empty(contig.seq)) return true;
@@ -1074,18 +1074,18 @@ bool lockContig(FragmentStore<TSpec, TConfig> &store, TId _id)
  *
  * This function decreases the contig usage counter by 1.
  *
- * @signature bool unlockContig(store, contigId);
+ * @signature bool unlockContig(store, contigID);
  *
  * @param[in,out] store    The FragmentStore to unlock the contig for.
- * @param[in]     contigId The id of the contig that was created earlier by @link FragmentStore#loadContigs @endlink.
+ * @param[in]     contigID The id of the contig that was created earlier by @link FragmentStore#loadContigs @endlink.
  *
  * @return bool true on success, false on failure.
  */
 
-template <typename TSpec, typename TConfig, typename TId>
-bool unlockContig(FragmentStore<TSpec, TConfig> &store, TId _id)
+template <typename TSpec, typename TConfig, typename TID>
+bool unlockContig(FragmentStore<TSpec, TConfig> &store, TID _id)
 {
-	if ((TId)length(store.contigStore) <= _id) return false;
+	if ((TID)length(store.contigStore) <= _id) return false;
 	--store.contigStore[_id].usage;
 	return true;
 }
@@ -1096,25 +1096,25 @@ bool unlockContig(FragmentStore<TSpec, TConfig> &store, TId _id)
  *
  * This function decreases the contig usage counter by 1 and frees the sequences' memory if the counter equals 0.
  *
- * @signature bool unlockContig(store, contigId);
+ * @signature bool unlockContig(store, contigID);
  *
  * @param[in,out] store    The FragmentStore to unlock the contig for.
- * @param[in]     contigId The id of the contig that was created earlier by @link FragmentStore#loadContigs @endlink.
+ * @param[in]     contigID The id of the contig that was created earlier by @link FragmentStore#loadContigs @endlink.
  *
  * @return bool true on success, false on failure.
  */
 
-template <typename TSpec, typename TConfig, typename TId>
-bool unlockAndFreeContig(FragmentStore<TSpec, TConfig> &store, TId _id)
+template <typename TSpec, typename TConfig, typename TID>
+bool unlockAndFreeContig(FragmentStore<TSpec, TConfig> &store, TID _id)
 {
 	typedef FragmentStore<TSpec, TConfig>				TFragmentStore;
 	typedef typename TFragmentStore::TContigStore		TContigStore;
 	typedef typename Value<TContigStore>::Type			TContig;
 
-	if ((TId)length(store.contigStore) <= _id) return false;
+	if ((TID)length(store.contigStore) <= _id) return false;
 	TContig &contig = store.contigStore[_id];
 
-	if (--contig.usage == 0 && contig.fileId < length(store.contigFileStore))
+	if (--contig.usage == 0 && contig.fileID < length(store.contigFileStore))
 	{
         typename TContig::TContigSeq emptySeq;
         swap(contig.seq, emptySeq);

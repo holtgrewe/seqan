@@ -191,10 +191,10 @@ struct FileFormat<FormattedFile<Fastq, Output, TSpec> >
  * @throw ParseError On high-level file format errors.
  */
 
-template <typename TSpec, typename TIdString, typename TSeqString>
+template <typename TSpec, typename TIDString, typename TSeqString>
 inline SEQAN_FUNC_ENABLE_IF(And<Is<InputStreamConcept<typename FormattedFile<Fastq, Input, TSpec>::TStream> >,
                                 Not<HasQualities<typename Value<TSeqString>::Type> > >, void)
-readRecord(TIdString & meta, TSeqString & seq, FormattedFile<Fastq, Input, TSpec> & file)
+readRecord(TIDString & meta, TSeqString & seq, FormattedFile<Fastq, Input, TSpec> & file)
 {
     readRecord(meta, seq, file.iter, file.format);
 }
@@ -203,10 +203,10 @@ readRecord(TIdString & meta, TSeqString & seq, FormattedFile<Fastq, Input, TSpec
 // Function readRecord(); No qualities in seq string
 // ----------------------------------------------------------------------------
 
-template <typename TSpec, typename TIdString, typename TSeqString>
+template <typename TSpec, typename TIDString, typename TSeqString>
 inline SEQAN_FUNC_ENABLE_IF(And<Is<InputStreamConcept<typename FormattedFile<Fastq, Input, TSpec>::TStream> >,
                                 HasQualities<typename Value<TSeqString>::Type> >, void)
-readRecord(TIdString & meta, TSeqString & seq, FormattedFile<Fastq, Input, TSpec> & file)
+readRecord(TIDString & meta, TSeqString & seq, FormattedFile<Fastq, Input, TSpec> & file)
 {
     readRecord(meta, seq, context(file).buffer[2], file.iter, file.format);
     assignQualities(seq, context(file).buffer[2]);
@@ -216,9 +216,9 @@ readRecord(TIdString & meta, TSeqString & seq, FormattedFile<Fastq, Input, TSpec
 // Function readRecord(); With separate qualities
 // ----------------------------------------------------------------------------
 
-template <typename TSpec, typename TIdString, typename TSeqString, typename TQualString>
+template <typename TSpec, typename TIDString, typename TSeqString, typename TQualString>
 inline SEQAN_FUNC_ENABLE_IF(Is<InputStreamConcept<typename FormattedFile<Fastq, Input, TSpec>::TStream> >, void)
-readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, FormattedFile<Fastq, Input, TSpec> & file)
+readRecord(TIDString & meta, TSeqString & seq, TQualString & qual, FormattedFile<Fastq, Input, TSpec> & file)
 {
     readRecord(meta, seq, qual, file.iter, file.format);
 }
@@ -248,8 +248,8 @@ swapPtr(TPtrA &a, TPtrB &b)
     a = tmp2.a;
 }
 
-template <typename TIdStringSet, typename TSeqStringSet, typename TSpec, typename TSize>
-inline void readRecords(TIdStringSet & meta,
+template <typename TIDStringSet, typename TSeqStringSet, typename TSpec, typename TSize>
+inline void readRecords(TIDStringSet & meta,
                         TSeqStringSet & seq,
                         FormattedFile<Fastq, Input, TSpec> & file,
                         TSize maxRecords)
@@ -280,8 +280,8 @@ inline void readRecords(TIdStringSet & meta,
 // Function readRecords(); Without max records
 // ----------------------------------------------------------------------------
 
-template <typename TIdStringSet, typename TSeqStringSet, typename TSpec>
-inline void readRecords(TIdStringSet & meta,
+template <typename TIDStringSet, typename TSeqStringSet, typename TSpec>
+inline void readRecords(TIDStringSet & meta,
                         TSeqStringSet & seq,
                         FormattedFile<Fastq, Input, TSpec> & file)
 {
@@ -292,8 +292,8 @@ inline void readRecords(TIdStringSet & meta,
 // Function readRecords(); With separate qualities
 // ----------------------------------------------------------------------------
 
-template <typename TIdStringSet, typename TSeqStringSet, typename TQualStringSet, typename TSpec, typename TSize>
-inline void readRecords(TIdStringSet & meta,
+template <typename TIDStringSet, typename TSeqStringSet, typename TQualStringSet, typename TSpec, typename TSize>
+inline void readRecords(TIDStringSet & meta,
                         TSeqStringSet & seq,
                         TQualStringSet & qual,
                         FormattedFile<Fastq, Input, TSpec> & file,
@@ -325,8 +325,8 @@ inline void readRecords(TIdStringSet & meta,
 // Function readRecords(); With separate qualities; Without max records
 // ----------------------------------------------------------------------------
 
-template <typename TIdStringSet, typename TSeqStringSet, typename TQualStringSet, typename TSpec>
-inline void readRecords(TIdStringSet & meta,
+template <typename TIDStringSet, typename TSeqStringSet, typename TQualStringSet, typename TSpec>
+inline void readRecords(TIDStringSet & meta,
                         TSeqStringSet & seq,
                         TQualStringSet & qual,
                         FormattedFile<Fastq, Input, TSpec> & file)
@@ -353,10 +353,10 @@ inline void readRecords(TIdStringSet & meta,
  * @throw ParseError On high-level file format errors.
  */
 
-template <typename TSpec, typename TIdString, typename TSeqString>
+template <typename TSpec, typename TIDString, typename TSeqString>
 inline SEQAN_FUNC_ENABLE_IF(Is<OutputStreamConcept<typename FormattedFile<Fastq, Output, TSpec>::TStream> >, void)
 writeRecord(FormattedFile<Fastq, Output, TSpec> & file,
-            TIdString const & meta,
+            TIDString const & meta,
             TSeqString const & seq)
 {
     writeRecord(file.iter, meta, seq, file.format, context(file).options);
@@ -366,10 +366,10 @@ writeRecord(FormattedFile<Fastq, Output, TSpec> & file,
 // Function writeRecord(); With separate qualities
 // ----------------------------------------------------------------------------
 
-template <typename TSpec, typename TIdString, typename TSeqString, typename TQualString>
+template <typename TSpec, typename TIDString, typename TSeqString, typename TQualString>
 inline SEQAN_FUNC_ENABLE_IF(Is<OutputStreamConcept<typename FormattedFile<Fastq, Output, TSpec>::TStream> >, void)
 writeRecord(FormattedFile<Fastq, Output, TSpec> & file,
-            TIdString const & meta,
+            TIDString const & meta,
             TSeqString const & seq,
             TQualString const & qual)
 {
@@ -387,13 +387,13 @@ writeRecord(FormattedFile<Fastq, Output, TSpec> & file,
  * @see SeqFileOut#writeRecord
  */
 
-template <typename TSpec, typename TIdStringSet, typename TSeqStringSet>
+template <typename TSpec, typename TIDStringSet, typename TSeqStringSet>
 inline void
 writeRecords(FormattedFile<Fastq, Output, TSpec> & file,
-             TIdStringSet const & meta,
+             TIDStringSet const & meta,
              TSeqStringSet const & seq)
 {
-    for (typename Size<TIdStringSet>::Type i = 0; i != length(seq); ++i)
+    for (typename Size<TIDStringSet>::Type i = 0; i != length(seq); ++i)
         writeRecord(file, meta[i], seq[i]);
 }
 
@@ -401,14 +401,14 @@ writeRecords(FormattedFile<Fastq, Output, TSpec> & file,
 // Function writeRecords(); With separate qualities
 // ----------------------------------------------------------------------------
 
-template <typename TSpec, typename TIdStringSet, typename TSeqStringSet, typename TQualStringSet>
+template <typename TSpec, typename TIDStringSet, typename TSeqStringSet, typename TQualStringSet>
 inline void
 writeRecords(FormattedFile<Fastq, Output, TSpec> & file,
-             TIdStringSet const & meta,
+             TIDStringSet const & meta,
              TSeqStringSet const & seq,
              TQualStringSet const & qual)
 {
-    for (typename Size<TIdStringSet>::Type i = 0; i != length(seq); ++i)
+    for (typename Size<TIDStringSet>::Type i = 0; i != length(seq); ++i)
         writeRecord(file, meta[i], seq[i], qual[i]);
 }
 

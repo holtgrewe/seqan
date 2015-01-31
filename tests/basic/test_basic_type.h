@@ -319,13 +319,13 @@ SEQAN_DEFINE_TEST(seqan_basic_type_metafunction_vertex_descriptor)
 namespace seqan {
 
 template <>
-struct Id<TestStruct1_>
+struct ID<TestStruct1_>
 {
     typedef short Type;
 };
 
 template <>
-struct Id<TestStruct1_ const>
+struct ID<TestStruct1_ const>
 {
     typedef short Type;
 };
@@ -334,14 +334,14 @@ struct Id<TestStruct1_ const>
 
 SEQAN_DEFINE_TEST(seqan_basic_type_metafunction_id)
 {
-    bool b = IsSameType<Id<TestStruct1_>::Type, short>::Type::VALUE;
+    bool b = IsSameType<ID<TestStruct1_>::Type, short>::Type::VALUE;
     SEQAN_ASSERT(b);
-    b = IsSameType<Id<TestStruct1_ const>::Type, short>::Type::VALUE;
+    b = IsSameType<ID<TestStruct1_ const>::Type, short>::Type::VALUE;
     SEQAN_ASSERT(b);
 
-    b = IsSameType<Id<TestStruct2_>::Type, unsigned int>::Type::VALUE;
+    b = IsSameType<ID<TestStruct2_>::Type, unsigned int>::Type::VALUE;
     SEQAN_ASSERT(b);
-    b = IsSameType<Id<TestStruct2_ const>::Type, unsigned int>::Type::VALUE;
+    b = IsSameType<ID<TestStruct2_ const>::Type, unsigned int>::Type::VALUE;
     SEQAN_ASSERT(b);
 }
 

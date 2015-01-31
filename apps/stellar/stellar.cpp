@@ -33,10 +33,10 @@ using namespace seqan;
 ///////////////////////////////////////////////////////////////////////////////
 // Initializes a Finder object for a database sequence,
 //  calls stellar, and writes matches to file
-template <typename TSequence, typename TId, typename TPattern, typename TMatches>
+template <typename TSequence, typename TID, typename TPattern, typename TMatches>
 inline bool
 _stellarOnOne(TSequence & database,
-              TId & databaseID,
+              TID & databaseID,
               TPattern & swiftPattern,
               bool databaseStrand,
               TMatches & matches,
@@ -138,12 +138,12 @@ struct FunctorComplement<AminoAcid>:
 ///////////////////////////////////////////////////////////////////////////////
 // Initializes a Pattern object with the query sequences,
 //  and calls _stellarOnOne for each database sequence
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 inline bool
 _stellarOnAll(StringSet<TSequence> & databases,
-              StringSet<TId> & databaseIDs,
+              StringSet<TID> & databaseIDs,
               StringSet<TSequence> & queries,
-              StringSet<TId> & queryIDs,
+              StringSet<TID> & queryIDs,
               StellarOptions & options)
 {
     // pattern
@@ -162,7 +162,7 @@ _stellarOnAll(StringSet<TSequence> & databases,
     std::cout << std::endl;
 
     // container for eps-matches
-    StringSet<QueryMatches<StellarMatch<TSequence, TId> > > matches;
+    StringSet<QueryMatches<StellarMatch<TSequence, TID> > > matches;
     resize(matches, length(queries));
 
     std::cout << "Aligning all query sequences to database sequence..." << std::endl;
@@ -203,24 +203,24 @@ _stellarOnAll(StringSet<TSequence> & databases,
     return 0;
 }
 
-template <typename TId>
+template <typename TID>
 inline bool
-_checkUniqueId(std::set<TId> & uniqueIds, TId & id)
+_checkUniqueID(std::set<TID> & uniqueIDs, TID & id)
 {
-    TId shortId;
-    typedef typename Iterator<TId>::Type TIterator;
+    TID shortID;
+    typedef typename Iterator<TID>::Type TIterator;
 
     TIterator it = begin(id);
     TIterator itEnd = end(id);
     while (it != itEnd && *it > 32)
     {
-        appendValue(shortId, *it);
+        appendValue(shortID, *it);
         ++it;
     }
 
-    if (uniqueIds.count(shortId) == 0)
+    if (uniqueIDs.count(shortID) == 0)
     {
-        uniqueIds.insert(shortId);
+        uniqueIDs.insert(shortID);
         return 1;
     }
 
@@ -230,12 +230,12 @@ _checkUniqueId(std::set<TId> & uniqueIds, TId & id)
 ///////////////////////////////////////////////////////////////////////////////
 // Imports sequences from a file,
 //  stores them in the StringSet seqs and their identifiers in the StringSet ids
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 inline bool
 _importSequences(CharString const & fileName,
                  CharString const & name,
                  StringSet<TSequence> & seqs,
-                 StringSet<TId> & ids)
+                 StringSet<TID> & ids)
 {
     SeqFileIn inSeqs;
     if (!open(inSeqs, (toCString(fileName))))
@@ -244,17 +244,17 @@ _importSequences(CharString const & fileName,
         return false;
     }
 
-    std::set<TId> uniqueIds; // set of short IDs (cut at first whitespace)
+    std::set<TID> uniqueIDs; // set of short IDs (cut at first whitespace)
     bool idsUnique = true;
 
     TSequence seq;
-    TId id;
+    TID id;
     unsigned seqCount = 0;
     for (; !atEnd(inSeqs); ++seqCount)
     {
         readRecord(id, seq, inSeqs);
 
-        idsUnique &= _checkUniqueId(uniqueIds, id);
+        idsUnique &= _checkUniqueID(uniqueIDs, id);
 
         appendValue(seqs, seq, Generous());
         appendValue(ids, id, Generous());

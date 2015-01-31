@@ -582,21 +582,21 @@ writeRecords(
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TNodeIdMap>
+template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TNodeIDMap>
 inline void
 _addNode(Graph<TSpec>& g,
 		 TStatement& node_id,
 		 TStatement& attr_list,
 		 TNodeAttributes& nodeMap,
 		 TEdgeAttributes&,			  
-		 TNodeIdMap& nodeIdMap)
+		 TNodeIDMap& nodeIDMap)
 {
 	typedef Graph<TSpec> TGraph;
 	typedef typename VertexDescriptor<TGraph>::Type TVertexDescriptor;
 
-	if (nodeIdMap.find(node_id) == nodeIdMap.end()) {
+	if (nodeIDMap.find(node_id) == nodeIDMap.end()) {
 		TVertexDescriptor _id = addVertex(g);
-		nodeIdMap.insert(std::make_pair(node_id, _id));
+		nodeIDMap.insert(std::make_pair(node_id, _id));
 		resizeVertexMap(nodeMap, g);
 		assignProperty(nodeMap, _id, attr_list);
 	}
@@ -719,7 +719,7 @@ _addEdge(Graph<Automaton<TAlphabet, TCargo, TSpec> >& g,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TNodeIdMap>
+template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TNodeIDMap>
 inline void
 _addEdge(Graph<TSpec>& g,
 		 TStatement& left_node_id,
@@ -727,7 +727,7 @@ _addEdge(Graph<TSpec>& g,
 		 TStatement& attr_list,
 		 TNodeAttributes& nodeMap,
 		 TEdgeAttributes& edgeMap,
-		 TNodeIdMap& nodeIdMap)
+		 TNodeIDMap& nodeIDMap)
 {
 	typedef Graph<TSpec> TGraph;
 	typedef typename Value<TStatement>::Type TValue;
@@ -738,12 +738,12 @@ _addEdge(Graph<TSpec>& g,
 	TVertexDescriptor targetV;
 
 	typename TMap::iterator pos;
-	pos = nodeIdMap.find(left_node_id);
-	if (pos == nodeIdMap.end()) return;
+	pos = nodeIDMap.find(left_node_id);
+	if (pos == nodeIDMap.end()) return;
 	else sourceV = pos->second;
 
-	pos = nodeIdMap.find(right_node_id);
-	if (pos == nodeIdMap.end()) return;
+	pos = nodeIDMap.find(right_node_id);
+	if (pos == nodeIDMap.end()) return;
 	else targetV = pos->second;
 
 	_addEdge(g, sourceV, targetV, nodeMap, edgeMap, attr_list);
@@ -751,13 +751,13 @@ _addEdge(Graph<TSpec>& g,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TNodeIdMap>
+template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TNodeIDMap>
 inline void
 _processNodeStatement(Graph<TSpec>& g,
 					  TStatement& stmt,
 					  TNodeAttributes& nodeMap,
 					  TEdgeAttributes& edgeMap,
-					  TNodeIdMap& nodeIdMap) 
+					  TNodeIDMap& nodeIDMap) 
 {
 	typedef typename Value<TStatement>::Type TValue;
 	typedef typename Iterator<TStatement>::Type TIter;
@@ -783,20 +783,20 @@ _processNodeStatement(Graph<TSpec>& g,
 			append(node_id, *it);
 		}
 	}
-	_addNode(g, node_id, attr_list, nodeMap, edgeMap, nodeIdMap);
+	_addNode(g, node_id, attr_list, nodeMap, edgeMap, nodeIDMap);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TPosition, typename TNodeIdMap>
+template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TPosition, typename TNodeIDMap>
 inline void
 _processEdgeStatement(Graph<TSpec>& g,
 					  TStatement& stmt,
 					  TNodeAttributes& nodeMap,
 					  TEdgeAttributes& edgeMap,
 					  TPosition pos,
-					  TNodeIdMap& nodeIdMap) 
+					  TNodeIDMap& nodeIDMap) 
 {
 	typedef typename Value<TStatement>::Type TValue;
 	typedef typename Iterator<TStatement>::Type TIter;
@@ -827,18 +827,18 @@ _processEdgeStatement(Graph<TSpec>& g,
 		}
 	}
 	//std::cout << left_node_id << "," << right_node_id << "," << std::endl;
-	_addEdge(g, left_node_id, right_node_id, attr_list, nodeMap, edgeMap, nodeIdMap);
+	_addEdge(g, left_node_id, right_node_id, attr_list, nodeMap, edgeMap, nodeIDMap);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TNodeIdMap>
+template<typename TSpec, typename TStatement, typename TNodeAttributes, typename TEdgeAttributes, typename TNodeIDMap>
 inline void
 _processStatement(Graph<TSpec>& g,
 				  TStatement& stmt,
 				  TNodeAttributes& nodeMap,
 				  TEdgeAttributes& edgeMap,
-				  TNodeIdMap& nodeIdMap) 
+				  TNodeIDMap& nodeIDMap) 
 {
 	// Clear everything up to the last line
 	typedef typename Value<TStatement>::Type TValue;
@@ -868,7 +868,7 @@ _processStatement(Graph<TSpec>& g,
 	  _id[pos % 2] = *it;
 	  if ((_id == "--") || (_id == "->")) {
 	    //std::cout << stmt << std::endl;
-	    _processEdgeStatement(g, stmt, nodeMap, edgeMap, pos - 1, nodeIdMap);
+	    _processEdgeStatement(g, stmt, nodeMap, edgeMap, pos - 1, nodeIDMap);
 	    clear(stmt);
 	    return;
 	  }
@@ -876,7 +876,7 @@ _processStatement(Graph<TSpec>& g,
 
 	// Process nodes
 	//std::cout << stmt << std::endl;
-	_processNodeStatement(g, stmt, nodeMap, edgeMap, nodeIdMap);
+	_processNodeStatement(g, stmt, nodeMap, edgeMap, nodeIDMap);
 	clear(stmt);
 }
 
@@ -896,14 +896,14 @@ void readRecords(
 	typedef Graph<TSpec> TGraph;
 	typedef typename VertexDescriptor<TGraph>::Type TVertexDescriptor;
 	typedef std::map<CharString, TVertexDescriptor> TMap;
-	TMap nodeIdMap;
+	TMap nodeIDMap;
 
 	CharString stmt;
 	while (!atEnd(reader))
     {
         clear(stmt);
         readUntil(stmt, reader, EqualsChar<';'>());
-        _processStatement(g, stmt, nodeMap, edgeMap, nodeIdMap);
+        _processStatement(g, stmt, nodeMap, edgeMap, nodeIDMap);
         skipLine(reader);
 	}
 }

@@ -126,13 +126,13 @@ template <typename TSpec, typename Traits, typename TReadSeqsIterator>
 inline void _collectSeedsImpl(SeedsCollector<TSpec, Traits> & me, TReadSeqsIterator const & it)
 {
     typedef typename Traits::TReadSeqs                  TReadSeqs;
-    typedef typename Id<TReadSeqs>::Type                TReadSeqId;
+    typedef typename ID<TReadSeqs>::Type                TReadSeqID;
 
-    TReadSeqId readSeqId = position(it);
-    TReadSeqId readId = getReadId(me.readSeqs, readSeqId);
+    TReadSeqID readSeqID = position(it);
+    TReadSeqID readID = getReadID(me.readSeqs, readSeqID);
 
-    if (!isMapped(me.ctx, readId) && getSeedErrors(me.ctx, readSeqId) == me.seedErrors)
-        _getSeeds(me, readSeqId);
+    if (!isMapped(me.ctx, readID) && getSeedErrors(me.ctx, readSeqID) == me.seedErrors)
+        _getSeeds(me, readSeqID);
 }
 
 // ----------------------------------------------------------------------------
@@ -140,8 +140,8 @@ inline void _collectSeedsImpl(SeedsCollector<TSpec, Traits> & me, TReadSeqsItera
 // ----------------------------------------------------------------------------
 // Enumerates the seeds for a given read sequence.
 
-template <typename TSpec, typename Traits, typename TReadSeqId>
-inline void _getSeeds(SeedsCollector<TSpec, Traits> & me, TReadSeqId readSeqId)
+template <typename TSpec, typename Traits, typename TReadSeqID>
+inline void _getSeeds(SeedsCollector<TSpec, Traits> & me, TReadSeqID readSeqID)
 {
     typedef typename Traits::TMatch                         TMatch;
     typedef typename Traits::TReadSeqs                      TReadSeqs;
@@ -149,14 +149,14 @@ inline void _getSeeds(SeedsCollector<TSpec, Traits> & me, TReadSeqId readSeqId)
     typedef typename Value<TReadSeqs>::Type                 TReadSeq;
     typedef typename Size<TReadSeq>::Type                   TSize;
 
-    TSize readLength = length(me.readSeqs[readSeqId]);
+    TSize readLength = length(me.readSeqs[readSeqID]);
     TSize readErrors = getReadErrors<TMatch>(me.options, readLength);
-    TSize seedErrors = getSeedErrors(me.ctx, readSeqId);
+    TSize seedErrors = getSeedErrors(me.ctx, readSeqID);
     TSize seedsCount = static_cast<TSize>(std::ceil((readErrors + 1) / (seedErrors + 1.0)));
     TSize seedsLength = readLength / seedsCount;
 
-    for (TSize seedId = 0; seedId < seedsCount; ++seedId)
-        _addSeed(me, TPos(readSeqId, seedId * seedsLength), seedsLength);
+    for (TSize seedID = 0; seedID < seedsCount; ++seedID)
+        _addSeed(me, TPos(readSeqID, seedID * seedsLength), seedsLength);
 }
 
 // ----------------------------------------------------------------------------

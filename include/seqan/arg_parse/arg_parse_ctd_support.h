@@ -254,9 +254,9 @@ inline std::string _indent(const int currentIndent)
 }
 
 // ----------------------------------------------------------------------------
-// Function _writeCLIElement()
+// Function _writeCliElement()
 // ----------------------------------------------------------------------------
-inline void _writeCLIElement(std::ostream & ctdfile, int currentIndent, std::string const & optionIdentifier, std::string const & ref_name, bool isList)
+inline void _writeCliElement(std::ostream & ctdfile, int currentIndent, std::string const & optionIdentifier, std::string const & ref_name, bool isList)
 {
     ctdfile << _indent(currentIndent)
             << "<clielement optionIdentifier=\"" << optionIdentifier
@@ -281,17 +281,17 @@ inline std::string _getManual(ArgumentParser const & me)
 }
 
 // ----------------------------------------------------------------------------
-// Function writeCTD()
+// Function writeCtd()
 // ----------------------------------------------------------------------------
 
 // TODO(holtgrew): Change argument order.
 
 /*!
- * @fn ArgumentParser#writeCTD
+ * @fn ArgumentParser#writeCtd
  * @headerfile <seqan/arg_parse.h>\
  * @brief Export the app's interface description to a .ctd file.
  *
- * @signature bool writeCTD(parser[, stream]);
+ * @signature bool writeCtd(parser[, stream]);
  *
  * @param[in]  parser The ArgumentParser to write the CTD file for.
  * @param[out] stream A <tt>std::ostream</tt> to write to.  If omitted an output file with the name form the
@@ -301,7 +301,7 @@ inline std::string _getManual(ArgumentParser const & me)
  */
 
 inline bool
-writeCTD(ArgumentParser const & me, std::ostream & ctdfile)
+writeCtd(ArgumentParser const & me, std::ostream & ctdfile)
 {
     typedef ArgumentParser::TOptionMap::const_iterator   TOptionMapIterator;
     typedef ArgumentParser::TArgumentMapSize TArgumentMapSize;
@@ -344,7 +344,7 @@ writeCTD(ArgumentParser const & me, std::ostream & ctdfile)
 
         if (_includeInCTD(opt))
         {
-            _writeCLIElement(ctdfile, currentIndent, optionIdentifier, refName, isListArgument(opt));
+            _writeCliElement(ctdfile, currentIndent, optionIdentifier, refName, isListArgument(opt));
         }
     }
 
@@ -362,7 +362,7 @@ writeCTD(ArgumentParser const & me, std::ostream & ctdfile)
         std::string optionIdentifier = "";
         std::stringstream refName;
         refName << toolname << "." << "argument-" << argIdx;
-        _writeCLIElement(ctdfile, currentIndent, optionIdentifier, refName.str(), isListArgument(me.argumentList[argIdx]));
+        _writeCliElement(ctdfile, currentIndent, optionIdentifier, refName.str(), isListArgument(me.argumentList[argIdx]));
     }
 
     ctdfile << _indent(--currentIndent) << "</cli>\n";
@@ -526,7 +526,7 @@ writeCTD(ArgumentParser const & me, std::ostream & ctdfile)
 }
 
 inline bool
-writeCTD(ArgumentParser const & me)
+writeCtd(ArgumentParser const & me)
 {
     // create file [appname].ctd in working directory
     std::string ctdfilename;
@@ -541,7 +541,7 @@ writeCTD(ArgumentParser const & me)
         return false;
     }
 
-    writeCTD(me, ctdfile);
+    writeCtd(me, ctdfile);
 
     ctdfile.close();
     return true;

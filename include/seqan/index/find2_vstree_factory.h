@@ -294,9 +294,9 @@ build(Factory<Iter<TIndex, VSTree<TopDown<ParentLinks<TSpec> > > > > & factory)
 // Function getObject()
 // ----------------------------------------------------------------------------
 
-template <typename TIndex, typename TSpec, typename TId>
+template <typename TIndex, typename TSpec, typename TID>
 inline SEQAN_HOST_DEVICE Iter<TIndex, VSTree<TSpec> >
-getObject(Factory<Iter<TIndex, VSTree<TSpec> > > & factory, TId /* objectId */)
+getObject(Factory<Iter<TIndex, VSTree<TSpec> > > & factory, TID /* objectID */)
 {
     return Iter<TIndex, VSTree<TSpec> >(_host(factory, typename IsView<TIndex>::Type()));
 }
@@ -305,15 +305,15 @@ getObject(Factory<Iter<TIndex, VSTree<TSpec> > > & factory, TId /* objectId */)
 // Function getObject()
 // ----------------------------------------------------------------------------
 
-template <typename TIndex, typename TSpec, typename TId>
+template <typename TIndex, typename TSpec, typename TID>
 inline SEQAN_HOST_DEVICE Iter<TIndex, VSTree<TopDown<ParentLinks<TSpec> > > >
-getObject(Factory<Iter<TIndex, VSTree<TopDown<ParentLinks<TSpec> > > > > & factory, TId objectId)
+getObject(Factory<Iter<TIndex, VSTree<TopDown<ParentLinks<TSpec> > > > > & factory, TID objectID)
 {
-    SEQAN_ASSERT_LT(objectId, factory._maxObjects);
+    SEQAN_ASSERT_LT(objectID, factory._maxObjects);
 
     Iter<TIndex, VSTree<TopDown<ParentLinks<TSpec> > > > it(_host(factory, typename IsView<TIndex>::Type()));
 
-    it.history._begin = begin(factory._history, Standard()) + objectId * factory._maxHistoryLength;
+    it.history._begin = begin(factory._history, Standard()) + objectID * factory._maxHistoryLength;
     it.history._end = it.history._begin;
     it.history._capacity = factory._maxHistoryLength;
 

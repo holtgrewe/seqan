@@ -71,11 +71,11 @@ struct Verifier
 
     template <typename TDelegate>
     inline bool
-    operator() (typename Size<TDb>::Type dbId,
-                typename Size<TDbQuery>::Type queryId,
+    operator() (typename Size<TDb>::Type dbID,
+                typename Size<TDbQuery>::Type queryID,
                 TDelegate & delegate)
     {
-        return _verify(*this, dbId, queryId, delegate);
+        return _verify(*this, dbID, queryID, delegate);
     }
 };
 
@@ -94,8 +94,8 @@ struct Verifier
 template <typename TText, typename TSpec, typename TDelegate>
 inline bool
 _verify(Verifier<TText, TSpec> & verifier,
-        typename Size<Db<TText> >::Type dbId,
-        typename Size<Db<TText, TSpec> >::Type queryId,
+        typename Size<Db<TText> >::Type dbID,
+        typename Size<Db<TText, TSpec> >::Type queryID,
         TDelegate & delegate)
 {
     //typedef Db<TText> /* const */                           TDb;
@@ -108,11 +108,11 @@ _verify(Verifier<TText, TSpec> & verifier,
     //typedef PatternState_<TTextReference, TAlgorithmSpec>   TPatternState;
 
     // Get texts from database.
-    TTextReference text1 = verifier.db.text[dbId];
-    TTextReference text2 = value(verifier.query).text[queryId];
+    TTextReference text1 = verifier.db.text[dbID];
+    TTextReference text2 = value(verifier.query).text[queryID];
     TTextSize length1 = length(text1);
     TTextSize length2 = length(text2);
-    TErrors maxErrors = getErrors(value(verifier.query), queryId);
+    TErrors maxErrors = getErrors(value(verifier.query), queryID);
 
     // Check that texts do not differ more than maxErrors in length.
     if (_max(length1, length2) - _min(length1, length2) > maxErrors)
@@ -139,7 +139,7 @@ _verify(Verifier<TText, TSpec> & verifier,
             return false;
     }
 
-    delegate(dbId, queryId);
+    delegate(dbID, queryID);
 
     return true;
 }

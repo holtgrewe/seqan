@@ -31,7 +31,7 @@ int main(int argc, char const ** argv)
 
     // Translate sequence name to index.
     unsigned idx = 0;
-    if (!getIdByName(idx, faiIndex, argv[2]))
+    if (!getIDByName(idx, faiIndex, argv[2]))
     {
         std::cerr << "ERROR: Index does not know about sequence " << argv[2] << "\n";
         return 1;

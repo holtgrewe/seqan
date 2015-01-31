@@ -14,7 +14,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ==========================================================================
-  $Id$
+  $ID$
  ==========================================================================*/
 
 #ifndef SEQAN_APPS_RR_UTILS_H
@@ -88,44 +88,44 @@ double p_value(const unsigned n_u, const double lambda)
 /////////////////////////////////////////////////////////////////////////////
 // some accessor stuff for the common repsep structures
 // 1. Triple< TAlphabet, .. gapped sequence char
-//            TId,       .. readId
+//            TID,       .. readID
 //            TReadPos > .. position of the char in ungapped read (gap is length(read) + 1)
 /////////////////////////////////////////////////////////////////////////////
-template<typename TAlphabet, typename TId, typename TReadPos>
-TAlphabet _sequenceCharacter(Triple<TAlphabet, TId, TReadPos> arc) 
+template<typename TAlphabet, typename TID, typename TReadPos>
+TAlphabet _sequenceCharacter(Triple<TAlphabet, TID, TReadPos> arc) 
 {
     return arc.i1;
 }
 
-template<typename TAlphabet, typename TId, typename TReadPos>
-TId _readId(Triple<TAlphabet, TId, TReadPos> arc) 
+template<typename TAlphabet, typename TID, typename TReadPos>
+TID _readID(Triple<TAlphabet, TID, TReadPos> arc) 
 {
 //IOREV _notio_
     return arc.i2;
 }
 
-template<typename TAlphabet, typename TId, typename TReadPos>
-TReadPos _positionInRead(Triple<TAlphabet, TId, TReadPos> arc) 
+template<typename TAlphabet, typename TID, typename TReadPos>
+TReadPos _positionInRead(Triple<TAlphabet, TID, TReadPos> arc) 
 {
     return arc.i3;
 }
 
 ///////////////////////////////////
 
-template<typename TAlphabet, typename TId, typename TReadPos>
-void _setSequenceCharacter(Triple<TAlphabet, TId, TReadPos> & arc, TAlphabet val) 
+template<typename TAlphabet, typename TID, typename TReadPos>
+void _setSequenceCharacter(Triple<TAlphabet, TID, TReadPos> & arc, TAlphabet val) 
 {
     arc.i1 = val;
 }
 
-template<typename TAlphabet, typename TId, typename TReadPos>
-void _setReadId(Triple<TAlphabet, TId, TReadPos> & arc, TId id) 
+template<typename TAlphabet, typename TID, typename TReadPos>
+void _setReadID(Triple<TAlphabet, TID, TReadPos> & arc, TID id) 
 {
     arc.i2 = id;
 }
 
-template<typename TAlphabet, typename TId, typename TReadPos>
-void _setPositionInRead(Triple<TAlphabet, TId, TReadPos> & arc, TReadPos pos) 
+template<typename TAlphabet, typename TID, typename TReadPos>
+void _setPositionInRead(Triple<TAlphabet, TID, TReadPos> & arc, TReadPos pos) 
 {
     arc.i3 = pos;
 }
@@ -163,12 +163,12 @@ void _setPositionInRead(Pair<TAlphabet, TReadPos> & arc, TReadPos pos)
 /////////////////////////////////////////////////////////////////////////////
 // (currently unused parser)
 // TODO: check removal
-template<typename TReadId>
-Pair<TReadId,TReadId>
-_parseIds(String<char> & fastaTag){
+template<typename TReadID>
+Pair<TReadID,TReadID>
+_parseIDs(String<char> & fastaTag){
 //IOREV _delcandidate_ marked for removal in code comment
-    // format is >257,288[id=1,mateId=431]
-    Pair<TReadId,TReadId> ret;
+    // format is >257,288[id=1,mateID=431]
+    Pair<TReadID,TReadID> ret;
 
     typedef typename Iterator< String<char> >::Type TIter;
     TIter iter = begin(fastaTag);
@@ -194,16 +194,16 @@ _parseIds(String<char> & fastaTag){
         ++iter;
     }
 
-    // after this there will only be the libraryId and so
+    // after this there will only be the libraryID and so
 
     return ret;
 }
 
 template <typename TString>
-int _parseGroupId(TString & tag)
+int _parseGroupID(TString & tag)
 {
 //IOREV _notio_
-    String<char> groupId;
+    String<char> groupID;
 
     for (unsigned i = 0; i < length(tag); ++i)
     {
@@ -212,12 +212,12 @@ int _parseGroupId(TString & tag)
             ++i;
             while(i < length(tag))
             {
-                append(groupId, static_cast<char>(value(tag,i)));
+                append(groupID, static_cast<char>(value(tag,i)));
                 ++i;
             }
         }
     }
-    return atoi(toCString(groupId));
+    return atoi(toCString(groupID));
 }
 
 /////////////////////////////////////////////////////////////////////////////

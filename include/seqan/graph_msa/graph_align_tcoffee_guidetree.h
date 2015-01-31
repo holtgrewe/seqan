@@ -831,9 +831,9 @@ upgmaTree(Graph<Undirected<TValue, TSpec1> >& pairGraph,
 		// Update the minimum values
 		minValues[sourceBest] = TWeightEdgePair(maxVal, 0);
 		for(TEdgeOutI itOutE(pairGraph, sourceBest);!atEnd(itOutE);goNext(itOutE)) {
-			TVD localTVD = targetVertex(itOutE);
-			if (sourceBest < localTVD) {
-				if (cargo(value(itOutE)) < (minValues[sourceBest].i1)) minValues[sourceBest] = TWeightEdgePair(cargo(value(itOutE)), localTVD);
+			TVD localTvd = targetVertex(itOutE);
+			if (sourceBest < localTvd) {
+				if (cargo(value(itOutE)) < (minValues[sourceBest].i1)) minValues[sourceBest] = TWeightEdgePair(cargo(value(itOutE)), localTvd);
 			}
 		}
 		// Find the new minimum value

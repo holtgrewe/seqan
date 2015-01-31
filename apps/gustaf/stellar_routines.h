@@ -45,10 +45,10 @@ using namespace seqan;
 // Compare StellarMatches using in order of priority (1) read begin, (2) read end position,
 // (3) chromosome begin, (4) chromosome end pos
 // Note: Assumes matches derive from the same read/contig
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 struct CompareStellarMatches
 {
-    bool operator()(StellarMatch<TSequence, TId> const & match1, StellarMatch<TSequence, TId> const & match2) const
+    bool operator()(StellarMatch<TSequence, TID> const & match1, StellarMatch<TSequence, TID> const & match2) const
     {
         if (match1.begin2 != match2.begin2)
             return match1.begin2 < match2.begin2;
@@ -234,11 +234,11 @@ void _getStellarMatches(StringSet<TSequence> & queries, StringSet<TSequence> & d
 // ----------------------------------------------------------------------------
 
 // Get edit distance score of two alignment rows
-template <typename TSequence, typename TId, typename TValue>
-inline void _getScore(StellarMatch<TSequence, TId> & match, TValue & alignDistance)
+template <typename TSequence, typename TID, typename TValue>
+inline void _getScore(StellarMatch<TSequence, TID> & match, TValue & alignDistance)
 {
     SEQAN_ASSERT_EQ(length(match.row1), length(match.row2));
-    typedef typename StellarMatch<TSequence, TId>::TRow TRow;
+    typedef typename StellarMatch<TSequence, TID>::TRow TRow;
     typedef typename Iterator<TRow>::Type TIter;
 
     if (!match.orientation)
@@ -269,13 +269,13 @@ inline void _getScore(StellarMatch<TSequence, TId> & match, TValue & alignDistan
 
 // Computes distance score for each Stellar match and stores i in distanceScores
 // Note: Matches are being sorted within this function
-template <typename TScoreAlloc, typename TSequence, typename TId>
+template <typename TScoreAlloc, typename TSequence, typename TID>
 void _getMatchDistanceScore(
-    StringSet<QueryMatches<StellarMatch<TSequence, TId> > > & queryMatchesSet,
+    StringSet<QueryMatches<StellarMatch<TSequence, TID> > > & queryMatchesSet,
     String<TScoreAlloc> & distanceScores,  // Note that this is a string of strings corresponding to the queryMatchesSet
     unsigned & numThreads)
 {
-    typedef StellarMatch<TSequence, TId> TMatch;
+    typedef StellarMatch<TSequence, TID> TMatch;
     typedef typename Size<typename TMatch::TAlign>::Type TSize;
     typedef typename Iterator<String<TMatch>, Standard>::Type TIterator;
 
@@ -287,14 +287,14 @@ void _getMatchDistanceScore(
     Splitter<TQueryMatchSetIterator> setSplitter(begin(queryMatchesSet, Standard()), end(queryMatchesSet, Standard()));
 
     SEQAN_OMP_PRAGMA(parallel for)
-    for(int jobId = 0; jobId < static_cast<int>(length(setSplitter)); ++jobId)
+    for(int jobID = 0; jobID < static_cast<int>(length(setSplitter)); ++jobID)
     {
-        for (TQueryMatchSetIterator it = setSplitter[jobId]; it != setSplitter[jobId + 1]; ++it)
+        for (TQueryMatchSetIterator it = setSplitter[jobID]; it != setSplitter[jobID + 1]; ++it)
         {
             TScoreAlloc & matchDistanceScores = distanceScores[it - begin(queryMatchesSet, Standard())];
             resize(matchDistanceScores, length((*it).matches));
             // Sorting matches according to query begin position (begin2)
-            std::sort(begin((*it).matches), end((*it).matches), CompareStellarMatches<TSequence, TId>());
+            std::sort(begin((*it).matches), end((*it).matches), CompareStellarMatches<TSequence, TID>());
             TIterator itStellarMatches = begin((*it).matches, Standard());
             TIterator itEndStellarMatches = end((*it).matches, Standard());
             TSize matchIndex = 0;
@@ -391,16 +391,16 @@ void _trimMatchEnd(TMatch & stMatch, TPos & splitPos, TPos & projSplitPos)
 // ----------------------------------------------------------------------------
 
 // TODO(ktrappe): Restructure and rewrite (buggy) (disabled atm)
-template <typename TSequence, typename TId, typename TBreakpoint>
-void _getStellarIndel(StellarMatch<TSequence, TId> & match,
+template <typename TSequence, typename TID, typename TBreakpoint>
+void _getStellarIndel(StellarMatch<TSequence, TID> & match,
                       String<TBreakpoint> & globalStellarIndels,
-                      TId const & queryId,
+                      TID const & queryID,
                       TSequence & query)
 {
     // std::cerr << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
     typedef typename Infix<TSequence>::Type TInfix;
     typedef typename TBreakpoint::TPos TPos;
-    // typedef typename StellarMatch<TSequence, TId>::TRow TRow;
+    // typedef typename StellarMatch<TSequence, TID>::TRow TRow;
     typedef Align<TInfix> TAlign;
     typedef typename Row<TAlign>::Type TRow;
 
@@ -484,14 +484,14 @@ void _getStellarIndel(StellarMatch<TSequence, TId> & match,
                                startSeqPos,
                                readStartPos,
                                readEndPos,
-                               queryId);
+                               queryID);
                 // get insertion sequence
                 TPos bPos = toSourcePosition(rowRead, indelStart);
                 TPos ePos = toSourcePosition(rowRead, pos);
                 if (bPos > ePos)
                     std::swap(bPos, ePos);
                 TInfix inSeq = infix(query, bPos, ePos);
-                setSVType(bp, static_cast<TId>("insertion"));
+                setSVType(bp, static_cast<TID>("insertion"));
                 setInsertionSeq(bp, inSeq);
                 // _insertBreakpoint(globalStellarIndels, bp);
                 // std::cerr << bp << std::endl;
@@ -515,14 +515,14 @@ void _getStellarIndel(StellarMatch<TSequence, TId> & match,
                        startSeqPos,
                        readStartPos,
                        readEndPos,
-                       queryId);
+                       queryID);
         // get insertion sequence
         TPos bPos = toSourcePosition(rowRead, indelStart) + match.begin2;
         TPos ePos = toSourcePosition(rowRead, pos) + match.begin2;
         if (bPos > ePos)
             std::swap(bPos, ePos);
         TInfix inSeq = infix(query, bPos, ePos);
-        setSVType(bp, static_cast<TId>("insertion"));
+        setSVType(bp, static_cast<TID>("insertion"));
         setInsertionSeq(bp, inSeq);
         _insertBreakpoint(globalStellarIndels, bp);
         // reset gapOpen
@@ -560,8 +560,8 @@ void _getStellarIndel(StellarMatch<TSequence, TId> & match,
                                endSeqPos,
                                readStartPos,
                                readEndPos,
-                               queryId);
-                setSVType(bp, static_cast<TId>("deletion"));
+                               queryID);
+                setSVType(bp, static_cast<TID>("deletion"));
                 _insertBreakpoint(globalStellarIndels, bp);
                 gapOpen = true;
             }
@@ -584,8 +584,8 @@ void _getStellarIndel(StellarMatch<TSequence, TId> & match,
                        endSeqPos,
                        readStartPos,
                        readEndPos,
-                       queryId);
-        setSVType(bp, static_cast<TId>("deletion"));
+                       queryID);
+        setSVType(bp, static_cast<TID>("deletion"));
         _insertBreakpoint(globalStellarIndels, bp);
         gapOpen = true;
     }
@@ -597,10 +597,10 @@ void _getStellarIndel(StellarMatch<TSequence, TId> & match,
 // /////////////////////////////////////////////////////////////////////////////
 // Functions taken from Stellar code for writing Stellar parameters and read files
 
-template <typename TId>
-struct IdComparator
+template <typename TID>
+struct IDComparator
 {
-    bool operator()(TId const & id1, TId const & id2)
+    bool operator()(TID const & id1, TID const & id2)
     {
         return std::lexicographical_compare(begin(id1, Standard()), end(id1, Standard()), begin(id2, Standard()), end(id2, Standard()));
     }
@@ -609,14 +609,14 @@ struct IdComparator
 // /////////////////////////////////////////////////////////////////////////////
 // Imports sequences from a file,
 //  stores them in the StringSet seqs and their identifiers in the StringSet ids
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 inline bool
 _importSequences(CharString const & fileName,
                  CharString const & name,
                  StringSet<TSequence> & seqs,
-                 StringSet<TId> & ids)
+                 StringSet<TID> & ids)
 {
-    typedef typename Iterator<StringSet<TId>, Standard>::Type TIdSetIterator;
+    typedef typename Iterator<StringSet<TID>, Standard>::Type TIDSetIterator;
 
     seqan::SeqFileIn seqFileIn;
     if (!open(seqFileIn, toCString(fileName)))
@@ -626,23 +626,23 @@ _importSequences(CharString const & fileName,
     }
 
     TSequence seq;
-    TId id;
-    TId sId;
+    TID id;
+    TID sID;
     unsigned seqCount = 0;
     for (; !atEnd(seqFileIn); ++seqCount)
     {
         readRecord(id, seq, seqFileIn);
         appendValue(seqs, seq, Generous());
 
-        _getShortId(sId, id);
-        appendValue(ids, sId, Generous());
+        _getShortID(sID, id);
+        appendValue(ids, sID, Generous());
     }
 
     // Check for dupliacte id entries.
-    StringSet<TId> uniqueIds = ids;
-    std::sort(begin(uniqueIds, Standard()), end(uniqueIds, Standard()), IdComparator<TId>());  // O(n*log(n))
-    TIdSetIterator itOldEnd = end(uniqueIds, Standard());
-    TIdSetIterator itNewEnd = std::unique(begin(uniqueIds, Standard()), end(uniqueIds, Standard()), IdComparator<TId>());  // O(n)
+    StringSet<TID> uniqueIDs = ids;
+    std::sort(begin(uniqueIDs, Standard()), end(uniqueIDs, Standard()), IDComparator<TID>());  // O(n*log(n))
+    TIDSetIterator itOldEnd = end(uniqueIDs, Standard());
+    TIDSetIterator itNewEnd = std::unique(begin(uniqueIDs, Standard()), end(uniqueIDs, Standard()), IDComparator<TID>());  // O(n)
 
     --itNewEnd;
     unsigned diff = itOldEnd - itNewEnd;

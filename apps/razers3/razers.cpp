@@ -570,7 +570,7 @@ extractOptions(
     getOptionValue(options.sortOrder, parser, "sort-order");
     getOptionValue(options.genomeNaming, parser, "genome-naming");
     getOptionValue(options.readNaming, parser, "read-naming");
-    getOptionValue(options.fullFastaId, parser, "full-readid");
+    getOptionValue(options.fullFastaID, parser, "full-readid");
     getOptionValue(options.positionFormat, parser, "position-format");
     getOptionValue(options.compactMult, parser, "compact-mult");
     getOptionValue(options.noCompactFrac, parser, "no-compact-frac");

@@ -275,22 +275,22 @@ inline void OverlapInfoComputation_<TFragmentStore>::buildPositionBasedOverlapIn
     // Obtain sorted copy of store's aligned read store.
     TAlignedReadStore sortedAlignedReads = store.alignedReadStore;
     sortAlignedReads(sortedAlignedReads, SortBeginPos());
-    sortAlignedReads(sortedAlignedReads, SortContigId());
+    sortAlignedReads(sortedAlignedReads, SortContigID());
 
     // Iterate over aligned read store, compute overlaps indicated in this multi-read alignment, and collect them.
     std::vector<OverlapInfo_> overlaps;  // will be expanded to alignments later
     TAlignedReadStoreIter it = begin(sortedAlignedReads, Standard());
     TAlignedReadStoreIter itEnd = end(sortedAlignedReads, Standard());
     for (; it != itEnd; ++it)
-        // Consider all overlaps with it->readId right of it but overlapping.
+        // Consider all overlaps with it->readID right of it but overlapping.
         for (TAlignedReadStoreIter it2 = it; it2 != itEnd; ++it2)
         {
             if (it == it2)
                 continue;  // no overlap with self
-            if (it2->contigId != it->contigId || static_cast<unsigned>(it2->beginPos) > static_cast<unsigned>(it->endPos + options.posDelta))
+            if (it2->contigID != it->contigID || static_cast<unsigned>(it2->beginPos) > static_cast<unsigned>(it->endPos + options.posDelta))
                 break;  // traversed contig or went too far to the right on same contig
             int pos = it2->beginPos - it->beginPos;
-            OverlapInfo_ info = computeOverlapInfo(it->readId, it2->readId,
+            OverlapInfo_ info = computeOverlapInfo(it->readID, it2->readID,
                                                    pos - options.posDelta, pos + options.posDelta);
             int ovlLen = length(store.readSeqStore[info.seq0]) - info.pos1;
             if (ovlLen < options.overlapMinLength || 100.0 * info.numErrors / ovlLen > options.overlapMaxErrorRate)
@@ -318,7 +318,7 @@ inline void OverlapInfoComputation_<TFragmentStore>::buildContigAllToAllOverlapI
 {
     std::map<unsigned, std::vector<unsigned> > readIDs;  // factorized by contig ID
     for (unsigned i = 0; i < length(store.alignedReadStore); ++i)
-        readIDs[store.alignedReadStore[i].contigId].push_back(store.alignedReadStore[i].readId);
+        readIDs[store.alignedReadStore[i].contigID].push_back(store.alignedReadStore[i].readID);
 
     for (std::map<unsigned, std::vector<unsigned> >::const_iterator it = readIDs.begin(); it != readIDs.end(); ++it)
         buildAllToAllOverlapInfos(infos, it->second);
@@ -354,7 +354,7 @@ inline void OverlapInfoComputation_<TFragmentStore>::buildAllToAllOverlapInfos(
     // Obtain subset of fragment store's read sequences.
     TStringSet subSet;
     for (std::vector<unsigned>::const_iterator it = readIDs.begin(); it != readIDs.end(); ++it)
-        assignValueById(subSet, superSet, *it);
+        assignValueByID(subSet, superSet, *it);
 
     // Build q-gram index over the read subset.
     typedef Shape<TAlphabet, OneGappedShape>        TShape;
@@ -388,7 +388,7 @@ inline void OverlapInfoComputation_<TFragmentStore>::buildAllToAllOverlapInfos(
             __int64 uDiag = endPosition(filterFinder);//filterFinder.curHit->hstkPos + filterFinder.curHit->bucketWidth - length(subSet[seq1]);
             SEQAN_ASSERT_GEQ(uDiag, lDiag);
 
-            OverlapInfo_ info(computeOverlapInfo(positionToId(subSet, seq0), positionToId(subSet, seq1),
+            OverlapInfo_ info(computeOverlapInfo(positionToID(subSet, seq0), positionToID(subSet, seq1),
                                                  lDiag, uDiag));
 
             int ovlLen = length(store.readSeqStore[info.seq0]) - info.pos1;

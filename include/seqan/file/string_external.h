@@ -2195,7 +2195,7 @@ namespace SEQAN_NAMESPACE_MAIN
 
 	template < typename TValue, typename TConfig >
     inline void const * 
-    getObjectId(String<TValue, External<TConfig> > const &me)
+    getObjectID(String<TValue, External<TConfig> > const &me)
     {
 //IOREV
         return &(*begin(me.pager));

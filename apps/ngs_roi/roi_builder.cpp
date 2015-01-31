@@ -38,7 +38,7 @@
 // Static Members
 // ---------------------------------------------------------------------------
 
-int RoiBuilder::nextId = 0;
+int RoiBuilder::nextID = 0;
 
 // ---------------------------------------------------------------------------
 // Member Function RoiBuilder::createRoi()
@@ -155,7 +155,7 @@ void RoiBuilder::extendRoi(seqan::BamAlignmentRecord const & record)
 void RoiBuilder::pushRecord(seqan::BamAlignmentRecord const & record)
 {
     if (options.verbosity >= 2 && currentRoi.rID != record.rID)
-        std::cerr << "switching to rId == " << record.rID << "\n";
+        std::cerr << "switching to rID == " << record.rID << "\n";
     // static int i = 0;
     // if (options.verbosity >= 2 && ++i)
     // {
@@ -200,9 +200,9 @@ int RoiBuilder::writeRecord(MyRoiRecord & record,
         record.countMax = std::max(record.countMax, record.count[i]);
 
     // Get ROI id.
-    std::stringstream roiIdStr;
-    roiIdStr << "region_" << nextId++;
-    record.name = roiIdStr.str();
+    std::stringstream roiIDStr;
+    roiIDStr << "region_" << nextID++;
+    record.name = roiIDStr.str();
 
     // Add information on number of reads in region.
     char buffer[100];

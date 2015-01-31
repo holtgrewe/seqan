@@ -198,7 +198,7 @@ namespace SEQAN_NAMESPACE_MAIN
 		typedef String<
 			TDFIEntry, 
 			Array<ValueSize<TValue>::VALUE> >	TDFIEntries;
-		typedef String<unsigned>				TDFIDatasets;
+		typedef String<unsigned>				TDFIdatasets;
 
 		// 1st word flags
 		static TSize const DFI_PRED_HULL	= (TSize)1 << (BitsPerValue<TSize>::VALUE - 3); // this node fulfills all monotonic frequency predicates (e.g. min_freq)
@@ -210,7 +210,7 @@ namespace SEQAN_NAMESPACE_MAIN
 
 		TDFIEntry		nodeEntry;			// current nodes frequencies
 		TDFIEntries		childEntry;			// child frequencies for each first letter of outgoing edges
-		TDFIDatasets	ds;
+		TDFIdatasets	ds;
 
 		TPredHull		predHull;
 		TPred			pred;
@@ -289,8 +289,8 @@ namespace SEQAN_NAMESPACE_MAIN
 		typedef typename TIndex::TCounter						TCounter;
 
 		typedef typename TIndex::TDFIEntry						TDFIEntry;
-		typedef typename TIndex::TDFIDatasets					TDFIDatasets;
-		typedef typename Iterator<TDFIDatasets, Standard>::Type	TDFIDatasetsIterator;
+		typedef typename TIndex::TDFIdatasets					TDFIdatasets;
+		typedef typename Iterator<TDFIdatasets, Standard>::Type	TDFIdatasetsIterator;
 
 		typedef typename Iterator<TText const, Standard>::Type	TTextIterator;
 		typedef typename Iterator<TSA, Standard>::Type			TSAIterator;
@@ -324,7 +324,7 @@ namespace SEQAN_NAMESPACE_MAIN
 
 		// 4. fill suffix array
 		unsigned dsNo = 0;
-		TDFIDatasetsIterator currentDS = begin(index.ds, Standard()) + 1;
+		TDFIdatasetsIterator currentDS = begin(index.ds, Standard()) + 1;
 		for(unsigned seqNo = 0; seqNo < length(stringSet); ++seqNo) 
 		{
 			// search for surrounding dataset
@@ -382,8 +382,8 @@ namespace SEQAN_NAMESPACE_MAIN
 		typedef typename TIndex::TCounter							TCounter;
 		typedef typename TIndex::TTempSA							TTempSA;
 		typedef typename TIndex::TDFIEntry							TDFIEntry;
-		typedef typename TIndex::TDFIDatasets						TDFIDatasets;
-		typedef typename Iterator<TDFIDatasets, Standard>::Type		TDFIDatasetsIterator;
+		typedef typename TIndex::TDFIdatasets						TDFIdatasets;
+		typedef typename Iterator<TDFIdatasets, Standard>::Type		TDFIdatasetsIterator;
 
 		typedef typename Iterator<TText const, Standard>::Type		TTextIterator;
 		typedef typename Iterator<TSA, Standard>::Type				TSAIterator;
@@ -418,7 +418,7 @@ namespace SEQAN_NAMESPACE_MAIN
 
 		// 2. count characters
 		{
-			TDFIDatasetsIterator currentDS = begin(index.ds, Standard()) + 1;
+			TDFIdatasetsIterator currentDS = begin(index.ds, Standard()) + 1;
 			TTextIterator itText = TTextIterator();
 			TTempSAIterator itSA = begin(tempSA, Standard());
 			TTempSAIterator itSAEnd = end(tempSA, Standard());

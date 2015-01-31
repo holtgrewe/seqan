@@ -174,7 +174,7 @@ bool testMyersUkkonen(TString seq1, TString seq2, int leftClip = 0, bool dump = 
 }
 
 template <typename TFinderCSP, typename TPatternCSP, typename TText, typename TNeedle>
-void testCSPImpl(TText &text, TNeedle &needle, int errors)
+void testCspImpl(TText &text, TNeedle &needle, int errors)
 {
 	PatternState_<TNeedle, Myers<AlignTextBanded<FindInfix, TFinderCSP,TPatternCSP>, True, void> > state;
 	Finder<TText> finder(text);
@@ -188,20 +188,20 @@ SEQAN_DEFINE_TEST(test_myers_find_banded_csp)
     {
         Dna5String text   = "ACAGTNNTAAGNNNNA";
         Dna5String needle = "ACNGTACTAAGNNNNG";
-        testCSPImpl<NMatchesAll_,  NMatchesAll_>  (text, needle, 1);
-        testCSPImpl<NMatchesAll_,  NMatchesN_>    (text, needle, 2);
-        testCSPImpl<NMatchesN_,    NMatchesAll_>  (text, needle, 3);
-        testCSPImpl<NMatchesN_,    NMatchesN_>    (text, needle, 4);
-        testCSPImpl<NMatchesNone_, NMatchesNone_> (text, needle, 8);
+        testCspImpl<NMatchesAll_,  NMatchesAll_>  (text, needle, 1);
+        testCspImpl<NMatchesAll_,  NMatchesN_>    (text, needle, 2);
+        testCspImpl<NMatchesN_,    NMatchesAll_>  (text, needle, 3);
+        testCspImpl<NMatchesN_,    NMatchesN_>    (text, needle, 4);
+        testCspImpl<NMatchesNone_, NMatchesNone_> (text, needle, 8);
     }
     {
         CharString text   = "ACAGTNNTAAGNNNNA";
         CharString needle = "ACNGTACTAAGNNNNG";
-        testCSPImpl<NMatchesAll_,  NMatchesAll_>  (text, needle, 1);
-        testCSPImpl<NMatchesAll_,  NMatchesN_>    (text, needle, 2);
-        testCSPImpl<NMatchesN_,    NMatchesAll_>  (text, needle, 3);
-        testCSPImpl<NMatchesN_,    NMatchesN_>    (text, needle, 4);
-        testCSPImpl<NMatchesNone_, NMatchesNone_> (text, needle, 8);
+        testCspImpl<NMatchesAll_,  NMatchesAll_>  (text, needle, 1);
+        testCspImpl<NMatchesAll_,  NMatchesN_>    (text, needle, 2);
+        testCspImpl<NMatchesN_,    NMatchesAll_>  (text, needle, 3);
+        testCspImpl<NMatchesN_,    NMatchesN_>    (text, needle, 4);
+        testCspImpl<NMatchesNone_, NMatchesNone_> (text, needle, 8);
     }
 }
 

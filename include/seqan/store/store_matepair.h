@@ -64,49 +64,49 @@ namespace SEQAN_NAMESPACE_MAIN
  */
 
 /*!
- * @var TId MatePairStoreElement::INVALID_ID;
+ * @var TID MatePairStoreElement::INVALID_ID;
  * @brief Constant to represent an invalid id.
  *
- * @var TId MatePairStoreElement::libId;
+ * @var TID MatePairStoreElement::libID;
  * @brief Refers to a library in the @link FragmentStore::libraryStore @endlink or is INVALID_ID if the mate pair
  *        has no library.
  *
- * @var TId[2] MatePairStoreElement::readId;
+ * @var TID[2] MatePairStoreElement::readID;
  * @brief Refers to two paried reads in @link FragmentStore::readStore @endlink or is INVALID_ID values.
  */
 
 template <typename TSpec = void>
 struct MatePairStoreElement
 {
-	typedef typename Id<MatePairStoreElement>::Type TId;
+	typedef typename ID<MatePairStoreElement>::Type TID;
 
-	static const TId INVALID_ID;
+	static const TID INVALID_ID;
 	
-	TId		readId[2];	// refers to the two reads of a mate-pair, INVALID_ID if this is a singleton fragment (e.g. in afg: reads refer to fragments (mate pairs) and these refer to libraries, singletons refer to an empty fragment)
-	TId		libId;
+	TID		readID[2];	// refers to the two reads of a mate-pair, INVALID_ID if this is a singleton fragment (e.g. in afg: reads refer to fragments (mate pairs) and these refer to libraries, singletons refer to an empty fragment)
+	TID		libID;
 
-	MatePairStoreElement() : libId(INVALID_ID) 
+	MatePairStoreElement() : libID(INVALID_ID) 
 	{
-		readId[0] = INVALID_ID;
-		readId[1] = INVALID_ID;
+		readID[0] = INVALID_ID;
+		readID[1] = INVALID_ID;
 	}
 
     inline bool operator==(MatePairStoreElement const & other) const
     {
-        return readId[0] == other.readId[0] &&
-                readId[1] == other.readId[1] &&
-                libId == other.libId;
+        return readID[0] == other.readID[0] &&
+                readID[1] == other.readID[1] &&
+                libID == other.libID;
     }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
- * @mfn MatePairStoreElement#Id
+ * @mfn MatePairStoreElement#ID
  * @headerfile <seqan/store.h>
  * @brief Returns the id type to use for <tt>MatePairStoreElement</tt>.
  *
- * @signature Id<TMatePairStoreElement>::Type;
+ * @signature ID<TMatePairStoreElement>::Type;
  *
  * @tparam TMatePairStoreElement The MatePairStoreElement specialization to get the id type for.
  *
@@ -114,8 +114,8 @@ struct MatePairStoreElement
  */
 
 template <typename TSpec>
-const typename Id<MatePairStoreElement<TSpec> >::Type
-MatePairStoreElement<TSpec>::INVALID_ID = MaxValue<typename Id<MatePairStoreElement<TSpec> >::Type>::VALUE;
+const typename ID<MatePairStoreElement<TSpec> >::Type
+MatePairStoreElement<TSpec>::INVALID_ID = MaxValue<typename ID<MatePairStoreElement<TSpec> >::Type>::VALUE;
 
 //////////////////////////////////////////////////////////////////////////////
 

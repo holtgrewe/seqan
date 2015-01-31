@@ -16,7 +16,7 @@ loadAndJoin(StringSet<TString, Owner<JournaledSet> > & journalSet,
     clear(journalSet);
 
     // Construct the temporary buffers for the read id and sequence.
-    String<char> tempSeqId;
+    String<char> tempSeqID;
     THost sequence;
 
     // No sequences in the fasta file!
@@ -26,14 +26,14 @@ loadAndJoin(StringSet<TString, Owner<JournaledSet> > & journalSet,
         return -1;
     }
     // First read sequence for reference sequence.
-    readRecord(tempSeqId, sequence, databaseFile);
+    readRecord(tempSeqID, sequence, databaseFile);
     // [B]
     createHost(journalSet, sequence);  // When using create we copy the reference instead of storing a pointer.
 
     // Read remaining sequences.
     while (!atEnd(databaseFile))
     {
-        readRecord(tempSeqId, sequence, databaseFile);
+        readRecord(tempSeqID, sequence, databaseFile);
         // [C]
         appendValue(journalSet, TString(sequence)); // First we append the sequence to the set.
         join(journalSet, length(journalSet) - 1, joinConfig); // Second we join it to the set.

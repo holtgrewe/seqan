@@ -92,12 +92,12 @@ inline void _initialiseKmerNeighbourhood(StringSet<String<unsigned> > & kmerNeig
         {
             for (unsigned l = 0; l < 4; ++l)
             {
-                String<Dna> wTMP;
-                wTMP = w;
-                if (wTMP[j] != l)
+                String<Dna> wTmp;
+                wTmp = w;
+                if (wTmp[j] != l)
                 {
-                    wTMP[j] = l;
-                    unsigned hashValue = hash(myShape, begin(wTMP));
+                    wTmp[j] = l;
+                    unsigned hashValue = hash(myShape, begin(wTmp));
                     // Check for double word occurrences
                     bool duplicate = false;
                     if (revCom == true)
@@ -350,7 +350,7 @@ void _standardiseCounts(TString & standardisedCounts,
         for (; itCounts < end(kmerCounts); ++itCounts)
         {
             // Temporary counter for mismatch kmer counting
-            TValue counterTMP = 0;
+            TValue counterTmp = 0;
             TValue p_w = 1;  // Probability of kmer
 
             String<TUnmaskedAlphabet> w;
@@ -371,15 +371,15 @@ void _standardiseCounts(TString & standardisedCounts,
                     // The kmer itself is weighted normally
                     if (wordRowHash == wordHash)  // The first word in the kmerNeighbourhood is the kmer itself, it is weighted normally
                     {
-                        counterTMP += (TValue) kmerCounts[wordRowHash];
+                        counterTmp += (TValue) kmerCounts[wordRowHash];
                     }
                     else if ((score.revCom == "both_strands") && (wordRowHash == wordRCHash))
                     {
-                        counterTMP += ((TValue) kmerCounts[wordRowHash]);
+                        counterTmp += ((TValue) kmerCounts[wordRowHash]);
                     }
                     else
                     {
-                        counterTMP += ((TValue) kmerCounts[wordRowHash]) * score.mismatchWeight;
+                        counterTmp += ((TValue) kmerCounts[wordRowHash]) * score.mismatchWeight;
                     }
                     String<Dna> wMM1;
                     unhash(wMM1, wordRowHash, score.kmerSize);
@@ -465,7 +465,7 @@ void _standardiseCounts(TString & standardisedCounts,
                 {
                     if (score.mismatches > 0)
                     {
-                        value(itStandardisedCounts) = ((TValue) ((TValue) counterTMP) - p_w * ((TValue)len1)) / variance;
+                        value(itStandardisedCounts) = ((TValue) ((TValue) counterTmp) - p_w * ((TValue)len1)) / variance;
                     }
                     else if (score.revCom == "both_strands")
                     {
@@ -512,7 +512,7 @@ void _standardiseCounts(TString & standardisedCounts,
             unhash(w, (unsigned)position(itCounts), score.kmerSize);
             p_w = emittedProbability(backgroundModel, w);
 
-            TValue counterTMP = 0.0;
+            TValue counterTmp = 0.0;
             if ((score.mismatches == 1))  // Start of mismatch calculations
             {
                 p_w = 0;
@@ -527,15 +527,15 @@ void _standardiseCounts(TString & standardisedCounts,
                     // The kmer itself is weighted normally
                     if (wordRowHash == wordHash)  // The first word in the kmerNeighbourhood is the kmer itself, it is weighted normally
                     {
-                        counterTMP += (TValue) kmerCounts[wordRowHash];
+                        counterTmp += (TValue) kmerCounts[wordRowHash];
                     }
                     else if ((score.revCom == "both_strands") && (wordRowHash == wordRCHash))
                     {
-                        counterTMP += ((TValue) kmerCounts[wordRowHash]);
+                        counterTmp += ((TValue) kmerCounts[wordRowHash]);
                     }
                     else
                     {
-                        counterTMP += ((TValue) kmerCounts[wordRowHash]) * score.mismatchWeight;
+                        counterTmp += ((TValue) kmerCounts[wordRowHash]) * score.mismatchWeight;
                     }
                     String<Dna> wMM1;
                     unhash(wMM1, wordRowHash, score.kmerSize);
@@ -619,7 +619,7 @@ void _standardiseCounts(TString & standardisedCounts,
                 {
                     if (score.mismatches > 0)
                     {
-                        value(itStandardisedCounts) = ((TValue) ((TValue) counterTMP) - p_w * ((TValue)len1)) / variance;
+                        value(itStandardisedCounts) = ((TValue) ((TValue) counterTmp) - p_w * ((TValue)len1)) / variance;
                     }
                     else if (score.revCom == "both_strands")
                     {

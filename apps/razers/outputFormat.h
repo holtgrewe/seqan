@@ -140,8 +140,8 @@ score(Score<TValue, Quality<TQualityString> > const & me,
 			if (a.rseqNo > b.rseqNo) return false;
 
 			// pair match id
-			if (a.pairId < b.pairId) return true;
-			if (a.pairId > b.pairId) return false;
+			if (a.pairID < b.pairID) return true;
+			if (a.pairID > b.pairID) return false;
 
 			// quality
 			return a.editDist < b.editDist;
@@ -699,9 +699,9 @@ void dumpMatches(
 			for(; it != itEnd; ++it) 
 			{
 				unsigned	readLen = length(reads[(*it).rseqNo]);
-				double		percId = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
+				double		percID = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
 #ifdef RAZERS_MICRO_RNA
-				percId = 100.0 * (1.0 - (double)(*it).editDist / (double) ((*it).mScore));
+				percID = 100.0 * (1.0 - (double)(*it).editDist / (double) ((*it).mScore));
 #endif
 				switch (options.readNaming)
 				{
@@ -747,7 +747,7 @@ void dumpMatches(
 					assignSource(row(align, 0), reads[(*it).rseqNo]);
 					assignSource(row(align, 1), infix(genomes[(*it).gseqNo], (*it).gBegin, (*it).gEnd));
 #ifdef RAZERS_MATEPAIRS
-					if ((*it).pairId != 0 && ((*it).rseqNo & 1))
+					if ((*it).pairID != 0 && ((*it).rseqNo & 1))
 						reverseComplement(source(row(align, 0)));
 #endif
 					if ((*it).orientation == 'R')
@@ -773,14 +773,14 @@ void dumpMatches(
 					}
 				}
 
-				file << _sep_ << ((*it).gBegin + options.positionFormat) << _sep_ << (*it).gEnd << _sep_ << ::std::setprecision(5) << percId;
+				file << _sep_ << ((*it).gBegin + options.positionFormat) << _sep_ << (*it).gEnd << _sep_ << ::std::setprecision(5) << percID;
 #ifdef RAZERS_MICRO_RNA
 				if(options.microRNA) file << _sep_ << (*it).mScore;
 #endif
 
 #ifdef RAZERS_MATEPAIRS
-				if ((*it).pairId != 0)
-					file << _sep_ << (*it).pairId << _sep_ << (*it).pairScore << _sep_ << (*it).mateDelta;
+				if ((*it).pairID != 0)
+					file << _sep_ << (*it).pairID << _sep_ << (*it).pairScore << _sep_ << (*it).mateDelta;
 #endif
 				file << ::std::endl;
 
@@ -795,7 +795,7 @@ void dumpMatches(
 			for(unsigned matchReadNo = -1, matchReadCount = 0; it != itEnd; ++it) 
 			{
 				unsigned	readLen = length(reads[(*it).rseqNo]);
-				double		percId = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
+				double		percID = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
 
 				if (matchReadNo != (*it).rseqNo)
 				{
@@ -808,8 +808,8 @@ void dumpMatches(
 				assign(fastaID, readIDs[(*it).rseqNo]);
 
 				::std::string id = fastaID;
-				int fragId = (*it).rseqNo;
-				bool appendMatchId = options.maxHits > 1;
+				int fragID = (*it).rseqNo;
+				bool appendMatchID = options.maxHits > 1;
 
 				size_t left = fastaID.find_first_of('[');
 				size_t right = fastaID.find_last_of(']');
@@ -822,12 +822,12 @@ void dumpMatches(
 					if (pos != fastaID.npos) {
 						::std::istringstream iss(fastaID.substr(pos + 3));
 						iss >> id;
-//						appendMatchId = false;
+//						appendMatchID = false;
 					}
-					pos = fastaID.find("fragId=");
+					pos = fastaID.find("fragID=");
 					if (pos != fastaID.npos) {
 						::std::istringstream iss(fastaID.substr(pos + 7));
-						iss >> fragId;
+						iss >> fragID;
 					}
 				}
 
@@ -843,10 +843,10 @@ void dumpMatches(
 					ambig += stats[i][(*it).rseqNo];
 				
 				file << "[id=" << id;
-				if (appendMatchId) file << "_" << matchReadCount;
-				file << ",fragId=" << fragId;
-				file << ",contigId=" << genomeIDs[(*it).gseqNo];
-				file << ",errors=" << (*it).editDist << ",percId=" << ::std::setprecision(5) << percId;
+				if (appendMatchID) file << "_" << matchReadCount;
+				file << ",fragID=" << fragID;
+				file << ",contigID=" << genomeIDs[(*it).gseqNo];
+				file << ",errors=" << (*it).editDist << ",percID=" << ::std::setprecision(5) << percID;
 				file << ",ambiguity=" << ambig << ']' << ::std::endl;
 
 				file << reads[(*it).rseqNo] << ::std::endl;
@@ -943,13 +943,13 @@ void dumpMatches(
 					break;
 				}
 
-                CharString currId;
+                CharString currID;
 				Dna5String currGenome;
 				
 				// iterate over genome sequences
 				for(; !atEnd(gFile); ++currSeqNo)
 				{
-					readRecord(currId, currGenome, gFile);			// read Fasta sequence
+					readRecord(currID, currGenome, gFile);			// read Fasta sequence
 					while(it != itEnd && (*it).gseqNo == currSeqNo)
 					{
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
@@ -1090,13 +1090,13 @@ void dumpMatches(
 						//file <<  options.runID << "_razers\tread";
 						file << "razers\tread";
 						file << '\t' << ((*it).gBegin + options.positionFormat) << '\t' << (*it).gEnd << '\t';
-						double percId = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
+						double percID = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
 						if(options.maqMapping)
 							file << (*it).mScore << "\t";
 						else
 #endif
-							file << percId << "\t";
+							file << percID << "\t";
 
 						if ((*it).orientation == 'F')
 							file << '+' << '\t' << '.' <<'\t';
@@ -1126,7 +1126,7 @@ void dumpMatches(
 #ifdef RAZERS_SPLICED
 						if(options.minMatchLen > 0)
 						{
-							file << ";delta=" << (*it).mateDelta << ";pairId="<<(*it).pairId;
+							file << ";delta=" << (*it).mateDelta << ";pairID="<<(*it).pairID;
 							file << ";pairErr=" << -(*it).pairScore;
 						}
 #endif
@@ -1181,7 +1181,7 @@ void dumpMatches(
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
 						options.maqMapping || 
 #endif
-						options.fastaIdQual)
+						options.fastaIDQual)
 						{
 		//					file << ";read=";
 		//					for(unsigned j=0;j<length(reads[currReadNo]);++j)

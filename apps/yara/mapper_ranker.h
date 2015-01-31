@@ -103,11 +103,11 @@ struct SeedsSorter
     template <typename TIterator>
     void operator() (TIterator & it)
     {
-        typedef typename Value<TIterator>::Type     TSeedIds;
+        typedef typename Value<TIterator>::Type     TSeedIDs;
 
-        TSeedIds const & seedIds = value(it);
+        TSeedIDs const & seedIDs = value(it);
 
-        sort(seedIds, KeySorter<THitsCounts>(counts));
+        sort(seedIDs, KeySorter<THitsCounts>(counts));
     }
 };
 
@@ -148,30 +148,30 @@ inline void _countHitsImpl(SeedsRanker<TSpec, Traits> & me, TReadSeqsIterator co
 {
     typedef typename Traits::THits                      THits;
     typedef typename Value<THits>::Type                 THit;
-    typedef typename Id<THit>::Type                     THitId;
-    typedef Pair<THitId>                                THitIds;
+    typedef typename ID<THit>::Type                     THitID;
+    typedef Pair<THitID>                                THitIDs;
     typedef typename Size<THit>::Type                   THitSize;
     typedef typename Traits::TSeeds                     TSeeds;
-    typedef typename Id<TSeeds>::Type                   TSeedId;
-    typedef Pair<TSeedId>                               TSeedIds;
+    typedef typename ID<TSeeds>::Type                   TSeedID;
+    typedef Pair<TSeedID>                               TSeedIDs;
     typedef typename Traits::TReadSeqs                  TReadSeqs;
-    typedef typename Size<TReadSeqs>::Type              TReadId;
+    typedef typename Size<TReadSeqs>::Type              TReadID;
 
-    TReadId readSeqId = position(it, me.readSeqs);
+    TReadID readSeqID = position(it, me.readSeqs);
 
     // Count the number of seeds per read seq.
-    TSeedIds readSeedIds = getSeedIds(me.seeds, readSeqId);
-    assignValue(stringSetLimits(me.ranks), readSeqId + 1, getValueI2(readSeedIds) - getValueI1(readSeedIds));
+    TSeedIDs readSeedIDs = getSeedIDs(me.seeds, readSeqID);
+    assignValue(stringSetLimits(me.ranks), readSeqID + 1, getValueI2(readSeedIDs) - getValueI1(readSeedIDs));
 
-    for (TSeedId seedId = getValueI1(readSeedIds); seedId < getValueI2(readSeedIds); ++seedId)
+    for (TSeedID seedID = getValueI1(readSeedIDs); seedID < getValueI2(readSeedIDs); ++seedID)
     {
-        // Fill the seed ranks with seedIds to be sorted e.g. the identity permutation.
-        assignValue(concat(me.ranks), seedId, seedId);
+        // Fill the seed ranks with seedIDs to be sorted e.g. the identity permutation.
+        assignValue(concat(me.ranks), seedID, seedID);
 
         // Count the number of hits per seed.
-        THitIds seedHitIds = getHitIds(me.hits, seedId);
-        THitSize seedHits = countHits<THitSize>(me.hits, seedHitIds);
-        assignValue(concat(me.counts), seedId, seedHits);
+        THitIDs seedHitIDs = getHitIDs(me.hits, seedID);
+        THitSize seedHits = countHits<THitSize>(me.hits, seedHitIDs);
+        assignValue(concat(me.counts), seedID, seedHits);
     }
 
 }

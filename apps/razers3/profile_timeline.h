@@ -191,17 +191,17 @@ dumpTimeline(char const * path, bool appendPid)
 
     // Dump events.
     const char * arr[] = {"END", "BEGIN"};
-    for (unsigned threadId = 0; threadId < length(timeline._entries); ++threadId)
+    for (unsigned threadID = 0; threadID < length(timeline._entries); ++threadID)
     {
-        for (unsigned i = 0; i < length(timeline._entries[threadId]); ++i)
+        for (unsigned i = 0; i < length(timeline._entries[threadID]); ++i)
         {
             while (true)
             {
-                if (i + 1 < length(timeline._entries[threadId]) &&
-                    !timeline._entries[threadId][i].isBegin &&
-                    timeline._entries[threadId][i + 1].isBegin &&
-                    timeline._entries[threadId][i].entryType == timeline._entries[threadId][i + 1].entryType &&
-                    fabs(timeline._entries[threadId][i + 1].timestamp - timeline._entries[threadId][i].timestamp) < gapIgnore)
+                if (i + 1 < length(timeline._entries[threadID]) &&
+                    !timeline._entries[threadID][i].isBegin &&
+                    timeline._entries[threadID][i + 1].isBegin &&
+                    timeline._entries[threadID][i].entryType == timeline._entries[threadID][i + 1].entryType &&
+                    fabs(timeline._entries[threadID][i + 1].timestamp - timeline._entries[threadID][i].timestamp) < gapIgnore)
                 {
                     i += 2;
                 }
@@ -210,7 +210,7 @@ dumpTimeline(char const * path, bool appendPid)
                     break;
                 }
             }
-            fprintf(fp, "%u\t%s\t%d\t%f\n", threadId, arr[timeline._entries[threadId][i].isBegin], timeline._entries[threadId][i].entryType, timeline._entries[threadId][i].timestamp);
+            fprintf(fp, "%u\t%s\t%d\t%f\n", threadID, arr[timeline._entries[threadID][i].isBegin], timeline._entries[threadID][i].entryType, timeline._entries[threadID][i].timestamp);
         }
     }
 

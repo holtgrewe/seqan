@@ -158,17 +158,17 @@ inline void _extendHitImpl(HitsExtender<TSpec, Traits> & me, THitsIterator const
 
     typedef typename Traits::TReadSeqs                  TReadSeqs;
     typedef typename Traits::TReadSeq                   TReadSeq;
-    typedef typename Id<TReadSeqs>::Type                TReadId;
+    typedef typename ID<TReadSeqs>::Type                TReadID;
     typedef Pair<typename Position<TReadSeq>::Type>     TReadPos;
     typedef typename Size<TReadSeq>::Type               TReadSeqSize;
     typedef typename Size<TReadSeq>::Type               TErrors;
 
     typedef typename Traits::TSeeds                     TSeeds;
-    typedef typename Id<TSeeds>::Type                   TSeedId;
+    typedef typename ID<TSeeds>::Type                   TSeedID;
 
     typedef typename Traits::THits                      THits;
     typedef typename Value<THits>::Type                 THit;
-    typedef typename Id<THit>::Type                     THitId;
+    typedef typename ID<THit>::Type                     THitID;
     typedef typename Position<THit>::Type               THitRange;
     typedef TReadSeqSize                                THitErrors;
 
@@ -180,22 +180,22 @@ inline void _extendHitImpl(HitsExtender<TSpec, Traits> & me, THitsIterator const
 
 
     // Get hit id.
-    THitId hitId = position(hitsIt, me.hits);
+    THitID hitID = position(hitsIt, me.hits);
 
     // Extract hit info.
-    TSeedId seedId = getSeedId(me.hits, hitId);
-    THitRange hitRange = getRange(me.hits, hitId);
-    THitErrors hitErrors = getErrors(me.hits, hitId);
+    TSeedID seedID = getSeedID(me.hits, hitID);
+    THitRange hitRange = getRange(me.hits, hitID);
+    THitErrors hitErrors = getErrors(me.hits, hitID);
 
     // Get read.
-    TReadId readSeqId = getReadSeqId(me.seeds, seedId);
-    TReadSeq const & readSeq = me.readSeqs[readSeqId];
+    TReadID readSeqID = getReadSeqID(me.seeds, seedID);
+    TReadSeq const & readSeq = me.readSeqs[readSeqID];
 
-    // Fill readSeqId.
-    setReadId(me.prototype, me.readSeqs, readSeqId);
+    // Fill readSeqID.
+    setReadID(me.prototype, me.readSeqs, readSeqID);
 
     // Get position in read.
-    TReadPos readPos = getPosInRead(me.seeds, seedId);
+    TReadPos readPos = getPosInRead(me.seeds, seedID);
     TReadSeqSize seedLength = getValueI2(readPos) - getValueI1(readPos);
 
     for (TSAPos saPos = getValueI1(hitRange); saPos < getValueI2(hitRange); ++saPos)
@@ -226,17 +226,17 @@ template <typename TSpec, typename Traits, typename TReadSeqsIterator>
 inline void _extendHitImpl(HitsExtender<TSpec, Traits> & me, TReadSeqsIterator const & it, Strata)
 {
     typedef typename Traits::TReadSeqs                  TReadSeqs;
-    typedef typename Size<TReadSeqs>::Type              TReadId;
+    typedef typename Size<TReadSeqs>::Type              TReadID;
     typedef typename Traits::TReadSeq                   TReadSeq;
     typedef typename Size<TReadSeq>::Type               TReadSeqSize;
 
     typedef typename Traits::TSeeds                     TSeeds;
-    typedef typename Id<TSeeds>::Type                   TSeedId;
+    typedef typename ID<TSeeds>::Type                   TSeedID;
 
     typedef typename Traits::THits                      THits;
     typedef typename Value<THits>::Type                 THit;
-    typedef typename Id<THit>::Type                     THitId;
-    typedef Pair<THitId>                                THitIds;
+    typedef typename ID<THit>::Type                     THitID;
+    typedef Pair<THitID>                                THitIDs;
     typedef typename Iterator<THits const, Standard>::Type  THitsIt;
 
     typedef typename Traits::TRanks                     TRanks;
@@ -244,44 +244,44 @@ inline void _extendHitImpl(HitsExtender<TSpec, Traits> & me, TReadSeqsIterator c
 
     typedef typename Traits::TMatch                     TMatch;
 
-    // Get readId.
-    TReadId readId = position(it);
-    TReadSeqSize readLength = length(me.readSeqs[readId]);
+    // Get readID.
+    TReadID readID = position(it);
+    TReadSeqSize readLength = length(me.readSeqs[readID]);
     TReadSeqSize readStrata = getReadStrata<TMatch>(me.options, readLength);
 
-    TReadId fwdSeqId = getFirstMateFwdSeqId(me.readSeqs, readId);
-    TReadId revSeqId = getFirstMateRevSeqId(me.readSeqs, readId);
+    TReadID fwdSeqID = getFirstMateFwdSeqID(me.readSeqs, readID);
+    TReadID revSeqID = getFirstMateRevSeqID(me.readSeqs, readID);
 
-    TRank fwdRank = me.ranks[fwdSeqId];
-    TRank revRank = me.ranks[revSeqId];
+    TRank fwdRank = me.ranks[fwdSeqID];
+    TRank revRank = me.ranks[revSeqID];
     SEQAN_ASSERT_EQ(length(fwdRank), length(revRank));
 
     // TODO(esiragusa): Get hits of fwd and rev read seq.
-//    THits fwdHits = getHits(me.hits, fwdSeqId);
-//    THits revHits = getHits(me.hits, revSeqId);
+//    THits fwdHits = getHits(me.hits, fwdSeqID);
+//    THits revHits = getHits(me.hits, revSeqID);
 
     // Iterate fwd and rev seeds by rank.
-    TSeedId seedRanks = length(fwdRank);
-    for (TSeedId seedRank = 0; seedRank < seedRanks && !isMapped(me.ctx, readId); ++seedRank)
+    TSeedID seedRanks = length(fwdRank);
+    for (TSeedID seedRank = 0; seedRank < seedRanks && !isMapped(me.ctx, readID); ++seedRank)
     {
-        // Get seedIds by rank.
-        TSeedId fwdSeedId = fwdRank[seedRank];
-        TSeedId revSeedId = revRank[seedRank];
+        // Get seedIDs by rank.
+        TSeedID fwdSeedID = fwdRank[seedRank];
+        TSeedID revSeedID = revRank[seedRank];
 
         // Get hits.
-        THitIds fwdHitIds = getHitIds(me.hits, fwdSeedId);
-        THitIds revHitIds = getHitIds(me.hits, revSeedId);
+        THitIDs fwdHitIDs = getHitIDs(me.hits, fwdSeedID);
+        THitIDs revHitIDs = getHitIDs(me.hits, revSeedID);
 
         // Verify seed hits.
         THitsIt hitsBegin = begin(me.hits, Standard());
-        for (THitsIt it = hitsBegin + getValueI1(fwdHitIds); it != hitsBegin + getValueI2(fwdHitIds); ++it)
+        for (THitsIt it = hitsBegin + getValueI1(fwdHitIDs); it != hitsBegin + getValueI2(fwdHitIDs); ++it)
             _extendHitImpl(me, it, All());
-        for (THitsIt it = hitsBegin + getValueI1(revHitIds); it != hitsBegin + getValueI2(revHitIds); ++it)
+        for (THitsIt it = hitsBegin + getValueI1(revHitIDs); it != hitsBegin + getValueI2(revHitIDs); ++it)
             _extendHitImpl(me, it, All());
 
         // Mark mapped reads.
-        if (getMinErrors(me.ctx, readId) + readStrata <= seedRank * (me.seedErrors + 1))
-            setMapped(me.ctx, readId);
+        if (getMinErrors(me.ctx, readID) + readStrata <= seedRank * (me.seedErrors + 1))
+            setMapped(me.ctx, readID);
     }
 }
 
@@ -297,14 +297,14 @@ inline void _addMatchImpl(HitsExtender<TSpec, Traits> & me,
                           TMatchErrors matchErrors)
 {
     typedef typename Traits::TReadSeqs       TReadSeqs;
-    typedef typename Size<TReadSeqs>::Type   TReadSeqId;
+    typedef typename Size<TReadSeqs>::Type   TReadSeqID;
 
     setContigPosition(me.prototype, matchBegin, matchEnd);
     me.prototype.errors = matchErrors;
     appendValue(me.matches, me.prototype, Generous(), typename Traits::TThreading());
 
-    TReadSeqId readId = getMember(me.prototype, ReadId());
-    setMinErrors(me.ctx, readId, matchErrors);
+    TReadSeqID readID = getMember(me.prototype, ReadID());
+    setMinErrors(me.ctx, readID, matchErrors);
 }
 
 #endif  // #ifndef APP_YARA_MAPPER_EXTENDER_H_

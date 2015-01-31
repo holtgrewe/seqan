@@ -49,7 +49,7 @@ namespace SEQAN_NAMESPACE_MAIN
     struct Skew7;
     struct LarssonSadakane;
     struct ManberMyers;
-    struct SAQSort;
+    struct SaqSort;
     struct QGramAlg;
 
     // inverse suffix array construction specs

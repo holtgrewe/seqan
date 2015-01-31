@@ -565,9 +565,9 @@ SEQAN_TYPED_TEST(StringSetTestCommon, AssignValue)
     testConstructDeconstruct(typename Value<typename Value<typename TestFixture::TStringSet>::Type>::Type());
 }
 
-// Test of assignValueById().
+// Test of assignValueByID().
 template <typename TStringSet>
-void testStringSetAssignValueById(TStringSet & /*Tag*/)
+void testStringSetAssignValueByID(TStringSet & /*Tag*/)
 {
     using namespace seqan;
 
@@ -577,7 +577,7 @@ void testStringSetAssignValueById(TStringSet & /*Tag*/)
 
     // Assigning a string.
     TString string("ACGT");
-    unsigned id = assignValueById(stringSet1, string);
+    unsigned id = assignValueByID(stringSet1, string);
     SEQAN_ASSERT_EQ(length(stringSet1), 1u);
     SEQAN_ASSERT_EQ(stringSet1[0], string);
     SEQAN_ASSERT_EQ(id, 0u);
@@ -591,7 +591,7 @@ void testStringSetAssignValueById(TStringSet & /*Tag*/)
     appendValue(stringSet2, str2);
     appendValue(stringSet2, str3);
     stringSet2[1] = str3;
-    id = assignValueById(stringSet1, stringSet2, 1u);
+    id = assignValueByID(stringSet1, stringSet2, 1u);
 
     SEQAN_ASSERT_EQ(length(stringSet1), 2u);
     SEQAN_ASSERT_EQ(stringSet1[0], string); 
@@ -601,24 +601,24 @@ void testStringSetAssignValueById(TStringSet & /*Tag*/)
 
 // TODO(singer): Seg fault
 template <typename TValue, typename TStringSetSpec>
-void testStringSetAssignValueById(StringSet<String<TValue, Block<> >, Owner<TStringSetSpec> > & /*Tag*/) {}
+void testStringSetAssignValueByID(StringSet<String<TValue, Block<> >, Owner<TStringSetSpec> > & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetAssignValueById(StringSet<String<TValue, Array<100> >, Owner<TStringSetSpec> > & /*Tag*/) {}
+void testStringSetAssignValueByID(StringSet<String<TValue, Array<100> >, Owner<TStringSetSpec> > & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetAssignValueById(StringSet<String<TValue, Packed<> >, Owner<TStringSetSpec> > & /*Tag*/) {}
+void testStringSetAssignValueByID(StringSet<String<TValue, Packed<> >, Owner<TStringSetSpec> > & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetAssignValueById(StringSet<String<TValue, MMap<> >, TStringSetSpec> & /*Tag*/) {}
+void testStringSetAssignValueByID(StringSet<String<TValue, MMap<> >, TStringSetSpec> & /*Tag*/) {}
 template <typename TValue>
-void testStringSetAssignValueById(StringSet<String<TValue, External<> >, Owner<ConcatDirect<> > > & /*Tag*/) {}
+void testStringSetAssignValueByID(StringSet<String<TValue, External<> >, Owner<ConcatDirect<> > > & /*Tag*/) {}
 template <typename TValue>
-void testStringSetAssignValueById(StringSet<String<TValue, Alloc<> >, Owner<ConcatDirect<> > > & /*Tag*/) {}
+void testStringSetAssignValueByID(StringSet<String<TValue, Alloc<> >, Owner<ConcatDirect<> > > & /*Tag*/) {}
 
-SEQAN_TYPED_TEST(StringSetTestCommon, AssignValueById)
+SEQAN_TYPED_TEST(StringSetTestCommon, AssignValueByID)
 {
     CountingChar::clear();
 
     typename TestFixture::TStringSet strSet;
-    testStringSetAssignValueById(strSet);
+    testStringSetAssignValueByID(strSet);
 
     testConstructDeconstruct(typename Value<typename Value<typename TestFixture::TStringSet>::Type>::Type());
 }
@@ -1249,9 +1249,9 @@ SEQAN_TYPED_TEST(StringSetTestCommon, GetValue)
 }
 
 // TODO (singer): not defined for const string sets.
-// Test of getValueById().
+// Test of getValueByID().
 template <typename TStringSet>
-void testStringSetGetValueById(TStringSet & /*Tag*/)
+void testStringSetGetValueByID(TStringSet & /*Tag*/)
 {
     using namespace seqan;
 
@@ -1266,29 +1266,29 @@ void testStringSetGetValueById(TStringSet & /*Tag*/)
     appendValue(nonConstStringSet, str2);
     appendValue(nonConstStringSet, str3);
     TStringSet stringSet(nonConstStringSet);
-    SEQAN_ASSERT_EQ(getValueById(stringSet, typename Id<TStringSet>::Type(1)), str2);
+    SEQAN_ASSERT_EQ(getValueByID(stringSet, typename ID<TStringSet>::Type(1)), str2);
 }
 
 // TODO(singer): No appendValue for string sets of packed strings
 template <typename TValue, typename TStringSetSpec>
-void testStringSetGetValueById(StringSet<String<TValue, Packed<> >, TStringSetSpec> & /*Tag*/) {}
+void testStringSetGetValueByID(StringSet<String<TValue, Packed<> >, TStringSetSpec> & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetGetValueById(StringSet<String<TValue, Packed<> >, TStringSetSpec> const & /*Tag*/) {}
+void testStringSetGetValueByID(StringSet<String<TValue, Packed<> >, TStringSetSpec> const & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetGetValueById(StringSet<String<TValue, Array<100> >, TStringSetSpec> & /*Tag*/) {}
+void testStringSetGetValueByID(StringSet<String<TValue, Array<100> >, TStringSetSpec> & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetGetValueById(StringSet<String<TValue, Array<100> >, TStringSetSpec> const & /*Tag*/) {}
+void testStringSetGetValueByID(StringSet<String<TValue, Array<100> >, TStringSetSpec> const & /*Tag*/) {}
 
-SEQAN_TYPED_TEST(StringSetTestCommon, GetValueById)
+SEQAN_TYPED_TEST(StringSetTestCommon, GetValueByID)
 {
     CountingChar::clear();
 
     typename TestFixture::TStringSet strSet;
-    testStringSetGetValueById(strSet);
+    testStringSetGetValueByID(strSet);
 
 // TODO (singer): not defined for const string sets.
 //     typename TestFixture::TStringSet const constStrSet;
-//     testStringSetGetValueById(constStrSet);
+//     testStringSetGetValueByID(constStrSet);
     
     testConstructDeconstruct(typename Value<typename Value<typename TestFixture::TStringSet>::Type>::Type());
 }
@@ -2029,9 +2029,9 @@ SEQAN_TYPED_TEST(StringSetTestCommon, Value)
 }
 
 
-// Test of valueById().
+// Test of valueByID().
 template <typename TStringSet>
-void testStringSetValueById(TStringSet & /*Tag*/)
+void testStringSetValueByID(TStringSet & /*Tag*/)
 {
     using namespace seqan;
 
@@ -2046,7 +2046,7 @@ void testStringSetValueById(TStringSet & /*Tag*/)
     appendValue(stringSet, str1);
     appendValue(stringSet, str2);
     appendValue(stringSet, str3);
-    TString & value_ = valueById(stringSet, 0);
+    TString & value_ = valueByID(stringSet, 0);
     SEQAN_ASSERT_EQ(value_, str1);
 
     value_ = "GGGG";
@@ -2055,9 +2055,9 @@ void testStringSetValueById(TStringSet & /*Tag*/)
     SEQAN_ASSERT_EQ(stringSet[0], str4);
 }
 
-// Test of valueById().
+// Test of valueByID().
 template <typename TStringSet>
-void testStringSetValueById(TStringSet const & /*Tag*/)
+void testStringSetValueByID(TStringSet const & /*Tag*/)
 {
     using namespace seqan;
 
@@ -2076,7 +2076,7 @@ void testStringSetValueById(TStringSet const & /*Tag*/)
     appendValue(nonConstStringSet, str3);
     
     TStringSet stringSet(nonConstStringSet);
-    TString value_ = valueById(stringSet, 0);
+    TString value_ = valueByID(stringSet, 0);
     SEQAN_ASSERT_EQ(value_, str1);
 
     value_ = "GGGG";
@@ -2087,39 +2087,39 @@ void testStringSetValueById(TStringSet const & /*Tag*/)
 
 // TODO(singer): Seg. fault
 template <typename TValue>
-void testStringSetValueById(StringSet<String<TValue, MMap<> >, Owner<> > & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, MMap<> >, Owner<> > & /*Tag*/) {}
 template <typename TValue>
-void testStringSetValueById(StringSet<String<TValue, MMap<> >, Owner<> > const & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, MMap<> >, Owner<> > const & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetValueById(StringSet<String<TValue, MMap<> >, Dependent<TStringSetSpec> > & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, MMap<> >, Dependent<TStringSetSpec> > & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetValueById(StringSet<String<TValue, MMap<> >, Dependent<TStringSetSpec> > const & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, MMap<> >, Dependent<TStringSetSpec> > const & /*Tag*/) {}
 
 
 // TODO(singer)
 template <typename TValue>
-void testStringSetValueById(StringSet<String<TValue, External<> >, Owner<> > & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, External<> >, Owner<> > & /*Tag*/) {}
 template <typename TValue>
-void testStringSetValueById(StringSet<String<TValue, External<> >, Owner<> > const & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, External<> >, Owner<> > const & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetValueById(StringSet<String<TValue, External<> >, Dependent<TStringSetSpec> > & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, External<> >, Dependent<TStringSetSpec> > & /*Tag*/) {}
 template <typename TValue, typename TStringSetSpec>
-void testStringSetValueById(StringSet<String<TValue, External<> >, Dependent<TStringSetSpec> > const & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, External<> >, Dependent<TStringSetSpec> > const & /*Tag*/) {}
 
 template <typename TValue, typename TStringSpec>
-void testStringSetValueById(StringSet<String<TValue, TStringSpec>, Owner<ConcatDirect<> > > & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, TStringSpec>, Owner<ConcatDirect<> > > & /*Tag*/) {}
 template <typename TValue, typename TStringSpec>
-void testStringSetValueById(StringSet<String<TValue, TStringSpec>, Owner<ConcatDirect<> > > const & /*Tag*/) {}
+void testStringSetValueByID(StringSet<String<TValue, TStringSpec>, Owner<ConcatDirect<> > > const & /*Tag*/) {}
 
-SEQAN_TYPED_TEST(StringSetTestCommon, ValueById)
+SEQAN_TYPED_TEST(StringSetTestCommon, ValueByID)
 {
     CountingChar::clear();
 
     typename TestFixture::TStringSet strSet;
-    testStringSetValueById(strSet);
+    testStringSetValueByID(strSet);
     
     typename TestFixture::TStringSet const constStrSet;
-    testStringSetValueById(constStrSet);
+    testStringSetValueByID(constStrSet);
     
     testConstructDeconstruct(typename Value<typename Value<typename TestFixture::TStringSet>::Type>::Type());
 }

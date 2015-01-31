@@ -39,7 +39,7 @@
  * @tag FMIndexRankDictionarySpec#WT
  * @brief Tag that specifies the @link FMIndex @endlink to use a wavelet tree as the occurrence table.
  *
- * @tag FMIndexRankDictionarySpec#SBM
+ * @tag FMIndexRankDictionarySpec#Sbm
  * @brief Tag that specifies the @link FMIndex @endlink to use a StringSet of rank support bis strings as the occurrence table.
  *
  */

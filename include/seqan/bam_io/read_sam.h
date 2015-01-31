@@ -226,10 +226,10 @@ readHeader(BamHeader & header,
             }
 
             // Add entry to name store and sequenceInfos if necessary.
-            size_t globalRefId = nameToId(contigNamesCache(context), name);
-            if (length(contigLengths(context)) <= globalRefId)
-                resize(contigLengths(context), globalRefId + 1, 0);
-            contigLengths(context)[globalRefId] = lRef;
+            size_t globalRefID = nameToID(contigNamesCache(context), name);
+            if (length(contigLengths(context)) <= globalRefID)
+                resize(contigLengths(context), globalRefID + 1, 0);
+            contigLengths(context)[globalRefID] = lRef;
         }
     }
 }
@@ -283,7 +283,7 @@ readRecord(BamAlignmentRecord & record,
     if (buffer == "*")
         record.rID = BamAlignmentRecord::INVALID_REFID;
     else
-        record.rID = nameToId(contigNamesCache(context), buffer);
+        record.rID = nameToID(contigNamesCache(context), buffer);
     skipOne(iter, IsTab());
 
     // POS
@@ -329,11 +329,11 @@ readRecord(BamAlignmentRecord & record,
     clear(buffer);
     readUntil(buffer, iter, nextEntry);
     if (buffer == "*")
-        record.rNextId = BamAlignmentRecord::INVALID_REFID;
+        record.rNextID = BamAlignmentRecord::INVALID_REFID;
     else if (buffer == "=")
-        record.rNextId = record.rID;
+        record.rNextID = record.rID;
     else
-        record.rNextId = nameToId(contigNamesCache(context), buffer);
+        record.rNextID = nameToID(contigNamesCache(context), buffer);
     skipOne(iter, IsTab());
 
     // PNEXT

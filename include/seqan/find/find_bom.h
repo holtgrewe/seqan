@@ -112,7 +112,7 @@ public:
 	TSize needleLength;
 	TSize haystackLength;
 	TSize step;
-	Graph<Automaton<TAlphabet, void, WithoutEdgeId> > automaton;
+	Graph<Automaton<TAlphabet, void, WithoutEdgeID> > automaton;
 
 //____________________________________________________________________________
 

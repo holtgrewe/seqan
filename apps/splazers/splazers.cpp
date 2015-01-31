@@ -494,7 +494,7 @@ int main(int argc, const char *argv[])
     getOptionValue(options.repeatLength, parser, "repeat-length");
 
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
-	getOptionValue(options.fastaIdQual, parser, "quality-in-header");
+	getOptionValue(options.fastaIDQual, parser, "quality-in-header");
 	getOptionValue(options.maqMapping, parser, "mapping-quality");
 	getOptionValue(options.noBelowIdentity, parser, "no-below-id");
 	getOptionValue(options.artSeedLength, parser, "mq-seed-length");
@@ -518,7 +518,7 @@ int main(int argc, const char *argv[])
 	getOptionValue(options.penaltyC, parser, "penalty-c");
 	
 	getOptionValue(options.minClippedLen, parser, "min-clipped-len");
-	getOptionValue(options.fastaIdQual, parser, "quality-in-header");
+	getOptionValue(options.fastaIDQual, parser, "quality-in-header");
 	
     if (isSet(parser, "help") || isSet(parser, "version")) return 0;	// print help or version and exit
 	if (isSet(parser, "verbose")) options._debugLevel = max(options._debugLevel, 1);

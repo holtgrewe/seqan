@@ -176,12 +176,12 @@ void work(String<ThreadLocalStorage<TJob, TSpec> > & threadLocalStorages, StealO
             {
                 // Select thread to steal from.
                 x = 1664525 * x + 1013904223;
-                int targetId = x % (maxThreads - 1);
-                targetId += targetId >= p;
+                int targetID = x % (maxThreads - 1);
+                targetID += targetID >= p;
 
                 // Try to steal a job and process it if successful.
                 TJob stolenJob;
-                if (stealWork(stolenJob, threadLocalStorages[targetId]))
+                if (stealWork(stolenJob, threadLocalStorages[targetID]))
                 {
                     // Stealing was successful, become active again.
                     SEQAN_OMP_PRAGMA(atomic)

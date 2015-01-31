@@ -117,7 +117,7 @@ public:
         OutputBuffer,
         BufferWriter>       serializer;
 
-    size_t                  currentJobId;
+    size_t                  currentJobID;
     bool                    currentJobAvail;
 
 
@@ -136,11 +136,11 @@ public:
             bool success = true;
             while (success)
             {
-                size_t jobId = -1;
-                if (!popFront(jobId, streamBuf->jobQueue))
+                size_t jobID = -1;
+                if (!popFront(jobID, streamBuf->jobQueue))
                     return;
 
-                CompressionJob &job = streamBuf->jobs[jobId];
+                CompressionJob &job = streamBuf->jobs[jobID];
 
                 // compress block with zlib
                 job.outputBuffer->size = _compressBlock(
@@ -148,7 +148,7 @@ public:
                     &job.buffer[0], job.size, compressionCtx);
 
                 success = releaseValue(streamBuf->serializer, job.outputBuffer);
-                appendValue(streamBuf->idleQueue, jobId);
+                appendValue(streamBuf->idleQueue, jobID);
             }
         }
     };
@@ -166,7 +166,7 @@ public:
 		serializer(ostream_, numThreads * jobsPerThread)
     {
         resize(jobs, numJobs, Exact());
-        currentJobId = 0;
+        currentJobID = 0;
 
         lockWriting(jobQueue);
         lockReading(idleQueue);
@@ -188,10 +188,10 @@ public:
             run(threads[i]);
         }
 
-        currentJobAvail = popFront(currentJobId, idleQueue);
+        currentJobAvail = popFront(currentJobID, idleQueue);
         SEQAN_ASSERT(currentJobAvail);
 
-        CompressionJob &job = jobs[currentJobId];
+        CompressionJob &job = jobs[currentJobID];
         job.outputBuffer = aquireValue(serializer);
 		this->setp(&job.buffer[0], &job.buffer[0] + (job.buffer.size() - 1));
     }
@@ -214,15 +214,15 @@ public:
         // submit current job
         if (currentJobAvail)
         {
-            jobs[currentJobId].size = size;
-            appendValue(jobQueue, currentJobId);
+            jobs[currentJobID].size = size;
+            appendValue(jobQueue, currentJobID);
         }
 
         // recycle existing idle job
-        if (!(currentJobAvail = popFront(currentJobId, idleQueue)))
+        if (!(currentJobAvail = popFront(currentJobID, idleQueue)))
             return false;
 
-        jobs[currentJobId].outputBuffer = aquireValue(serializer);
+        jobs[currentJobID].outputBuffer = aquireValue(serializer);
 
         return serializer;
     }
@@ -237,7 +237,7 @@ public:
         }
         if (compressBuffer(w))
         {
-            CompressionJob &job = jobs[currentJobId];
+            CompressionJob &job = jobs[currentJobID];
             this->setp(&job.buffer[0], &job.buffer[0] + (job.buffer.size() - 1));
             return c;
         }
@@ -252,7 +252,7 @@ public:
         int w = static_cast<int>(this->pptr() - this->pbase());
         if ((w != 0 || flushEmptyBuffer) && compressBuffer(w))
         {
-            CompressionJob &job = jobs[currentJobId];
+            CompressionJob &job = jobs[currentJobID];
             this->setp(&job.buffer[0], &job.buffer[0] + (job.buffer.size() - 1));
         }
         else
@@ -375,7 +375,7 @@ public:
     String<DecompressionJob>    jobs;
     TJobQueue                   runningQueue;
     TJobQueue                   todoQueue;
-    int                         currentJobId;
+    int                         currentJobID;
 
     struct DecompressionThread
     {
@@ -390,11 +390,11 @@ public:
             // wait for a new job to become available
             while (true)
             {
-                int jobId = -1;
-                if (!popFront(jobId, streamBuf->todoQueue))
+                int jobID = -1;
+                if (!popFront(jobID, streamBuf->todoQueue))
                     return;
 
-                DecompressionJob &job = streamBuf->jobs[jobId];
+                DecompressionJob &job = streamBuf->jobs[jobID];
                 size_t tailLen = 0;
 
                 // typically the idle queue contains only ready jobs
@@ -470,7 +470,7 @@ public:
                             streamBuf->serializer.istream.rdstate() & ~std::ios_base::failbit);
                     }
 
-                    if (!appendValue(streamBuf->runningQueue, jobId))
+                    if (!appendValue(streamBuf->runningQueue, jobID))
                     {
                         // signal that job is ready
                         {
@@ -515,7 +515,7 @@ public:
         putbackBuffer(MAX_PUTBACK)
     {
         resize(jobs, numJobs, Exact());
-        currentJobId = -1;
+        currentJobID = -1;
 
         lockReading(runningQueue);
         lockWriting(todoQueue);
@@ -564,21 +564,21 @@ public:
                 this->gptr(),
                 &putbackBuffer[0]);
 
-        if (currentJobId >= 0)
-            appendValue(todoQueue, currentJobId);
+        if (currentJobID >= 0)
+            appendValue(todoQueue, currentJobID);
 
         while (true)
         {
-            if (!popFront(currentJobId, runningQueue))
+            if (!popFront(currentJobID, runningQueue))
             {
-                currentJobId = -1;
+                currentJobID = -1;
                 SEQAN_ASSERT(serializer.error != NULL);
                 if (serializer.error != NULL)
                     throw *serializer.error;
                 return EOF;
             }
 
-            DecompressionJob &job = jobs[currentJobId];
+            DecompressionJob &job = jobs[currentJobID];
 
             // restore putback buffer
             this->setp(&job.buffer[0], &job.buffer[0] + (job.buffer.size() - 1));
@@ -617,16 +617,16 @@ public:
             if (dir == std::ios_base::cur && ofs >= 0)
             {
                 // forward delta seek
-                while (currentJobId < 0 || this->egptr() - this->gptr() < ofs)
+                while (currentJobID < 0 || this->egptr() - this->gptr() < ofs)
                 {
                     ofs -= this->egptr() - this->gptr();
                     if (this->underflow() == EOF)
                         break;
                 }
 
-                if (currentJobId >= 0 && ofs <= this->egptr() - this->gptr())
+                if (currentJobID >= 0 && ofs <= this->egptr() - this->gptr())
                 {
-                    DecompressionJob &job = jobs[currentJobId];
+                    DecompressionJob &job = jobs[currentJobID];
 
                     // reset buffer pointers
                     this->setg( 
@@ -644,9 +644,9 @@ public:
                 std::streampos destFileOfs = ofs >> 16;
 
                 // are we in the same block?
-                if (currentJobId >= 0 && jobs[currentJobId].fileOfs == (off_type)destFileOfs)
+                if (currentJobID >= 0 && jobs[currentJobID].fileOfs == (off_type)destFileOfs)
                 {
-                    DecompressionJob &job = jobs[currentJobId];
+                    DecompressionJob &job = jobs[currentJobID];
 
                     // reset buffer pointers
                     this->setg(
@@ -663,50 +663,50 @@ public:
                     // remove all running jobs and put them in the idle queue unless we
                     // find our seek target
 
-                    if (currentJobId >= 0)
-                        appendValue(todoQueue, currentJobId);
+                    if (currentJobID >= 0)
+                        appendValue(todoQueue, currentJobID);
 
                     // Note that if we are here the current job does not represent the sought block.
-                    // Hence if the running queue is empty we need to explicitly unset the jobId,
+                    // Hence if the running queue is empty we need to explicitly unset the jobID,
                     // otherwise we would not update the serializers istream pointer to the correct position.
                     if (empty(runningQueue))
-                        currentJobId = -1;
+                        currentJobID = -1;
 
                     // empty is thread-safe in serializer.lock
                     while (!empty(runningQueue))
                     {
-                        popFront(currentJobId, runningQueue);
+                        popFront(currentJobID, runningQueue);
 
-                        if (jobs[currentJobId].fileOfs == (off_type)destFileOfs)
+                        if (jobs[currentJobID].fileOfs == (off_type)destFileOfs)
                             break;
 
                         // push back useless job
-                        appendValue(todoQueue, currentJobId);
-                        currentJobId = -1;
+                        appendValue(todoQueue, currentJobID);
+                        currentJobID = -1;
                     }
 
-                    if (currentJobId == -1)
+                    if (currentJobID == -1)
                     {
                         SEQAN_ASSERT(empty(runningQueue));
                         serializer.istream.clear(serializer.istream.rdstate() & ~std::ios_base::eofbit);
                         if (serializer.istream.rdbuf()->pubseekpos(destFileOfs, std::ios_base::in) == destFileOfs)
                             serializer.fileOfs = destFileOfs;
                         else
-                            currentJobId = -2;      // temporarily signals a seek error
+                            currentJobID = -2;      // temporarily signals a seek error
                     }
                 }
 
                 // if our block wasn't in the running queue yet, it should now
                 // be the first that falls out after modifying serializer.fileOfs
-                if (currentJobId == -1)
-                    popFront(currentJobId, runningQueue);
-                else if (currentJobId == -2)
-                    currentJobId = -1;
+                if (currentJobID == -1)
+                    popFront(currentJobID, runningQueue);
+                else if (currentJobID == -2)
+                    currentJobID = -1;
 
-                if (currentJobId >= 0)
+                if (currentJobID >= 0)
                 {
                     // wait for the end of decompression
-                    DecompressionJob &job = jobs[currentJobId];
+                    DecompressionJob &job = jobs[currentJobID];
                     {
                         ScopedLock<CriticalSection> lock(job.cs);
                         if (!job.ready)

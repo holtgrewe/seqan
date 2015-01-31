@@ -277,7 +277,7 @@ void globalMsaAlignment(Graph<Alignment<TStringSet, TCargo, TSpec> > & gAlign,
     typedef typename Value<TScore>::Type TScoreValue;
     typedef typename Size<TStringSet>::Type TSize;
     typedef Graph<Alignment<TStringSet, TSize> > TGraph;
-    //typedef typename Id<TGraph>::Type TId;
+    //typedef typename ID<TGraph>::Type TID;
     typedef double TDistanceValue;
 
     // Initialize alignment object
@@ -467,7 +467,7 @@ void globalMsaAlignment(Align<TSource, TSpec> & align,
 {
     typedef StringSet<TSource, Dependent<> > TStringSet;
     TStringSet sequenceSet = stringSet(align);
-    Graph<Alignment<TStringSet, void, WithoutEdgeId> > gAlign(sequenceSet);
+    Graph<Alignment<TStringSet, void, WithoutEdgeID> > gAlign(sequenceSet);
     globalMsaAlignment(gAlign, scoreObject);
     convertAlignment(gAlign, align);
 }
@@ -483,25 +483,25 @@ void
 _debugMatches(TStringSet & str,
               TMatches & matches)
 {
-    typedef typename Id<TStringSet>::Type TId;
+    typedef typename ID<TStringSet>::Type TID;
     typedef typename Size<TStringSet>::Type TSize;
 
     // Print all the matches
     std::cout << "The sequences:" << std::endl;
     for (TSize i = 0; i < length(str); ++i)
     {
-        std::cout << positionToId(str, i) << ':' << str[i] << std::endl;
+        std::cout << positionToID(str, i) << ':' << str[i] << std::endl;
     }
     std::cout << "The matches:" << std::endl;
     for (TSize i = 0; i < length(matches); ++i)
     {
-        TId tmp_id1 = sequenceId(matches[i], 0);
+        TID tmp_id1 = sequenceID(matches[i], 0);
         std::cout << tmp_id1 << ',' << fragmentBegin(matches[i], tmp_id1) << ',';
         for (TSize j = fragmentBegin(matches[i], tmp_id1); j < fragmentBegin(matches[i], tmp_id1) + fragmentLength(matches[i], tmp_id1); ++j)
         {
             std::cout << str[idToPosition(str, tmp_id1)][j];
         }
-        TId tmp_id2 = sequenceId(matches[i], 1);
+        TID tmp_id2 = sequenceID(matches[i], 1);
         std::cout << ',' << tmp_id2 << ',' << fragmentBegin(matches[i], tmp_id2) << ',';
         for (TSize j = fragmentBegin(matches[i], tmp_id2); j < fragmentBegin(matches[i], tmp_id2) + fragmentLength(matches[i], tmp_id2); ++j)
         {
@@ -509,7 +509,7 @@ _debugMatches(TStringSet & str,
         }
         std::cout << std::endl;
 
-        SEQAN_ASSERT(sequenceId(matches[i], 0) != sequenceId(matches[i], 1));
+        SEQAN_ASSERT(sequenceID(matches[i], 0) != sequenceID(matches[i], 1));
         SEQAN_ASSERT(fragmentBegin(matches[i], tmp_id1) < length(str[idToPosition(str, tmp_id1)]));
         SEQAN_ASSERT(fragmentBegin(matches[i], tmp_id1) + fragmentLength(matches[i], tmp_id1) <= length(str[idToPosition(str, tmp_id1)]));
         SEQAN_ASSERT(fragmentBegin(matches[i], tmp_id2) < length(str[idToPosition(str, tmp_id2)]));
@@ -521,7 +521,7 @@ _debugMatches(TStringSet & str,
 template <typename TGraph>
 void _debugRefinedMatches(TGraph & g)
 {
-    typedef typename Id<TGraph>::Type TId;
+    typedef typename ID<TGraph>::Type TID;
     //typedef typename Size<TGraph>::Type TSize;
     typedef typename Iterator<TGraph, EdgeIterator>::Type TEdgeIterator;
 
@@ -529,8 +529,8 @@ void _debugRefinedMatches(TGraph & g)
     TEdgeIterator it_tmp(g);
     for (; !atEnd(it_tmp); ++it_tmp)
     {
-        TId id1 = sequenceId(g, sourceVertex(it_tmp));
-        TId id2 = sequenceId(g, targetVertex(it_tmp));
+        TID id1 = sequenceID(g, sourceVertex(it_tmp));
+        TID id2 = sequenceID(g, targetVertex(it_tmp));
         std::cout << id1 << ',' << fragmentBegin(g, sourceVertex(it_tmp)) << ',';
         std::cout << label(g, sourceVertex(it_tmp));
         std::cout << ',' << id2 << ',' << fragmentBegin(g, targetVertex(it_tmp)) << ',';
@@ -538,7 +538,7 @@ void _debugRefinedMatches(TGraph & g)
         std::cout << " (" << cargo(*it_tmp) << ")";
         std::cout << std::endl;
 
-        SEQAN_ASSERT(sequenceId(g, sourceVertex(it_tmp)) != sequenceId(g, targetVertex(it_tmp)));
+        SEQAN_ASSERT(sequenceID(g, sourceVertex(it_tmp)) != sequenceID(g, targetVertex(it_tmp)));
         SEQAN_ASSERT(fragmentBegin(g, sourceVertex(it_tmp)) < length((stringSet(g))[idToPosition((stringSet(g)), id1)]));
         SEQAN_ASSERT(fragmentBegin(g, sourceVertex(it_tmp)) + fragmentLength(g, sourceVertex(it_tmp)) <= length((stringSet(g))[idToPosition((stringSet(g)), id1)]));
         SEQAN_ASSERT(fragmentBegin(g, targetVertex(it_tmp)) < length((stringSet(g))[idToPosition((stringSet(g)), id2)]));

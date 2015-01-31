@@ -80,7 +80,7 @@ struct IntervalizeCmp
 struct ContigInterval
 {
     // Contig the interval is in.
-    size_t contigId;
+    size_t contigID;
 
     // true iff the interval is on the forward strand.
     bool isForward;
@@ -92,12 +92,12 @@ struct ContigInterval
     size_t last;
 
     // Default constructor so it can be used in containers.
-    ContigInterval() : contigId(0), isForward(false), first(0), last(0)
+    ContigInterval() : contigID(0), isForward(false), first(0), last(0)
     {}
 
     // Constructor for the record.
-    ContigInterval(size_t _contigId, bool _isForward, size_t _first, size_t _last) :
-        contigId(_contigId), isForward(_isForward), first(_first), last(_last)
+    ContigInterval(size_t _contigID, bool _isForward, size_t _first, size_t _last) :
+        contigID(_contigID), isForward(_isForward), first(_first), last(_last)
     {}
 };
 
@@ -191,11 +191,11 @@ char const * yesNo(bool b)
 }
 
 // ----------------------------------------------------------------------------
-// Function trimSeqHeaderToId()
+// Function trimSeqHeaderToID()
 // ----------------------------------------------------------------------------
 
 // TODO(holtgrew): Such a method is already in the SeqAn library, but in extras. Remove here when it is in core.
-void trimSeqHeaderToId(seqan::CharString & header)
+void trimSeqHeaderToID(seqan::CharString & header)
 {
     unsigned i = 0;
     for (; i < length(header); ++i)
@@ -229,18 +229,18 @@ int intervalizeAndDumpErrorCurves(TStream & stream,
     writeRecord(stream, GSI_COLUMN_NAMES, Gsi());
 
     // Get a list of read ids, sorted by their read name.
-    String<unsigned> sortedReadIds;
-    reserve(sortedReadIds, length(readNameStore));
+    String<unsigned> sortedReadIDs;
+    reserve(sortedReadIDs, length(readNameStore));
     for (unsigned i = 0; i < length(readNameStore); ++i)
-        appendValue(sortedReadIds, i);
+        appendValue(sortedReadIDs, i);
     IntervalizeCmp cmp(readNameStore);
-    std::sort(begin(sortedReadIds, Standard()), end(sortedReadIds, Standard()), cmp);
+    std::sort(begin(sortedReadIDs, Standard()), end(sortedReadIDs, Standard()), cmp);
 
     unsigned tenPercent = errorCurves.size() / 10 + 1;
     typedef TErrorCurves::const_iterator TErrorCurvesIter;
-    for (unsigned i = 0; i < length(sortedReadIds); ++i)
+    for (unsigned i = 0; i < length(sortedReadIDs); ++i)
     {
-        TErrorCurvesIter it = errorCurves.find(sortedReadIds[i]);
+        TErrorCurvesIter it = errorCurves.find(sortedReadIDs[i]);
         if (it == errorCurves.end())
         {
             if (!toStdout)
@@ -256,7 +256,7 @@ int intervalizeAndDumpErrorCurves(TStream & stream,
                 std::cerr << '.';
         }
 
-        size_t readId = it->first;
+        size_t readID = it->first;
         TWeightedMatches const & matches = it->second;
 
         // Sort the matches.  Matches with high scores (negative score and low absolute value) come first.
@@ -274,16 +274,16 @@ int intervalizeAndDumpErrorCurves(TStream & stream,
         //
         // The position of the previous match, so we can consider only the ones with the smallest error.
         //
-        // The following two vars should be != first pos and contigId.
+        // The following two vars should be != first pos and contigID.
         size_t previousPos = maxValue<size_t>();
-        size_t previousContigId = maxValue<size_t>();
+        size_t previousContigID = maxValue<size_t>();
         typedef Iterator<TWeightedMatches>::Type TWeightedMatchesIter;
         for (TWeightedMatchesIter it = begin(sortedMatches);
              it != end(sortedMatches); ++it)
         {
             // Skip it if (it - 1) pointed to same pos (and must point to
             // one with smaller absolute distance.
-            if (it->pos == previousPos && it->contigId == previousContigId)
+            if (it->pos == previousPos && it->contigID == previousContigID)
                 continue;
             // Consider all currently open intervals with a greater error than the error in *it and extend them or
             // create a new one.
@@ -294,22 +294,22 @@ int intervalizeAndDumpErrorCurves(TStream & stream,
                 // Handle base case of no open interval:  Create new one.
                 if (length(intervals[e]) == 0)
                 {
-                    appendValue(intervals[e], ContigInterval(it->contigId, it->isForward, it->pos, it->pos));
+                    appendValue(intervals[e], ContigInterval(it->contigID, it->isForward, it->pos, it->pos));
                     continue;
                 }
                 ContigInterval & interval = back(intervals[e]);
                 // Either extend the interval or create a new one.
-                if (interval.contigId == it->contigId && interval.isForward == it->isForward)
+                if (interval.contigID == it->contigID && interval.isForward == it->isForward)
                     SEQAN_ASSERT_LEQ(interval.last, it->pos);
-                if (interval.contigId == it->contigId && interval.isForward == it->isForward &&
+                if (interval.contigID == it->contigID && interval.isForward == it->isForward &&
                     interval.last + 1 == it->pos)
                     back(intervals[e]).last += 1;
                 else
-                    appendValue(intervals[e], ContigInterval(it->contigId, it->isForward, it->pos, it->pos));
+                    appendValue(intervals[e], ContigInterval(it->contigID, it->isForward, it->pos, it->pos));
             }
             // Book-keeping.
             previousPos = it->pos;
-            previousContigId = it->contigId;
+            previousContigID = it->contigID;
         }
 
         // Print the resulting intervals.
@@ -325,21 +325,21 @@ int intervalizeAndDumpErrorCurves(TStream & stream,
                 // We appended custom prefixes to the read ids.  "/S" means single-end, "/0" means left mate, "/1" means
                 // right mate.
                 int mateNo = -1;
-                if (back(readNameStore[readId]) == '0')
+                if (back(readNameStore[readID]) == '0')
                     mateNo = 0;
-                if (back(readNameStore[readId]) == '1')
+                if (back(readNameStore[readID]) == '1')
                     mateNo = 1;
-                SEQAN_ASSERT_EQ(readNameStore[readId][length(readNameStore[readId]) - 2], '/');
+                SEQAN_ASSERT_EQ(readNameStore[readID][length(readNameStore[readID]) - 2], '/');
                 if (mateNo == 0)
                     flags = GsiRecord::FLAG_PAIRED | GsiRecord::FLAG_FIRST_MATE;
                 else if (mateNo == 1)
                     flags = GsiRecord::FLAG_PAIRED | GsiRecord::FLAG_SECOND_MATE;
 
-                int gsiDistance = options.oracleMode ? readAlignmentDistances[readId] : distance;
+                int gsiDistance = options.oracleMode ? readAlignmentDistances[readID] : distance;
                 if (options.oracleMode && options.maxErrorSet && gsiDistance > options.maxError)
                     continue;  // Skip if cut off in Rabema oracle mode.
-                GsiRecord gsiRecord(prefix(readNameStore[readId], length(readNameStore[readId]) - 2), flags,
-                                    gsiDistance, contigNameStore[it2->contigId],
+                GsiRecord gsiRecord(prefix(readNameStore[readID], length(readNameStore[readID]) - 2), flags,
+                                    gsiDistance, contigNameStore[it2->contigID],
                                     it2->isForward, it2->first, it2->last);
                 writeRecord(stream, gsiRecord, Gsi());
             }
@@ -383,10 +383,10 @@ template <typename TContigSeq, typename TReadSeq, typename TPatternSpec, typenam
 void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
                            int & maxError,
                            TContigSeq /*const*/ & contig,
-                           size_t contigId,
+                           size_t contigID,
                            bool isForward,
                            TReadSeq /*const*/ & read,
-                           size_t readId,
+                           size_t readID,
                            size_t endPos,
                            TReadNames const & readNames,
                            bool matchN,
@@ -412,8 +412,8 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
     #define ALL 1
     #define READID 1
 
-    //if (readNames[readId] == CharString("rabema_synthetic_ecoli_illumina_l100_100k_e3.000000376")) {
-    //      std::cerr << "**************** read id = " << readId << " readname = " << readNames[readId] << " read = " << read << " maxError == " << maxError << std::endl;
+    //if (readNames[readID] == CharString("rabema_synthetic_ecoli_illumina_l100_100k_e3.000000376")) {
+    //      std::cerr << "**************** read id = " << readID << " readname = " << readNames[readID] << " read = " << read << " maxError == " << maxError << std::endl;
     //}
 
     // The read maps with less than the given number of errors to [left, right]
@@ -423,7 +423,7 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
     // Skip this alignment position if not right of previously
     // right border of the interval.
     // TODO(holtgrew): Remove this piece, it's unused right now. We could/should also fix this to work for streaming over SAM files.
-    //if (readId == previousReadId && contigId == previousContigId && left <= previousRightBorder) {
+    //if (readID == previousReadID && contigID == previousContigID && left <= previousRightBorder) {
     //    //std::cerr << __FILE__  << ":" << __LINE__ << " Skipping because " << left << " <= " << previousRightBorder << std::endl;
     //    return previousRightBorder;
     //}
@@ -441,14 +441,14 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
     _patternMatchNOfFinder(pattern, matchN);
     TPosition hitBeginPosition;
 
-    if (ENABLE && (ALL || readId == READID))
+    if (ENABLE && (ALL || readID == READID))
     {
-        std::cerr << "**************** read id = " << readId << " readname = " << readNames[readId]
+        std::cerr << "**************** read id = " << readID << " readname = " << readNames[readID]
                   << " read = " << read << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " maxError = " << maxError << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " relative min score = " << relativeMinScore << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " extending to the right." << std::endl;
-        std::cerr << __FILE__ << ":" << __LINE__ << " contig id == " << contigId << std::endl;
+        std::cerr << __FILE__ << ":" << __LINE__ << " contig id == " << contigID << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " is forward strand? " << isForward << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " contig length = " << length(contig) << std::endl;
         std::cerr << __FILE__ << ":" << __LINE__ << " endPos = " << endPos << std::endl;
@@ -475,14 +475,14 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
 
         // Add original hit to the error curve points.
         int relativeScore = (int)ceilAwayFromZero(100.0 * getScore(pattern) / length(read));
-        appendValue(tempMatches, WeightedMatch(contigId, isForward, endPosition(finder) - 1, relativeScore,
+        appendValue(tempMatches, WeightedMatch(contigID, isForward, endPosition(finder) - 1, relativeScore,
                                                beginPosition(finder)));
         hitBeginPosition = beginPosition(finder);
-        if (ENABLE && (ALL || readId == READID))
+        if (ENABLE && (ALL || readID == READID))
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " -- getScore(pattern) == " << getScore(pattern) << std::endl;
             std::cerr << __FILE__ << ":" << __LINE__ << " -- appended " << back(tempMatches)
-                      << " for read id " << readId << " (FIRST HIT)" << std::endl;
+                      << " for read id " << readID << " (FIRST HIT)" << std::endl;
             std::cerr << __FILE__ << ":" << __LINE__ << " -- infix " << infix(finder) << " read " << read
                       << " endPos = " << endPos << std::endl;
         }
@@ -496,22 +496,22 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
             if (getScore(pattern) < -maxError && beginPosition(finder) != back(tempMatches).beginPos)
             {
                 foundWithTooLowScore = true;
-                if (ENABLE && (ALL || readId == READID))
+                if (ENABLE && (ALL || readID == READID))
                 {
                     std::cerr << __FILE__ << ":" << __LINE__ << " -- Found too low score." << std::endl;
                     std::cerr << __FILE__ << ":" << __LINE__ << " -- low scoring match was "
-                              << WeightedMatch(contigId, isForward, endPosition(finder) - 1, relativeScore,
+                              << WeightedMatch(contigID, isForward, endPosition(finder) - 1, relativeScore,
                                      beginPosition(finder)) << std::endl;
                 }
                 break;
             }
             int relativeScore = (int)ceilAwayFromZero(100.0 * getScore(pattern) / length(read));
-            appendValue(tempMatches, WeightedMatch(contigId, isForward, endPosition(finder) - 1, relativeScore,
+            appendValue(tempMatches, WeightedMatch(contigID, isForward, endPosition(finder) - 1, relativeScore,
                                                    beginPosition(finder)));
-            if (ENABLE && (ALL || readId == READID))
+            if (ENABLE && (ALL || readID == READID))
             {
                 std::cerr << __FILE__ << ":" << __LINE__ << " -- appended " << back(tempMatches)
-                          << " for read id " << readId << std::endl;
+                          << " for read id " << readID << std::endl;
                 std::cerr << __FILE__ << ":" << __LINE__ << " -- infix " << infix(finder)
                           << " read " << read << std::endl;
             }
@@ -525,7 +525,7 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
             if (beginPosition(finder) == hitBeginPosition)
             {
                 relativeScore = static_cast<int>(ceilAwayFromZero(100.0 * getScore(pattern) / length(read)));
-                appendValue(tempMatches, WeightedMatch(contigId, isForward, endPosition(finder) - 1,
+                appendValue(tempMatches, WeightedMatch(contigID, isForward, endPosition(finder) - 1,
                                                        relativeScore, beginPosition(finder)));
                 TPosition currentBeginPosition = beginPosition(finder);
                 // Add the rest until we hit one with a different begin position.
@@ -541,12 +541,12 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
                     if (beginPosition(finder) != currentBeginPosition)
                         break;
                     relativeScore = (int)ceilAwayFromZero(100.0 * getScore(pattern) / length(read));
-                    appendValue(tempMatches, WeightedMatch(contigId, isForward, endPosition(finder) - 1,
+                    appendValue(tempMatches, WeightedMatch(contigID, isForward, endPosition(finder) - 1,
                                                            relativeScore, beginPosition(finder)));
-                    if (ENABLE && (ALL || readId == READID))
+                    if (ENABLE && (ALL || readID == READID))
                     {
                         std::cerr << __FILE__ << ":" << __LINE__ << " -- appended " << back(tempMatches)
-                                  << " for read id " << readId << std::endl;
+                                  << " for read id " << readID << std::endl;
                         std::cerr << __FILE__ << ":" << __LINE__ << " -- infix " << infix(finder)
                                   << " read " << read << std::endl;
                     }
@@ -555,7 +555,7 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
             }
         }
 
-        if (ENABLE && (ALL || readId == READID))
+        if (ENABLE && (ALL || readID == READID))
         {
             std::cerr << __FILE__ << ":" << __LINE__ << " extending to the left." << std::endl;
         }
@@ -578,30 +578,30 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
             {
                 // Stop if went went to the rightmost position of the
                 // last interval with the previous loop iteration.
-                //if (readId == previousReadId && contigId == previousContigId && tentativeLeft == previousRightBorder)
+                //if (readID == previousReadID && contigID == previousContigID && tentativeLeft == previousRightBorder)
                 //    break;
                 loopedAfterFoundTooLowScore = foundTooLowScore;
                 TPosition oldTentativeLeft = tentativeLeft;
                 // Move the tentative left position left by kIntervalLen but not
                 // further left than 0.
-                if (ENABLE && (ALL || readId == READID))
+                if (ENABLE && (ALL || readID == READID))
                     std::cerr << "tentativeLeft before = " << tentativeLeft << std::endl;
                 tentativeLeft -= _min(kIntervalLen, tentativeLeft);
-                if (ENABLE && (ALL || readId == READID))
+                if (ENABLE && (ALL || readID == READID))
                     std::cerr << "tentativeLeft after = " << tentativeLeft << std::endl;
                 // Do not go further than the previous right position.
-                //if (readId == previousReadId && contigId == previousContigId && tentativeLeft <= previousRightBorder) {
+                //if (readID == previousReadID && contigID == previousContigID && tentativeLeft <= previousRightBorder) {
                 //    tentativeLeft = previousRightBorder;
                 //    hitLastRight = true;
                 //}
-                if (ENABLE && (ALL || readId == READID))
+                if (ENABLE && (ALL || readID == READID))
                 {
                     std::cerr << __FILE__ << ":" << __LINE__ << " -- tentative left = " << tentativeLeft << std::endl;
                 }
                 // Search from tentative left position to the previous tentative left position.
                 ret = setEndPosition(finder, pattern, tentativeLeft);
                 SEQAN_ASSERT(ret);
-                if (ENABLE && (ALL || readId == READID))
+                if (ENABLE && (ALL || readID == READID))
                 {
                     std::cerr << __FILE__ << ":" << __LINE__ << " -- endPosition(finder) = "
                               << endPosition(finder) << std::endl;
@@ -611,12 +611,12 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
                 while (findBegin(finder, pattern, getScore(pattern)))
                     continue;  // Find leftmost begin position.
                 int relativeScore = (int)ceilAwayFromZero(100.0 * getScore(pattern) / length(read));
-                appendValue(tempMatches, WeightedMatch(contigId, isForward, endPosition(finder) - 1, relativeScore,
+                appendValue(tempMatches, WeightedMatch(contigID, isForward, endPosition(finder) - 1, relativeScore,
                                                        beginPosition(finder)));
-                if (ENABLE && (ALL || readId == READID))
+                if (ENABLE && (ALL || readID == READID))
                 {
                     std::cerr << __FILE__ << ":" << __LINE__ << " -- appended " << back(tempMatches)
-                              << " for read id " << readId << std::endl;
+                              << " for read id " << readID << std::endl;
                     std::cerr << __FILE__ << ":" << __LINE__ << " -- infix " << infix(finder) << " read "
                               << read << std::endl;
                 }
@@ -627,21 +627,21 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
                         continue;  // Find leftmost begin position.
                     SEQAN_ASSERT(ret);
                     relativeScore = (int)ceilAwayFromZero(100.0 * getScore(pattern) / length(read));
-                    appendValue(tempMatches, WeightedMatch(contigId, isForward, endPosition(finder) - 1,
+                    appendValue(tempMatches, WeightedMatch(contigID, isForward, endPosition(finder) - 1,
                                                            relativeScore, beginPosition(finder)));
-                    if (ENABLE && (ALL || readId == READID))
+                    if (ENABLE && (ALL || readID == READID))
                     {
                         std::cerr << __FILE__ << ":" << __LINE__ << " -- raw score is " << getScore(pattern)
                                   << std::endl;
                         std::cerr << __FILE__ << ":" << __LINE__ << " -- appended " << back(tempMatches)
-                                  << " for read id " << readId << std::endl;
+                                  << " for read id " << readID << std::endl;
                         std::cerr << __FILE__ << ":" << __LINE__ << " -- infix " << infix(finder) << " read "
                                   << read << std::endl;
                     }
                     foundTooLowScore = foundTooLowScore || (relativeScore < relativeMinScore);
                 }
             }
-            if (ENABLE && (ALL || readId == READID))
+            if (ENABLE && (ALL || readID == READID))
             {
                 std::cerr << __FILE__ << ":" << __LINE__ << " -- after loop" << std::endl;
             }
@@ -655,7 +655,7 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
             TPosition i;
             // Search up to the first too low score.
             for (i = 0; i < length(rTempMatches); ++i) {
-                if (ENABLE && (ALL || readId == READID)) {
+                if (ENABLE && (ALL || readID == READID)) {
                     std::cerr << "Considering " << rTempMatches[i] << std::endl;
                 }
                 if (rTempMatches[i].distance < relativeMinScore) {
@@ -669,7 +669,7 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
                 prefixLength += 1;
                 left -= 1;
             }
-            if (ENABLE && (ALL || readId == READID)) {
+            if (ENABLE && (ALL || readID == READID)) {
                 std::cerr << "prefixLength == " << prefixLength << std::endl;
                 std::cerr << "i == " << i << std::endl;
             }
@@ -683,7 +683,7 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
                 }
             }
             // Finally, append the prefix of the given length.
-            if (ENABLE && (ALL || readId == READID)) {
+            if (ENABLE && (ALL || readID == READID)) {
                 std::cerr << "appending prefix(rTempMatches, " << prefixLength << ")" << std::endl;
             }
         */
@@ -729,8 +729,8 @@ void buildErrorCurvePoints(String<WeightedMatch> & errorCurve,
         }
     }
 
-//     if (readId == READID) {
-//         std::cerr << ",-- errorCurve is (read id = " << readId << " readname = " << readNames[readId] << ")" << std::endl;
+//     if (readID == READID) {
+//         std::cerr << ",-- errorCurve is (read id = " << readID << " readname = " << readNames[readID] << ")" << std::endl;
 //         for (unsigned i = 0; i < length(errorCurve); ++i) {
 //             std::cerr << "| " << errorCurve[i] << std::endl;
 //         }
@@ -779,7 +779,7 @@ int matchesToErrorFunction(TErrorCurves & errorCurves,
     //     Build error curve for this read alignment on backward strand.
 
     startTime = sysTime();      // Time at beginning for total time display at end.
-    int prevRefId = -1;      // Previous contig id.
+    int prevRefID = -1;      // Previous contig id.
     int prevPos = -1;
     int posOnContig = 0;
     BamAlignmentRecord record;  // Current read record.
@@ -807,7 +807,7 @@ int matchesToErrorFunction(TErrorCurves & errorCurves,
         if (record.rID == -1)
             break;  // Done!
         // Check that the file is actually sorted by coordinate.
-        if (prevRefId != -1 && (prevRefId > record.rID || (prevRefId == record.rID && prevPos > record.beginPos)))
+        if (prevRefID != -1 && (prevRefID > record.rID || (prevRefID == record.rID && prevPos > record.beginPos)))
         {
             std::cerr << "ERROR: File was not sorted by coordinate!\n";
             return 1;
@@ -818,7 +818,7 @@ int matchesToErrorFunction(TErrorCurves & errorCurves,
         // strand.
         if (hasFlagRC(record))
             reverseComplement(readSeq);
-        trimSeqHeaderToId(record.qName);  // Remove everything after the first whitespace.
+        trimSeqHeaderToID(record.qName);  // Remove everything after the first whitespace.
         if (!hasFlagMultiple(record))
             append(record.qName, "/S");
         if (hasFlagMultiple(record) && hasFlagFirst(record))
@@ -826,10 +826,10 @@ int matchesToErrorFunction(TErrorCurves & errorCurves,
         if (hasFlagMultiple(record) && hasFlagLast(record))
             append(record.qName, "/1");
         // Translate read to read id.
-        unsigned readId = 0;
-        if (!getIdByName(readNameStore, record.qName, readId, readNameStoreCache))
+        unsigned readID = 0;
+        if (!getIDByName(readNameStore, record.qName, readID, readNameStoreCache))
         {
-            readId = length(readNameStore);
+            readID = length(readNameStore);
             appendName(readNameStore, record.qName, readNameStoreCache);
             appendValue(readLengthStore, length(record.seq));
             if (options.oracleMode)
@@ -841,12 +841,12 @@ int matchesToErrorFunction(TErrorCurves & errorCurves,
         // -------------------------------------------------------------------
 
         // Handle progress: Change of contig.
-        SEQAN_ASSERT_LEQ(prevRefId, record.rID);
-        if (prevRefId != record.rID)
+        SEQAN_ASSERT_LEQ(prevRefID, record.rID);
+        if (prevRefID != record.rID)
         {
-            for (int i = prevRefId + 1; i <= record.rID; ++i)
+            for (int i = prevRefID + 1; i <= record.rID; ++i)
             {
-                if (i != prevRefId)
+                if (i != prevRefID)
                     std::cerr << "\n";
                 std::cerr << contigNameStore[record.rID] << " (" << record.rID + 1 << "/"
                           << length(contigNameStore) << ") ";
@@ -854,15 +854,15 @@ int matchesToErrorFunction(TErrorCurves & errorCurves,
             posOnContig = 0;
 
             // Load reference sequence on the fly using FAI index to save memory.
-            unsigned faiRefId = 0;
-            if (!getIdByName(faiRefId, faiIndex, contigNameStore[record.rID]))
+            unsigned faiRefID = 0;
+            if (!getIDByName(faiRefID, faiIndex, contigNameStore[record.rID]))
             {
                 std::cerr << "Reference sequence " << contigNameStore[record.rID] << " not known in FAI file.\n";
                 return 1;
             }
             try
             {
-                readSequence(contig, faiIndex, faiRefId);
+                readSequence(contig, faiIndex, faiRefID);
             }
             catch (seqan::ParseError const & ioErr)
             {
@@ -896,20 +896,20 @@ int matchesToErrorFunction(TErrorCurves & errorCurves,
         int endPos = record.beginPos + getAlignmentLengthInRef(record) - countPaddings(record.cigar);
 
         if (!hasFlagRC(record))
-            buildErrorCurvePoints(errorCurves[readId], maxError, contig, record.rID, !hasFlagRC(record),
-                                  readSeq, readId, endPos, readNameStore, options.matchN, TPatternSpec());
+            buildErrorCurvePoints(errorCurves[readID], maxError, contig, record.rID, !hasFlagRC(record),
+                                  readSeq, readID, endPos, readNameStore, options.matchN, TPatternSpec());
         else
-            buildErrorCurvePoints(errorCurves[readId], maxError, rcContig, record.rID, !hasFlagRC(record),
-                                  readSeq, readId, length(rcContig) - record.beginPos, readNameStore, options.matchN,
+            buildErrorCurvePoints(errorCurves[readID], maxError, rcContig, record.rID, !hasFlagRC(record),
+                                  readSeq, readID, length(rcContig) - record.beginPos, readNameStore, options.matchN,
                                   TPatternSpec());
 #if ENABLE
-        std::cerr << "AFTER BUILD, readId == " << readId << ", read name == " << readNameStore[readId] << ", maxError == " << maxError << "\n";
+        std::cerr << "AFTER BUILD, readID == " << readID << ", read name == " << readNameStore[readID] << ", maxError == " << maxError << "\n";
 #endif  // #if ENABLE
         if (options.oracleMode)
-            readAlignmentDistances[readId] = maxError;
+            readAlignmentDistances[readID] = maxError;
 
         // Update variables storing the previous read/contig id and position.
-        prevRefId = record.rID;
+        prevRefID = record.rID;
         prevPos = record.beginPos;
     }
     std::cerr << "\n\nTook " << sysTime() - startTime << " s\n";
@@ -924,40 +924,40 @@ int matchesToErrorFunction(TErrorCurves & errorCurves,
     startTime = sysTime();
     unsigned tenPercent = length(readLengthStore) / 10 + 1;
     std::cerr << "Progress: ";
-    for (unsigned readId = 0; readId < length(readLengthStore); ++readId)
+    for (unsigned readID = 0; readID < length(readLengthStore); ++readID)
     {
-        if (tenPercent > 0u && readId % tenPercent == 0u)
-            std::cerr << readId / tenPercent * 10 << '%';
-        else if (tenPercent > 5u && readId % (tenPercent / 5) == 0u)
+        if (tenPercent > 0u && readID % tenPercent == 0u)
+            std::cerr << readID / tenPercent * 10 << '%';
+        else if (tenPercent > 5u && readID % (tenPercent / 5) == 0u)
             std::cerr << '.';
 
-        std::sort(begin(errorCurves[readId], Standard()), end(errorCurves[readId], Standard()));
-        fillGaps(errorCurves[readId]);
-        smoothErrorCurve(errorCurves[readId]);
+        std::sort(begin(errorCurves[readID], Standard()), end(errorCurves[readID], Standard()));
+        fillGaps(errorCurves[readID]);
+        smoothErrorCurve(errorCurves[readID]);
 
         // Compute relative min score for the read.
         String<WeightedMatch> filtered;
-        int maxError = (int)floor(options.maxError / 100.0 * readLengthStore[readId]);
+        int maxError = (int)floor(options.maxError / 100.0 * readLengthStore[readID]);
         if (options.oracleMode)
         {
-            SEQAN_ASSERT_NEQ(readAlignmentDistances[readId], -1);
-            maxError = readAlignmentDistances[readId];
+            SEQAN_ASSERT_NEQ(readAlignmentDistances[readID], -1);
+            maxError = readAlignmentDistances[readID];
             if (options.maxErrorSet && maxError > options.maxError)
                 maxError = options.maxError;
         }
-        int relativeMinScore = (int)ceilAwayFromZero(100.0 * -maxError / readLengthStore[readId]);
+        int relativeMinScore = (int)ceilAwayFromZero(100.0 * -maxError / readLengthStore[readID]);
 #if ENABLE
-        std::cerr << "AFTER SMOOTHING, readId == " << readId << ", read name == " << readNameStore[readId] << ", maxError == " << maxError << "\n";
+        std::cerr << "AFTER SMOOTHING, readID == " << readID << ", read name == " << readNameStore[readID] << ", maxError == " << maxError << "\n";
 #endif  // #if ENABLE
 
         // Filter out low scoring ones.
         typedef typename Iterator<String<WeightedMatch> >::Type TIterator;
-        for (TIterator it = begin(errorCurves[readId]); it != end(errorCurves[readId]); ++it)
+        for (TIterator it = begin(errorCurves[readID]); it != end(errorCurves[readID]); ++it)
         {
             if (value(it).distance >= relativeMinScore)
                 appendValue(filtered, value(it));
         }
-        move(errorCurves[readId], filtered);
+        move(errorCurves[readID], filtered);
     }
     std::cerr << "100% DONE\n"
               << "\nTook: " << sysTime() - startTime << " s\n";

@@ -51,7 +51,7 @@ struct FilterDelegate
 {
     typedef typename Traits::THitsAppender  THits;
     typedef typename Value<THits>::Type     THit;
-    typedef typename Id<THit>::Type         TSeedId;
+    typedef typename ID<THit>::Type         TSeedID;
 
     THits & hits;
 
@@ -62,7 +62,7 @@ struct FilterDelegate
     template <typename TIndexIt, typename TSeedsIt>
     void operator() (TIndexIt const & indexIt, TSeedsIt const & seedsIt, unsigned char errors)
     {
-        THit hit = { range(indexIt), (TSeedId)position(seedsIt), errors };
+        THit hit = { range(indexIt), (TSeedID)position(seedsIt), errors };
 
         appendValue(hits, hit, Generous(), typename Traits::TThreading());
     }

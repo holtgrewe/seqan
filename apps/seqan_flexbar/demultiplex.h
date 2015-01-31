@@ -71,8 +71,8 @@ struct DemultiplexStats
 // Functions
 // ============================================================================
 
-template <typename TSeqs, typename TIds, typename TBarcodes> //This version works with paired-end data
-bool check(TSeqs& seqs,  TIds& ids, TSeqs& seqsRev, TIds& idsRev, TBarcodes& barcodes, GeneralStats& stats)
+template <typename TSeqs, typename TIDs, typename TBarcodes> //This version works with paired-end data
+bool check(TSeqs& seqs,  TIDs& ids, TSeqs& seqsRev, TIDs& idsRev, TBarcodes& barcodes, GeneralStats& stats)
 {
 	unsigned len = length(barcodes[0]);
 	for (unsigned i = 1; i < length(barcodes); ++i)
@@ -108,8 +108,8 @@ bool check(TSeqs& seqs,  TIds& ids, TSeqs& seqsRev, TIds& idsRev, TBarcodes& bar
 	return true;
 }
 //Overload for single-end data
-template <typename TSeqs, typename TIds, typename TBarcodes>
-bool check(TSeqs& seqs, TIds& ids,TBarcodes& barcodes, GeneralStats& stats) 
+template <typename TSeqs, typename TIDs, typename TBarcodes>
+bool check(TSeqs& seqs, TIDs& ids,TBarcodes& barcodes, GeneralStats& stats) 
 {
 	unsigned len = length(barcodes[0]);
 	for (unsigned i = 1; i < length(barcodes); ++i)
@@ -346,15 +346,15 @@ void doAll(StringSet<String<int> >& sortedSequences, TSeqs& seqs, TBarcodes& bar
 }
 
 //Version for paired-end data
-template<typename TSeqs, typename TIds>
-void buildSets(TSeqs& seqs, TSeqs& seqsRev, TIds& ids, TIds& idsRev, const StringSet<String<int> >& groups,
-		String<TSeqs>& gSeqs, String<TSeqs>& gSeqsRev, String<TIds>& gIds, String<TIds>& gIdsRev)
+template<typename TSeqs, typename TIDs>
+void buildSets(TSeqs& seqs, TSeqs& seqsRev, TIDs& ids, TIDs& idsRev, const StringSet<String<int> >& groups,
+		String<TSeqs>& gSeqs, String<TSeqs>& gSeqsRev, String<TIDs>& gIDs, String<TIDs>& gIDsRev)
 {
 	unsigned len = length(groups);
     resize(gSeqs, len);
 	resize(gSeqsRev, len);
-	resize(gIds, len);
-	resize(gIdsRev, len);
+	resize(gIDs, len);
+	resize(gIDsRev, len);
     unsigned k = 0;
 	for (unsigned i = 0; i < length(groups); ++i)
 	{
@@ -362,8 +362,8 @@ void buildSets(TSeqs& seqs, TSeqs& seqsRev, TIds& ids, TIds& idsRev, const Strin
 		{
 			appendValue(gSeqs[k], seqs[groups[i][j]]);
 			appendValue(gSeqsRev[k], seqsRev[groups[i][j]]);
-			appendValue(gIds[k], ids[groups[i][j]]);
-			appendValue(gIdsRev[k], idsRev[groups[i][j]]);
+			appendValue(gIDs[k], ids[groups[i][j]]);
+			appendValue(gIDsRev[k], idsRev[groups[i][j]]);
 		}
 		if (length(groups[i]) != 0)
 		{
@@ -372,26 +372,26 @@ void buildSets(TSeqs& seqs, TSeqs& seqsRev, TIds& ids, TIds& idsRev, const Strin
 	}
 	resize(gSeqs, k);
 	resize(gSeqsRev, k);
-	resize(gIds, k);
-	resize(gIdsRev, k);
+	resize(gIDs, k);
+	resize(gIDsRev, k);
 	clear(seqs);
 	clear(seqsRev);
 	clear(ids);
 	clear(idsRev);
 }
 //Overload for single-end data.
-template<typename TSeqs, typename TIds>
-void buildSets(TSeqs& seqs, TIds& ids, const StringSet<String<int> >& groups, String<TSeqs>& gSeqs, String<TIds>& gIds)
+template<typename TSeqs, typename TIDs>
+void buildSets(TSeqs& seqs, TIDs& ids, const StringSet<String<int> >& groups, String<TSeqs>& gSeqs, String<TIDs>& gIDs)
 {
 	resize(gSeqs, length(groups));
-	resize(gIds, length(groups));
+	resize(gIDs, length(groups));
 	unsigned k = 0;
 	for (unsigned i = 0; i < length(groups); ++i)
 	{
 		for (unsigned j = 0; j < length(groups[i]); ++j)
 		{
             appendValue(gSeqs[k], seqs[groups[i][j]]);
-		    appendValue(gIds[k],ids[groups[i][j]]);
+		    appendValue(gIDs[k],ids[groups[i][j]]);
 		}
 		if (length(groups[i]) != 0)
 		{
@@ -399,7 +399,7 @@ void buildSets(TSeqs& seqs, TIds& ids, const StringSet<String<int> >& groups, St
 		}
 	}
     resize(gSeqs, k);
-	resize(gIds, k);
+	resize(gIDs, k);
 	clear(seqs);
  	clear(ids);
 }

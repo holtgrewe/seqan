@@ -92,23 +92,23 @@ class StringSet<TString, Dependent<Tight> >
 {
 public:
     typedef String<TString *>                           TStrings;
-    typedef typename Id<StringSet>::Type                TIdType;
+    typedef typename ID<StringSet>::Type                TIDType;
     typedef typename Position<StringSet>::Type          TPosition;
-    typedef String<TIdType>                             TIds;
-    typedef std::map<TIdType, TPosition>                TIdPosMap;
+    typedef String<TIDType>                             TIDs;
+    typedef std::map<TIDType, TPosition>                TIDPosMap;
     typedef typename StringSetLimits<StringSet>::Type   TLimits;
     typedef typename Concatenator<StringSet>::Type      TConcatenator;
 
-    TIdType         lastId;
+    TIDType         lastID;
     TStrings        strings;
-    TIds            ids;
-    TIdPosMap       id_pos_map;
+    TIDs            ids;
+    TIDPosMap       id_pos_map;
     TLimits         limits;
     bool            limitsValid;        // is true if limits contains the cumulative sum of the sequence lengths
     TConcatenator   concat;
 
     StringSet() :
-        lastId(0),
+        lastID(0),
         limitsValid(true)
     {
         _initStringSetLimits(*this);
@@ -116,7 +116,7 @@ public:
 
     template <typename TDefault>
     StringSet(StringSet<TString, Owner<TDefault> > const & _other) :
-        lastId(0),
+        lastID(0),
         limitsValid(true)
     {
         _initStringSetLimits(*this);
@@ -165,9 +165,9 @@ inline void appendValue(
     SEQAN_CHECKPOINT;
     typedef typename Position<StringSet<TString, Dependent<Tight> > >::Type TPos;
     appendValue(me.limits, lengthSum(me) + length(obj), tag);
-    typedef typename StringSet<TString, Dependent<Tight> >::TIdType TIdType;
+    typedef typename StringSet<TString, Dependent<Tight> >::TIDType TIDType;
     appendValue(me.strings, const_cast<TString*>(&obj));
-    TIdType last = me.lastId++;
+    TIDType last = me.lastID++;
     appendValue(me.ids, last, tag);
     me.id_pos_map.insert(std::make_pair(last, (TPos)(length(me.strings) - 1)));
 }
@@ -186,7 +186,7 @@ inline void clear(StringSet<TString, Dependent<Tight> >& me)
     me.limitsValid = true;
 
     clear(me.ids);
-    me.lastId = 0;
+    me.lastID = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -209,46 +209,46 @@ value(StringSet<TString, Dependent<Tight> >const & me, TPos pos)
 }
 
 // --------------------------------------------------------------------------
-// Function getValueById()
+// Function getValueByID()
 // --------------------------------------------------------------------------
 
-template <typename TString, typename TId>
+template <typename TString, typename TID>
 inline typename Reference<StringSet<TString, Dependent<Tight> > >::Type
-getValueById(StringSet<TString, Dependent<Tight> > & me,
-            TId const id)
+getValueByID(StringSet<TString, Dependent<Tight> > & me,
+            TID const id)
 {
     SEQAN_ASSERT_GT_MSG(me.id_pos_map.count(id), 0u, "String id must be known!");
     return (value(me, me.id_pos_map.find(id)->second));
 }
 
 // --------------------------------------------------------------------------
-// Function assignValueById()
+// Function assignValueByID()
 // --------------------------------------------------------------------------
 
 template<typename TString, typename TString2>
-inline typename Id<StringSet<TString, Dependent<Tight> > >::Type
-assignValueById(StringSet<TString, Dependent<Tight> >& me,
+inline typename ID<StringSet<TString, Dependent<Tight> > >::Type
+assignValueByID(StringSet<TString, Dependent<Tight> >& me,
                 TString2& obj)
 {
     SEQAN_CHECKPOINT;
     appendValue(me, obj);
     SEQAN_ASSERT_EQ(length(me.limits), length(me) + 1);
-    return positionToId(me, length(me.strings) - 1);
+    return positionToID(me, length(me.strings) - 1);
 }
 
 
-template<typename TString, typename TId1>
-inline typename Id<StringSet<TString, Dependent<Tight> > >::Type
-assignValueById(StringSet<TString, Dependent<Tight> >& me,
+template<typename TString, typename TID1>
+inline typename ID<StringSet<TString, Dependent<Tight> > >::Type
+assignValueByID(StringSet<TString, Dependent<Tight> >& me,
                 TString& obj,
-                TId1 id)
+                TID1 id)
 {
     SEQAN_CHECKPOINT;
     typedef StringSet<TString, Dependent<Tight> > TStringSet;
-    typedef typename TStringSet::TIdPosMap::const_iterator TIter;
-    typedef typename Id<TStringSet>::Type TId;
+    typedef typename TStringSet::TIDPosMap::const_iterator TIter;
+    typedef typename ID<TStringSet>::Type TID;
 
-    if (me.lastId < (TId) id) me.lastId = (TId) (id + 1);
+    if (me.lastID < (TID) id) me.lastID = (TID) (id + 1);
 
     TIter pos = me.id_pos_map.find(id);
     if (pos != me.id_pos_map.end()) {
@@ -264,17 +264,17 @@ assignValueById(StringSet<TString, Dependent<Tight> >& me,
 }
 
 // --------------------------------------------------------------------------
-// Function removeValueById()
+// Function removeValueByID()
 // --------------------------------------------------------------------------
 
-template<typename TString, typename TId>
+template<typename TString, typename TID>
 inline void
-removeValueById(StringSet<TString, Dependent<Tight> >& me, TId const id)
+removeValueByID(StringSet<TString, Dependent<Tight> >& me, TID const id)
 {
     SEQAN_CHECKPOINT;
     typedef StringSet<TString, Dependent<Tight> > TStringSet;
     typedef typename Size<TStringSet>::Type TSize;
-    typedef typename TStringSet::TIdPosMap::iterator TIter;
+    typedef typename TStringSet::TIDPosMap::iterator TIter;
 
     SEQAN_ASSERT_EQ(length(me.limits), length(me) + 1);
     TIter pos = me.id_pos_map.find(id);
@@ -293,12 +293,12 @@ removeValueById(StringSet<TString, Dependent<Tight> >& me, TId const id)
 }
 
 // --------------------------------------------------------------------------
-// Function positionToId()
+// Function positionToID()
 // --------------------------------------------------------------------------
 
 template <typename TString, typename TPos>
-inline typename Id<StringSet<TString, Dependent<Tight> > >::Type
-positionToId(StringSet<TString, Dependent<Tight> > & me,
+inline typename ID<StringSet<TString, Dependent<Tight> > >::Type
+positionToID(StringSet<TString, Dependent<Tight> > & me,
             TPos const pos)
 {
     SEQAN_CHECKPOINT;
@@ -306,8 +306,8 @@ positionToId(StringSet<TString, Dependent<Tight> > & me,
 }
 
 template <typename TString, typename TPos>
-inline typename Id<StringSet<TString, Dependent<Tight> > >::Type
-positionToId(StringSet<TString, Dependent<Tight> > const & me,
+inline typename ID<StringSet<TString, Dependent<Tight> > >::Type
+positionToID(StringSet<TString, Dependent<Tight> > const & me,
             TPos const pos)
 {
     SEQAN_CHECKPOINT;
@@ -318,16 +318,16 @@ positionToId(StringSet<TString, Dependent<Tight> > const & me,
 // Function idToPosition()
 // --------------------------------------------------------------------------
 
-template <typename TString, typename TId>
-inline typename Id<StringSet<TString, Dependent<Tight> > >::Type
+template <typename TString, typename TID>
+inline typename ID<StringSet<TString, Dependent<Tight> > >::Type
 idToPosition(StringSet<TString, Dependent<Tight> > const & me,
-            TId const id)
+            TID const id)
 {
     SEQAN_CHECKPOINT;
     return me.id_pos_map.find(id)->second;
 /*
     for(unsigned i = 0; i < length(me.ids); ++i)
-        if ((TId) me.ids[i] == id)
+        if ((TID) me.ids[i] == id)
             return i;
     return 0;
     */

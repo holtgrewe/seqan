@@ -984,7 +984,7 @@ struct AssignString_
     {
         if (empty(source) && empty(target))
             return;  // Do nothing if both source and target are empty.
-        if (!getObjectId(source) || !shareResources(target, source))
+        if (!getObjectID(source) || !shareResources(target, source))
         {
             typename Size<TTarget>::Type part_length = _clearSpace(target, length(source), TExpand());
             arrayConstructCopy(begin(source, Standard()), begin(source, Standard()) + part_length, begin(target, Standard()));
@@ -1005,7 +1005,7 @@ struct AssignString_
         TSource & source,
         typename Size<TTarget>::Type limit)
     {
-        if (!getObjectId(source) || !shareResources(target, source))
+        if (!getObjectID(source) || !shareResources(target, source))
         {
             typename Size<TTarget>::Type part_length = _clearSpace(target, typename Size<TTarget>::Type(length(source)), limit, TExpand());
             arrayConstructCopy(begin(source, Standard()), begin(source, Standard()) + part_length, begin(target, Standard()));
@@ -1209,7 +1209,7 @@ struct AppendString_
     append_(TTarget & target,
             TSource & source)
     {
-        if (!getObjectId(source) || !shareResources(target, source) ||
+        if (!getObjectID(source) || !shareResources(target, source) ||
             !_stringCheckForPossibleOverlap(begin(source, Standard()), end(target, Standard()), length(source)))
         {
             typename Size<TTarget>::Type target_length = length(target);
@@ -1230,7 +1230,7 @@ struct AppendString_
             typename Size<TTarget>::Type limit)
     {
         typename Iterator<TTarget, Standard>::Type target_begin = begin(target, Standard());
-        if (!getObjectId(source) || !shareResources(target, source))
+        if (!getObjectID(source) || !shareResources(target, source))
         {
             typename Size<TTarget>::Type target_length = length(target);
             typename Size<TTarget>::Type part_length = _clearSpace(target, length(source), target_length, target_length, limit, TExpand());
@@ -1401,7 +1401,7 @@ struct ReplaceString_
              typename Size<TTarget>::Type pos_end,
              TSource & source)
     {
-        if (!getObjectId(source) || !shareResources(target, source))
+        if (!getObjectID(source) || !shareResources(target, source))
         {
             typename Size<TTarget>::Type part_length = _clearSpace(target, length(source), pos_begin, pos_end, TExpand());
             arrayConstructCopy(begin(source, Standard()), begin(source, Standard()) + part_length, begin(target, Standard()) + pos_begin);
@@ -1421,7 +1421,7 @@ struct ReplaceString_
              TSource & source,
              typename Size<TTarget>::Type limit)
     {
-        if (!getObjectId(source) || !shareResources(target, source))
+        if (!getObjectID(source) || !shareResources(target, source))
         {
             typename Size<TTarget>::Type part_length = _clearSpace(target, length(source), pos_begin, pos_end, limit, TExpand());
             arrayConstructCopy(begin(source, Standard()), begin(source, Standard()) + part_length, begin(target, Standard()) + pos_begin);
@@ -2026,13 +2026,13 @@ operator>>(TStream & source,
 }
 
 // ----------------------------------------------------------------------------
-// Function assignValueById
+// Function assignValueByID
 // ----------------------------------------------------------------------------
 
-template<typename TValue, typename TSpec, typename TId, typename TValue2>
-inline SEQAN_FUNC_ENABLE_IF(Is<IntegerConcept<TId> >, void)
-assignValueById(String<TValue, TSpec> & me,
-                TId id,
+template<typename TValue, typename TSpec, typename TID, typename TValue2>
+inline SEQAN_FUNC_ENABLE_IF(Is<IntegerConcept<TID> >, void)
+assignValueByID(String<TValue, TSpec> & me,
+                TID id,
                 TValue2 const & obj)
 {
     if (length(me) <= id)
@@ -2041,13 +2041,13 @@ assignValueById(String<TValue, TSpec> & me,
 }
 
 // ----------------------------------------------------------------------------
-// Function getValueById
+// Function getValueByID
 // ----------------------------------------------------------------------------
 
-template<typename TValue, typename TSpec, typename TId>
-inline SEQAN_FUNC_ENABLE_IF(Is<IntegerConcept<TId> >, TValue)
-getValueById(String<TValue, TSpec> & me,
-             TId id)
+template<typename TValue, typename TSpec, typename TID>
+inline SEQAN_FUNC_ENABLE_IF(Is<IntegerConcept<TID> >, TValue)
+getValueByID(String<TValue, TSpec> & me,
+             TID id)
 {
     if (id < length(me))
         return getValue(me, id);

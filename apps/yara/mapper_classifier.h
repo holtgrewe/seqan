@@ -124,30 +124,30 @@ inline void _classifyReadImpl(ReadsClassifier<TSpec, TConfig> & me, TReadSeqsIte
 {
     typedef typename TConfig::THits                     THits;
     typedef typename Value<THits>::Type                 THit;
-    typedef typename Id<THit>::Type                     THitId;
-    typedef Pair<THitId>                                THitIds;
+    typedef typename ID<THit>::Type                     THitID;
+    typedef Pair<THitID>                                THitIDs;
     typedef typename Size<THit>::Type                   THitSize;
     typedef typename TConfig::TSeeds                    TSeeds;
-    typedef typename Id<TSeeds>::Type                   TSeedId;
-    typedef Pair<TSeedId>                               TSeedIds;
+    typedef typename ID<TSeeds>::Type                   TSeedID;
+    typedef Pair<TSeedID>                               TSeedIDs;
     typedef typename TConfig::TReadSeqs                 TReadSeqs;
-    typedef typename Size<TReadSeqs>::Type              TReadId;
+    typedef typename Size<TReadSeqs>::Type              TReadID;
 
-    TReadId readSeqId = position(it);
+    TReadID readSeqID = position(it);
 
     // Count the hits per read.
-    TSeedIds readSeedIds = getSeedIds(me.seeds, readSeqId);
-    THitIds readHitIds = getHitIds(me.hits, readSeedIds);
-    THitSize readHits = countHits<THitSize>(me.hits, readHitIds);
+    TSeedIDs readSeedIDs = getSeedIDs(me.seeds, readSeqID);
+    THitIDs readHitIDs = getHitIDs(me.hits, readSeedIDs);
+    THitSize readHits = countHits<THitSize>(me.hits, readHitIDs);
 
     // Re-seed hard reads.
     if (readHits > me.options.hitsThreshold)
     {
         // Guess a good seeding stragegy.
-        setSeedErrors(me.ctx, readSeqId, (readHits < 200 * me.options.hitsThreshold) ? 1 : 2);
+        setSeedErrors(me.ctx, readSeqID, (readHits < 200 * me.options.hitsThreshold) ? 1 : 2);
 
         // Clear the hits of the read.
-        clearHits(me.hits, readHitIds);
+        clearHits(me.hits, readHitIDs);
     }
 }
 
@@ -160,32 +160,32 @@ inline void _classifyReadImpl(ReadsClassifier<TSpec, TConfig> & me, TReadSeqsIte
 {
     typedef typename TConfig::THits                     THits;
     typedef typename Value<THits>::Type                 THit;
-    typedef typename Id<THit>::Type                     THitId;
-    typedef Pair<THitId>                                THitIds;
+    typedef typename ID<THit>::Type                     THitID;
+    typedef Pair<THitID>                                THitIDs;
     typedef typename Size<THit>::Type                   THitSize;
     typedef typename TConfig::TSeeds                    TSeeds;
-    typedef typename Id<TSeeds>::Type                   TSeedId;
-    typedef Pair<TSeedId>                               TSeedIds;
+    typedef typename ID<TSeeds>::Type                   TSeedID;
+    typedef Pair<TSeedID>                               TSeedIDs;
     typedef typename TConfig::TReadSeqs                 TReadSeqs;
-    typedef typename Size<TReadSeqs>::Type              TReadId;
+    typedef typename Size<TReadSeqs>::Type              TReadID;
 
-    // Get readSeqId.
-    TReadId fwdSeqId = position(it);
+    // Get readSeqID.
+    TReadID fwdSeqID = position(it);
 
     // Get mate id.
-    TReadId revSeqId = getFirstMateRevSeqId(me.readSeqs, fwdSeqId);
+    TReadID revSeqID = getFirstMateRevSeqID(me.readSeqs, fwdSeqID);
 
     // Get seed ids.
-    TSeedIds fwdSeedIds = getSeedIds(me.seeds, fwdSeqId);
-    TSeedIds revSeedIds = getSeedIds(me.seeds, revSeqId);
+    TSeedIDs fwdSeedIDs = getSeedIDs(me.seeds, fwdSeqID);
+    TSeedIDs revSeedIDs = getSeedIDs(me.seeds, revSeqID);
 
     // Get hit ids.
-    THitIds fwdHitIds = getHitIds(me.hits, fwdSeedIds);
-    THitIds revHitIds = getHitIds(me.hits, revSeedIds);
+    THitIDs fwdHitIDs = getHitIDs(me.hits, fwdSeedIDs);
+    THitIDs revHitIDs = getHitIDs(me.hits, revSeedIDs);
 
     // Count the hits of each read.
-    THitSize fwdHits = countHits<THitSize>(me.hits, fwdHitIds);
-    THitSize revHits = countHits<THitSize>(me.hits, revHitIds);
+    THitSize fwdHits = countHits<THitSize>(me.hits, fwdHitIDs);
+    THitSize revHits = countHits<THitSize>(me.hits, revHitIDs);
     THitSize readHits = fwdHits + revHits;
 
     // Re-seed hard reads.
@@ -193,12 +193,12 @@ inline void _classifyReadImpl(ReadsClassifier<TSpec, TConfig> & me, TReadSeqsIte
     {
         // Guess a good seeding stragegy.
         unsigned seedErrors = (readHits < 2 * 200 * me.options.hitsThreshold) ? 1 : 2;
-        setSeedErrors(me.ctx, fwdSeqId, seedErrors);
-        setSeedErrors(me.ctx, revSeqId, seedErrors);
+        setSeedErrors(me.ctx, fwdSeqID, seedErrors);
+        setSeedErrors(me.ctx, revSeqID, seedErrors);
 
         // Clear the hits of the read.
-        clearHits(me.hits, fwdHitIds);
-        clearHits(me.hits, revHitIds);
+        clearHits(me.hits, fwdHitIDs);
+        clearHits(me.hits, revHitIDs);
     }
 }
 
@@ -212,67 +212,67 @@ inline void _classifyReadImpl(ReadsClassifier<TSpec, TConfig> & me, TReadSeqsIte
 {
     typedef typename TConfig::THits                     THits;
     typedef typename Value<THits>::Type                 THit;
-    typedef typename Id<THit>::Type                     THitId;
-    typedef Pair<THitId>                                THitIds;
+    typedef typename ID<THit>::Type                     THitID;
+    typedef Pair<THitID>                                THitIDs;
     typedef typename Size<THit>::Type                   THitSize;
     typedef typename TConfig::TSeeds                    TSeeds;
-    typedef typename Id<TSeeds>::Type                   TSeedId;
-    typedef Pair<TSeedId>                               TSeedIds;
+    typedef typename ID<TSeeds>::Type                   TSeedID;
+    typedef Pair<TSeedID>                               TSeedIDs;
     typedef typename TConfig::TReadSeqs                 TReadSeqs;
-    typedef typename Size<TReadSeqs>::Type              TReadId;
+    typedef typename Size<TReadSeqs>::Type              TReadID;
 
-    // Get readSeqId.
-    TReadId readSeqId = position(it);
+    // Get readSeqID.
+    TReadID readSeqID = position(it);
 
     // Get mate id.
-    TReadId mateSeqId = getMateSeqId(me.readSeqs, readSeqId);
+    TReadID mateSeqID = getMateSeqID(me.readSeqs, readSeqID);
 
     // Get seed ids.
-    TSeedIds readSeedIds = getSeedIds(me.seeds, readSeqId);
-    TSeedIds mateSeedIds = getSeedIds(me.seeds, mateSeqId);
+    TSeedIDs readSeedIDs = getSeedIDs(me.seeds, readSeqID);
+    TSeedIDs mateSeedIDs = getSeedIDs(me.seeds, mateSeqID);
 
     // Get hit ids.
-    THitIds readHitIds = getHitIds(me.hits, readSeedIds);
-    THitIds mateHitIds = getHitIds(me.hits, mateSeedIds);
+    THitIDs readHitIDs = getHitIDs(me.hits, readSeedIDs);
+    THitIDs mateHitIDs = getHitIDs(me.hits, mateSeedIDs);
 
     // Count the hits of each read.
-    THitSize readHits = countHits<THitSize>(me.hits, readHitIds);
-    THitSize mateHits = countHits<THitSize>(me.hits, mateHitIds);
+    THitSize readHits = countHits<THitSize>(me.hits, readHitIDs);
+    THitSize mateHits = countHits<THitSize>(me.hits, mateHitIDs);
 
-    TReadId anchorSeqId;
-    TReadId otherSeqId;
-    THitIds anchorHitIds;
-    THitIds otherHitIds;
+    TReadID anchorSeqID;
+    TReadID otherSeqID;
+    THitIDs anchorHitIDs;
+    THitIDs otherHitIDs;
 
     // Choose the easiest read as the anchor.
     THitSize anchorHits = std::min(readHits, mateHits);
 
     if (anchorHits == readHits)
     {
-        anchorSeqId = readSeqId;
-        anchorHitIds = readHitIds;
-        otherSeqId = mateSeqId;
-        otherHitIds = mateHitIds;
+        anchorSeqID = readSeqID;
+        anchorHitIDs = readHitIDs;
+        otherSeqID = mateSeqID;
+        otherHitIDs = mateHitIDs;
     }
     else
     {
-        anchorSeqId = mateSeqId;
-        anchorHitIds = mateHitIds;
-        otherSeqId = readSeqId;
-        otherHitIds = readHitIds;
+        anchorSeqID = mateSeqID;
+        anchorHitIDs = mateHitIDs;
+        otherSeqID = readSeqID;
+        otherHitIDs = readHitIDs;
     }
 
     // Clear the hits of the other read.
-    clearHits(me.hits, otherHitIds);
+    clearHits(me.hits, otherHitIDs);
 
     // Re-seed hard anchors.
     if (anchorHits > me.options.hitsThreshold)
     {
         // Guess a good seeding stragegy.
-        setSeedErrors(me.ctx, anchorSeqId, (anchorHits < 200 * me.options.hitsThreshold) ? 1 : 2);
+        setSeedErrors(me.ctx, anchorSeqID, (anchorHits < 200 * me.options.hitsThreshold) ? 1 : 2);
 
         // Clear the hits of the anchor.
-        clearHits(me.hits, anchorHitIds);
+        clearHits(me.hits, anchorHitIDs);
     }
 }
 

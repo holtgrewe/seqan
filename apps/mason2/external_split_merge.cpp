@@ -35,10 +35,10 @@
 #include "external_split_merge.h"
 
 // ---------------------------------------------------------------------------
-// Function IdSplitter::open()
+// Function IDSplitter::open()
 // ---------------------------------------------------------------------------
 
-void IdSplitter::open()
+void IDSplitter::open()
 {
     close();
     for (unsigned i = 0; i < numContigs; ++i)
@@ -98,10 +98,10 @@ void IdSplitter::open()
 }
 
 // ---------------------------------------------------------------------------
-// Function IdSplitter::reset()
+// Function IDSplitter::reset()
 // ---------------------------------------------------------------------------
 
-void IdSplitter::reset()
+void IDSplitter::reset()
 {
     for (unsigned i = 0; i < files.size(); ++i)
         if (files[i] != 0)
@@ -114,10 +114,10 @@ void IdSplitter::reset()
 }
 
 // ---------------------------------------------------------------------------
-// Function IdSplitter::close()
+// Function IDSplitter::close()
 // ---------------------------------------------------------------------------
 
-void IdSplitter::close()
+void IDSplitter::close()
 {
     for (unsigned i = 0; i < files.size(); ++i)
         if (files[i])

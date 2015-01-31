@@ -22,7 +22,7 @@ int main()
     std::cout << "  begin position: " << getAnnotation(it).beginPos << std::endl;
     std::cout << "  end position: " << getAnnotation(it).endPos << std::endl;
     std::cout << "  id: " << value(it) << std::endl;
-    std::cout << "  parent id: " << getAnnotation(it).parentId << std::endl;
+    std::cout << "  parent id: " << getAnnotation(it).parentID << std::endl;
     std::cout << "  parent name: " << getParentName(it) << std::endl;
     return 0;
 }

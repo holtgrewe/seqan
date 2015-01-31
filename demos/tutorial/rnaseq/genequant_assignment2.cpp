@@ -11,9 +11,9 @@ using namespace seqan;
 // define used types
 typedef FragmentStore<>                         TStore;
 typedef Value<TStore::TAnnotationStore>::Type   TAnnotation;
-typedef TAnnotation::TId                        TId;
+typedef TAnnotation::TID                        TID;
 typedef TAnnotation::TPos                       TPos;
-typedef IntervalAndCargo<TPos, TId>             TInterval;
+typedef IntervalAndCargo<TPos, TID>             TInterval;
 //![definitions]
 
 //![definitions_end]
@@ -84,7 +84,7 @@ bool loadFiles(TStore & store, Options const & options)
 
 //![yourcode]
 //
-// 3. Extract intervals from gene annotations (grouped by contigId)
+// 3. Extract intervals from gene annotations (grouped by contigID)
 //
 void extractGeneIntervals(String<String<TInterval> > & intervals, TStore const & store)
 {

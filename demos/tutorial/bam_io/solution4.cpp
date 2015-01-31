@@ -14,8 +14,8 @@ int main()
     BamFileOut bamFileOut(std::cout, Sam());
 
     // Fill sequenceInfos.
-    assignValueById(contigLengths(context(bamFileOut)),
-                    nameToId(contigNamesCache(context(bamFileOut)), "REF"),
+    assignValueByID(contigLengths(context(bamFileOut)),
+                    nameToID(contigNamesCache(context(bamFileOut)), "REF"),
                     length(ref));
 
     // Fill header records.

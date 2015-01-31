@@ -63,9 +63,9 @@ SEQAN_DEFINE_TEST(test_graph_types_utils_graph_drawing)
         "4 -> \n"
         "5 -> \n"
         "Edge list:\n"
-        "Source: 0,Target: 2 (Id: 1)\n"
-        "Source: 0,Target: 1 (Id: 0)\n"
-        "Source: 3,Target: 4 (Id: 2)\n";
+        "Source: 0,Target: 2 (ID: 1)\n"
+        "Source: 0,Target: 1 (ID: 0)\n"
+        "Source: 3,Target: 4 (ID: 2)\n";
     char const * EXPECTED_UNDIRECTED =
         "Adjacency list:\n"
         "0 -> 2,1,\n"
@@ -75,9 +75,9 @@ SEQAN_DEFINE_TEST(test_graph_types_utils_graph_drawing)
         "4 -> 3,\n"
         "5 -> \n"
         "Edge list:\n"
-        "Source: 0,Target: 2 (Id: 1)\n"
-        "Source: 0,Target: 1 (Id: 0)\n"
-        "Source: 3,Target: 4 (Id: 2)\n";
+        "Source: 0,Target: 2 (ID: 1)\n"
+        "Source: 0,Target: 1 (ID: 0)\n"
+        "Source: 3,Target: 4 (ID: 2)\n";
     char const * EXPECTED_TREE =
         "Adjacency list:\n"
         "0 -> 2,1,\n"
@@ -87,9 +87,9 @@ SEQAN_DEFINE_TEST(test_graph_types_utils_graph_drawing)
         "4 -> \n"
         "5 -> \n"
         "Edge list:\n"
-        "Source: 0,Target: 2 (Id: 2)\n"
-        "Source: 0,Target: 1 (Id: 1)\n"
-        "Source: 3,Target: 4 (Id: 4)\n";
+        "Source: 0,Target: 2 (ID: 2)\n"
+        "Source: 0,Target: 1 (ID: 1)\n"
+        "Source: 3,Target: 4 (ID: 4)\n";
     Test_GraphDrawing_Tmp<Graph<Directed<> > >(EXPECTED_DIRECTED);
     Test_GraphDrawing_Tmp<Graph<Undirected<> > >(EXPECTED_UNDIRECTED);
     Test_GraphDrawing_Tmp<Graph<Tree<> > >(EXPECTED_TREE);

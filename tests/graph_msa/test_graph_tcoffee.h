@@ -51,10 +51,10 @@ void Test_Distances() {
 	TString str3 = "GARFIELDTHEVERYFASTCAT";
 	TString str4 = "THEFATCAT";
 	TStringSet strSet;
-	assignValueById(strSet, str1);
-	assignValueById(strSet, str2);
-	assignValueById(strSet, str3);
-	assignValueById(strSet, str4);
+	assignValueByID(strSet, str1);
+	assignValueByID(strSet, str2);
+	assignValueByID(strSet, str3);
+	assignValueByID(strSet, str4);
 	TGraph g(strSet);
 
 	String<double> distanceMatrix;
@@ -82,7 +82,7 @@ void Test_Distances() {
 void 
 testquickAlign__(Graph<Alignment<StringSet<String<AminoAcid>, Dependent<> >, unsigned int> >& g) 
 {
-	Graph<Alignment<StringSet<String<AminoAcid>, Dependent<> >, void, WithoutEdgeId> > gOut(stringSet(g));
+	Graph<Alignment<StringSet<String<AminoAcid>, Dependent<> >, void, WithoutEdgeID> > gOut(stringSet(g));
 	tripletLibraryExtension(g);
 	String<double> distForGuideTree;
 	getDistanceMatrix(g,distForGuideTree,LibraryDistance());

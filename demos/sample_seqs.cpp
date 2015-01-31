@@ -90,17 +90,17 @@ int main(int argc, char const ** argv)
     Rng<MersenneTwister> rng(SEED);
     Pdf<Uniform<unsigned> > pdf(0, length(seqs) - 1);
     std::cerr << "Sampling ids..." << std::endl;
-    std::set<unsigned> sampledIds;
-    while (sampledIds.size() < num)
+    std::set<unsigned> sampledIDs;
+    while (sampledIDs.size() < num)
     {
         unsigned x = pickRandomNumber(rng, pdf);
-        sampledIds.insert(x);
+        sampledIDs.insert(x);
     }
 
     // Finally, sample reads.
     SeqFileOut seqFileOut(std::cout, Fastq());
-    std::set<unsigned>::iterator it = sampledIds.begin();
-    for (; it != sampledIds.end(); ++it)
+    std::set<unsigned>::iterator it = sampledIDs.begin();
+    for (; it != sampledIDs.end(); ++it)
         writeRecord(seqFileOut, ids[*it], seqs[*it]);
 
     return 0;

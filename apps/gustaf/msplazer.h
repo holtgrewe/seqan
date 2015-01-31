@@ -123,7 +123,7 @@ struct MSplazerOptions
 // ----------------------------------------------------------------------------
 
 // BreakPoint class: container for structural variant or RNA-seq breakpoint information
-template <typename TSequence_, typename TId_>
+template <typename TSequence_, typename TID_>
 struct Breakpoint
 {
     enum SVType
@@ -140,13 +140,13 @@ struct Breakpoint
     };
 
     typedef TSequence_                          TSequence;
-    typedef TId_                                TId;
+    typedef TID_                                TID;
     typedef typename Position<TSequence>::Type  TPos;
 
-    // Ids of the two sequences
-    TId startSeqId;
-    TId endSeqId;
-    TId midPosId;
+    // IDs of the two sequences
+    TID startSeqID;
+    TID endSeqID;
+    TID midPosID;
     // Sequence orientation
     bool startSeqStrand;
     bool endSeqStrand;
@@ -165,8 +165,8 @@ struct Breakpoint
     // Counter of occurrences (read support)
     unsigned support;
     unsigned similar;
-    // Query Sequence Ids (queries/reads that support the breakpoint)
-    StringSet<TId> supportIds;
+    // Query Sequence IDs (queries/reads that support the breakpoint)
+    StringSet<TID> supportIDs;
     // SV type
     SVType svtype;
     TSequence insertionSeq;
@@ -182,9 +182,9 @@ struct Breakpoint
     bool breakend;
 
     Breakpoint() :
-        startSeqId("####"),
-        endSeqId("####"),
-        midPosId("####"),
+        startSeqID("####"),
+        endSeqID("####"),
+        midPosID("####"),
         startSeqStrand(true),
         endSeqStrand(true),
         midPosStrand(false),
@@ -207,17 +207,17 @@ struct Breakpoint
         breakend(false)
     {}
 
-    Breakpoint(TId const & sId,
-               TId const & eId,
+    Breakpoint(TID const & sID,
+               TID const & eID,
                bool const & sStrand,
                bool const & eStrand,
                TPos const & sPos,
                TPos const & ePos,
                TPos const & rsPos,
                TPos const & rePos) :
-        startSeqId(sId),
-        endSeqId(eId),
-        midPosId("####"),
+        startSeqID(sID),
+        endSeqID(eID),
+        midPosID("####"),
         startSeqStrand(sStrand),
         endSeqStrand(eStrand),
         midPosStrand(false),
@@ -240,18 +240,18 @@ struct Breakpoint
         breakend(false)
     {}
 
-    Breakpoint(TId const & sId,
-               TId const & eId,
+    Breakpoint(TID const & sID,
+               TID const & eID,
                bool const & sStrand,
                bool const & eStrand,
                TPos const & sPos,
                TPos const & ePos,
                TPos const & rsPos,
                TPos const & rePos,
-               TId const & spId) :
-        startSeqId(sId),
-        endSeqId(eId),
-        midPosId("####"),
+               TID const & spID) :
+        startSeqID(sID),
+        endSeqID(eID),
+        midPosID("####"),
         startSeqStrand(sStrand),
         endSeqStrand(eStrand),
         midPosStrand(false),
@@ -272,7 +272,7 @@ struct Breakpoint
         translSuppStartPos(false),
         translSuppEndPos(false),
         breakend(false)
-    {appendValue(supportIds, spId); }
+    {appendValue(supportIDs, spID); }
 };
 
 // ----------------------------------------------------------------------------
@@ -443,35 +443,35 @@ inline bool getProperty(SparsePropertyMap<TObject, TPos> const & spm, TDescripto
 }
 
 // ----------------------------------------------------------------------------
-// Function appendSupportId()
+// Function appendSupportID()
 // ----------------------------------------------------------------------------
 
-template <typename TBreakpoint, typename TId>
-inline void appendSupportId(TBreakpoint & bp, TId const & id)
+template <typename TBreakpoint, typename TID>
+inline void appendSupportID(TBreakpoint & bp, TID const & id)
 {
-    for (unsigned i = 0; i < length(bp.supportIds); ++i)
+    for (unsigned i = 0; i < length(bp.supportIDs); ++i)
     {
-        if (bp.supportIds[i] == id)
+        if (bp.supportIDs[i] == id)
         {
             ++bp.support;
             return;
         }
     }
-    appendValue(bp.supportIds, id);
+    appendValue(bp.supportIDs, id);
     ++bp.support;
 }
 
-template <typename TBreakpoint, typename TId>
-inline void appendSupportId(TBreakpoint & bp, StringSet<TId> const & ids)
+template <typename TBreakpoint, typename TID>
+inline void appendSupportID(TBreakpoint & bp, StringSet<TID> const & ids)
 {
 /*
-    typedef typename Iterator<StringSet<TId> >::Type TIterator;
+    typedef typename Iterator<StringSet<TID> >::Type TIterator;
     TIterator it = begin(ids);
     for(;!atEnd(it);goNext(it))
-        appendSupportId(bp, *it);
+        appendSupportID(bp, *it);
 */
     for (unsigned i = 0; i < length(ids); ++i)
-        appendSupportId(bp, ids[i]);
+        appendSupportID(bp, ids[i]);
 }
 
 // ----------------------------------------------------------------------------
@@ -487,8 +487,8 @@ inline void setSupport(TBreakpoint & bp, unsigned const & value)
 // Function getSVType()
 // ----------------------------------------------------------------------------
 
-template <typename TSequence, typename TId, typename TSVType>
-inline TSVType getSVType(Breakpoint<TSequence, TId> & bp)
+template <typename TSequence, typename TID, typename TSVType>
+inline TSVType getSVType(Breakpoint<TSequence, TID> & bp)
 {
     return bp.svtype;
 }
@@ -507,7 +507,7 @@ template <typename TBreakpoint>
 inline bool setSVType(TBreakpoint & bp, bool refOrder)
 {
     // if insertion return 1; else return 0;
-    if (bp.startSeqId != bp.endSeqId)
+    if (bp.startSeqID != bp.endSeqID)
     {
         bp.svtype = TBreakpoint::INTERTRANSLOCATION;
         return false;
@@ -565,21 +565,21 @@ inline bool _posInSameRange(TPos const & pos1, TPos const & pos2, TPosR const & 
         return pos1 <= pos2 + range;
 }
 
-// Breakends are distinguishable by there one reference Id (startId=endId) and position
+// Breakends are distinguishable by there one reference ID (startID=endID) and position
 // (start and end position are the same), strand doesn't matter
-template <typename TId, typename TPos, typename TPosR>
-inline bool _similarBreakends(Breakpoint<TId, TPos> & be1, Breakpoint<TId, TPos> & be2, TPosR const & range)
+template <typename TID, typename TPos, typename TPosR>
+inline bool _similarBreakends(Breakpoint<TID, TPos> & be1, Breakpoint<TID, TPos> & be2, TPosR const & range)
 {
-    if (be1.startSeqId != be2.startSeqId)
+    if (be1.startSeqID != be2.startSeqID)
         return false;
     return _posInSameRange(be1.startSeqPos, be2.startSeqPos, range);
 }
 
-template <typename TId, typename TPos, typename TPosR>
-inline bool _breakendSupport(Breakpoint<TId, TPos> & be, Breakpoint<TId, TPos> & bp, TPosR const & range)
+template <typename TID, typename TPos, typename TPosR>
+inline bool _breakendSupport(Breakpoint<TID, TPos> & be, Breakpoint<TID, TPos> & bp, TPosR const & range)
 {
-    typedef Breakpoint<TId, TPos> TBreakpoint;
-    if (be.startSeqId != bp.startSeqId && be.startSeqId != bp.endSeqId)
+    typedef Breakpoint<TID, TPos> TBreakpoint;
+    if (be.startSeqID != bp.startSeqID && be.startSeqID != bp.endSeqID)
         return false;
     // If bp is duplication or translocation, also check targetpos
     if ((bp.svtype == TBreakpoint::DISPDUPLICATION || bp.svtype == TBreakpoint::TRANSLOCATION || bp.svtype == TBreakpoint::INTERTRANSLOCATION)
@@ -591,16 +591,16 @@ inline bool _breakendSupport(Breakpoint<TId, TPos> & be, Breakpoint<TId, TPos> &
     return (_posInSameRange(be.startSeqPos, bp.startSeqPos, range) ||
             _posInSameRange(be.startSeqPos, bp.endSeqPos, range) );
 }
-template <typename TId, typename TPos>
-inline bool _similarBreakpoints(Breakpoint<TId, TPos> & bp1, Breakpoint<TId, TPos> & bp2, unsigned const & range)
+template <typename TID, typename TPos>
+inline bool _similarBreakpoints(Breakpoint<TID, TPos> & bp1, Breakpoint<TID, TPos> & bp2, unsigned const & range)
 {
-    typedef Breakpoint<TId, TPos> TBreakpoint;
+    typedef Breakpoint<TID, TPos> TBreakpoint;
     if (bp1.svtype != bp2.svtype && bp1.svtype != TBreakpoint::TRANSLOCATION && bp1.svtype != TBreakpoint::DISPDUPLICATION
                                  && bp2.svtype != TBreakpoint::TRANSLOCATION && bp2.svtype != TBreakpoint::DISPDUPLICATION)
         return false;
-    if (bp1.startSeqId != bp2.startSeqId)
+    if (bp1.startSeqID != bp2.startSeqID)
         return false;
-    if (bp1.endSeqId != bp2.endSeqId)
+    if (bp1.endSeqID != bp2.endSeqID)
         return false;
 
     if (bp1.svtype == TBreakpoint::DELETION || TBreakpoint::INVERSION)
@@ -620,14 +620,14 @@ inline bool _similarBreakpoints(Breakpoint<TId, TPos> & bp1, Breakpoint<TId, TPo
     return false;
 }
 
-template <typename TId, typename TPos>
-inline bool operator==(Breakpoint<TId, TPos> const & bp1, Breakpoint<TId, TPos> const & bp2)
+template <typename TID, typename TPos>
+inline bool operator==(Breakpoint<TID, TPos> const & bp1, Breakpoint<TID, TPos> const & bp2)
 {
     if (bp1.svtype != bp2.svtype)
         return false;
-    if (bp1.startSeqId != bp2.startSeqId)
+    if (bp1.startSeqID != bp2.startSeqID)
         return false;
-    if (bp1.endSeqId != bp2.endSeqId)
+    if (bp1.endSeqID != bp2.endSeqID)
         return false;
     /*
     if(bp1.startSeqStrand != bp2.startSeqStrand)
@@ -649,14 +649,14 @@ inline bool operator==(Breakpoint<TId, TPos> const & bp1, Breakpoint<TId, TPos> 
 // Function operator<(Breakpoint)
 // ----------------------------------------------------------------------------
 
-template <typename TId, typename TPos>
-inline bool operator<(Breakpoint<TId, TPos> const & bp1, Breakpoint<TId, TPos> const & bp2)
+template <typename TID, typename TPos>
+inline bool operator<(Breakpoint<TID, TPos> const & bp1, Breakpoint<TID, TPos> const & bp2)
 {
-    if (bp1.startSeqId != bp2.startSeqId)
-        return bp1.startSeqId < bp2.startSeqId;
+    if (bp1.startSeqID != bp2.startSeqID)
+        return bp1.startSeqID < bp2.startSeqID;
 
-    if (bp1.endSeqId != bp2.endSeqId)
-        return bp1.endSeqId < bp2.endSeqId;
+    if (bp1.endSeqID != bp2.endSeqID)
+        return bp1.endSeqID < bp2.endSeqID;
 
     if (bp1.startSeqPos != bp2.startSeqPos)
         return bp1.startSeqPos < bp2.startSeqPos;
@@ -664,13 +664,13 @@ inline bool operator<(Breakpoint<TId, TPos> const & bp1, Breakpoint<TId, TPos> c
     return bp1.endSeqPos < bp2.endSeqPos;
 }
 
-template <typename TSequence, typename TId, typename TStream>
-// std::ostream & operator<<(std::ostream & out, Breakpoint<TSequence, TId> const & value)
-TStream & operator<<(TStream & out, Breakpoint<TSequence, TId> const & value)
+template <typename TSequence, typename TID, typename TStream>
+// std::ostream & operator<<(std::ostream & out, Breakpoint<TSequence, TID> const & value)
+TStream & operator<<(TStream & out, Breakpoint<TSequence, TID> const & value)
 {
-    typedef Breakpoint<TSequence, TId> TBreakpoint;
+    typedef Breakpoint<TSequence, TID> TBreakpoint;
     out << "Breakpoint: seq1 --> seq2; posInSeq1 --> posInSeq2; readPos1 --> readPos2 :" << std::endl;
-    out << value.startSeqId << " ( " << value.startSeqStrand << " ) " << " --> " << value.endSeqId << " ( " <<
+    out << value.startSeqID << " ( " << value.startSeqStrand << " ) " << " --> " << value.endSeqID << " ( " <<
     value.endSeqStrand << " ) " << std::endl;
     out << " ( " << value.startSeqPos + 1 << " ) --> ( " << value.endSeqPos + 1 << " ) " << std::endl;
     if (value.dupMiddlePos != maxValue<unsigned>())
@@ -706,17 +706,17 @@ TStream & operator<<(TStream & out, Breakpoint<TSequence, TId> const & value)
         out << "SVType: breakend";
     }
     out << " insertionSeq: " << value.insertionSeq << std::endl;
-    out << "Support: " << value.support << " Ids: ";
-    for (unsigned i = 0; i < length(value.supportIds); ++i)
-        out << value.supportIds[i] << ", ";
+    out << "Support: " << value.support << " IDs: ";
+    for (unsigned i = 0; i < length(value.supportIDs); ++i)
+        out << value.supportIDs[i] << ", ";
     out << std::endl;
     return out;
 }
 
-template <typename TSequence, typename TId, typename TStream>
-TStream & operator<<(TStream & out, StellarMatch<TSequence, TId> & match)
+template <typename TSequence, typename TID, typename TStream>
+TStream & operator<<(TStream & out, StellarMatch<TSequence, TID> & match)
 {
-    out << "DB Id: " << match.id;
+    out << "DB ID: " << match.id;
     if (match.orientation)
         out << " + " << std::endl;
     else
@@ -727,7 +727,7 @@ TStream & operator<<(TStream & out, StellarMatch<TSequence, TId> & match)
     if (!match.orientation)
         reverseComplement(infix(source(match.row1), match.begin1, match.end1));
 
-    typedef typename StellarMatch<TSequence, TId>::TAlign TAlign;
+    typedef typename StellarMatch<TSequence, TID>::TAlign TAlign;
     TAlign align;
     // assignSource makes a local copy of the source sequence (only the part of the row)
     appendValue(align.data_rows, match.row1);

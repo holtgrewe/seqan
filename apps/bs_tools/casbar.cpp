@@ -78,7 +78,7 @@ using namespace seqan;
 
 // load entire genome into memory
 template <typename TGenomeSet, typename TGenomeNames>
-bool loadGenomes(TGenomeSet &genomes, StringSet<CharString> &fileNameList, ::std::map<CharString,unsigned> &gIdStringToIdNumMap, TGenomeNames & genomeNames)
+bool loadGenomes(TGenomeSet &genomes, StringSet<CharString> &fileNameList, ::std::map<CharString,unsigned> &gIDStringToIDNumMap, TGenomeNames & genomeNames)
 {
     clear(genomes);
     clear(genomeNames);
@@ -96,7 +96,7 @@ bool loadGenomes(TGenomeSet &genomes, StringSet<CharString> &fileNameList, ::std
             readRecord(id, seq, seqFileIn);
             cropAfterFirst(id, IsBlank());
 
-            gIdStringToIdNumMap.insert(std::make_pair(id, length(genomes)));
+            gIDStringToIDNumMap.insert(std::make_pair(id, length(genomes)));
 
             appendValue(genomes, seq);
             appendValue(genomeNames, id);
@@ -146,7 +146,7 @@ copyNextWindowMatchesAndReads(TFragmentStore &fragmentStore,
     typedef typename Value<TMatches>::Type                      TMatch;
     typedef typename Iterator<TMatches,Standard>::Type          TMatchIt;
     typedef typename Iterator<TSetContigAnchorGaps,Standard>::Type          TSetContigGapsIter;
-    typedef typename Id<TFragmentStore>::Type                   TId;
+    typedef typename ID<TFragmentStore>::Type                   TID;
     //typedef typename Value<TReadClips>::Type                    TPair;
 
     SEQAN_ASSERT_EQ(length(fragmentStore.readSeqStore),length(fragmentStore.alignQualityStore));
@@ -175,13 +175,13 @@ copyNextWindowMatchesAndReads(TFragmentStore &fragmentStore,
     {
         if( _max((*mIt).beginPos,(*mIt).endPos) + (TContigPos)options.windowBuff > currentWindowEnd )
         {
-            TId id = length(tmpMatches);
+            TID id = length(tmpMatches);
             appendValue(tmpMatches,*mIt);
             tmpMatches[id].id = id;
-            tmpMatches[id].readId = id;
-            appendValue(tmpReads,fragmentStore.readSeqStore[(*mIt).readId]);
-            appendValue(tmpRs,fragmentStore.readStore[(*mIt).readId]);
-            appendValue(tmpQualities,fragmentStore.alignQualityStore[(*mIt).readId]);
+            tmpMatches[id].readID = id;
+            appendValue(tmpReads,fragmentStore.readSeqStore[(*mIt).readID]);
+            appendValue(tmpRs,fragmentStore.readStore[(*mIt).readID]);
+            appendValue(tmpQualities,fragmentStore.alignQualityStore[(*mIt).readID]);
             appendValue(tmpSetContigAnchorGaps, *itG);
             maxCoord = std::max(maxCoord, (int)std::max(mIt->beginPos, mIt->endPos));
             minCoord = std::min(minCoord, (int)std::min(mIt->beginPos, mIt->endPos));
@@ -255,11 +255,11 @@ applyPileupCorrection(TFragmentStore    &fragmentStore,
     {
         TContigPos currentBegin = _min((*matchIt).beginPos,(*matchIt).endPos);
         TContigPos currentEnd = _max((*matchIt).beginPos,(*matchIt).endPos);
-        unsigned currentSeqno = (*matchIt).contigId;
+        unsigned currentSeqno = (*matchIt).contigID;
         char currentOrientation = orientation(*matchIt);
         unsigned currPile = 0;
         while(matchIt != matchRangeEnd
-              && (*matchIt).contigId == currentSeqno
+              && (*matchIt).contigID == currentSeqno
               && _min((*matchIt).beginPos,(*matchIt).endPos) == currentBegin
               && _max((*matchIt).beginPos,(*matchIt).endPos) == currentEnd
               && (!options.orientationAware || orientation(*matchIt) == currentOrientation)
@@ -272,7 +272,7 @@ applyPileupCorrection(TFragmentStore    &fragmentStore,
         }
         //if(matchRangeEnd > matchItEnd) ::std::cerr <<"neeeeeeee\n";
         while(matchIt != matchRangeEnd
-              && (*matchIt).contigId == currentSeqno
+              && (*matchIt).contigID == currentSeqno
               && _min((*matchIt).beginPos,(*matchIt).endPos) == currentBegin
               && _max((*matchIt).beginPos,(*matchIt).endPos) == currentEnd
               && (!options.orientationAware || orientation(*matchIt) == currentOrientation))
@@ -311,7 +311,7 @@ addReadQualityToMatches(TFragmentStore  &fragmentStore,
     int avgRQ;
     for (; it != itEnd; ++it)
     {
-        TRead const &read = fragmentStore.readSeqStore[(*it).readId];
+        TRead const &read = fragmentStore.readSeqStore[(*it).readID];
         avgRQ = 0;
         for(unsigned i = 0; i < length(read); ++i)
             avgRQ += (int) getQualityValue(read[i]);
@@ -383,9 +383,9 @@ clipReads(TFragmentStore    &fragmentStore,
     for (; it != itEnd; ++it)
     {
         TMatch &m = *it;
-        TRead &read = fragmentStore.readSeqStore[m.readId];
-        int clipLeft = readClips[m.readId].i1;
-        int clipRight = readClips[m.readId].i2;
+        TRead &read = fragmentStore.readSeqStore[m.readID];
+        int clipLeft = readClips[m.readID].i1;
+        int clipRight = readClips[m.readID].i2;
         TContigPos beginPos = (m.beginPos < m.endPos ) ? m.beginPos : m.endPos;
         TContigPos endPos = (m.beginPos > m.endPos ) ? m.beginPos : m.endPos;
         TAlignQuality &aliQ = fragmentStore.alignQualityStore[m.id];
@@ -393,13 +393,13 @@ clipReads(TFragmentStore    &fragmentStore,
 #ifdef SNPSTORE_DEBUG
         TContigPos beginBefore = beginPos;
 #endif
-        if(m.id != m.readId) ::std::cout << "match id != readId \n";
+        if(m.id != m.readID) ::std::cout << "match id != readID \n";
         if(clipLeft+clipRight > (int)length(read) || clipLeft > (int)length(read) || clipRight > (int)length(read))
         {
             if(options._debugLevel > 0)::std::cout << "WARNING: clipLeft+clipRight > readLen!!\n";
 #ifdef SNPSTORE_DEBUG
             ::std::cout << "readlength = "<<length(read)<< " \n";
-            ::std::cout << "readId = "<<m.readId << "id=" << m.id << " \n";
+            ::std::cout << "readID = "<<m.readID << "id=" << m.id << " \n";
             ::std::cout << "clipLeft = " << clipLeft << " clipRight = "<<clipRight << "\n";
             ::std::cout << "read=" << read << std::endl;
             ::std::cout << "beginPos=" << beginPos << std::endl;
@@ -410,7 +410,7 @@ clipReads(TFragmentStore    &fragmentStore,
         }
 #ifdef SNPSTORE_DEBUG
             ::std::cout << "readlength = "<<length(read)<< " \n";
-            ::std::cout << "readId = "<<m.readId << "id=" << m.id << " \n";
+            ::std::cout << "readID = "<<m.readID << "id=" << m.id << " \n";
             ::std::cout << "clipLeft = " << clipLeft << " clipRight = "<<clipRight << "\n";
             ::std::cout << "read=" << read << std::endl;
             ::std::cout << "beginPos=" << beginPos << std::endl;
@@ -520,7 +520,7 @@ clipReads(TFragmentStore    &fragmentStore,
                 ::std::cout << "bgein groesser 300mio neu beginPos = "<< beginPos << " endpos=" << endPos << ::std::endl;
 #ifdef SNPSTORE_DEBUG
                 ::std::cout << "WARNING: clipLeft+clipRight > readLen!!??\n";
-                ::std::cout << "readId = "<<m.readId << "id=" << m.id << " \n";
+                ::std::cout << "readID = "<<m.readID << "id=" << m.id << " \n";
                 ::std::cout << "clipLeft = " << clipLeft << " clipRight = "<<clipRight << "\n";
                 ::std::cout << "read=" << read << std::endl;
                 ::std::cout << "beginPos before=" << beginBefore << std::endl;
@@ -550,9 +550,9 @@ _dumpMatches(TTmpReads & reads, TTmpMatches & matches, TTmpQualities & qualities
     {
         char ori = (matches[i].beginPos < matches[i].endPos) ? 'F' : 'R';
         std::cout << "--"<<str<<"Match number " << i << ":\n";
-        std::cout << "--"<<str<<"MatchId  = " << matches[i].id << "\n";
-        std::cout << "--"<<str<<"ReadId   = " << matches[i].readId << "\n";
-        std::cout << "--"<<str<<"ContigId = " << matches[i].contigId << std::flush << "\n";
+        std::cout << "--"<<str<<"MatchID  = " << matches[i].id << "\n";
+        std::cout << "--"<<str<<"ReadID   = " << matches[i].readID << "\n";
+        std::cout << "--"<<str<<"ContigID = " << matches[i].contigID << std::flush << "\n";
         std::cout << "--"<<str<<"gBegin   = " << _min(matches[i].beginPos, matches[i].endPos) << "\n";
         std::cout << "--"<<str<<"gEnd     = " << _max(matches[i].beginPos, matches[i].endPos) << "\n";
         std::cout << "--"<<str<<"orient   = " << ori << std::flush << std::endl;
@@ -561,7 +561,7 @@ _dumpMatches(TTmpReads & reads, TTmpMatches & matches, TTmpQualities & qualities
             std::cout << "--"<<str<<"EditDist = " << (int) qualities[matches[i].id].errors << "\n";
             std::cout << "--"<<str<<"AvgQ     = " << (int) qualities[matches[i].id].score << "\n";
         }
-        std::cout << "--"<<str<<"Readseq  = " << reads[matches[i].readId] << std::flush << "\n";
+        std::cout << "--"<<str<<"Readseq  = " << reads[matches[i].readID] << std::flush << "\n";
 
     }
 }
@@ -575,25 +575,25 @@ assignIntervalsToContigs(TContigIntervals &contigIntervals, TFragmentStore &frag
 
     resize(contigIntervals, length(fragStore.contigStore));
     unsigned i = 0;
-    for (unsigned contigId = 0; contigId < length(fragStore.contigStore); ++contigId)
+    for (unsigned contigID = 0; contigID < length(fragStore.contigStore); ++contigID)
     {
-        while (i < length(methOptions.intervals) && methOptions.intervals[i].contigName == fragStore.contigNameStore[contigId])
+        while (i < length(methOptions.intervals) && methOptions.intervals[i].contigName == fragStore.contigNameStore[contigID])
         {
             TInterval interval;
             interval.i1 = methOptions.intervals[i].startPos;
             interval.i2 = methOptions.intervals[i].endPos;
-            appendValue(contigIntervals[contigId], interval);
+            appendValue(contigIntervals[contigID], interval);
             ++i;
         }
     }
 }
 
-template <typename TSpec, typename TContigId, typename TBamFileIns, typename TRecords, typename TContigIntervals, typename TOptions, typename TMethOptions>
+template <typename TSpec, typename TContigID, typename TBamFileIns, typename TRecords, typename TContigIntervals, typename TOptions, typename TMethOptions>
 inline bool
 detectSNPsForContig(seqan::VcfFileOut & vcfFileOut,
                     seqan::BedFileOut & bedFileOut,
                     FragmentStore<TSpec> &fragmentStore1,
-                    TContigId &currContigId,
+                    TContigID &currContigID,
                     TBamFileIns & bamFileIns,
                     TRecords &records,
                     TContigIntervals &contigIntervals,
@@ -611,12 +611,12 @@ detectSNPsForContig(seqan::VcfFileOut & vcfFileOut,
 
     typedef String<String<typename TFragmentStore::TContigGapAnchor> >      TSetContigAnchorGaps;
 
-    if (!empty(methOptions.intervals) && empty(contigIntervals[currContigId])) return 0;
+    if (!empty(methOptions.intervals) && empty(contigIntervals[currContigID])) return 0;
     unsigned currInterval = 0;
 
     // parse matches batch by batch
     TContigPos currentWindowBegin = 0;
-    if(options._debugLevel > 0) ::std::cout << "Scanning genome #" << currContigId << " ..." << ::std::endl;
+    if(options._debugLevel > 0) ::std::cout << "Scanning genome #" << currContigID << " ..." << ::std::endl;
 
     // containers for those matches that overlap two windows
     TAlignedReadStore tmpMatches;
@@ -631,23 +631,23 @@ detectSNPsForContig(seqan::VcfFileOut & vcfFileOut,
     // bs_change
     if (!empty(methOptions.intervals))
     {
-        SEQAN_ASSERT_LT((unsigned)contigIntervals[currContigId][currInterval].i2, (unsigned)length(fragmentStore1.contigStore[currContigId].seq));
-        currentWindowBegin = contigIntervals[currContigId][currInterval].i1;
+        SEQAN_ASSERT_LT((unsigned)contigIntervals[currContigID][currInterval].i2, (unsigned)length(fragmentStore1.contigStore[currContigID].seq));
+        currentWindowBegin = contigIntervals[currContigID][currInterval].i1;
     }
-    while(currentWindowBegin <  (TContigPos)length(fragmentStore1.contigStore[currContigId].seq))
+    while(currentWindowBegin <  (TContigPos)length(fragmentStore1.contigStore[currContigID].seq))
     {
         TContigPos currentWindowEnd = currentWindowBegin + options.windowSize;
-        if(currentWindowEnd > (TContigPos)length(fragmentStore1.contigStore[currContigId].seq)) currentWindowEnd = (TContigPos)length(fragmentStore1.contigStore[currContigId].seq);
+        if(currentWindowEnd > (TContigPos)length(fragmentStore1.contigStore[currContigID].seq)) currentWindowEnd = (TContigPos)length(fragmentStore1.contigStore[currContigID].seq);
         // bs_change
-        if (!empty(methOptions.intervals) && currentWindowEnd > contigIntervals[currContigId][currInterval].i2)
+        if (!empty(methOptions.intervals) && currentWindowEnd > contigIntervals[currContigID][currInterval].i2)
         {
-            currentWindowEnd = contigIntervals[currContigId][currInterval].i2;
-            //std::cout << "currInterval startPos: " << contigIntervals[currContigId][currInterval].i1 << "  endPos: " << contigIntervals[currContigId][currInterval].i2 << std::endl;
+            currentWindowEnd = contigIntervals[currContigID][currInterval].i2;
+            //std::cout << "currInterval startPos: " << contigIntervals[currContigID][currInterval].i1 << "  endPos: " << contigIntervals[currContigID][currInterval].i2 << std::endl;
         }
         //std::cout << "currentWindowBegin: " << currentWindowBegin << "  currentWindowEnd: " << currentWindowEnd << std::endl;
 
         if(options._debugLevel > 0)
-            std::cout << "Sequence number " << currContigId << " window " << currentWindowBegin << ".." << currentWindowEnd << "\n";
+            std::cout << "Sequence number " << currContigID << " window " << currentWindowBegin << ".." << currentWindowEnd << "\n";
 
         TFragmentStore fragmentStoreTmp;  // Use temp. fragmentStore to store only current reads and to use only infix of contig seq for realigning etc.
         TSetContigAnchorGaps setContigAnchorGaps;
@@ -673,9 +673,9 @@ detectSNPsForContig(seqan::VcfFileOut & vcfFileOut,
 #endif
         }
         TContig contig;
-        contig.seq = fragmentStore1.contigStore[currContigId].seq;
+        contig.seq = fragmentStore1.contigStore[currContigID].seq;
         appendValue(fragmentStoreTmp.contigStore, contig);
-        appendValue(fragmentStoreTmp.contigNameStore, fragmentStore1.contigNameStore[currContigId]);
+        appendValue(fragmentStoreTmp.contigNameStore, fragmentStore1.contigNameStore[currContigID]);
 
         // parse matches for current window
         if(options._debugLevel > 0) std::cout << "Parsing reads up to position " << currentWindowEnd << "...\n";
@@ -684,7 +684,7 @@ detectSNPsForContig(seqan::VcfFileOut & vcfFileOut,
             unsigned sizeBefore = length(fragmentStoreTmp.alignedReadStore);
 
             int result = readMatchesFromSamBam(setContigAnchorGaps, *bamFileIns[j], records[j], fragmentStoreTmp, fragmentStore1,
-                                               currContigId, currentWindowBegin, currentWindowEnd, options);
+                                               currContigID, currentWindowBegin, currentWindowEnd, options);
 
             if(result == CALLSNPS_GFF_FAILED)
             {
@@ -712,19 +712,19 @@ detectSNPsForContig(seqan::VcfFileOut & vcfFileOut,
 
         // these were set while parsing matches, first and last position of parsed matches
         TContigPos startCoord = _max((int)options.minCoord-options.realignAddBorder,0);// can be < currentWindowBegin
-        TContigPos endCoord = _min(options.maxCoord+options.realignAddBorder,length(fragmentStore1.contigStore[currContigId].seq)); // can be > currentWindoEnd
+        TContigPos endCoord = _min(options.maxCoord+options.realignAddBorder,length(fragmentStore1.contigStore[currContigID].seq)); // can be > currentWindoEnd
 
         if(!empty(fragmentStoreTmp.alignedReadStore))
         {
             //initial values of min and max coords for next round are set here
-            if(currentWindowEnd != (TContigPos)length(fragmentStore1.contigStore[currContigId].seq))
+            if(currentWindowEnd != (TContigPos)length(fragmentStore1.contigStore[currContigID].seq))
             {
                 clear(tmpMatches);
                 clear(tmpQualities);
                 clear(tmpRs);
                 clear(tmpReads);
                 clear(tmpSetContigAnchorGaps);
-                copyNextWindowMatchesAndReads(fragmentStoreTmp, setContigAnchorGaps, tmpReads, tmpRs, tmpMatches, tmpQualities, tmpSetContigAnchorGaps, currContigId, currentWindowEnd, options);
+                copyNextWindowMatchesAndReads(fragmentStoreTmp, setContigAnchorGaps, tmpReads, tmpRs, tmpMatches, tmpQualities, tmpSetContigAnchorGaps, currContigID, currentWindowEnd, options);
             }
 #ifdef SNPSTORE_DEBUG
             std::cout << "Min = " << options.minCoord << " Max = " << options.maxCoord << std::endl;
@@ -734,7 +734,7 @@ detectSNPsForContig(seqan::VcfFileOut & vcfFileOut,
             // Aligned read coordinates are relative to current chromosomal window (segment)
             transformCoordinates(fragmentStoreTmp,startCoord,options);
             // set the current contig segment as contig sequence
-            fragmentStoreTmp.contigStore[0].seq = infix(fragmentStore1.contigStore[currContigId].seq,startCoord,endCoord);
+            fragmentStoreTmp.contigStore[0].seq = infix(fragmentStore1.contigStore[currContigID].seq,startCoord,endCoord);
 
             if(options.realign)
             {
@@ -754,18 +754,18 @@ detectSNPsForContig(seqan::VcfFileOut & vcfFileOut,
                 doSnpAndMethCalling(fragmentStoreTmp,  startCoord, currentWindowBegin, currentWindowEnd, false, vcfFileOut, bedFileOut, methOptions, options);    //bs
             }
         }
-        if (!empty(methOptions.intervals) && currentWindowEnd == contigIntervals[currContigId][currInterval].i2)   // Reached end off current interval
+        if (!empty(methOptions.intervals) && currentWindowEnd == contigIntervals[currContigID][currInterval].i2)   // Reached end off current interval
         {
-            if (currInterval < length(contigIntervals[currContigId])-1)   // If existent, go to next interval within the current contig
+            if (currInterval < length(contigIntervals[currContigID])-1)   // If existent, go to next interval within the current contig
             {
-                currentWindowBegin = contigIntervals[currContigId][currInterval+1].i1;
+                currentWindowBegin = contigIntervals[currContigID][currInterval+1].i1;
                 clear(tmpReads);
                 clear(tmpRs);
                 clear(tmpMatches);
                 clear(tmpQualities);
                 clear(tmpSetContigAnchorGaps);
             }
-            else currentWindowBegin = length(fragmentStore1.contigStore[currContigId].seq);    // No interval int this contig to analyze anymore -> jump to end of contig
+            else currentWindowBegin = length(fragmentStore1.contigStore[currContigID].seq);    // No interval int this contig to analyze anymore -> jump to end of contig
             ++currInterval;
         }
         else currentWindowBegin = currentWindowEnd;
@@ -792,7 +792,7 @@ int detectSNPs(SNPCallingOptions &options, TMethOptions &methOptions)
     refresh(fragmentStore1.contigNameStoreCache);
 
 
-    // Assign intervals to analyze to string which can be accessed by contigId
+    // Assign intervals to analyze to string which can be accessed by contigID
     String<String<Interval<TContigPos> > > contigIntervals;
     if(!empty(methOptions.intervals)) assignIntervalsToContigs(contigIntervals, fragmentStore1, methOptions);
     // Prepare genotype priors
@@ -828,7 +828,7 @@ int detectSNPs(SNPCallingOptions &options, TMethOptions &methOptions)
     SEQAN_OMP_PRAGMA(parallel for schedule(dynamic, 1)) // TODO Check if guided is faster
 #endif  // #if defined(SEQAN_ENABLE_PARALLELISM)
 
-    for (int currContigId = 0; currContigId < (int)length(fragmentStore1.contigStore); ++currContigId)
+    for (int currContigID = 0; currContigID < (int)length(fragmentStore1.contigStore); ++currContigID)
     {
 #if defined(SEQAN_ENABLE_PARALLELISM)
         // For each contig we need our own BamFileIn (for each given sam file)
@@ -861,18 +861,18 @@ int detectSNPs(SNPCallingOptions &options, TMethOptions &methOptions)
             append(tempFileNameBed, SEQAN_TEMP_FILENAME());
             //std::cout << "temp file Name: " << tempFileNameVcf << std::endl;
             stringstream ss;
-            ss << currContigId;
+            ss << currContigID;
             append(tempFileNameVcf, ss.str());
             append(tempFileNameBed, ss.str());
             append(tempFileNameVcf, ".vcf");
             append(tempFileNameBed, ".bed");
-            contigTempFileNamesVcf[currContigId] = tempFileNameVcf;
-            contigTempFileNamesBed[currContigId] = tempFileNameBed;
+            contigTempFileNamesVcf[currContigID] = tempFileNameVcf;
+            contigTempFileNamesBed[currContigID] = tempFileNameBed;
 
             seqan::VcfFileOut vcfFileOut(toCString(tempFileNameVcf));
             seqan::VcfHeader vcfHeader;
 
-            appendName(contigNamesCache(context(vcfFileOut)), fragmentStore1.contigNameStore[currContigId]);
+            appendName(contigNamesCache(context(vcfFileOut)), fragmentStore1.contigNameStore[currContigID]);
             appendName(sampleNamesCache(context(vcfFileOut)), "NA00001");
 
             appendValue(vcfHeader, VcfHeaderRecord("fileformat", "VCFv4.1"));
@@ -896,8 +896,8 @@ int detectSNPs(SNPCallingOptions &options, TMethOptions &methOptions)
             writeHeader(vcfFileOut, vcfHeader);
 
             seqan::BedFileOut bedFileOut(toCString(tempFileNameBed));
-            //XXX addSequenceName(tempBedStream, fragmentStore1.contigNameStore[currContigId]);
-            detectSNPsForContig(vcfFileOut, bedFileOut, fragmentStore1, currContigId, bamFileIns, records, contigIntervals, options, methOptions);
+            //XXX addSequenceName(tempBedStream, fragmentStore1.contigNameStore[currContigID]);
+            detectSNPsForContig(vcfFileOut, bedFileOut, fragmentStore1, currContigID, bamFileIns, records, contigIntervals, options, methOptions);
         }
     }
 
@@ -979,11 +979,11 @@ int detectSNPs(SNPCallingOptions &options, TMethOptions &methOptions)
     }
 
     methOptions.statsCGMethylated = methOptions.statsCGMethylated/methOptions.countCG;
-    methOptions.statsCHGMethylated = methOptions.statsCHGMethylated/methOptions.countCHG;
-    methOptions.statsCHHMethylated = methOptions.statsCHHMethylated/methOptions.countCHH;
+    methOptions.statsChgMethylated = methOptions.statsChgMethylated/methOptions.countChg;
+    methOptions.statsChhMethylated = methOptions.statsChhMethylated/methOptions.countChh;
     std::cout << "Average methylation rate in CG context: " << methOptions.statsCGMethylated << std::endl;
-    std::cout << "Average methylation rate in CHG context: " << methOptions.statsCHGMethylated << std::endl;
-    std::cout << "Average methylation rate in CHH context: " << methOptions.statsCHHMethylated << std::endl;
+    std::cout << "Average methylation rate in CHG context: " << methOptions.statsChgMethylated << std::endl;
+    std::cout << "Average methylation rate in CHH context: " << methOptions.statsChhMethylated << std::endl;
     return 0;
 }
 

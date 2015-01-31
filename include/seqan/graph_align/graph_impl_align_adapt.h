@@ -302,7 +302,7 @@ _createNodeAttributes(Graph<Alignment<TStringSet, TCargo, TSpec> > const& g,
 {
 	SEQAN_CHECKPOINT
 	typedef Graph<Alignment<TStringSet, TCargo, TSpec> > TGraph;
-	typedef typename Id<TGraph>::Type TIdType;
+	typedef typename ID<TGraph>::Type TIDType;
 	resizeVertexMap(nodeMap, g);
 
 	unsigned int scaling = 20 / length(value(g.data_sequence));
@@ -311,7 +311,7 @@ _createNodeAttributes(Graph<Alignment<TStringSet, TCargo, TSpec> > const& g,
 	typedef typename Iterator<TGraph, VertexIterator>::Type TConstIter;
 	TConstIter it(g);
 	for(;!atEnd(it);++it) {
-		TIdType id = sequenceId(g, *it);
+		TIDType id = sequenceID(g, *it);
 		std::ostringstream outs; 
 		outs << "label = \"";
         outs << "[" << fragmentBegin(g, *it) << "," << fragmentBegin(g, *it)+fragmentLength(g, *it) << ")";
@@ -368,19 +368,19 @@ _writeGraphFooter(TTarget & iter,
 {
 	typedef Graph<Alignment<TStringSet, TCargo, TSpec> > TGraph;
 	typedef typename Size<TGraph>::Type TSize;
-	typedef typename Id<TGraph>::Type TId;
+	typedef typename ID<TGraph>::Type TID;
 	typedef typename VertexDescriptor<TGraph>::Type TVertexDescriptor;
 
 	TStringSet& str = stringSet(g);
 	TSize len = length(str);
 	for(TSize i = 0; i<len; ++i) {
-		TId seqId = positionToId(str, i);
+		TID seqID = positionToID(str, i);
 		TSize j = 0;
 		TVertexDescriptor nilVertex = getNil<TVertexDescriptor>();	
 		TVertexDescriptor previousVertex = nilVertex;
 		while(j<length(str[i]))
         {
-			TVertexDescriptor nextVertex = findVertex(const_cast<TGraph&>(g), seqId, j);
+			TVertexDescriptor nextVertex = findVertex(const_cast<TGraph&>(g), seqID, j);
 			if (nextVertex == nilVertex) {
 				++j;
 				continue;

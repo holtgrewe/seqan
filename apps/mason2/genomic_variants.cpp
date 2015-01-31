@@ -36,14 +36,14 @@
 
 std::ostream & operator<<(std::ostream & out, SnpRecord const & record)
 {
-    out << "SnpRecord(" << record.haplotype << ", " << record.rId << ", " << record.pos
+    out << "SnpRecord(" << record.haplotype << ", " << record.rID << ", " << record.pos
         << ", " << record.to << ")";
     return out;
 }
 
 std::ostream & operator<<(std::ostream & out, SmallIndelRecord const & record)
 {
-    out << "SnpRecord(" << record.haplotype << ", " << record.rId << ", " << record.pos
+    out << "SnpRecord(" << record.haplotype << ", " << record.rID << ", " << record.pos
         << ", " << record.size << ", " << record.seq << ")";
     return out;
 }
@@ -120,8 +120,8 @@ std::ostream & operator<<(std::ostream & out, StructuralVariantRecord const & re
             break;
     }
     out << "StructuralVariantRecord(kind=" << kind << ", haplotype=" << record.haplotype
-        << ", rId=" << record.rId << ", pos=" << record.pos << ", size=" << record.size
-        << ", targetRId=" << record.targetRId << ", targetPos=" << record.targetPos
+        << ", rID=" << record.rID << ", pos=" << record.pos << ", size=" << record.size
+        << ", targetRID=" << record.targetRID << ", targetPos=" << record.targetPos
         << ", seq=\"" << record.seq << "\")";
     return out;
 }
@@ -138,7 +138,7 @@ int VariantMaterializer::_runImpl(
         std::vector<std::pair<int, int> > & breakpoints,
         seqan::Dna5String const * ref,
         MethylationLevels const * refLvls,
-        int haplotypeId)
+        int haplotypeID)
 {
     breakpoints.clear();
     clear(*resultSeq);
@@ -152,7 +152,7 @@ int VariantMaterializer::_runImpl(
     MethylationLevels * smallLvlsPtr = refLvls ? &levelsSmallVariants : 0;
     std::vector<SmallVarInfo> smallVarInfos;
     if (_materializeSmallVariants(seqSmallVariants, journal, smallLvlsPtr, smallVarInfos, *ref, *variants,
-                                  refLvls, haplotypeId) != 0)
+                                  refLvls, haplotypeID) != 0)
         return 1;
 
     // Build position map for large variant -> small variant and small variant <-> reference position mapping.
@@ -160,7 +160,7 @@ int VariantMaterializer::_runImpl(
 
     // Apply structural variants and build the interval tree of posMap
     if (_materializeLargeVariants(*resultSeq, resultLvls, varInfos, breakpoints, *posMap, journal, seqSmallVariants,
-                                  smallVarInfos, *variants, smallLvlsPtr, haplotypeId) != 0)
+                                  smallVarInfos, *variants, smallLvlsPtr, haplotypeID) != 0)
         return 1;
 
     // Sort resulting variant infos.
@@ -189,7 +189,7 @@ int VariantMaterializer::_materializeSmallVariants(
         seqan::Dna5String const & contig,
         Variants const & variants,
         MethylationLevels const * levels,
-        int hId)
+        int hID)
 {
     if (methSimOptions)
     {
@@ -211,12 +211,12 @@ int VariantMaterializer::_materializeSmallVariants(
     unsigned smallIndelIdx = 0;
     // Current SNP record, default to sentinel.
     SnpRecord snpRecord;
-    snpRecord.rId = seqan::maxValue<int>();
+    snpRecord.rID = seqan::maxValue<int>();
     if (snpsIdx < length(variants.snps))
         snpRecord = variants.snps[snpsIdx++];
     // Current small indel record, default to sentinel.
     SmallIndelRecord smallIndelRecord;
-    smallIndelRecord.rId = seqan::maxValue<int>();
+    smallIndelRecord.rID = seqan::maxValue<int>();
     if (smallIndelIdx < length(variants.smallIndels))
         smallIndelRecord = variants.smallIndels[smallIndelIdx++];
     // Track last position from contig appended to seq so far.
@@ -227,12 +227,12 @@ int VariantMaterializer::_materializeSmallVariants(
     // TODO(holtgrew): Extract contig building into their own functions.
     if (verbosity >= 2)
         std::cerr << "building output\n";
-    while (snpRecord.rId != seqan::maxValue<int>() || smallIndelRecord.rId != seqan::maxValue<int>())
+    while (snpRecord.rID != seqan::maxValue<int>() || smallIndelRecord.rID != seqan::maxValue<int>())
     {
         // TODO(holtgrew): Extract SNP and small indel handling into their own functions.
         if (snpRecord.getPos() < smallIndelRecord.getPos())  // process SNP records
         {
-            if (snpRecord.haplotype == hId)  // Ignore all but the current contig.
+            if (snpRecord.haplotype == hID)  // Ignore all but the current contig.
             {
                 if (verbosity >= 3)
                     std::cerr << "append(seq, infix(contig, " << lastPos << ", " << snpRecord.pos << ") " << __LINE__ << "\n";
@@ -259,13 +259,13 @@ int VariantMaterializer::_materializeSmallVariants(
             }
 
             if (snpsIdx >= length(variants.snps))
-                snpRecord.rId = seqan::maxValue<int>();
+                snpRecord.rID = seqan::maxValue<int>();
             else
                 snpRecord = variants.snps[snpsIdx++];
         }
         else
         {
-            if (smallIndelRecord.haplotype == hId)  // Ignore all but the current contig.
+            if (smallIndelRecord.haplotype == hID)  // Ignore all but the current contig.
             {
                 if (smallIndelRecord.size > 0)
                 {
@@ -337,7 +337,7 @@ int VariantMaterializer::_materializeSmallVariants(
             }
 
             if (smallIndelIdx >= length(variants.smallIndels))
-                smallIndelRecord.rId = seqan::maxValue<int>();
+                smallIndelRecord.rID = seqan::maxValue<int>();
             else
                 smallIndelRecord = variants.smallIndels[smallIndelIdx++];
         }
@@ -376,7 +376,7 @@ int VariantMaterializer::_materializeLargeVariants(
         std::vector<SmallVarInfo> const & smallVarInfos,
         Variants const & variants,
         MethylationLevels const * levels,
-        int hId)
+        int hID)
 {
     if (methSimOptions)
     {
@@ -407,7 +407,7 @@ int VariantMaterializer::_materializeLargeVariants(
 
     for (unsigned i = 0; i < length(variants.svRecords); ++i)
     {
-        if (variants.svRecords[i].haplotype != hId)  // Ignore all but the current contig.
+        if (variants.svRecords[i].haplotype != hID)  // Ignore all but the current contig.
             continue;
         // We obtain a copy of the current SV record since we translate its positions below.
         StructuralVariantRecord svRecord = variants.svRecords[i];

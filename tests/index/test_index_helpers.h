@@ -553,24 +553,24 @@ bool isInvSuffixArray(TInvSuffArray &iSA, TSufArray &SA, TText const &s)
 }
 
 template <typename TLCP, typename TSufArray, typename TText>
-bool isLCPTable(TLCP &LCP, TSufArray &SA, TText const &s) {
+bool isLcpTable(TLCP &LCP, TSufArray &SA, TText const &s) {
 	if (length(SA) != length(s)) {
-		printf("isLCPTable: length is bad: SA=%d, s=%d\n", (int)length(SA), (int)length(s));
+		printf("isLcpTable: length is bad: SA=%d, s=%d\n", (int)length(SA), (int)length(s));
 		return false;
 	}
 	
 	if (length(LCP) != length(s)) {
-		printf("isLCPTable: length is bad: LCP=%d, s=%d\n", (int)length(LCP), (int)length(s));
+		printf("isLcpTable: length is bad: LCP=%d, s=%d\n", (int)length(LCP), (int)length(s));
 		return false;
 	}
 	
 	if (!isPermutation(SA)) {
-		std::cerr<<"isLCPTable: SA is not a permutation!\n";
+		std::cerr<<"isLcpTable: SA is not a permutation!\n";
 		return false;
 	}
 
 	if (!isSortedLCP(LCP, SA, s)) {
-		std::cerr<<"isLCPTable: SA is not sorted!\n";
+		std::cerr<<"isLcpTable: SA is not sorted!\n";
 		return false;
 	}
 

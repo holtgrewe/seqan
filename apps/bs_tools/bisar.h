@@ -35,12 +35,12 @@ private:
 
 
 // Realign with 4-letter alphabet and set alignedReadStore entries
-template<typename TReadGaps, typename TContigGaps, typename TFragmentStore, typename TId, typename TBsScoreCTLeft, typename TBsScoreCTRight, typename TBsScoreGALeft, typename TBsScoreGARight, typename TOptions>
+template<typename TReadGaps, typename TContigGaps, typename TFragmentStore, typename TID, typename TBsScoreCTLeft, typename TBsScoreCTRight, typename TBsScoreGALeft, typename TBsScoreGARight, typename TOptions>
 inline int
 reAlign4(TReadGaps &readGaps,
          TContigGaps &contigGaps,
          TFragmentStore &store,
-         TId &id,
+         TID &id,
          TBsScoreCTLeft &scoringSchemeCTLeft,
          TBsScoreCTRight &scoringSchemeCTRight,
          TBsScoreGALeft &scoringSchemeGALeft,
@@ -59,21 +59,21 @@ reAlign4(TReadGaps &readGaps,
     // Do alignment
     //std::cout << " Do alignment: " << std::endl;
     int band = 6;   // dep. on interOffset?
-    if (getMateNo(store, store.alignedReadStore[id].readId) != -1 )     // If paired
+    if (getMateNo(store, store.alignedReadStore[id].readID) != -1 )     // If paired
     {
-        if (getMateNo(store, store.alignedReadStore[id].readId) == 0 && store.alignedReadStore[id].beginPos < store.alignedReadStore[id].endPos)
+        if (getMateNo(store, store.alignedReadStore[id].readID) == 0 && store.alignedReadStore[id].beginPos < store.alignedReadStore[id].endPos)
         {
             scoreA = (double)globalAlignment(contigGaps, readGaps, scoringSchemeCTLeft, AlignConfig<true, false, false, true>(), -band, band)/10000.0;    // convert back from int to double
         }
-        else if (getMateNo(store, store.alignedReadStore[id].readId) == 0 && store.alignedReadStore[id].beginPos > store.alignedReadStore[id].endPos)
+        else if (getMateNo(store, store.alignedReadStore[id].readID) == 0 && store.alignedReadStore[id].beginPos > store.alignedReadStore[id].endPos)
         {
             scoreA = (double)globalAlignment(contigGaps, readGaps, scoringSchemeGALeft, AlignConfig<true, false, false, true>(), -band, band)/10000.0;
         }
-        else if (getMateNo(store, store.alignedReadStore[id].readId) == 1 && store.alignedReadStore[id].beginPos > store.alignedReadStore[id].endPos)
+        else if (getMateNo(store, store.alignedReadStore[id].readID) == 1 && store.alignedReadStore[id].beginPos > store.alignedReadStore[id].endPos)
         {
             scoreA = (double)globalAlignment(contigGaps, readGaps, scoringSchemeCTRight, AlignConfig<true, false, false, true>(), -band, band)/10000.0;
         }
-        else //if (getMateNo(store, store.alignedReadStore[id].readId) == 1 && store.alignedReadStore[id].beginPos < store.alignedReadStore[id].endPos)
+        else //if (getMateNo(store, store.alignedReadStore[id].readID) == 1 && store.alignedReadStore[id].beginPos < store.alignedReadStore[id].endPos)
         {
             scoreA = (double)globalAlignment(contigGaps, readGaps, scoringSchemeGARight, AlignConfig<true, false, false, true>(), -band, band)/10000.0;
         }
@@ -123,7 +123,7 @@ reAlign4(TReadGaps &readGaps,
 
     if (false)
     {
-        std::cout << "align: (reAlign4 2) " << store.readNameStore[store.alignedReadStore[id].readId] << std::endl;
+        std::cout << "align: (reAlign4 2) " << store.readNameStore[store.alignedReadStore[id].readID] << std::endl;
         std::cout << contigGaps << std::endl;
         std::cout << readGaps << std::endl;
     }
@@ -147,10 +147,10 @@ reAlign4(TReadGaps &readGaps,
         store.alignedReadStore[id].beginPos = store.alignedReadStore[id].endPos + endPosition(contigGaps) - beginPosition(contigGaps);
     }
     // Count errors
-    if (getMateNo(store, store.alignedReadStore[id].readId) != -1 )     // If paired
+    if (getMateNo(store, store.alignedReadStore[id].readID) != -1 )     // If paired
     {
-        if ((getMateNo(store, store.alignedReadStore[id].readId) == 0 && store.alignedReadStore[id].beginPos < store.alignedReadStore[id].endPos) ||    // Mapped against CT ref
-            (getMateNo(store, store.alignedReadStore[id].readId) == 1 && store.alignedReadStore[id].beginPos > store.alignedReadStore[id].endPos) )
+        if ((getMateNo(store, store.alignedReadStore[id].readID) == 0 && store.alignedReadStore[id].beginPos < store.alignedReadStore[id].endPos) ||    // Mapped against CT ref
+            (getMateNo(store, store.alignedReadStore[id].readID) == 1 && store.alignedReadStore[id].beginPos > store.alignedReadStore[id].endPos) )
             for (; !atEnd(itR) && !atEnd(itC); ++itR, ++itC)
             {
                 if (isGap(itR) || isGap(itC)) ++gaps;
@@ -193,12 +193,12 @@ reAlign4(TReadGaps &readGaps,
 }
 
 
-template <typename TFragmentStore, typename TContigGaps, typename TId, typename TScore, typename TOptions>
+template <typename TFragmentStore, typename TContigGaps, typename TID, typename TScore, typename TOptions>
 inline int
 writeBsAlignment(seqan::BamFileOut & bamFileOut,
                  TFragmentStore &store,
                  TContigGaps &contigGaps,
-                 TId &bestId,
+                 TID &bestID,
                  TScore &mapq,
                  BamAlignmentRecord &record,
                  TOptions &/*options*/)
@@ -213,12 +213,12 @@ writeBsAlignment(seqan::BamFileOut & bamFileOut,
     typedef Gaps<TReadSeq, AnchorGaps<TReadGapAnchors> >                        TReadGaps;
 
     // Create (mate independent) record entries
-    record.qName = store.readNameStore[store.alignedReadStore[bestId].readId];
-    if (store.alignedReadStore[bestId].beginPos < store.alignedReadStore[bestId].endPos)
-        record.beginPos = store.alignedReadStore[bestId].beginPos;
+    record.qName = store.readNameStore[store.alignedReadStore[bestID].readID];
+    if (store.alignedReadStore[bestID].beginPos < store.alignedReadStore[bestID].endPos)
+        record.beginPos = store.alignedReadStore[bestID].beginPos;
     else
     {
-        record.beginPos = store.alignedReadStore[bestId].endPos;
+        record.beginPos = store.alignedReadStore[bestID].endPos;
         record.flag |= 0x0010;
     }
 	record.mapQ = (unsigned)mapq;
@@ -226,9 +226,9 @@ writeBsAlignment(seqan::BamFileOut & bamFileOut,
     CharString md;
     String<CigarElement<> > cigar;
 
-    TReadSeq readSeq = store.readSeqStore[store.alignedReadStore[bestId].readId];
+    TReadSeq readSeq = store.readSeqStore[store.alignedReadStore[bestID].readID];
 
-    if (store.alignedReadStore[bestId].beginPos < store.alignedReadStore[bestId].endPos)
+    if (store.alignedReadStore[bestID].beginPos < store.alignedReadStore[bestID].endPos)
     {
         record.seq = readSeq;
     }
@@ -237,7 +237,7 @@ writeBsAlignment(seqan::BamFileOut & bamFileOut,
         Dna5String tmpReadSeq = readSeq;
         record.seq = Dna5StringReverseComplement(tmpReadSeq);
     }
-    TReadGaps readGaps(record.seq, store.alignedReadStore[bestId].gaps);
+    TReadGaps readGaps(record.seq, store.alignedReadStore[bestID].gaps);
 
     getCigarString(cigar, contigGaps, readGaps);
     getMDString(md, contigGaps, readGaps);
@@ -246,7 +246,7 @@ writeBsAlignment(seqan::BamFileOut & bamFileOut,
     clear(record.qual);
     resize(record.qual, length(readSeq));
     unsigned avgQual = 0;
-    if (store.alignedReadStore[bestId].beginPos < store.alignedReadStore[bestId].endPos)
+    if (store.alignedReadStore[bestID].beginPos < store.alignedReadStore[bestID].endPos)
     {
         unsigned i = 0;
         for (unsigned j = 0; j < length(readSeq); ++j, ++i)
@@ -267,18 +267,18 @@ writeBsAlignment(seqan::BamFileOut & bamFileOut,
         avgQual = avgQual/(i+1);
     }
 
-    if (store.alignedReadStore[bestId].contigId == TAlignedRead::INVALID_ID)
+    if (store.alignedReadStore[bestID].contigID == TAlignedRead::INVALID_ID)
     {
         record.rID = seqan::BamAlignmentRecord::INVALID_REFID;
         record.beginPos = -1;
     }
     else
     {
-        record.rID = store.alignedReadStore[bestId].contigId;
+        record.rID = store.alignedReadStore[bestID].contigID;
     }
 
     seqan::BamTagsDict tagsDict(record.tags);
-    setTagValue(tagsDict, "NM", (int)store.alignQualityStore[bestId].errors);
+    setTagValue(tagsDict, "NM", (int)store.alignQualityStore[bestID].errors);
     if (!empty(md))
         setTagValue(tagsDict, "MD", md);
     // for testing
@@ -295,9 +295,9 @@ writeBsAlignment(seqan::BamFileOut & bamFileOut,
 
 // TODO Does it make sense to count errors? (with score it would have to be exactly the same alignment then) threshold?
 
-template<typename TFragmentStore, typename TId>
+template<typename TFragmentStore, typename TID>
 inline unsigned
-countEqualHits(TFragmentStore &store, TId &id)
+countEqualHits(TFragmentStore &store, TID &id)
 {
     // Count number of hits which have the same number of errors as second best hit
     unsigned count = 0;
@@ -387,18 +387,18 @@ struct VerifiedRead
     typedef FragmentStore<MyFragmentStoreConfig>::TMappingQuality          TScore;
     typedef FragmentStore<MyFragmentStoreConfig>::TAlignedReadStore        TAlignedReadStore;
     typedef Value<TAlignedReadStore>::Type                                 TAlignedReadStoreElement;
-    typedef TAlignedReadStoreElement::TId                                  TId;
+    typedef TAlignedReadStoreElement::TID                                  TID;
 
-    TId alignedReadId;
+    TID alignedReadID;
     BamAlignmentRecord record;
     TScore mapq;
 
 	VerifiedRead():
-		alignedReadId(0),
+		alignedReadID(0),
 		mapq(0) {}
 
-	VerifiedRead(TId _alignedReadId, BamAlignmentRecord _record, TScore _mapq):
-		alignedReadId(_alignedReadId),
+	VerifiedRead(TID _alignedReadID, BamAlignmentRecord _record, TScore _mapq):
+		alignedReadID(_alignedReadID),
 		record(_record),
 		mapq(_mapq) {}
 
@@ -412,84 +412,84 @@ verifyRead(TFragmentStore &store, TOptions &options)
 
     // Find best and second best hit (match mate hit) -> lowest score
     TScore bestScore = store.alignQualityStore[0].score;
-    unsigned bestId = 0;
+    unsigned bestID = 0;
     TScore secBestScore = 10000; //store.alignQualityStore[0].score;
-    unsigned secBestId = 0;
+    unsigned secBestID = 0;
     for (unsigned i = 1; i < length(store.alignedReadStore); ++i)
     {
         if (bestScore > store.alignQualityStore[i].score)
         {
             secBestScore = bestScore;
-            secBestId = bestId;
+            secBestID = bestID;
             bestScore = store.alignQualityStore[i].score;
-            bestId = i;
+            bestID = i;
         }
         else if (secBestScore > store.alignQualityStore[i].score)
         {
             secBestScore = store.alignQualityStore[i].score;
-            secBestId = i;
+            secBestID = i;
         }
     }
 
     unsigned countHits = length(store.alignedReadStore);
     TScore mapq;
-    computeMapq(mapq, bestId, countHits, secBestId, store, options);
+    computeMapq(mapq, bestID, countHits, secBestID, store, options);
 
     BamAlignmentRecord record;
     record.flag = 0;
-    record.rNextId = BamAlignmentRecord::INVALID_REFID;
+    record.rNextID = BamAlignmentRecord::INVALID_REFID;
     record.pNext = BamAlignmentRecord::INVALID_POS;
     record.tLen = 0;
 
-    VerifiedRead verifiedRead(bestId, record, mapq);
+    VerifiedRead verifiedRead(bestID, record, mapq);
     return verifiedRead;
 }
 
-template<typename TFragmentStore, typename TId>
+template<typename TFragmentStore, typename TID>
 inline unsigned
-countEqualMateHits(TFragmentStore &store, TId &mateId)
+countEqualMateHits(TFragmentStore &store, TID &mateID)
 {
     // Count number of hits of one mate which have the same number of errors
     unsigned count = 0;
-    unsigned errors = store.alignQualityStore[mateId].errors;
-    if (getMateNo(store, store.alignedReadStore[mateId].readId) == 0)
+    unsigned errors = store.alignQualityStore[mateID].errors;
+    if (getMateNo(store, store.alignedReadStore[mateID].readID) == 0)
     {
         for (unsigned i = 0; i < length(store.alignQualityStore); ++i)
-            if (getMateNo(store, store.alignedReadStore[i].readId) == 0 && store.alignQualityStore[i].errors == errors)
+            if (getMateNo(store, store.alignedReadStore[i].readID) == 0 && store.alignQualityStore[i].errors == errors)
                 ++count;
     }
-    else if (getMateNo(store, store.alignedReadStore[mateId].readId) == 1)
+    else if (getMateNo(store, store.alignedReadStore[mateID].readID) == 1)
     {
         for (unsigned i = 0; i < length(store.alignQualityStore); ++i)
-            if (getMateNo(store, store.alignedReadStore[i].readId) == 1 && store.alignQualityStore[i].errors == errors)
+            if (getMateNo(store, store.alignedReadStore[i].readID) == 1 && store.alignQualityStore[i].errors == errors)
                 ++count;
     }
     return count;
 }
 
-template<typename TFragmentStore, typename TId>
+template<typename TFragmentStore, typename TID>
 inline unsigned
-countEqualMateHits(TFragmentStore &store, TId &mateIdL, TId &mateIdR)
+countEqualMateHits(TFragmentStore &store, TID &mateIDL, TID &mateIDR)
 {
     typedef typename TFragmentStore::TAlignedReadStore      TAlignedReadStore;
     typedef typename Value<TAlignedReadStore>::Type         TAlignedReadStoreElement;
     // Count number of match mate hits which have the same number of errors
     unsigned count = 0;
 
-    unsigned errors = store.alignQualityStore[mateIdL].errors + store.alignQualityStore[mateIdR].errors;
+    unsigned errors = store.alignQualityStore[mateIDL].errors + store.alignQualityStore[mateIDR].errors;
 
     for (unsigned i = 0; i < length(store.alignQualityStore); ++i)
-        if (getMateNo(store, store.alignedReadStore[i].readId) == 0 && store.alignedReadStore[i].pairMatchId != TAlignedReadStoreElement::INVALID_ID) // Only if left mate and has match mate
-            if (store.alignQualityStore[i].errors + store.alignQualityStore[store.alignedReadStore[i].pairMatchId].errors == errors)
+        if (getMateNo(store, store.alignedReadStore[i].readID) == 0 && store.alignedReadStore[i].pairMatchID != TAlignedReadStoreElement::INVALID_ID) // Only if left mate and has match mate
+            if (store.alignQualityStore[i].errors + store.alignQualityStore[store.alignedReadStore[i].pairMatchID].errors == errors)
                 ++count;
 
     return count;
 }
 
 
-template<typename TScore, typename TId, typename TFragmentStore, typename TOptions>
+template<typename TScore, typename TID, typename TFragmentStore, typename TOptions>
 inline void
-computeMapq(TScore &mapq, TId &bestId, unsigned countHits, TId &secBestId, TFragmentStore &store, TOptions &options)
+computeMapq(TScore &mapq, TID &bestID, unsigned countHits, TID &secBestID, TFragmentStore &store, TOptions &options)
 {
     typedef typename TFragmentStore::TReadSeq               TReadSeq;
 
@@ -499,27 +499,27 @@ computeMapq(TScore &mapq, TId &bestId, unsigned countHits, TId &secBestId, TFrag
     // If multiple pair hits: use pair hit counts
     if (!empty(store.matePairStore))
     {
-        countBest = countEqualMateHits(store, bestId);
-        countSecBest = countEqualMateHits(store, secBestId);
+        countBest = countEqualMateHits(store, bestID);
+        countSecBest = countEqualMateHits(store, secBestID);
     }
     else
     {
-        countBest = countEqualHits(store, bestId);
-        countSecBest = countEqualHits(store, secBestId);
+        countBest = countEqualHits(store, bestID);
+        countSecBest = countEqualHits(store, secBestID);
     }
     if (countHits == 1)
     {
         TScore worstScore;
-        TReadSeq readSeq = store.readSeqStore[store.alignedReadStore[bestId].readId];
+        TReadSeq readSeq = store.readSeqStore[store.alignedReadStore[bestID].readID];
         computePseudoWorstScore2(worstScore, readSeq, options);
-        mapq = worstScore - store.alignQualityStore[bestId].score;
-        if (false) // store.readNameStore[store.alignedReadStore[bestId].readId] == "simulated_1.42" || store.readNameStore[store.alignedReadStore[bestId].readId] == "simulated_1.88" || store.readNameStore[store.alignedReadStore[bestId].readId] == "simulated_1.1042" )
+        mapq = worstScore - store.alignQualityStore[bestID].score;
+        if (false) // store.readNameStore[store.alignedReadStore[bestID].readID] == "simulated_1.42" || store.readNameStore[store.alignedReadStore[bestID].readID] == "simulated_1.88" || store.readNameStore[store.alignedReadStore[bestID].readID] == "simulated_1.1042" )
         {
             std::cout << " Only one hit" << std::endl;
-            std::cout << "      readName" <<  store.readNameStore[store.alignedReadStore[bestId].readId] << std::endl;
-            std::cout << "      ***: score :" << store.alignQualityStore[bestId].score << "  worstScore: " << worstScore << std::endl;
+            std::cout << "      readName" <<  store.readNameStore[store.alignedReadStore[bestID].readID] << std::endl;
+            std::cout << "      ***: score :" << store.alignQualityStore[bestID].score << "  worstScore: " << worstScore << std::endl;
             std::cout << "      ***: mapq :" << mapq << std::endl;
-            std::cout << "      ***: errors: " << static_cast<unsigned int>(store.alignQualityStore[bestId].errors) << std::endl;
+            std::cout << "      ***: errors: " << static_cast<unsigned int>(store.alignQualityStore[bestID].errors) << std::endl;
         }
     }
     else if (countBest != 1) // Same edit distance
@@ -528,11 +528,11 @@ computeMapq(TScore &mapq, TId &bestId, unsigned countHits, TId &secBestId, TFrag
     }
     else
     {
-        mapq = store.alignQualityStore[secBestId].score  - store.alignQualityStore[bestId].score - 10*std::log10((double)countSecBest);
+        mapq = store.alignQualityStore[secBestID].score  - store.alignQualityStore[bestID].score - 10*std::log10((double)countSecBest);
 
-        //std::cout << " Unique:  read:" << store.readNameStore[store.alignedReadStore[bestId].readId] << std::endl;
-        //std::cout << "***: sec best score :" << store.alignQualityStore[secBestId].score  << " best score: " << store.alignQualityStore[bestId].score << "  count2: " << countSecBest << std::endl;
-        //std::cout << "***: sec best id :" << secBestId  << " best id: " <<bestId  << std::endl;
+        //std::cout << " Unique:  read:" << store.readNameStore[store.alignedReadStore[bestID].readID] << std::endl;
+        //std::cout << "***: sec best score :" << store.alignQualityStore[secBestID].score  << " best score: " << store.alignQualityStore[bestID].score << "  count2: " << countSecBest << std::endl;
+        //std::cout << "***: sec best id :" << secBestID  << " best id: " <<bestID  << std::endl;
         //std::cout << "*** mapq: " << mapq << std::endl;
         //  can be negative, since it's possible that there exist single hits, which are better than left or right mate match hit
     }
@@ -543,29 +543,29 @@ struct VerifiedMates
     typedef FragmentStore<MyFragmentStoreConfig>::TMappingQuality          TScore;
     typedef FragmentStore<MyFragmentStoreConfig>::TAlignedReadStore        TAlignedReadStore;
     typedef Value<TAlignedReadStore>::Type                                 TAlignedReadStoreElement;
-    typedef TAlignedReadStoreElement::TId                                  TId;
+    typedef TAlignedReadStoreElement::TID                                  TID;
 
-    TId alignedReadIdL;
-    TId alignedReadIdR;
+    TID alignedReadIDL;
+    TID alignedReadIDR;
     BamAlignmentRecord recordL;
     BamAlignmentRecord recordR;
     TScore mapqL;
     TScore mapqR;
 
 	VerifiedMates():
-		alignedReadIdL(0),
-		alignedReadIdR(0),
+		alignedReadIDL(0),
+		alignedReadIDR(0),
 		mapqL(0),
 		mapqR(0) {}
 
-	VerifiedMates(TId _alignedReadIdL,
-                  TId _alignedReadIdR,
+	VerifiedMates(TID _alignedReadIDL,
+                  TID _alignedReadIDR,
 	              BamAlignmentRecord _recordL,
 	              BamAlignmentRecord _recordR,
 	              TScore _mapqL,
 	              TScore _mapqR):
-		alignedReadIdL(_alignedReadIdL),
-		alignedReadIdR(_alignedReadIdR),
+		alignedReadIDL(_alignedReadIDL),
+		alignedReadIDR(_alignedReadIDR),
 		recordL(_recordL),
 		recordR(_recordR),
 		mapqL(_mapqL),
@@ -581,81 +581,81 @@ verifyMates(TFragmentStore &store, TOptions &options)
     typedef typename Value<TMatePairStore>::Type            TMatePairStoreElement;
     typedef typename TFragmentStore::TAlignedReadStore      TAlignedReadStore;
     typedef typename Value<TAlignedReadStore>::Type         TAlignedReadStoreElement;
-    typedef typename TAlignedReadStoreElement::TId          TId;
+    typedef typename TAlignedReadStoreElement::TID          TID;
     typedef typename TFragmentStore::TContigPos             TContigPos;
     typedef typename TFragmentStore::TMappingQuality        TScore;
 
     // Find best and second best hit (match mate hit) -> lowest score
     TScore bestScoreL = store.alignQualityStore[0].score;
-    TId bestIdL = 0;
+    TID bestIDL = 0;
     TScore secBestScoreL = store.alignQualityStore[0].score;
-    TId secBestIdL = 0;
+    TID secBestIDL = 0;
     TScore bestScoreR = store.alignQualityStore[0].score;
-    TId bestIdR = 0;
+    TID bestIDR = 0;
     TScore secBestScoreR = store.alignQualityStore[0].score;
-    TId secBestIdR = 0;
+    TID secBestIDR = 0;
 
     unsigned countPairHits = 0;
     unsigned countHitsL = 0;
     unsigned countHitsR = 0;
     TScore bestMateScore = 1000000;   // Set to maximum
-    TId bestMateId = 0;
+    TID bestMateID = 0;
     TScore secBestMateScore = 1000000;
-    TId secBestMateId = 0;
-    if (store.matePairStore[0].readId[0] != TMatePairStoreElement::INVALID_ID && store.matePairStore[0].readId[1] != TMatePairStoreElement::INVALID_ID) // If read is paired
+    TID secBestMateID = 0;
+    if (store.matePairStore[0].readID[0] != TMatePairStoreElement::INVALID_ID && store.matePairStore[0].readID[1] != TMatePairStoreElement::INVALID_ID) // If read is paired
     {
-        for (TId i = 0; i < length(store.alignedReadStore); ++i)
+        for (TID i = 0; i < length(store.alignedReadStore); ++i)
         {
             // Get single left and right scores
-            if (getMateNo(store, store.alignedReadStore[i].readId) == 0 )
+            if (getMateNo(store, store.alignedReadStore[i].readID) == 0 )
             {
                 ++countHitsL;
                 if (bestScoreL >= store.alignQualityStore[i].score)
                 {
                     secBestScoreL = bestScoreL;
-                    secBestIdL = bestIdL;
+                    secBestIDL = bestIDL;
                     bestScoreL = store.alignQualityStore[i].score;
-                    bestIdL = i;
+                    bestIDL = i;
                 }
                 else if (secBestScoreL >= store.alignQualityStore[i].score)
                 {
                     secBestScoreL = store.alignQualityStore[i].score;
-                    secBestIdL = i;
+                    secBestIDL = i;
                 }
             }
-            else if (getMateNo(store, store.alignedReadStore[i].readId) == 1 )
+            else if (getMateNo(store, store.alignedReadStore[i].readID) == 1 )
             {
                 ++countHitsR;
                 if (bestScoreR >= store.alignQualityStore[i].score)
                 {
                     secBestScoreR = bestScoreR;
-                    secBestIdR = bestIdR;
+                    secBestIDR = bestIDR;
                     bestScoreR = store.alignQualityStore[i].score;
-                    bestIdR = i;
+                    bestIDR = i;
                 }
                 else if (secBestScoreR >= store.alignQualityStore[i].score)
                 {
                     secBestScoreR = store.alignQualityStore[i].score;
-                    secBestIdR = i;
+                    secBestIDR = i;
                 }
             }
             // Get mate match scores
-            if (getMateNo(store, store.alignedReadStore[i].readId) == 0 && store.alignedReadStore[i].pairMatchId != TAlignedReadStoreElement::INVALID_ID ) // Only if left mate and has match mate
+            if (getMateNo(store, store.alignedReadStore[i].readID) == 0 && store.alignedReadStore[i].pairMatchID != TAlignedReadStoreElement::INVALID_ID ) // Only if left mate and has match mate
             {
                 ++countPairHits;
 
-                double currMateScore = store.alignQualityStore[i].score + store.alignQualityStore[store.alignedReadStore[i].pairMatchId].score;
+                double currMateScore = store.alignQualityStore[i].score + store.alignQualityStore[store.alignedReadStore[i].pairMatchID].score;
                 if (currMateScore <= bestMateScore)
                 {
                     secBestMateScore = bestMateScore;
-                    secBestMateId = bestMateId;             // Id of left aligned read
+                    secBestMateID = bestMateID;             // ID of left aligned read
                     bestMateScore = currMateScore;
-                    bestMateId = i;
+                    bestMateID = i;
                 }
                 else if (currMateScore <= secBestMateScore)
                 {
                     secBestMateScore = currMateScore;
-                    secBestMateId = i;
+                    secBestMateID = i;
                 }
             }
         }
@@ -665,7 +665,7 @@ verifyMates(TFragmentStore &store, TOptions &options)
     // Compute mapping qualities dependent on case
     unsigned count1 = 0;
     if (countPairHits >= 1)
-        count1 = countEqualMateHits(store, bestMateId, store.alignedReadStore[bestMateId].pairMatchId);
+        count1 = countEqualMateHits(store, bestMateID, store.alignedReadStore[bestMateID].pairMatchID);
 
     TScore mapqL;
     TScore mapqR;
@@ -673,9 +673,9 @@ verifyMates(TFragmentStore &store, TOptions &options)
     BamAlignmentRecord recordR;
     if (countPairHits == 1)  // Case1: Only one pair hit (single hits can be nonunique)
     {
-        TId bestMateIdR = store.alignedReadStore[bestMateId].pairMatchId;
-        computeMapq(mapqL, bestMateId, countHitsL, secBestIdL, store, options);
-        computeMapq(mapqR, bestMateIdR, countHitsR, secBestIdR, store, options);
+        TID bestMateIDR = store.alignedReadStore[bestMateID].pairMatchID;
+        computeMapq(mapqL, bestMateID, countHitsL, secBestIDL, store, options);
+        computeMapq(mapqR, bestMateIDR, countHitsR, secBestIDR, store, options);
 
         mapqL = mapqL + mapqR;
         mapqR = mapqL;
@@ -689,29 +689,29 @@ verifyMates(TFragmentStore &store, TOptions &options)
         recordR.flag |= 0x002;
         recordL.flag |= 0x0040;  // Is left read
         recordR.flag |= 0x0080;  // Is right read
-        recordL.rNextId = store.alignedReadStore[bestMateIdR].contigId;
-        recordR.rNextId = store.alignedReadStore[bestMateId].contigId;
+        recordL.rNextID = store.alignedReadStore[bestMateIDR].contigID;
+        recordR.rNextID = store.alignedReadStore[bestMateID].contigID;
 
-        if (store.alignedReadStore[bestMateId].beginPos < store.alignedReadStore[bestMateId].endPos)
+        if (store.alignedReadStore[bestMateID].beginPos < store.alignedReadStore[bestMateID].endPos)
         {
-            recordR.pNext = store.alignedReadStore[bestMateId].beginPos;
+            recordR.pNext = store.alignedReadStore[bestMateID].beginPos;
         }
         else
         {
             recordR.flag |= 0x0020;
-            recordR.pNext = store.alignedReadStore[bestMateId].endPos;
+            recordR.pNext = store.alignedReadStore[bestMateID].endPos;
         }
-        if (store.alignedReadStore[bestMateIdR].beginPos < store.alignedReadStore[bestMateIdR].endPos)
+        if (store.alignedReadStore[bestMateIDR].beginPos < store.alignedReadStore[bestMateIDR].endPos)
         {
-            recordL.pNext = store.alignedReadStore[bestMateIdR].beginPos;
+            recordL.pNext = store.alignedReadStore[bestMateIDR].beginPos;
         }
         else
         {
             recordL.flag |= 0x0020; // Mate is reverse complemented
-            recordL.pNext = store.alignedReadStore[bestMateIdR].endPos;
+            recordL.pNext = store.alignedReadStore[bestMateIDR].endPos;
         }
-        TContigPos beginPair = store.alignedReadStore[bestMateId].beginPos;
-        TContigPos endPair = store.alignedReadStore[bestMateIdR].beginPos;
+        TContigPos beginPair = store.alignedReadStore[bestMateID].beginPos;
+        TContigPos endPair = store.alignedReadStore[bestMateIDR].beginPos;
         if (beginPair < endPair)
         {
             recordL.tLen = endPair - beginPair;
@@ -723,10 +723,10 @@ verifyMates(TFragmentStore &store, TOptions &options)
             recordR.tLen = beginPair - endPair;
         }
 
-        //std::cout << "One hit:  mapqL: " << mapqL << "  errors: " << static_cast<unsigned>(store.alignQualityStore[bestMateId].errors) << "  score: " << store.alignQualityStore[bestMateId].score << std::endl;
-        //std::cout << "  right:  mapqR: " << mapqR << "  errors: " << static_cast<unsigned>(store.alignQualityStore[bestMateIdR].errors) << "  score: " << store.alignQualityStore[bestMateIdR].score << std::endl;
+        //std::cout << "One hit:  mapqL: " << mapqL << "  errors: " << static_cast<unsigned>(store.alignQualityStore[bestMateID].errors) << "  score: " << store.alignQualityStore[bestMateID].score << std::endl;
+        //std::cout << "  right:  mapqR: " << mapqR << "  errors: " << static_cast<unsigned>(store.alignQualityStore[bestMateIDR].errors) << "  score: " << store.alignQualityStore[bestMateIDR].score << std::endl;
 
-        VerifiedMates verifiedMates(bestMateId, bestMateIdR, recordL, recordR, mapqL, mapqR);
+        VerifiedMates verifiedMates(bestMateID, bestMateIDR, recordL, recordR, mapqL, mapqR);
         return verifiedMates;
 
     }
@@ -736,11 +736,11 @@ verifyMates(TFragmentStore &store, TOptions &options)
             // -> Ensure that mate match get higher mapping quality than it would get in not paired mode
             // -> Increases prob. that score of each single mate is higher that that of second best mate match
             // (is mate match is classified as best, doesn't mean there are no single reads which are better than single mates)
-            TId bestMateIdR = store.alignedReadStore[bestMateId].pairMatchId;
-            TId secBestMateIdR = store.alignedReadStore[secBestMateId].pairMatchId;
+            TID bestMateIDR = store.alignedReadStore[bestMateID].pairMatchID;
+            TID secBestMateIDR = store.alignedReadStore[secBestMateID].pairMatchID;
 
-            computeMapq(mapqL, bestMateId, countHitsL, secBestMateId, store, options);
-            computeMapq(mapqR, bestMateIdR, countHitsR, secBestMateIdR, store, options);
+            computeMapq(mapqL, bestMateID, countHitsL, secBestMateID, store, options);
+            computeMapq(mapqR, bestMateIDR, countHitsR, secBestMateIDR, store, options);
 
             // If pair hit is unique
             if (count1 == 1)
@@ -758,29 +758,29 @@ verifyMates(TFragmentStore &store, TOptions &options)
             recordR.flag |= 0x002;
             recordL.flag |= 0x0040;  // Is left read
             recordR.flag |= 0x0080;  // Is right read
-            recordL.rNextId = store.alignedReadStore[bestMateIdR].contigId;
-            recordR.rNextId = store.alignedReadStore[bestMateId].contigId;
+            recordL.rNextID = store.alignedReadStore[bestMateIDR].contigID;
+            recordR.rNextID = store.alignedReadStore[bestMateID].contigID;
 
-            if (store.alignedReadStore[bestMateId].beginPos < store.alignedReadStore[bestMateId].endPos)
+            if (store.alignedReadStore[bestMateID].beginPos < store.alignedReadStore[bestMateID].endPos)
             {
-                recordR.pNext = store.alignedReadStore[bestMateId].beginPos;
+                recordR.pNext = store.alignedReadStore[bestMateID].beginPos;
             }
             else
             {
                 recordR.flag |= 0x0020;
-                recordR.pNext = store.alignedReadStore[bestMateId].endPos;
+                recordR.pNext = store.alignedReadStore[bestMateID].endPos;
             }
-            if (store.alignedReadStore[bestMateIdR].beginPos < store.alignedReadStore[bestMateIdR].endPos)
+            if (store.alignedReadStore[bestMateIDR].beginPos < store.alignedReadStore[bestMateIDR].endPos)
             {
-                recordL.pNext = store.alignedReadStore[bestMateIdR].beginPos;
+                recordL.pNext = store.alignedReadStore[bestMateIDR].beginPos;
             }
             else
             {
                 recordL.flag |= 0x0020; // Mate is reverse complemented
-                recordL.pNext = store.alignedReadStore[bestMateIdR].endPos;
+                recordL.pNext = store.alignedReadStore[bestMateIDR].endPos;
             }
-            TContigPos beginPair = store.alignedReadStore[bestMateId].beginPos;
-            TContigPos endPair = store.alignedReadStore[bestMateIdR].beginPos;
+            TContigPos beginPair = store.alignedReadStore[bestMateID].beginPos;
+            TContigPos endPair = store.alignedReadStore[bestMateIDR].beginPos;
             if (beginPair < endPair)
             {
                 recordL.tLen = endPair - beginPair;
@@ -792,7 +792,7 @@ verifyMates(TFragmentStore &store, TOptions &options)
                 recordR.tLen = beginPair - endPair;
             }
 
-            VerifiedMates verifiedMates(bestMateId, bestMateIdR, recordL, recordR, mapqL, mapqR);
+            VerifiedMates verifiedMates(bestMateID, bestMateIDR, recordL, recordR, mapqL, mapqR);
             return verifiedMates;
     }
     // else
@@ -804,8 +804,8 @@ verifyMates(TFragmentStore &store, TOptions &options)
         if (countHitsL > 0)
         {
             // Compute mapqs
-            unsigned count1L = countEqualHits(store, bestIdL);
-            unsigned count2L = countEqualHits(store, secBestIdL);
+            unsigned count1L = countEqualHits(store, bestIDL);
+            unsigned count2L = countEqualHits(store, secBestIDL);
             if (countHitsL == 1)
                 mapqL = 255 - bestScoreL; //-10*log10(1-pow(10, -bestScoreL/10.0));
             else if (count1L != 1)
@@ -817,7 +817,7 @@ verifyMates(TFragmentStore &store, TOptions &options)
             recordL.flag = 0;
             recordL.flag |= 0x008;   // Mate is unmapped (or not paired with this one)
             recordL.flag |= 0x0040;  // Is left read
-            recordL.rNextId = '*';
+            recordL.rNextID = '*';
             recordL.pNext = '*';
             recordL.tLen = 0;
 
@@ -825,8 +825,8 @@ verifyMates(TFragmentStore &store, TOptions &options)
         if (countHitsR > 0)
         {
             // Compute mapqs
-            unsigned count1R = countEqualHits(store, bestIdR);
-            unsigned count2R = countEqualHits(store, secBestIdR);
+            unsigned count1R = countEqualHits(store, bestIDR);
+            unsigned count2R = countEqualHits(store, secBestIDR);
             if (countHitsR == 1)
                 mapqR = 255 - bestScoreR; //-10*log(1-pow(10, -bestScoreR/10.0));
             else if (count1R != 1)
@@ -838,7 +838,7 @@ verifyMates(TFragmentStore &store, TOptions &options)
             recordR.flag = 0;
             recordR.flag |= 0x008;   // Mate is unmapped (or not paired with this one)
             recordR.flag |= 0x0080;  // Is right read
-            recordL.rNextId = '*';
+            recordL.rNextID = '*';
             recordL.pNext = '*';
             recordR.tLen = 0;
 
@@ -851,8 +851,8 @@ template <typename TAlignedRead, typename TMInfo, typename TFragStore, typename 
 inline int
 _compareAlignedReadAndMateInfo2(TAlignedRead const &a, TMInfo const &b, TFragStore const &fragStore, TOptions &options)
 {
-    if ((__int32)a.contigId < b.contigId) return -1;
-    if ((__int32)a.contigId > b.contigId) return 1;
+    if ((__int32)a.contigID < b.contigID) return -1;
+    if ((__int32)a.contigID > b.contigID) return 1;
 
     typename TFragStore::TContigPos posA = _min(a.beginPos, a.endPos);
     if (posA < b.beginPos - options.intervalOffset)
@@ -870,23 +870,23 @@ _compareAlignedReadAndMateInfo2(TAlignedRead const &a, TMInfo const &b, TFragSto
 
     typedef typename TFragStore::TMatePairStore     TMatePairStore;
     typedef typename Value<TMatePairStore>::Type    TMatePair;
-    typename TMatePair::TId matePairIdA = TMatePair::INVALID_ID;
+    typename TMatePair::TID matePairIDA = TMatePair::INVALID_ID;
 
-    if (a.readId < length(fragStore.readStore))
-        matePairIdA = fragStore.readStore[a.readId].matePairId;
+    if (a.readID < length(fragStore.readStore))
+        matePairIDA = fragStore.readStore[a.readID].matePairID;
 
-    if (matePairIdA < b.matePairId)
+    if (matePairIDA < b.matePairID)
     {
         return -1;
     }
-    if (matePairIdA > b.matePairId) return 1;
+    if (matePairIDA > b.matePairID) return 1;
     return 0;
 }
 
-// Use pairMatchIds to store alignId of other match mate, which can still be used to access this entry in alignedReadStore (if order not touched since building!)
+// Use pairMatchIDs to store alignID of other match mate, which can still be used to access this entry in alignedReadStore (if order not touched since building!)
 template<typename TFragmentStore, typename TMatchMateInfos, typename TOptions>
 inline void
-_generatePseudoPairMatchIds (
+_generatePseudoPairMatchIDs (
     TFragmentStore &store,
     TMatchMateInfos & matchMateInfos,
     TOptions &options)
@@ -910,14 +910,14 @@ _generatePseudoPairMatchIds (
     while (true)
     {
         // skip already aligned reads
-        while (it->pairMatchId != TAlignedRead::INVALID_ID)
+        while (it->pairMatchID != TAlignedRead::INVALID_ID)
             if (++it == itEnd) return;
 
         int cmp = _compareAlignedReadAndMateInfo2(*it, *mit, store, options);
         if (cmp == 0)   // both are equal -> link them
         {
-            (*it).pairMatchId = (*mit).pairMatchId;
-            store.alignedReadStore[(*it).pairMatchId].pairMatchId = (*it).id; // Only possible if order of alignedReadStore not touched, alignId == position
+            (*it).pairMatchID = (*mit).pairMatchID;
+            store.alignedReadStore[(*it).pairMatchID].pairMatchID = (*it).id; // Only possible if order of alignedReadStore not touched, alignID == position
         }
         if (cmp >= 0)   // MateInfo is less or equal
         {
@@ -953,12 +953,12 @@ postProcessMain(TOptions &options, TModel const &)
     typedef Gaps<TContigSeq, AnchorGaps<TContigGapAnchors> >                        TContigGaps;
     typedef typename TFragmentStore::TContigPos                                     TContigPos;
 
-    typedef typename TAlignedRead::TId                                              TId;
+    typedef typename TAlignedRead::TID                                              TID;
 
     typedef StringSet<TContigGaps>                                                  TSetContigGaps;
 
     typedef typename Value<typename TFragmentStore::TMatePairStore>::Type           TMatePairStoreElement;
-    typedef MatchMateInfo_<TId>                                                     TMatchMateInfo;
+    typedef MatchMateInfo_<TID>                                                     TMatchMateInfo;
     typedef String<TMatchMateInfo>                                                  TMatchMateInfos;
 
     // Initialize aligment scores
@@ -993,9 +993,9 @@ postProcessMain(TOptions &options, TModel const &)
     // Load original reads into fragmentStore
     TFragmentStore store;
     if (options.readFileName2 == "")
-        loadReadsCroppedId(store, options.readFileName);
+        loadReadsCroppedID(store, options.readFileName);
     else
-        loadReadsCroppedId(store, options.readFileName, options.readFileName2);
+        loadReadsCroppedID(store, options.readFileName, options.readFileName2);
 
     TReadNameStoreCache readNameCache(store.readNameStore);
     refresh(store.readNameStoreCache);
@@ -1042,7 +1042,7 @@ postProcessMain(TOptions &options, TModel const &)
     TMatchMateInfos matchMateInfos;
 
     CharString currReadName;
-    TId readId;
+    TID readID;
     //TSetContigGapAnchors setContigGapAnchors;   // TODO only store anchorGaps and assign contig seq later for output
     TSetContigGaps setContigGaps;
 
@@ -1061,27 +1061,27 @@ postProcessMain(TOptions &options, TModel const &)
                 if (!empty(store.matePairStore))
                 {
                     // set the match mate IDs using the information stored in matchMateInfos
-                    _generatePseudoPairMatchIds(store, matchMateInfos, options);
+                    _generatePseudoPairMatchIDs(store, matchMateInfos, options);
 
                     VerifiedMates verifiedMates = verifyMates(store, options);  // For mates: Find best alignments and compute mapq, verify
-                    //std::cout << "alignedReadIdL: " << verifiedMates.alignedReadIdL << "  alignedReadIdr: " << verifiedMates.alignedReadIdR << "  length(alignedReadStore) " <<  length(store.alignedReadStore) << std::endl;
+                    //std::cout << "alignedReadIDL: " << verifiedMates.alignedReadIDL << "  alignedReadIDR: " << verifiedMates.alignedReadIDR << "  length(alignedReadStore) " <<  length(store.alignedReadStore) << std::endl;
                     //std::cout << "Contig gaps: "  << std::endl;
-                    //std::cout << setContigGaps[verifiedMates.alignedReadIdL] << std::endl;
-					unsigned max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedMates.alignedReadIdL].readId]) / 100.0);
+                    //std::cout << setContigGaps[verifiedMates.alignedReadIDL] << std::endl;
+					unsigned max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedMates.alignedReadIDL].readID]) / 100.0);
 
-                    if (verifiedMates.mapqL >= options.minMapq && store.alignQualityStore[verifiedMates.alignedReadIdL].errors <= max4Errors && store.alignQualityStore[verifiedMates.alignedReadIdL].score <= options.maxScore)
-                        writeBsAlignment(bamFileOut, store, setContigGaps[verifiedMates.alignedReadIdL], verifiedMates.alignedReadIdL, verifiedMates.mapqL, verifiedMates.recordL, options);
-					max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedMates.alignedReadIdR].readId]) / 100.0);
-                    if (verifiedMates.mapqR >= options.minMapq && store.alignQualityStore[verifiedMates.alignedReadIdR].errors <= max4Errors && store.alignQualityStore[verifiedMates.alignedReadIdR].score <= options.maxScore)
-                        writeBsAlignment(bamFileOut, store, setContigGaps[verifiedMates.alignedReadIdR], verifiedMates.alignedReadIdR, verifiedMates.mapqR, verifiedMates.recordR, options);
+                    if (verifiedMates.mapqL >= options.minMapq && store.alignQualityStore[verifiedMates.alignedReadIDL].errors <= max4Errors && store.alignQualityStore[verifiedMates.alignedReadIDL].score <= options.maxScore)
+                        writeBsAlignment(bamFileOut, store, setContigGaps[verifiedMates.alignedReadIDL], verifiedMates.alignedReadIDL, verifiedMates.mapqL, verifiedMates.recordL, options);
+					max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedMates.alignedReadIDR].readID]) / 100.0);
+                    if (verifiedMates.mapqR >= options.minMapq && store.alignQualityStore[verifiedMates.alignedReadIDR].errors <= max4Errors && store.alignQualityStore[verifiedMates.alignedReadIDR].score <= options.maxScore)
+                        writeBsAlignment(bamFileOut, store, setContigGaps[verifiedMates.alignedReadIDR], verifiedMates.alignedReadIDR, verifiedMates.mapqR, verifiedMates.recordR, options);
                 }
                 else
                 {
                     VerifiedRead verifiedRead = verifyRead(store, options);   // Find best alignment and compute mapq, verify
-					unsigned max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedRead.alignedReadId].readId]) / 100.0);
-                    if (verifiedRead.mapq >= options.minMapq && static_cast<unsigned int>(store.alignQualityStore[verifiedRead.alignedReadId].errors) <= max4Errors && store.alignQualityStore[verifiedRead.alignedReadId].score <= options.maxScore)
+					unsigned max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedRead.alignedReadID].readID]) / 100.0);
+                    if (verifiedRead.mapq >= options.minMapq && static_cast<unsigned int>(store.alignQualityStore[verifiedRead.alignedReadID].errors) <= max4Errors && store.alignQualityStore[verifiedRead.alignedReadID].score <= options.maxScore)
                     {
-                        writeBsAlignment(bamFileOut, store, setContigGaps[verifiedRead.alignedReadId], verifiedRead.alignedReadId, verifiedRead.mapq, verifiedRead.record, options);
+                        writeBsAlignment(bamFileOut, store, setContigGaps[verifiedRead.alignedReadID], verifiedRead.alignedReadID, verifiedRead.mapq, verifiedRead.record, options);
                     }
                }
             }
@@ -1096,22 +1096,22 @@ postProcessMain(TOptions &options, TModel const &)
         }
 
         if (hasFlagUnmapped(record)) continue;     // Read is unmapped
-        // Get readId (could be curr. read or mate) -> Only Id, seq. we will get the original from readSeqStore
+        // Get readID (could be curr. read or mate) -> Only ID, seq. we will get the original from readSeqStore
         // If read name not found, skip entry
-        if (!getIdByName(store.readNameStore, record.qName, readId, readNameCache)) continue;
+        if (!getIDByName(store.readNameStore, record.qName, readID, readNameCache)) continue;
 
-        if (hasFlagMultiple(record))   //)    // If paired: Get readId for current mate
+        if (hasFlagMultiple(record))   //)    // If paired: Get readID for current mate
         {
             // if the read is in the store and paired
             // check the mate pair store if it is the same mate of the pair
             // assuming that only one flag 0x040 or 0x0080 is 1
             int inPair = 1 - ((record.flag & 0x40) >> 6);	// bit 7 is set => inPair = 0
                                                              // else inPair = 1 (even if bits 6 and 7 are not set)
-            TId matePairId = store.readStore[readId].matePairId;
-            if (matePairId != TMatePairStoreElement::INVALID_ID)
+            TID matePairID = store.readStore[readID].matePairID;
+            if (matePairID != TMatePairStoreElement::INVALID_ID)
             {
-                readId = store.matePairStore[matePairId].readId[inPair];
-                if (readId == TMatePairStoreElement::INVALID_ID) continue;
+                readID = store.matePairStore[matePairID].readID[inPair];
+                if (readID == TMatePairStoreElement::INVALID_ID) continue;
             }
         }
         // Get positions
@@ -1127,12 +1127,12 @@ postProcessMain(TOptions &options, TModel const &)
             endPos = temp;
         }
         // Create alignedReadStore entry
-        TId id = length(store.alignedReadStore);
+        TID id = length(store.alignedReadStore);
         TReadGapAnchors readGapAnchors;
-        TAlignedRead alignedRead = TAlignedRead(id, readId, record.rID, beginPos, endPos, readGapAnchors);
+        TAlignedRead alignedRead = TAlignedRead(id, readID, record.rID, beginPos, endPos, readGapAnchors);
         appendValue(store.alignedReadStore, alignedRead);
 
-        TReadSeq readSeq =  store.readSeqStore[readId];
+        TReadSeq readSeq =  store.readSeqStore[readID];
         TContigSeq contigInf;
         TReadGaps readGaps;
         // Set readGaps source and get contig infix
@@ -1148,11 +1148,11 @@ postProcessMain(TOptions &options, TModel const &)
         }
         else
         {
-            TReadSeq readSeq = store.readSeqStore[readId];
+            TReadSeq readSeq = store.readSeqStore[readID];
             reverseComplement(readSeq);
-            for (int i = length(store.readSeqStore[readId]) - 1; i >= 0; --i)   // assign rev. compl qualities
+            for (int i = length(store.readSeqStore[readID]) - 1; i >= 0; --i)   // assign rev. compl qualities
             {
-                assignQualityValue(readSeq[i], getQualityValue(store.readSeqStore[readId][length(store.readSeqStore[readId]) - 1 - i]));
+                assignQualityValue(readSeq[i], getQualityValue(store.readSeqStore[readID][length(store.readSeqStore[readID]) - 1 - i]));
             }
             assignSource(readGaps, readSeq);
             if (endPos < options.intervalOffset) beginInf = 0;
@@ -1169,19 +1169,19 @@ postProcessMain(TOptions &options, TModel const &)
         appendValue(setContigGaps, contigGaps, Generous());
 
         // Store information about mate
-        if (getMateNo(store, readId) == 0 && !hasFlagNextUnmapped(record) )  // store info only if read is the first mate and if the second mate is mapped
+        if (getMateNo(store, readID) == 0 && !hasFlagNextUnmapped(record) )  // store info only if read is the first mate and if the second mate is mapped
         {
-            typename TMatePairStoreElement::TId matePairId = store.readStore[readId].matePairId;
+            typename TMatePairStoreElement::TID matePairID = store.readStore[readID].matePairID;
 
             TMatchMateInfo matchMateInfo;
-            matchMateInfo.readId = readId;
-            matchMateInfo.contigId = (TId)record.rID;
-            matchMateInfo.pairMatchId = id;
-            matchMateInfo.matePairId = matePairId;
+            matchMateInfo.readID = readID;
+            matchMateInfo.contigID = (TID)record.rID;
+            matchMateInfo.pairMatchID = id;
+            matchMateInfo.matePairID = matePairID;
             matchMateInfo.reversed = hasFlagNextRC(record);
             matchMateInfo.beginPos = record.pNext;
             appendValue(matchMateInfos, matchMateInfo);
-            back(store.alignedReadStore).pairMatchId = id;  // pairMatchId == alignedRead id of first mate // abuse
+            back(store.alignedReadStore).pairMatchID = id;  // pairMatchID == alignedRead id of first mate // abuse
         }
     }
     if(!empty(store.alignedReadStore))
@@ -1190,22 +1190,22 @@ postProcessMain(TOptions &options, TModel const &)
         if (!empty(store.matePairStore))
         {
             // set the match mate IDs using the information stored in matchMateInfos
-            _generatePseudoPairMatchIds(store, matchMateInfos, options);
+            _generatePseudoPairMatchIDs(store, matchMateInfos, options);
             VerifiedMates verifiedMates = verifyMates(store, options);  // For mates: Find best alignments and compute mapq, verify
-            unsigned max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedMates.alignedReadIdL].readId])/100.0);
-            if (verifiedMates.mapqL >= options.minMapq && store.alignQualityStore[verifiedMates.alignedReadIdL].errors <= max4Errors && store.alignQualityStore[verifiedMates.alignedReadIdL].score <= options.maxScore)
-                writeBsAlignment(bamFileOut, store, setContigGaps[verifiedMates.alignedReadIdL], verifiedMates.alignedReadIdL, verifiedMates.mapqL, verifiedMates.recordL, options);
-			max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedMates.alignedReadIdR].readId]) / 100.0);
-            if (verifiedMates.mapqR >= options.minMapq && store.alignQualityStore[verifiedMates.alignedReadIdR].errors <= max4Errors && store.alignQualityStore[verifiedMates.alignedReadIdR].score <= options.maxScore)
-                writeBsAlignment(bamFileOut, store, setContigGaps[verifiedMates.alignedReadIdR], verifiedMates.alignedReadIdR, verifiedMates.mapqR, verifiedMates.recordR, options);
+            unsigned max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedMates.alignedReadIDL].readID])/100.0);
+            if (verifiedMates.mapqL >= options.minMapq && store.alignQualityStore[verifiedMates.alignedReadIDL].errors <= max4Errors && store.alignQualityStore[verifiedMates.alignedReadIDL].score <= options.maxScore)
+                writeBsAlignment(bamFileOut, store, setContigGaps[verifiedMates.alignedReadIDL], verifiedMates.alignedReadIDL, verifiedMates.mapqL, verifiedMates.recordL, options);
+			max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedMates.alignedReadIDR].readID]) / 100.0);
+            if (verifiedMates.mapqR >= options.minMapq && store.alignQualityStore[verifiedMates.alignedReadIDR].errors <= max4Errors && store.alignQualityStore[verifiedMates.alignedReadIDR].score <= options.maxScore)
+                writeBsAlignment(bamFileOut, store, setContigGaps[verifiedMates.alignedReadIDR], verifiedMates.alignedReadIDR, verifiedMates.mapqR, verifiedMates.recordR, options);
 
         }
         else
         {
             VerifiedRead verifiedRead = verifyRead(store, options);   // Find best alignment and compute mapq, verify
-			unsigned max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedRead.alignedReadId].readId]) / 100.0);
-            if (verifiedRead.mapq >= options.minMapq && store.alignQualityStore[verifiedRead.alignedReadId].errors <= max4Errors && store.alignQualityStore[verifiedRead.alignedReadId].score <= options.maxScore)
-                writeBsAlignment(bamFileOut, store, setContigGaps[verifiedRead.alignedReadId], verifiedRead.alignedReadId, verifiedRead.mapq, verifiedRead.record, options);
+			unsigned max4Errors = (unsigned)(options.max4Error*length(store.readSeqStore[store.alignedReadStore[verifiedRead.alignedReadID].readID]) / 100.0);
+            if (verifiedRead.mapq >= options.minMapq && store.alignQualityStore[verifiedRead.alignedReadID].errors <= max4Errors && store.alignQualityStore[verifiedRead.alignedReadID].score <= options.maxScore)
+                writeBsAlignment(bamFileOut, store, setContigGaps[verifiedRead.alignedReadID], verifiedRead.alignedReadID, verifiedRead.mapq, verifiedRead.record, options);
         }
     }
     return 0;

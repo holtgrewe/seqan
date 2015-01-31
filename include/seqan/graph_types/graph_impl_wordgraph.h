@@ -62,14 +62,14 @@ template<typename TAlphabet, typename TSpec>
 class Graph<Automaton<TAlphabet, String<TAlphabet>, WordGraph<TSpec> > > 
 {
 	public:
-		typedef typename VertexIdHandler<Graph>::Type TVertexIdManager_;
-		typedef typename EdgeIdHandler<Graph>::Type TEdgeIdManager_;
+		typedef typename VertexIDHandler<Graph>::Type TVertexIDManager_;
+		typedef typename EdgeIDHandler<Graph>::Type TEdgeIDManager_;
 		typedef typename VertexDescriptor<Graph>::Type TVertexDescriptor_;
 		typedef typename EdgeType<Graph>::Type TEdge_;	
 
 		String<AutomatonEdgeArray<TEdge_, TAlphabet> > data_vertex;		// List of tables
-		TVertexIdManager_ data_id_managerV;
-		TEdgeIdManager_ data_id_managerE;
+		TVertexIDManager_ data_id_managerV;
+		TEdgeIDManager_ data_id_managerE;
 		TVertexDescriptor_ data_root;
 
 
@@ -116,12 +116,12 @@ addEdge(Graph<Automaton<TAlphabet, String<TAlphabet>, WordGraph<TSpec> > >& g,
 	
 	typedef Graph<Automaton<TAlphabet, String<TAlphabet>, WordGraph<TSpec> > > TGraph;
 	typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
-	typedef typename Id<TGraph>::Type TId;
+	typedef typename ID<TGraph>::Type TID;
 	
 	TAlphabet firstChar = getValue(label, 0);
 	TEdgeDescriptor e = findEdge(g, source, firstChar);
-	TId id = obtainId(g.data_id_managerE);
-	_assignId(e, id);
+	TID id = obtainID(g.data_id_managerE);
+	_assignID(e, id);
 	assignTarget(e, target);
 	String<TAlphabet> suf(suffix(label,1));
 	assignCargo(e, suf);

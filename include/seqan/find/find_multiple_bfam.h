@@ -89,7 +89,7 @@ public:
 	typedef typename Position<TNeedle>::Type TNeedlePosition;
 	typedef typename Size<TKeyword>::Type TSize;
 	typedef typename Value<TKeyword>::Type TValue;
-	typedef Graph<Automaton<TValue, void, WithoutEdgeId> > TGraph;
+	typedef Graph<Automaton<TValue, void, WithoutEdgeID> > TGraph;
 
 	//searching data: these members are initialized in _patternInit or during search
 	TNeedlePosition * position;		//pointer to last found position
@@ -298,7 +298,7 @@ SEQAN_CHECKPOINT
 	typedef typename Value<TKeyword>::Type TValue;
 	typedef typename Size<TKeyword>::Type TSize;
 	typedef typename Iterator<TKeyword, Standard>::Type TKeywordIterator;
-	typedef Graph<Automaton<TValue, void, WithoutEdgeId> > TGraph;
+	typedef Graph<Automaton<TValue, void, WithoutEdgeID> > TGraph;
 	typedef typename VertexDescriptor<TGraph>::Type TVertexDescriptor;
 
 	if (me.lmin == 0) return false;

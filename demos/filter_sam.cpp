@@ -93,9 +93,9 @@ void performWork(Options const & options)
         if (beginPos > endPos)
             std::swap(beginPos, endPos);
         typedef Infix<TContigSeq>::Type TInfix;
-        TInfix infixCopy(fragmentStore.contigStore[it->contigId].seq, beginPos, endPos);
+        TInfix infixCopy(fragmentStore.contigStore[it->contigID].seq, beginPos, endPos);
         assignSource(row(align, 0), infixCopy);
-        assignSource(row(align, 1), fragmentStore.readSeqStore[it->readId]);
+        assignSource(row(align, 1), fragmentStore.readSeqStore[it->readID]);
         int s = globalAlignment(align, Score<int, EditDistance>(), NeedlemanWunsch());
         distances[it->id] = -s;
     }
@@ -107,19 +107,19 @@ void performWork(Options const & options)
         shuffle(fragmentStore.alignedReadStore, rng);
     if (options.sortDistance)
         sortAlignedReads(fragmentStore.alignedReadStore, distances, SortAlignmentDistance());
-    sortAlignedReads(fragmentStore.alignedReadStore, SortReadId());
+    sortAlignedReads(fragmentStore.alignedReadStore, SortReadID());
 
     // Copy over at most options.limit alignments per read.
     std::cerr << "Filtering reads..." << std::endl;
     FragmentStore<>::TAlignedReadStore rsCopy;
-    size_t readId = MaxValue<size_t>::VALUE;
+    size_t readID = MaxValue<size_t>::VALUE;
     size_t alignmentCount = 0;
     for (TIterator it = begin(fragmentStore.alignedReadStore), itEnd = end(fragmentStore.alignedReadStore); it != itEnd; ++it)
     {
-        if (readId != it->readId)
+        if (readID != it->readID)
         {
             alignmentCount = 1;
-            readId = it->readId;
+            readID = it->readID;
         }
         else
         {

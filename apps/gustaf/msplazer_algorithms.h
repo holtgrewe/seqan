@@ -83,7 +83,7 @@ inline bool _checkMatchSim(TPos const & m1Begin,
 
 // Check distance between matches:
 // The maximal allowed distance between two matches has to be smaller than a specified threshold value
-// template < typename TSequence, typename TId >
+// template < typename TSequence, typename TID >
 template <typename TPos>
 inline bool _checkMatchDist(TPos const & begin, TPos const & end, MSplazerOptions const & msplazerOptions)
 {
@@ -95,24 +95,24 @@ inline bool _checkMatchDist(TPos const & begin, TPos const & end, MSplazerOption
 }
 
 // Check matches for same database
-template <typename TSequence, typename TId>
-inline bool _checkDBIds(StellarMatch<TSequence, TId> const & match1, StellarMatch<TSequence, TId> const & match2)
+template <typename TSequence, typename TID>
+inline bool _checkDBIDs(StellarMatch<TSequence, TID> const & match1, StellarMatch<TSequence, TID> const & match2)
 {
     return match1.id == match2.id;
 }
 
 // Check matches for same strand
-template <typename TSequence, typename TId>
-inline bool _checkMatchStrands(StellarMatch<TSequence, TId> const & match1, StellarMatch<TSequence, TId> const & match2)
+template <typename TSequence, typename TID>
+inline bool _checkMatchStrands(StellarMatch<TSequence, TID> const & match1, StellarMatch<TSequence, TID> const & match2)
 {
     return match1.orientation == match2.orientation;
 }
 
 // Check order in matching strand: Function assumes that both matches are on the same strand and in the same genome
 // and that match1.begin2 < match2.begin2 (ordered matches according to read)
-template <typename TSequence, typename TId>
-inline bool _checkMatchOrderInDB(StellarMatch<TSequence, TId> const & match1,
-                                 StellarMatch<TSequence, TId> const & match2)
+template <typename TSequence, typename TID>
+inline bool _checkMatchOrderInDB(StellarMatch<TSequence, TID> const & match1,
+                                 StellarMatch<TSequence, TID> const & match2)
 {
     return match1.begin1 < match2.begin1;
 }
@@ -162,9 +162,9 @@ inline bool _isTandemOverlap(TPos const & m1Begin, TPos const & m1End, TPos cons
 
 // Intitialisation of graph structure for combinable StellarMatches of a read
 /*
-template <typename TSequence, typename TId, typename TGraph, typename TScoreAlloc, typename TVertexDescriptor,
+template <typename TSequence, typename TID, typename TGraph, typename TScoreAlloc, typename TVertexDescriptor,
           typename TBreakpointMap>
-void _initialiseGraph(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
+void _initialiseGraph(QueryMatches<StellarMatch<TSequence, TID> > & queryMatches,
                       TGraph & graph,
                       TScoreAlloc & matchDistanceScores,
                       TVertexDescriptor & startVertex,
@@ -172,15 +172,15 @@ void _initialiseGraph(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches
                       TBreakpointMap & queryBreakpoints,
                       MSplazerOptions const & msplazerOptions)
 */
-template <typename TSequence, typename TId, typename TMSplazerChain>
-void _initialiseGraphNoBreakend(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
+template <typename TSequence, typename TID, typename TMSplazerChain>
+void _initialiseGraphNoBreakend(QueryMatches<StellarMatch<TSequence, TID> > & queryMatches,
                       TMSplazerChain & chain,
                       MSplazerOptions const & options)
 {
     // std::cerr << " Initialising graph structure " << std::endl;
     typedef typename TMSplazerChain::TGraph TGraph;
     typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
-    typedef typename Iterator<String<StellarMatch<TSequence, TId> > >::Type TIterator;
+    typedef typename Iterator<String<StellarMatch<TSequence, TID> > >::Type TIterator;
 
     TIterator itStellarMatches = begin(queryMatches.matches);
     TIterator itEndStellarMatches = end(queryMatches.matches);
@@ -220,17 +220,17 @@ void _initialiseGraphNoBreakend(QueryMatches<StellarMatch<TSequence, TId> > & qu
 }
 
 // Intitialisation of graph structure for combinable StellarMatches of a read
-template <typename TSequence, typename TId, typename TMSplazerChain>
-void _initialiseGraph(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
-                      TId & queryId,
+template <typename TSequence, typename TID, typename TMSplazerChain>
+void _initialiseGraph(QueryMatches<StellarMatch<TSequence, TID> > & queryMatches,
+                      TID & queryID,
                       TMSplazerChain & chain,
                       MSplazerOptions const & options)
 {
     // std::cerr << " Initialising graph structure " << std::endl;
     typedef typename TMSplazerChain::TGraph TGraph;
     typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
-    typedef typename Iterator<String<StellarMatch<TSequence, TId> > >::Type TIterator;
-    typedef Breakpoint<TSequence, TId> TBreakpoint;
+    typedef typename Iterator<String<StellarMatch<TSequence, TID> > >::Type TIterator;
+    typedef Breakpoint<TSequence, TID> TBreakpoint;
 
     TIterator itStellarMatches = begin(queryMatches.matches);
     TIterator itEndStellarMatches = end(queryMatches.matches);
@@ -270,7 +270,7 @@ void _initialiseGraph(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches
                                queryMatches.matches[i].begin1,
                                queryMatches.matches[i].begin2,
                                queryMatches.matches[i].begin2,
-                               queryId);
+                               queryID);
                 bp.svtype = TBreakpoint::BREAKEND;
                 // bp.imprecise = true;
                 bp.breakend = 0; // left breakend
@@ -296,7 +296,7 @@ void _initialiseGraph(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches
                                queryMatches.matches[i].end1,
                                queryMatches.matches[i].end2,
                                queryMatches.matches[i].end2,
-                               queryId);
+                               queryID);
                 bp.svtype = TBreakpoint::BREAKEND;
                 // bp.imprecise = true;
                 bp.breakend = 1; // right breakend
@@ -307,9 +307,9 @@ void _initialiseGraph(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches
 }
 
 // Match Chaining for one query: Inserts edges between compatible matches and determines their breakpoint
-template <typename TSequence, typename TId, typename TGraph, typename TScoreAlloc, typename TBreakpointMap, typename TMSplazerChain>
-void _chainMatches(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
-                   TId const & queryId,
+template <typename TSequence, typename TID, typename TGraph, typename TScoreAlloc, typename TBreakpointMap, typename TMSplazerChain>
+void _chainMatches(QueryMatches<StellarMatch<TSequence, TID> > & queryMatches,
+                   TID const & queryID,
                    TSequence & query,
                    TGraph & graph,
                    TScoreAlloc & matchDistanceScores,
@@ -320,7 +320,7 @@ void _chainMatches(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
     typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
     typedef Align<TSequence, ArrayGaps> TAlign;
     typedef typename Position<TSequence>::Type  TPos;
-    typedef Breakpoint<TSequence, TId> TBreakpoint;
+    typedef Breakpoint<TSequence, TID> TBreakpoint;
     typedef typename Infix<TSequence>::Type TInfix;
 
     // Output values for compatibility check: do breakpoint evaluation, insert edge into graph,
@@ -346,13 +346,13 @@ void _chainMatches(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
     // Breakpoint score
     int score = 0;
 
-    // std::cout << "Query Id: " << queryId << std::endl;
+    // std::cout << "Query ID: " << queryID << std::endl;
 
     // loop over all query matches
     // std::cerr << "In chainQueryMatches length(queryMatches.matches): " << length(queryMatches.matches) << std::endl;
     for (unsigned m1 = 0; m1 < (length(queryMatches.matches) - 1); ++m1)
     {
-        StellarMatch<TSequence, TId> & stMatch1 = queryMatches.matches[m1];
+        StellarMatch<TSequence, TID> & stMatch1 = queryMatches.matches[m1];
         TPos m1Begin = stMatch1.begin2;
         TPos m1End = stMatch1.end2;
         takeNextMatch = true;
@@ -361,7 +361,7 @@ void _chainMatches(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
         {
             // /////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Compatibility check
-            StellarMatch<TSequence, TId> & stMatch2 = queryMatches.matches[m2];
+            StellarMatch<TSequence, TID> & stMatch2 = queryMatches.matches[m2];
             TPos m2Begin = stMatch2.begin2;
             TPos m2End = stMatch2.end2;
             // std::cout << "chain matches " << m1Begin << " " << m1End << " " << m2Begin << " " << m2End << std::endl;
@@ -376,7 +376,7 @@ void _chainMatches(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
                 // /////////////////////////////////////////////////////////////////////////////////////////////////////
                 // Penalties
                 // Different reference sequence penalty
-                diffDBPen = _checkDBIds(stMatch1, stMatch2) ? 0 : msplazerOptions.diffDBPen;
+                diffDBPen = _checkDBIDs(stMatch1, stMatch2) ? 0 : msplazerOptions.diffDBPen;
                 // Different orientation penalty
                 diffStrandPen =
                     (diffDBPen > 0 || _checkMatchStrands(stMatch1, stMatch2)) ? 0 : msplazerOptions.diffStrandPen;
@@ -469,7 +469,7 @@ void _chainMatches(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
                                endSeqPos,
                                readStartPos,
                                readEndPos,
-                               queryId);
+                               queryID);
 
                 // Imprecise breakpoint?
                 // if (!doBP) bp.imprecise = true;
@@ -516,9 +516,9 @@ void _chainMatches(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
 }
 
 // Match Chaining for one query: Inserts edges between compatible matches and determines their breakpoint
-template <typename TSequence, typename TId, typename TGraph, typename TScoreAlloc, typename TBreakpointMap, typename TMSplazerChain>
-void _chainMatchesReference(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
-                            TId const & queryId,
+template <typename TSequence, typename TID, typename TGraph, typename TScoreAlloc, typename TBreakpointMap, typename TMSplazerChain>
+void _chainMatchesReference(QueryMatches<StellarMatch<TSequence, TID> > & queryMatches,
+                            TID const & queryID,
                             TSequence & query,
                             TGraph & graph,
                             TScoreAlloc & matchDistanceScores,
@@ -529,8 +529,8 @@ void _chainMatchesReference(QueryMatches<StellarMatch<TSequence, TId> > & queryM
     typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
     typedef Align<TSequence, ArrayGaps> TAlign;
     typedef typename Position<TSequence>::Type  TPos;
-    typedef Breakpoint<TSequence, TId> TBreakpoint;
-    typedef StellarMatch<TSequence, TId> TMatch;
+    typedef Breakpoint<TSequence, TID> TBreakpoint;
+    typedef StellarMatch<TSequence, TID> TMatch;
     typedef typename Infix<TSequence>::Type TInfix;
 
     // Penalties
@@ -557,7 +557,7 @@ void _chainMatchesReference(QueryMatches<StellarMatch<TSequence, TId> > & queryM
     // Breakpoint score (gain of edit distance)
     int score = 0;
 
-    //std::cout << "Query Id: " << queryId << std::endl;
+    //std::cout << "Query ID: " << queryID << std::endl;
 
     // loop over all query matches
     for (unsigned m1 = 0; m1 < (length(queryMatches.matches) - 1); ++m1)
@@ -576,7 +576,7 @@ void _chainMatchesReference(QueryMatches<StellarMatch<TSequence, TId> > & queryM
 
             // std::cerr << "stMatch1 and stMatch2: " << *stMatch1 << *stMatch2 << std::endl;
             // Check if on same chromosome
-            if (_checkDBIds(*stMatch1, *stMatch2))
+            if (_checkDBIDs(*stMatch1, *stMatch2))
             {
                 // Matches have other order in reference than in read
                 // Exchange matches once, via temp reference, then change back at the end!
@@ -732,7 +732,7 @@ void _chainMatchesReference(QueryMatches<StellarMatch<TSequence, TId> > & queryM
                                    endSeqPos,
                                    readStartPos,
                                    readEndPos,
-                                   queryId);
+                                   queryID);
 
                     // Imprecise breakpoint?
                     // if (!doBP) bp.imprecise = true;
@@ -812,11 +812,11 @@ void _chainMatchesReference(QueryMatches<StellarMatch<TSequence, TId> > & queryM
 }
 
 // Chain all matches of each query
-template <typename TSequence, typename TId, typename TScoreAlloc, typename TMSplazerChain>
-void _chainQueryMatches(StringSet<QueryMatches<StellarMatch<TSequence, TId> > > & stellarMatches,
+template <typename TSequence, typename TID, typename TScoreAlloc, typename TMSplazerChain>
+void _chainQueryMatches(StringSet<QueryMatches<StellarMatch<TSequence, TID> > > & stellarMatches,
                         String<TScoreAlloc> & distanceScores,
                         String<TMSplazerChain> & queryChains,
-                        StringSet<TId> & queryIds,
+                        StringSet<TID> & queryIDs,
                         StringSet<TSequence> & queries,
                         String<unsigned> & readJoinPositions,
                         MSplazerOptions const & msplazerOptions)
@@ -839,14 +839,14 @@ void _chainQueryMatches(StringSet<QueryMatches<StellarMatch<TSequence, TId> > > 
         {
             // Graph init
             if (msplazerOptions.pairedEndMode)
-                _initialiseGraphMatePairs(stellarMatches[i], queryIds[i], chain, msplazerOptions);
+                _initialiseGraphMatePairs(stellarMatches[i], queryIDs[i], chain, msplazerOptions);
             else
                 //_initialiseGraphNoBreakend(stellarMatches[i], chain, msplazerOptions);
-                _initialiseGraph(stellarMatches[i], queryIds[i], chain, msplazerOptions);
+                _initialiseGraph(stellarMatches[i], queryIDs[i], chain, msplazerOptions);
 
             // Chain compatible matches
             _chainMatches(stellarMatches[i],
-                          queryIds[i],
+                          queryIDs[i],
                           queries[i],
                           chain.graph,
                           chain.matchDistanceScores,
@@ -855,7 +855,7 @@ void _chainQueryMatches(StringSet<QueryMatches<StellarMatch<TSequence, TId> > > 
                           msplazerOptions);
             // Chain matches comptable according to reference
             _chainMatchesReference(stellarMatches[i],
-                                   queryIds[i],
+                                   queryIDs[i],
                                    queries[i],
                                    chain.graph,
                                    chain.matchDistanceScores,
@@ -912,7 +912,7 @@ inline unsigned _getSVSize(TBreakpoint const & bp)
 template <typename TBreakpoint>
 bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP, unsigned const & bpPosRange)
 {
-    if (bp.startSeqId != tempBP.startSeqId)
+    if (bp.startSeqID != tempBP.startSeqID)
         return false;
     /*
     if ( (bp.endSeqPos - bp.startSeqPos) < 31)
@@ -939,7 +939,7 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
         // Then we just want to add this deletion as support
         if (startPosSameRange && endPosSameRange)
         {
-            appendSupportId(tempBP, bp.supportIds);
+            appendSupportID(tempBP, bp.supportIDs);
             foundNewBP = false;
             return false;
         }
@@ -950,10 +950,10 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
         // position is also the target position of the duplication
         if (startPosSameRange)
         {
-            appendSupportId(tempBP, bp.supportIds);
+            appendSupportID(tempBP, bp.supportIDs);
             tempBP.dupTargetPos = tempBP.startSeqPos;
             tempBP.dupMiddlePos = bp.endSeqPos;
-            tempBP.midPosId = bp.endSeqId;
+            tempBP.midPosID = bp.endSeqID;
             tempBP.translSuppStartPos = true;
             //if (tempBP.translSuppEndPos)
                 //tempBP.svtype = TBreakpoint::TRANSLOCATION;
@@ -967,10 +967,10 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
         // position is also the target position of the duplication
         if (endPosSameRange)
         {
-            appendSupportId(tempBP, bp.supportIds);
+            appendSupportID(tempBP, bp.supportIDs);
             tempBP.dupTargetPos = tempBP.endSeqPos;
             tempBP.dupMiddlePos = bp.startSeqPos;
-            tempBP.midPosId = bp.startSeqId;
+            tempBP.midPosID = bp.startSeqID;
             tempBP.translSuppEndPos = true;
             //if (tempBP.translSuppStartPos)
                // tempBP.svtype = TBreakpoint::TRANSLOCATION;
@@ -991,7 +991,7 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
         // Then we just want to add this deletion as support
         if (startPosSameRange && endPosSameRange)
         {
-            appendSupportId(bp, tempBP.supportIds);
+            appendSupportID(bp, tempBP.supportIDs);
             foundNewBP = true;
             return true;
         }
@@ -1000,10 +1000,10 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
         // bp.middlePos=tempBP.endPos
         if (startPosSameRange)
         {
-            appendSupportId(bp, tempBP.supportIds);
+            appendSupportID(bp, tempBP.supportIDs);
             bp.dupTargetPos = bp.startSeqPos;
             bp.dupMiddlePos = tempBP.endSeqPos;
-            bp.midPosId = tempBP.endSeqId;
+            bp.midPosID = tempBP.endSeqID;
             bp.translSuppStartPos = true;
             // tempBP = bp;
             foundNewBP = true;
@@ -1013,10 +1013,10 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
         // bp.middlePos=tempBP.startPos
         if (endPosSameRange)
         {
-            appendSupportId(bp, tempBP.supportIds);
+            appendSupportID(bp, tempBP.supportIDs);
             bp.dupTargetPos = bp.endSeqPos;
             bp.dupMiddlePos = tempBP.startSeqPos;
-            bp.midPosId = tempBP.startSeqId;
+            bp.midPosID = tempBP.startSeqID;
             bp.translSuppEndPos = true;
             // tempBP = bp;
             foundNewBP = true;
@@ -1032,8 +1032,8 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
         // startPos=tempBP.startPos, middlePos=min(tempBP.endPos,bp.startPos), endPos=bp.endPos
         if (_posInSameRange(bp.startSeqPos, tempBP.endSeqPos, bpPosRange))
         {
-            TBreakpoint translBP(tempBP.startSeqId,
-                               bp.endSeqId,
+            TBreakpoint translBP(tempBP.startSeqID,
+                               bp.endSeqID,
                                tempBP.startSeqStrand,
                                bp.endSeqStrand,
                                tempBP.startSeqPos,
@@ -1043,11 +1043,11 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
                               );
             translBP.svtype = TBreakpoint::TRANSLOCATION;
             translBP.dupMiddlePos = std::min(tempBP.endSeqPos,bp.startSeqPos);
-            translBP.midPosId = tempBP.endSeqId;
+            translBP.midPosID = tempBP.endSeqID;
             translBP.translSuppStartPos = true;
             translBP.translSuppEndPos = true;
-            appendSupportId(translBP, bp.supportIds);
-            appendSupportId(translBP, tempBP.supportIds);
+            appendSupportID(translBP, bp.supportIDs);
+            appendSupportID(translBP, tempBP.supportIDs);
             bp = translBP;
             foundNewBP = true;
             return true;
@@ -1056,8 +1056,8 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
         // startPos=bp.startPos, middlePos=min(bp.endPos,tempBP.startPos), endPos=tempBP.endPos
         if (_posInSameRange(bp.endSeqPos, tempBP.startSeqPos, bpPosRange))
         {
-            TBreakpoint translBP(bp.startSeqId,
-                               tempBP.endSeqId,
+            TBreakpoint translBP(bp.startSeqID,
+                               tempBP.endSeqID,
                                bp.startSeqStrand,
                                tempBP.endSeqStrand,
                                bp.startSeqPos,
@@ -1067,11 +1067,11 @@ bool _translDelSupport(TBreakpoint & bp, TBreakpoint & tempBP, bool & foundNewBP
                               );
             translBP.svtype = TBreakpoint::TRANSLOCATION;
             translBP.dupMiddlePos = std::min(bp.endSeqPos, tempBP.startSeqPos);
-            translBP.midPosId = bp.endSeqId;
+            translBP.midPosID = bp.endSeqID;
             translBP.translSuppStartPos = true;
             translBP.translSuppEndPos = true;
-            appendSupportId(translBP, bp.supportIds);
-            appendSupportId(translBP, tempBP.supportIds);
+            appendSupportID(translBP, bp.supportIDs);
+            appendSupportID(translBP, tempBP.supportIDs);
             bp = translBP;
             foundNewBP = true;
             return true;
@@ -1088,7 +1088,7 @@ inline bool _invDelClassification(TBreakpoint & bp, TBreakpoint & tempBP, TBreak
     bool newInv = false;
     if (bp.svtype != TBreakpoint::INVERSION || tempBP.svtype != TBreakpoint::INVERSION)
         return false;
-    if (bp.startSeqId != tempBP.startSeqId)
+    if (bp.startSeqID != tempBP.startSeqID)
         return false;
 
     bool startPosSameRange = _posInSameRange(bp.startSeqPos, tempBP.startSeqPos, bpPosRange);
@@ -1182,7 +1182,7 @@ inline bool _insertBreakend(String<TBreakpoint> & countedBE, TBreakpoint & be, u
         // if .breakend is equal, both breakends are both either left or right breakends
         if (_similarBreakends(be, tempBE, bpPosRange) && tempBE.breakend == be.breakend)
         {
-            appendSupportId(tempBE, be.supportIds);
+            appendSupportID(tempBE, be.supportIDs);
             newBE = false;
             // Take leftmost (left BE,0) or rightmost (right BE,1) position
             if ((tempBE.breakend && tempBE.startSeqPos > be.startSeqPos)
@@ -1208,7 +1208,7 @@ inline bool _addBeSupport(String<TBreakpoint> & countedBP, TBreakpoint & be, uns
         TBreakpoint & tempBP = countedBP[i];
         if (_breakendSupport(be, tempBP, bpPosRange))
         {
-            appendSupportId(tempBP, be.supportIds);
+            appendSupportID(tempBP, be.supportIDs);
             newBE = false;
             // return false;
         }
@@ -1227,8 +1227,8 @@ inline void _getBeSupport(String<TBreakpoint> & countedBE, TBreakpoint & bp, uns
         TBreakpoint & tempBE = countedBE[i];
         if (_breakendSupport(tempBE, bp, bpPosRange))
         {
-            // Append support Ids of old bp (tempBP) to new bp
-            appendSupportId(bp, tempBE.supportIds);
+            // Append support IDs of old bp (tempBP) to new bp
+            appendSupportID(bp, tempBE.supportIDs);
             appendValue(toBeErased, i);
         }
     }
@@ -1240,7 +1240,7 @@ inline void _getBeSupport(String<TBreakpoint> & countedBE, TBreakpoint & bp, uns
 }
 
 template <typename TBreakpoint>
-inline void _insertBreakpoint(String<TBreakpoint> & countedBP, TBreakpoint & bp, unsigned const & bpPosRange, unsigned & similarBPId)
+inline void _insertBreakpoint(String<TBreakpoint> & countedBP, TBreakpoint & bp, unsigned const & bpPosRange, unsigned & similarBpID)
 {
     String<unsigned> toBeErased;
     bool newBP = true;
@@ -1253,13 +1253,13 @@ inline void _insertBreakpoint(String<TBreakpoint> & countedBP, TBreakpoint & bp,
         TBreakpoint & tempBP = countedBP[i];
         if (bp == tempBP)
         {
-            appendSupportId(tempBP, bp.supportIds);
+            appendSupportID(tempBP, bp.supportIDs);
             // Very special case, should be no other support likely
             newBP = false;
         }
         else if (_similarBreakpoints(bp, tempBP, bpPosRange))
         {
-            appendSupportId(tempBP, bp.supportIds);
+            appendSupportID(tempBP, bp.supportIDs);
 	    if (bp.dupMiddlePos != maxValue<unsigned>() && tempBP.dupMiddlePos != maxValue<unsigned>()
 		&& bp.dupMiddlePos < tempBP.dupMiddlePos)
             {
@@ -1305,15 +1305,15 @@ inline void _insertBreakpoint(String<TBreakpoint> & countedBP, TBreakpoint & bp,
     {
         if (bp.similar == maxValue<unsigned>())
         {
-            bp.similar = similarBPId;
-            ++similarBPId;
+            bp.similar = similarBpID;
+            ++similarBpID;
         }
         appendValue(countedBP, bp);
     }
     // Append new deletion breakpoint if appl./insert new deletion bc. there could be one already in the set?
     if (newInv)
         appendValue(countedBP, newInvBP);
-        // _insertBreakpoint(countedBP, newDelbp, bpPosRange, similarBPId++?);
+        // _insertBreakpoint(countedBP, newDelbp, bpPosRange, similarBpID++?);
 }
 // Insert Breakpoint into string of breakpoints if it is not already in the set. Returns true if breakpoint was new and
 // has been inserted or false if breakpoint was already in the set (and just has been counted).
@@ -1331,10 +1331,10 @@ bool _insertBreakpointOld(String<TBreakpoint> & countedBP, TBreakpoint & bp, uns
         // Special case: old breakpoint is only breakend
         if (tempBP.svtype == TBreakpoint::BREAKEND)
         {
-            // If both are breakends and similar, add supportId to the old (temp) bp
+            // If both are breakends and similar, add supportID to the old (temp) bp
             if (bp.svtype == TBreakpoint::BREAKEND && _similarBreakends(bp, tempBP, bpPosRange))
             {
-                appendSupportId(tempBP, bp.supportIds);
+                appendSupportID(tempBP, bp.supportIDs);
                 // TODO set tempBP.startendSeqPos to left most position and set cistartend
                 // if (bp.startSeqPos < tempBP.startSeqPos)
                 // {
@@ -1347,11 +1347,11 @@ bool _insertBreakpointOld(String<TBreakpoint> & countedBP, TBreakpoint & bp, uns
                 return false;
             }
             // If the old bp is only a breakend but the new is a proper breakpoint, check if the breakend is supporting
-            // the new breakpoint, if so, then replace the breakend and add its Ids as support to the new bp
+            // the new breakpoint, if so, then replace the breakend and add its IDs as support to the new bp
             else if (_breakendSupport(tempBP, bp, bpPosRange))
             {
-                // Append support Ids of old bp (tempBP) to new bp
-                appendSupportId(bp, tempBP.supportIds);
+                // Append support IDs of old bp (tempBP) to new bp
+                appendSupportID(bp, tempBP.supportIDs);
                 // tempBP = bp;
                 foundNewBP = true;
                 appendValue(toBeErased, i);
@@ -1364,7 +1364,7 @@ bool _insertBreakpointOld(String<TBreakpoint> & countedBP, TBreakpoint & bp, uns
         {
             if (_breakendSupport(bp, tempBP, bpPosRange))
             {
-                appendSupportId(tempBP, bp.supportIds);
+                appendSupportID(tempBP, bp.supportIDs);
                 foundNewBP = false;
                 // No other support should be possible, most have been detected before and be must have been replaced
                 return false;
@@ -1372,7 +1372,7 @@ bool _insertBreakpointOld(String<TBreakpoint> & countedBP, TBreakpoint & bp, uns
         }
         else if (bp == tempBP)
         {
-            appendSupportId(tempBP, bp.supportIds);
+            appendSupportID(tempBP, bp.supportIDs);
             // Very special case, should be no other support likely
             return false;
         }
@@ -1412,7 +1412,7 @@ void _insertBreakpoints(String<TBreakpoint> & countedBP,
                         String<TBreakpoint> & countedBE,
                         String<TBreakpoint> & newBP,
                         MSplazerOptions const & options,
-                        unsigned & similarBPId)
+                        unsigned & similarBpID)
 {
     for (unsigned i = 0; i < length(newBP); ++i)
     {
@@ -1432,7 +1432,7 @@ void _insertBreakpoints(String<TBreakpoint> & countedBP,
         else
         {
             _getBeSupport(countedBE, bp, options.breakpointPosRange);
-            _insertBreakpoint(countedBP, bp, options.breakpointPosRange, similarBPId);
+            _insertBreakpoint(countedBP, bp, options.breakpointPosRange, similarBpID);
         }
     }
 }
@@ -1479,10 +1479,10 @@ void _trimMatches(String<TMatch> & matchChain, StringSet<String<TPos> > & splitP
 }
 
 // TODO(ktrappe): Indel extraction is disabled atm cause it depends on match trimming
-template <typename TBreakpoint, typename TSequence, typename TId, typename TMatch>
+template <typename TBreakpoint, typename TSequence, typename TID, typename TMatch>
 void _getChainIndels(String<String<TMatch> > & bestChains,
                      String<TBreakpoint> & globalStellarIndels,
-                     TId const & queryId,
+                     TID const & queryID,
                      TSequence & query)
 {
     typedef typename Iterator<String<TMatch> >::Type TIterator;
@@ -1491,7 +1491,7 @@ void _getChainIndels(String<String<TMatch> > & bestChains,
         TIterator itStellarMatches = begin(bestChains[i]);
         TIterator itEndStellarMatches = end(bestChains[i]);
         for (; itStellarMatches < itEndStellarMatches; goNext(itStellarMatches))
-            _getStellarIndel(*itStellarMatches, globalStellarIndels, queryId, query);
+            _getStellarIndel(*itStellarMatches, globalStellarIndels, queryID, query);
     }
 }
 
@@ -1549,10 +1549,10 @@ bool _findBestChain(TMSplazerChain & queryChain, String<TMatch> & stellarMatches
             return 0;
         }
         // Append tmpStellarMatch
-        // std::cerr << "ID: " << _getId(spVertex2) << std::endl;
-        if (_getId(spVertex2) != queryChain.startVertex)
+        // std::cerr << "ID: " << _getID(spVertex2) << std::endl;
+        if (_getID(spVertex2) != queryChain.startVertex)
         {
-            TMatch stMatch = stellarMatches[_getId(spVertex2)];
+            TMatch stMatch = stellarMatches[_getID(spVertex2)];
             appendValue(tmpBestChain, stMatch);
         }
         // Getting edge between both vertices; findEdge returns 0 if there is no such edge
@@ -1577,7 +1577,7 @@ bool _findBestChain(TMSplazerChain & queryChain, String<TMatch> & stellarMatches
             resize(splitPos, 4);
 
             // Store breakpoint pos., mind matches of different order for translocations and reverse strand deletions
-            // if ((bp.svtype == 6 && bp.startSeqId == bp.endSeqId) || bp.revStrandDel) // 6=translocation
+            // if ((bp.svtype == 6 && bp.startSeqID == bp.endSeqID) || bp.revStrandDel) // 6=translocation
             // TODO(ktrappe): Adjust SVType
             if ((bp.svtype == TBreakpoint::TRANSLOCATION) || bp.revStrandDel)
             {
@@ -1611,11 +1611,11 @@ bool _findBestChain(TMSplazerChain & queryChain, String<TMatch> & stellarMatches
 
 // Finding the best chain (belonging to the shortest path) and reporting the breakpoints, if any.
 template <typename TMSplazerChain, typename TBreakpoint, typename TQueryMatches>
-// , typename TSequence, typename TId>
+// , typename TSequence, typename TID>
 void _findAllBestChains(String<TMSplazerChain> & queryChains,
                         StringSet<TQueryMatches> & queryMatches,
                         // StringSet<TSequence> & queries,
-                        // StringSet<TId> const & queryIds,
+                        // StringSet<TID> const & queryIDs,
                         String<TBreakpoint> & globalBreakpoints,
                         // String<TBreakpoint> & globalStellarIndels,
                         MSplazerOptions const & msplazerOptions
@@ -1629,7 +1629,7 @@ void _findAllBestChains(String<TMSplazerChain> & queryChains,
     */
     String<TBreakpoint> globalBreakends;
     unsigned brokenChainCount = 0;
-    unsigned similarBPId = 0;
+    unsigned similarBpID = 0;
     for (unsigned i = 0; i < length(queryChains); ++i)
     {
         String<TBreakpoint> tmpGlobalBreakpoints;
@@ -1637,9 +1637,9 @@ void _findAllBestChains(String<TMSplazerChain> & queryChains,
         if (_findBestChain(queryChains[i], queryMatches[i].matches, tmpGlobalBreakpoints, // msplazerOptions,
                            brokenChainCount))
         {
-            _insertBreakpoints(globalBreakpoints, globalBreakends, tmpGlobalBreakpoints, msplazerOptions, similarBPId);
+            _insertBreakpoints(globalBreakpoints, globalBreakends, tmpGlobalBreakpoints, msplazerOptions, similarBpID);
             // get small indels from matches
-            // _getChainIndels(queryChains[i].bestChains, globalStellarIndels, queryIds[i], queries[i]);
+            // _getChainIndels(queryChains[i].bestChains, globalStellarIndels, queryIDs[i], queries[i]);
             /*
             for(unsigned j = 0; j < length(queryChains[i].bestChains); ++j)
                 ++chainSizeCount[length(queryChains[i].bestChains[j])];
@@ -1662,7 +1662,7 @@ bool _findSuboptimalChains(TMSplazerChain & queryChain // ,
     typedef typename TMSplazerChain::TGraph TGraph;
     typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
     // typedef typename TBreakpoint::TPos TPos;
-    // typedef typename TBreakpoint::TId TId;
+    // typedef typename TBreakpoint::TID TID;
 
     typedef::std::multimap<int, unsigned> TChainScoreMap;
     TChainScoreMap chainScoreMap;
@@ -1737,10 +1737,10 @@ bool _findSuboptimalChains(TMSplazerChain & queryChain // ,
             return 0;
         }
         // Append tmpStellarMatch
-        //std::cerr << "ID: " << _getId(spVertex2) << std::endl;
-        if (_getId(spVertex2) != queryChain.startVertex)
+        //std::cerr << "ID: " << _getID(spVertex2) << std::endl;
+        if (_getID(spVertex2) != queryChain.startVertex)
         {
-            TMatch stMatch = stellarMatches[_getId(spVertex2)];
+            TMatch stMatch = stellarMatches[_getID(spVertex2)];
             appendValue(tmpBestChain, stMatch);
         }
         // Getting edge between both vertices
@@ -1768,7 +1768,7 @@ bool _findSuboptimalChains(TMSplazerChain & queryChain // ,
             //std::cerr << bp << std::endl;
 
             // Store breakpoint pos., mind matches of different order for translocations and reverse strand deletions
-            if ((getSVType(bp) == static_cast<TId>("translocation") && bp.startSeqId == bp.endSeqId) || bp.revStrandDel)
+            if ((getSVType(bp) == static_cast<TID>("translocation") && bp.startSeqID == bp.endSeqID) || bp.revStrandDel)
             {
                 splitPos[0] = bp.endSeqPos;
                 splitPos[1] = bp.startSeqPos;
@@ -1799,13 +1799,13 @@ bool _findSuboptimalChains(TMSplazerChain & queryChain // ,
 }
 
 // Finding the best chain (belonging to the shortest path) and reporting the breakpoints, if any.
-// template <typename TMSplazerChain, typename TBreakpoint, typename TQueryMatches, typename TSequence, typename TId>
+// template <typename TMSplazerChain, typename TBreakpoint, typename TQueryMatches, typename TSequence, typename TID>
 // Note: This is just a place holder atm for future extension of suboptimal path extraction.
 template <typename TMSplazerChain>
 void _findAllChains(String<TMSplazerChain> & queryChains // ,
                     //    StringSet<TQueryMatches> & queryMatches,
                     //    StringSet<TSequence> & queries,
-                    //    StringSet<TId> const & queryIds,
+                    //    StringSet<TID> const & queryIDs,
                     //    String<TBreakpoint> & globalBreakpoints,
                     //    String<TBreakpoint> & globalStellarIndels,
                     //    MSplazerOptions const & msplazerOptions

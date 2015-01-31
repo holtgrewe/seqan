@@ -674,7 +674,7 @@ struct DemultiplexingParams
 {
     seqan::String<char> barcodeFile;
     seqan::StringSet<seqan::String<seqan::Dna5> > barcodes;
-    seqan::StringSet<seqan::String<char> > barcodeIds;
+    seqan::StringSet<seqan::String<char> > barcodeIDs;
     seqan::String<char> multiplexFile;
     seqan::StringSet<seqan::String<seqan::Dna5Q> > multiplex;
     bool approximate;
@@ -879,8 +879,8 @@ public:
         }
     }
     //Writes the sets of ids and sequences to their corresponding files. Used for single-end data.
-    template <typename TIds, typename TSeqs, typename TMap, typename TNames>
-    void writeSeqs(TIds& ids, TSeqs& seqs, TMap& map, TNames& names)
+    template <typename TIDs, typename TSeqs, typename TMap, typename TNames>
+    void writeSeqs(TIDs& ids, TSeqs& seqs, TMap& map, TNames& names)
     {
         updateStreams(map, names, false);
         for (unsigned i = 0; i < length(seqs); ++i)
@@ -890,8 +890,8 @@ public:
         }
     }
     //Overload of writeSeqs for paired-end data.
-    template <typename TIds, typename TSeqs, typename TMap, typename TNames>
-    void writeSeqs(TIds& ids1, TSeqs& seqs1, TIds& ids2, TSeqs& seqs2, TMap& map, TNames& names)
+    template <typename TIDs, typename TSeqs, typename TMap, typename TNames>
+    void writeSeqs(TIDs& ids1, TSeqs& seqs1, TIDs& ids2, TSeqs& seqs2, TMap& map, TNames& names)
     {
         updateStreams(map, names, true);
         for (unsigned i = 0; i < length(seqs1); ++i)
@@ -933,7 +933,7 @@ int loadBarcodes(char const * path, DemultiplexingParams& params)
         std::cerr << "Error while opening file'" <<  params.barcodeFile << "'.\n";
         return 1;
     }
-    readRecords(params.barcodeIds, params.barcodes, bcFile);
+    readRecords(params.barcodeIDs, params.barcodes, bcFile);
 
     if (params.approximate)                            //modifies the barcodes for approximate matching
     {
@@ -1142,8 +1142,8 @@ int checkParams(ProgramParams const & programParams, ProcessingParams const & pr
 // PROGRAM STAGES ---------------------
 
 //Preprocessing Stage
-template<typename TSeqs, typename TIds>
-void preprocessingStage(TSeqs& seqs, TIds& ids, DemultiplexingParams& demultiplexingParams,
+template<typename TSeqs, typename TIDs>
+void preprocessingStage(TSeqs& seqs, TIDs& ids, DemultiplexingParams& demultiplexingParams,
     ProcessingParams& processingParams, seqan::ArgumentParser const & parser, GeneralStats& generalStats)
 {
     if (processingParams.runPre)
@@ -1193,8 +1193,8 @@ void preprocessingStage(TSeqs& seqs, TIds& ids, DemultiplexingParams& demultiple
 }
 
 //Overload for paired-end data
-template<typename TSeqs, typename TIds>
-void preprocessingStage(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev,
+template<typename TSeqs, typename TIDs>
+void preprocessingStage(TSeqs& seqs, TIDs& ids, TSeqs& seqsRev, TIDs& idsRev,
     DemultiplexingParams& demultiplexingParams, ProcessingParams& processingParams,
     seqan::ArgumentParser const & parser, GeneralStats& generalStats)
 {
@@ -1247,8 +1247,8 @@ void preprocessingStage(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev,
 }
 // DEMULTIPLEXING
 //Version for single-end data
-template <typename TSeqsVec, typename TIdsVec, typename TFinder,typename TMap>
-int demultiplexingStage(DemultiplexingParams& params, TSeqsVec& seqs, TIdsVec& ids, TFinder& esaFinder, 
+template <typename TSeqsVec, typename TIDsVec, typename TFinder,typename TMap>
+int demultiplexingStage(DemultiplexingParams& params, TSeqsVec& seqs, TIDsVec& ids, TFinder& esaFinder, 
     TMap& map, GeneralStats& generalStats)
 {
     if (!params.run)
@@ -1296,18 +1296,18 @@ int demultiplexingStage(DemultiplexingParams& params, TSeqsVec& seqs, TIdsVec& i
     }
     // Sorting the results into the sequence- and ID Strings
     seqan::String<seqan::StringSet<seqan::String<seqan::Dna5Q> > > sortedSeqs; 
-    seqan::String<seqan::StringSet<seqan::String<char> > > sortedIds;
-    buildSets(seqs[0], ids[0], groups, sortedSeqs, sortedIds);
+    seqan::String<seqan::StringSet<seqan::String<char> > > sortedIDs;
+    buildSets(seqs[0], ids[0], groups, sortedSeqs, sortedIDs);
     resize(seqs, length(sortedSeqs));
-    resize(ids, length(sortedIds));
+    resize(ids, length(sortedIDs));
     seqs = sortedSeqs;
-    ids = sortedIds;
+    ids = sortedIDs;
     return 0;
 }
 //Version for paired-end data
-template <typename TSeqsVec, typename TIdsVec, typename TFinder, typename TMap>
-int demultiplexingStage(DemultiplexingParams& params, TSeqsVec& seqs, TSeqsVec& seqsRev, TIdsVec& ids,
-    TIdsVec& idsRev, TFinder& esaFinder, TMap& map, GeneralStats& generalStats)
+template <typename TSeqsVec, typename TIDsVec, typename TFinder, typename TMap>
+int demultiplexingStage(DemultiplexingParams& params, TSeqsVec& seqs, TSeqsVec& seqsRev, TIDsVec& ids,
+    TIDsVec& idsRev, TFinder& esaFinder, TMap& map, GeneralStats& generalStats)
 {
     if (!params.run)
     {
@@ -1355,24 +1355,24 @@ int demultiplexingStage(DemultiplexingParams& params, TSeqsVec& seqs, TSeqsVec& 
     // Sorting the results into the sequence- and ID Strings
     seqan::String<seqan::StringSet<seqan::String<seqan::Dna5Q> > > sortedSeqs; 
     seqan::String<seqan::StringSet<seqan::String<seqan::Dna5Q> > > sortedSeqsRev; 
-    seqan::String<seqan::StringSet<seqan::String<char> > > sortedIds;
-    seqan::String<seqan::StringSet<seqan::String<char> > > sortedIdsRev;
-    buildSets(seqs[0], seqsRev[0] ,ids[0], idsRev[0], groups, sortedSeqs, sortedSeqsRev, sortedIds, sortedIdsRev);
+    seqan::String<seqan::StringSet<seqan::String<char> > > sortedIDs;
+    seqan::String<seqan::StringSet<seqan::String<char> > > sortedIDsRev;
+    buildSets(seqs[0], seqsRev[0] ,ids[0], idsRev[0], groups, sortedSeqs, sortedSeqsRev, sortedIDs, sortedIDsRev);
     resize(seqs, length(sortedSeqs));
     resize(seqsRev, length(sortedSeqs));
-    resize(ids, length(sortedIds));
-    resize(idsRev, length(sortedIds));
+    resize(ids, length(sortedIDs));
+    resize(idsRev, length(sortedIDs));
     seqs = sortedSeqs;
     seqsRev = sortedSeqsRev;
-    ids = sortedIds;
-    idsRev = sortedIdsRev;
+    ids = sortedIDs;
+    idsRev = sortedIDsRev;
     return 0;
 }
 
 // ADAPTER TRIMMING
 //Version for single-end data
-template <typename TSeqs, typename TIds>
-void adapterTrimmingStage(AdapterTrimmingParams& params, TSeqs& seqSet, TIds& idSet, bool tagOpt)
+template <typename TSeqs, typename TIDs>
+void adapterTrimmingStage(AdapterTrimmingParams& params, TSeqs& seqSet, TIDs& idSet, bool tagOpt)
 {
     if (!params.run)
     {
@@ -1401,8 +1401,8 @@ void adapterTrimmingStage(AdapterTrimmingParams& params, TSeqs& seqSet, TIds& id
 }
 
 //Overload for paired-end data
-template <typename TSeqs, typename TIds>
-void adapterTrimmingStage(AdapterTrimmingParams& params, TSeqs& seqSet1, TIds& idSet1, TSeqs& seqSet2, TIds& idSet2, bool tagOpt)
+template <typename TSeqs, typename TIDs>
+void adapterTrimmingStage(AdapterTrimmingParams& params, TSeqs& seqSet1, TIDs& idSet1, TSeqs& seqSet2, TIDs& idSet2, bool tagOpt)
 {
     if (!params.run)
     {
@@ -1440,8 +1440,8 @@ void adapterTrimmingStage(AdapterTrimmingParams& params, TSeqs& seqSet1, TIds& i
 
 // QUALITY TRIMMING
 //Version for single-ende data
-template <typename TIds, typename TSeqs>
-void qualityTrimmingStage(QualityTrimmingParams& params, TIds& idSet, TSeqs& seqSet, bool tagOpt)
+template <typename TIDs, typename TSeqs>
+void qualityTrimmingStage(QualityTrimmingParams& params, TIDs& idSet, TSeqs& seqSet, bool tagOpt)
 {
     if (params.run)
     {
@@ -1482,8 +1482,8 @@ void qualityTrimmingStage(QualityTrimmingParams& params, TIds& idSet, TSeqs& seq
 }
 
 //Overload for paired-end data
-template <typename TIds, typename TSeqs>
-void qualityTrimmingStage(QualityTrimmingParams& params, TIds& idSet1, TSeqs& seqSet1, TIds& idSet2, TSeqs& seqSet2, bool tagOpt)
+template <typename TIDs, typename TSeqs>
+void qualityTrimmingStage(QualityTrimmingParams& params, TIDs& idSet1, TSeqs& seqSet1, TIDs& idSet2, TSeqs& seqSet2, bool tagOpt)
 {
     if (params.run)
     {
@@ -1523,8 +1523,8 @@ void qualityTrimmingStage(QualityTrimmingParams& params, TIds& idSet1, TSeqs& se
     }
 }
 //Postprocessing
-template<typename TSeqSet, typename TIdSet>
-void postprocessingStage(TSeqSet& seqSet, TIdSet& idSet, ProcessingParams& params, GeneralStats& stats)
+template<typename TSeqSet, typename TIDSet>
+void postprocessingStage(TSeqSet& seqSet, TIDSet& idSet, ProcessingParams& params, GeneralStats& stats)
 {
     if (params.runPost)
     {
@@ -1545,8 +1545,8 @@ void postprocessingStage(TSeqSet& seqSet, TIdSet& idSet, ProcessingParams& param
     }
 }
 //Overload for paired-end data
-template<typename TSeqSet, typename TIdSet>
-void postprocessingStage(TSeqSet& seqSet, TIdSet& idSet, TSeqSet& seqSet2, TIdSet& idSet2, ProcessingParams& params, GeneralStats& stats)
+template<typename TSeqSet, typename TIDSet>
+void postprocessingStage(TSeqSet& seqSet, TIDSet& idSet, TSeqSet& seqSet2, TIDSet& idSet2, ProcessingParams& params, GeneralStats& stats)
 {
     if (params.runPost)
     {
@@ -1658,7 +1658,7 @@ void printStatistics(ProgramParams& programParams, GeneralStats& generalStats, D
         std::cout << "\n";
         for (unsigned i = 1; i < length(demultiplexParams.stats.groups); ++i)
         {
-            std::cout << demultiplexParams.barcodeIds[i-1]<<":\t" << read_factor * demultiplexParams.stats.groups[i];
+            std::cout << demultiplexParams.barcodeIDs[i-1]<<":\t" << read_factor * demultiplexParams.stats.groups[i];
             if (programParams.readCount - dropped_d != 0)
             {
                 std::cout  << "\t\t(" << std::setprecision(3) << (double)demultiplexParams.stats.groups[i] /
@@ -2154,7 +2154,7 @@ int flexbarMain(int argc, char const ** argv)
             programParams.processTime += SEQAN_PROTIMEDIFF(processTime);    // END of processing time.
 
             // Append to output file.
-            outputStreams.writeSeqs(idSet, seqSet, map, demultiplexingParams.barcodeIds);
+            outputStreams.writeSeqs(idSet, seqSet, map, demultiplexingParams.barcodeIDs);
             // Information
             std::cout << "\r" << programParams.readCount;
         }
@@ -2209,7 +2209,7 @@ int flexbarMain(int argc, char const ** argv)
             programParams.processTime += SEQAN_PROTIMEDIFF(processTime); // END of processing time.
 
             // Append to output file.
-            outputStreams.writeSeqs(idSet1, seqSet1, idSet2, seqSet2, map, demultiplexingParams.barcodeIds);
+            outputStreams.writeSeqs(idSet1, seqSet1, idSet2, seqSet2, map, demultiplexingParams.barcodeIDs);
             // Information
             std::cout << "\r" << 2*programParams.readCount;
         }

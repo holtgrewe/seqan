@@ -151,7 +151,7 @@ SEQAN_DEFINE_TEST(test_parallel_queue_non_pod)
 }
 
 template <typename TResizeTag, typename TParallelPop, typename TParallelPush>
-void testMPMCQueue(size_t initialCapacity)
+void testMpmcQueue(size_t initialCapacity)
 {
     typedef seqan::ConcurrentQueue<unsigned> TQueue;
 
@@ -271,42 +271,42 @@ void testMPMCQueue(size_t initialCapacity)
 
 SEQAN_DEFINE_TEST(test_parallel_queue_spsc_dynamicsize)
 {
-    testMPMCQueue<seqan::Generous, seqan::Serial, seqan::Serial>(0u);
+    testMpmcQueue<seqan::Generous, seqan::Serial, seqan::Serial>(0u);
 }
 
 SEQAN_DEFINE_TEST(test_parallel_queue_spsc_fixedsize)
 {
-    testMPMCQueue<seqan::Limit, seqan::Serial, seqan::Serial>(30u);
+    testMpmcQueue<seqan::Limit, seqan::Serial, seqan::Serial>(30u);
 }
 
 SEQAN_DEFINE_TEST(test_parallel_queue_spmc_dynamicsize)
 {
-    testMPMCQueue<seqan::Generous, seqan::Parallel, seqan::Serial>(0u);
+    testMpmcQueue<seqan::Generous, seqan::Parallel, seqan::Serial>(0u);
 }
 
 SEQAN_DEFINE_TEST(test_parallel_queue_spmc_fixedsize)
 {
-    testMPMCQueue<seqan::Limit, seqan::Parallel, seqan::Serial>(30u);
+    testMpmcQueue<seqan::Limit, seqan::Parallel, seqan::Serial>(30u);
 }
 
 SEQAN_DEFINE_TEST(test_parallel_queue_mpsc_dynamicsize)
 {
-    testMPMCQueue<seqan::Generous, seqan::Serial, seqan::Parallel>(0u);
+    testMpmcQueue<seqan::Generous, seqan::Serial, seqan::Parallel>(0u);
 }
 
 SEQAN_DEFINE_TEST(test_parallel_queue_mpsc_fixedsize)
 {
-    testMPMCQueue<seqan::Limit, seqan::Serial, seqan::Parallel>(30u);
+    testMpmcQueue<seqan::Limit, seqan::Serial, seqan::Parallel>(30u);
 }
 
 SEQAN_DEFINE_TEST(test_parallel_queue_mpmc_dynamicsize)
 {
-    testMPMCQueue<seqan::Generous, seqan::Parallel, seqan::Parallel>(0u);
+    testMpmcQueue<seqan::Generous, seqan::Parallel, seqan::Parallel>(0u);
 }
 
 SEQAN_DEFINE_TEST(test_parallel_queue_mpmc_fixedsize)
 {
-    testMPMCQueue<seqan::Limit, seqan::Parallel, seqan::Parallel>(30u);
+    testMpmcQueue<seqan::Limit, seqan::Parallel, seqan::Parallel>(30u);
 }
 
 #endif  // TEST_PARALLEL_TEST_PARALLEL_QUEUE_H_

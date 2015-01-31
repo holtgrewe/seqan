@@ -42,7 +42,7 @@ template <
     typename TRazerSMode>
 void _mapSingleReadsToContigWindow(
     TFragmentStore & store,
-    unsigned                                  contigId,                     // ... and its sequence number
+    unsigned                                  contigID,                     // ... and its sequence number
     Pattern<TReadIndex, Swift<TSwiftSpec> > & swiftPattern,
     TPreprocessing & preprocessing,
     TCounts & cnts,
@@ -50,7 +50,7 @@ void _mapSingleReadsToContigWindow(
     TRazerSOptions & options,
     TRazerSMode                       const & mode)
 {
-    _mapSingleReadsToContigWindow(store, store, contigId, swiftPattern, swiftPattern, preprocessing, cnts, orientation, options, mode);
+    _mapSingleReadsToContigWindow(store, store, contigID, swiftPattern, swiftPattern, preprocessing, cnts, orientation, options, mode);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ template <
 void _mapSingleReadsToContigWindow(
     TFragmentStore & mainStore,
     TFragmentStore & blockStore,
-    unsigned                                  contigId,                     // ... and its sequence number
+    unsigned                                  contigID,                     // ... and its sequence number
     Pattern<TReadIndex, Swift<TSwiftSpec> > & swiftPattern,
     TSwiftPatternHandler & swiftPatternHandler,
     TPreprocessing & preprocessing,
@@ -108,15 +108,15 @@ void _mapSingleReadsToContigWindow(
     // output what is done if verbous
     if (options._debugLevel >= 1)
     {
-        std::cerr << std::endl << "Process genome seq #" << contigId;
+        std::cerr << std::endl << "Process genome seq #" << contigID;
         if (orientation == 'F')
             std::cerr << "[fwd]";
         else
             std::cerr << "[rev]";
     }
     // lock contig
-    lockContig(mainStore, contigId);
-    TContigSeq & contigSeq = mainStore.contigStore[contigId].seq;
+    lockContig(mainStore, contigID);
+    TContigSeq & contigSeq = mainStore.contigStore[contigID].seq;
     if (orientation == 'R')
         reverseComplement(contigSeq);
 
@@ -127,7 +127,7 @@ void _mapSingleReadsToContigWindow(
     // initialize verifier
     verifier.onReverseComplement = (orientation == 'R');
     verifier.genomeLength = length(contigSeq);
-    verifier.m.contigId = contigId;
+    verifier.m.contigID = contigID;
 
     // if the pattern can be initialized and there is a non-repeat region in the contig that fits a qgram.
     if (windowFindBegin(swiftFinder, swiftPattern, options.errorRate))
@@ -150,7 +150,7 @@ void _mapSingleReadsToContigWindow(
             // verifiy them
             for (THitStringSize h = 0; h < length(hits); ++h)
             {
-                verifier.m.readId = hits[h].ndlSeqNo;             //array oder jedesmal berechnen
+                verifier.m.readID = hits[h].ndlSeqNo;             //array oder jedesmal berechnen
                 matchVerify(verifier, swiftInfix(hits[h], contigSeq), hits[h].ndlSeqNo, host(host(swiftPattern))[hits[h].ndlSeqNo], mode);
                 ++options.countFiltration;
             }
@@ -177,7 +177,7 @@ void _mapSingleReadsToContigWindow(
 
     }
 
-    if (!unlockAndFreeContig(mainStore, contigId))                              // if the contig is still used
+    if (!unlockAndFreeContig(mainStore, contigID))                              // if the contig is still used
         if (orientation == 'R')
             reverseComplement(contigSeq);
     // we have to restore original orientation

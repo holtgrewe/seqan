@@ -147,8 +147,8 @@ SEQAN_CHECKPOINT
 //printMatch(Fragment<TFragSize,TFragSpec> & f)
 //{
 //	std::cout << "FRAGMENT:" << " f.len = "<< f.len <<std::endl;
-//	std::cout << "f.seqId1 = "<< f.seqId1 << " f.begin1 = " << f.begin1 << std::endl;
-//	std::cout << "f.seqId2 = "<< f.seqId2 << " f.begin2 = " << f.begin2 << std::endl;
+//	std::cout << "f.seqID1 = "<< f.seqID1 << " f.begin1 = " << f.begin1 << std::endl;
+//	std::cout << "f.seqID2 = "<< f.seqID2 << " f.begin2 = " << f.begin2 << std::endl;
 //}
 
 //template<typename TAlign>
@@ -268,7 +268,7 @@ SEQAN_CHECKPOINT
 	//for each sequence look at all cut positions and create nodes between them
 	for(unsigned int seq_i_pos = 0; seq_i_pos < length(seqs); ++seq_i_pos)
 	{
-		TValue seq_i_id = positionToId(stringSet(ali_g), seq_i_pos);
+		TValue seq_i_id = positionToID(stringSet(ali_g), seq_i_pos);
 		TSetIterator it = all_nodes[seq_i_pos].begin();
 		TSetIterator end_it = all_nodes[seq_i_pos].end();
 		TSetIterator next_it = it;
@@ -499,7 +499,7 @@ SEQAN_CHECKPOINT
 //	typedef Pair<unsigned,unsigned,BitPacked<31,1> > TCargo;
 	typedef Pair<unsigned,unsigned,BitPacked<31,1> > TCargo;
 	typedef IntervalAndCargo<int,TCargo> TInterval;
-	typedef Graph<Directed<void,WithoutEdgeId> > TGraph;
+	typedef Graph<Directed<void,WithoutEdgeID> > TGraph;
 	typedef IntervalTreeNode<TInterval> TNode;
 	typedef String<TNode> TPropertyMap;
 	typedef typename std::set<TValue>::iterator TSetIterator;
@@ -512,7 +512,7 @@ SEQAN_CHECKPOINT
 	//weird ID --> good ID map
 	std::map<const void * ,int> seq_map;
 	for(int i = 0; i < (int) numSequences; ++i)
-		seq_map[getObjectId(seq[i])] = i;
+		seq_map[getObjectID(seq[i])] = i;
 	////////////////////////////////////////////////////////////////
 	//build interval trees
 	String<TGraph> gs;
@@ -570,7 +570,7 @@ SEQAN_CHECKPOINT
                    //&& _cutIsValid(all_node_queues,seq_i_pos,node_i,qiter,min_fragment_len,tag))
 //				if(iter == all_nodes[seq_i_pos].end())
 				{
-					TValue seq_i_id = positionToId(seq, seq_i_pos);
+					TValue seq_i_id = positionToID(seq, seq_i_pos);
 					all_nodes[seq_i_pos].insert(node_i);
 					String<TAlignmentPointer> relevant_segments;
 					findIntervalsExcludeTouching(relevant_segments, gs[seq_i_pos],pms[seq_i_pos],node_i);

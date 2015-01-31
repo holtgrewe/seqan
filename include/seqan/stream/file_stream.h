@@ -235,8 +235,8 @@ struct FilePageTable
     typedef Buffer<TValue>                              TBuffer;
     typedef typename Iterator<TBuffer, Standard>::Type  TIterator;
 
-    typedef short int                                   TPageId;
-    typedef String<TPageId>                             TPageDir;
+    typedef short int                                   TPageID;
+    typedef String<TPageID>                             TPageDir;
 
     static const unsigned numPages = 2;                // double-buffering
 

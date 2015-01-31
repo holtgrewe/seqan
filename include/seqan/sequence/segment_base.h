@@ -427,10 +427,10 @@ struct IsLightWeight< Segment<THost, TSpec> > :
 
 template <typename THost, typename TSpec>
 inline void const *
-getObjectId(Segment<THost, TSpec> const & me)
+getObjectID(Segment<THost, TSpec> const & me)
 {
 SEQAN_CHECKPOINT
-    return getObjectId(host(me));
+    return getObjectID(host(me));
 }
 
 // --------------------------------------------------------------------------

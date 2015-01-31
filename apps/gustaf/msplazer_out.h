@@ -70,7 +70,7 @@ write(std::ostream & out,
     // IOREV _doc_ _batchreading_
     SEQAN_CHECKPOINT
     // typedef typename Value<TBreakpointAlloc>::Type TBreakpoint; // Requires Value<SparsePropertyMap> specialisation in msplazer.h
-    typedef typename TBreakpoint::TId TId;
+    typedef typename TBreakpoint::TID TID;
 
     // _writeGraphType(file,g,DotDrawing());
     out << "digraph G {\n";
@@ -92,14 +92,14 @@ write(std::ostream & out,
     bool atEndV = false;
     for (; !atEnd(it); ++it)
     {
-        TId sId;
+        TID sID;
         if (i < length(queryMatches))
         {
             out << *it;
             out << " [label = \"";
             out << "chr: ";
-            _getShortId(sId, queryMatches[i].id);
-            out << sId;
+            _getShortID(sID, queryMatches[i].id);
+            out << sID;
             out << "\\n db: ";
             out << queryMatches[i].begin1 + 1;
             out << "...";
@@ -162,10 +162,10 @@ write(std::ostream & out,
 }
 
 // DotWriting call for read graphs
-template <typename TSequence, typename TId, typename TMSplazerChain>
-void _writeDotfiles(StringSet<QueryMatches<StellarMatch<TSequence, TId> > > & stellarMatches,
+template <typename TSequence, typename TID, typename TMSplazerChain>
+void _writeDotfiles(StringSet<QueryMatches<StellarMatch<TSequence, TID> > > & stellarMatches,
                     StringSet<TSequence> const & queries,
-                    StringSet<TId> const & queryIDs,
+                    StringSet<TID> const & queryIDs,
                     String<TMSplazerChain> & queryChains,
                     MSplazerOptions const & msplazerOptions)
 {
@@ -221,11 +221,11 @@ void _setGffRecordType(GffRecord & record, TBreakpoint & bp)
 template <typename TBreakpoint>
 inline void _fillGffRecordDuplication(GffRecord & record, TBreakpoint & bp, unsigned id)
 {
-    typedef typename TBreakpoint::TId TId;
-    TId sId;
+    typedef typename TBreakpoint::TID TID;
+    TID sID;
     typedef typename TBreakpoint::TPos TPos;
-    _getShortId(sId, bp.startSeqId);
-    record.ref = sId;
+    _getShortID(sID, bp.startSeqID);
+    record.ref = sID;
     record.source = "GUSTAF";
     record.type = "duplication";
     TPos begin, end, target = maxValue<unsigned>();
@@ -263,12 +263,12 @@ inline void _fillGffRecordDuplication(GffRecord & record, TBreakpoint & bp, unsi
     }
     appendValue(record.tagNames, "support");
     appendValue(record.tagValues, toString(bp.support));
-    appendValue(record.tagNames, "supportIds");
+    appendValue(record.tagNames, "supportIDs");
 
     std::stringstream s;
-    for (unsigned i = 0; i < length(bp.supportIds); ++i)
+    for (unsigned i = 0; i < length(bp.supportIDs); ++i)
     {
-        s << bp.supportIds[i];
+        s << bp.supportIDs[i];
         s << ',';
     }
 
@@ -278,11 +278,11 @@ inline void _fillGffRecordDuplication(GffRecord & record, TBreakpoint & bp, unsi
 template <typename TBreakpoint>
 inline void _fillGffRecord(GffRecord & record, TBreakpoint & bp, unsigned id)
 {
-    typedef typename TBreakpoint::TId TId;
-    TId sId;
+    typedef typename TBreakpoint::TID TID;
+    TID sID;
     typedef typename TBreakpoint::TPos TPos;
-    _getShortId(sId, bp.startSeqId);
-    record.ref = sId;
+    _getShortID(sID, bp.startSeqID);
+    record.ref = sID;
     record.source = "GUSTAF";
     _setGffRecordType(record, bp);
 //    record.type = bp.svtype;
@@ -320,8 +320,8 @@ inline void _fillGffRecord(GffRecord & record, TBreakpoint & bp, unsigned id)
     else
     {
         appendValue(record.tagNames, "endChr");
-        _getShortId(sId, bp.endSeqId);
-        appendValue(record.tagValues, sId);
+        _getShortID(sID, bp.endSeqID);
+        appendValue(record.tagValues, sID);
         appendValue(record.tagNames, "endPos");
         appendValue(record.tagValues, toString(bp.endSeqPos));
         appendValue(record.tagNames, "endStrand");
@@ -332,12 +332,12 @@ inline void _fillGffRecord(GffRecord & record, TBreakpoint & bp, unsigned id)
     }
     appendValue(record.tagNames, "support");
     appendValue(record.tagValues, toString(bp.support));
-    appendValue(record.tagNames, "supportIds");
+    appendValue(record.tagNames, "supportIDs");
 
     std::stringstream s;
-    for (unsigned i = 0; i < length(bp.supportIds); ++i)
+    for (unsigned i = 0; i < length(bp.supportIDs); ++i)
     {
-        s << bp.supportIds[i];
+        s << bp.supportIDs[i];
         s << ',';
     }
 
@@ -681,8 +681,8 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
     // 6th: pos. after third split (endSeqPos) ALT: dupMiddlePos - 1
     // Note that the positions have to be adjusted for 0-1 base change, only the record.beginPos is beeing adjusted
     // automatically
-    typedef typename TBreakpoint::TId TId;
-    TId sId;
+    typedef typename TBreakpoint::TID TID;
+    TID sID;
     VcfRecord record;
     // Record values shared by (almost) all entries
     record.rID = id;
@@ -719,10 +719,10 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
     // Compute ALT columns
     if (bp.dupMiddlePos != maxValue<unsigned>())
     {
-        _getShortId(sId, bp.midPosId);
+        _getShortID(sID, bp.midPosID);
         std::stringstream alt1;
         alt1 << "[";
-        alt1 << sId; // alt1 << bp.midPosId;
+        alt1 << sID; // alt1 << bp.midPosID;
         alt1 << ':';
         alt1 << bp.dupMiddlePos + 1; // 1-based adjustment
         alt1 << "[";
@@ -757,7 +757,7 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
     {
         std::stringstream alt1;
         alt1 << "[";
-        alt1 << bp.endSeqId;
+        alt1 << bp.endSeqID;
         alt1 << ':';
         // -1 for position before split, -1 for end position adjustment, +1 for 1-base adjustment
         alt1 << bp.endSeqPos - 1 + 1; // 1-based adjustment, writing explicitely to keep overview
@@ -767,7 +767,7 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
     {
         std::stringstream alt1;
         alt1 << "]";
-        alt1 << bp.endSeqId;
+        alt1 << bp.endSeqID;
         alt1 << ':';
         alt1 << bp.endSeqPos - 1 + 1; // 1-based adjustment
         alt1 << "]";
@@ -806,7 +806,7 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
         {
             std::stringstream alt1;
             alt1 << "]";
-            alt1 << bp.endSeqId;
+            alt1 << bp.endSeqID;
             alt1 << ':';
             alt1 << bp.endSeqPos + 1; // 1-based adjustment
             alt1 << "]";
@@ -815,7 +815,7 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
         {
             std::stringstream alt1;
             alt1 << "[";
-            alt1 << bp.endSeqId;
+            alt1 << bp.endSeqID;
             alt1 << ':';
             alt1 << bp.endSeqPos + 1; // 1-based adjustment
             alt1 << "[";
@@ -843,7 +843,7 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
         // Compute ALT columns
         std::stringstream alt4;
         alt4 << "]";
-        alt4 << sId; // alt1 << bp.midPosId;
+        alt4 << sID; // alt1 << bp.midPosID;
         alt4 << ':';
         if (bp.startSeqPos > 0)
             alt4 << bp.startSeqPos - 1 + 1; // 1-based adjustment
@@ -886,7 +886,7 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
     {
         std::stringstream alt1;
         alt1 << "]";
-        alt1 << bp.startSeqId;
+        alt1 << bp.startSeqID;
         alt1 << ':';
         alt1 << bp.startSeqPos + 1; // 1-based adjustment
         alt1 << "]";
@@ -895,7 +895,7 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
     {
         std::stringstream alt1;
         alt1 << "[";
-        alt1 << bp.startSeqId;
+        alt1 << bp.startSeqID;
         alt1 << ':';
         alt1 << bp.startSeqPos + 1; // 1-based adjustment
         alt1 << "[";
@@ -928,7 +928,7 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
             alt1 << "[";
         else
             alt1 << "]";
-        alt1 << sId; // alt1 << bp.midPosId;
+        alt1 << sID; // alt1 << bp.midPosID;
         alt1 << ':';
         alt1 << bp.dupMiddlePos - 1 + 1; // 1-based adjustment
         if (bp.endSeqStrand != bp.midPosStrand)
@@ -966,11 +966,11 @@ inline bool _writeVcfTranslocation(VcfFileOut & vcfOut, TBreakpoint & bp, TSeque
     return 0;
 }
 
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 void _fillVcfHeader(seqan::VcfHeader & vcfHeader,
                     seqan::VcfFileOut & vcfFileOut,
                     StringSet<TSequence> & databases,
-                    StringSet<TId> & databaseIDs,
+                    StringSet<TID> & databaseIDs,
                     MSplazerOptions const & msplOpt)
 {
     // Header record entries
@@ -1021,13 +1021,13 @@ void _fillVcfHeader(seqan::VcfHeader & vcfHeader,
     }
 }
 
-template <typename TId>
-__int32 _getrID(StringSet<TId> & databaseIDs, TId dbID)
+template <typename TID>
+__int32 _getrID(StringSet<TID> & databaseIDs, TID dbID)
 {
     for (unsigned i = 0; i < length(databaseIDs); ++i)
     {
-        TId sID;
-	_getShortId(sID, databaseIDs[i]);
+        TID sID;
+	_getShortID(sID, databaseIDs[i]);
         if (sID == dbID)
             return static_cast<__int32>(i);
     }
@@ -1035,10 +1035,10 @@ __int32 _getrID(StringSet<TId> & databaseIDs, TId dbID)
 }
 
 // Breakpoint writing call
-template <typename TBreakpoint, typename TSequence, typename TId>
+template <typename TBreakpoint, typename TSequence, typename TID>
 bool _writeGlobalBreakpoints(String<TBreakpoint> & globalBreakpoints,
                              StringSet<TSequence> & databases,
-                             StringSet<TId> & databaseIDs,
+                             StringSet<TID> & databaseIDs,
                              MSplazerOptions const & msplazerOptions,
                              Vcf /*tag*/)
 {
@@ -1078,7 +1078,7 @@ bool _writeGlobalBreakpoints(String<TBreakpoint> & globalBreakpoints,
 
             if (bp.svtype == TBreakpoint::DISPDUPLICATION && bp.translSuppStartPos && bp.translSuppEndPos)
                 bp.svtype = TBreakpoint::TRANSLOCATION;
-            id = _getrID(databaseIDs, bp.startSeqId);
+            id = _getrID(databaseIDs, bp.startSeqID);
             if (bp.svtype != 6 && bp.svtype != 7) // 6=inter-chr-translocation; 7=translocation
             {
                 // Fill and write record
@@ -1097,7 +1097,7 @@ bool _writeGlobalBreakpoints(String<TBreakpoint> & globalBreakpoints,
             {
                 // extra write function because we have to write 6 records here instead of 1
                 __int32 id2 = maxValue<int>();
-                id2 = _getrID(databaseIDs, bp.endSeqId);
+                id2 = _getrID(databaseIDs, bp.endSeqID);
                 if (_writeVcfTranslocation(vcfOut, bp, databases[id], databases[id2], id, id2, i))
                         std::cerr << "Error while writing breakpoint translocation vcf record!" << std::endl;
 
@@ -1136,9 +1136,9 @@ _writeParams(TOptions & options)
 // ////////////////////
 // SAM Output
 // TODO(ktrappe): Use SamBamIO, see tutorial
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 void _writeSamFile(CharString outfile,
-                   StringSet<QueryMatches<StellarMatch<TSequence, TId> > > & stellarMatches,
+                   StringSet<QueryMatches<StellarMatch<TSequence, TID> > > & stellarMatches,
                    StringSet<TSequence> & databases,
                    StringSet<CharString> databaseIDs,
                    StringSet<CharString> queryIDs)
@@ -1154,7 +1154,7 @@ void _writeSamFile(CharString outfile,
     else
     {
 
-        typedef StellarMatch<TSequence, TId> TMatch;
+        typedef StellarMatch<TSequence, TID> TMatch;
         typedef typename Iterator<String<TMatch> >::Type TIterator;
         typedef typename Row<typename TMatch::TAlign>::Type TMatchRow;
         typedef typename Size<TMatchRow>::Type TRowSize;

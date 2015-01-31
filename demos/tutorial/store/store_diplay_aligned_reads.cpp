@@ -20,7 +20,7 @@ int main()
 //![ascii]
 
 //![svg]
-    SVGFile svg("layout.svg");
+    SvgFile svg("layout.svg");
     printAlignment(svg, layout, store, 1, 0, 150, 0, 36);
 
     return 0;

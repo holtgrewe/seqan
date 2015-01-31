@@ -229,10 +229,10 @@ _computeEValue(TSize score, TSize len0, TSize len1) {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Writes rows of a StellarMatch in gff format to a file.
-template<typename TId, typename TSize, typename TRow, typename TFile>
+template<typename TID, typename TSize, typename TRow, typename TFile>
 void
-_writeMatchGff(TId const & databaseID,
-              TId const & patternID,
+_writeMatchGff(TID const & databaseID,
+              TID const & patternID,
               bool const databaseStrand,
 			  TSize lengthAdjustment,
               TRow const & row0,
@@ -241,7 +241,7 @@ _writeMatchGff(TId const & databaseID,
 //IOREV _recordreading_ unclear how this is related to GFF support from store_io
     typedef typename Value<typename Source<TRow>::Type>::Type TAlphabet;
 
-    for (typename Position<TId>::Type i = 0; i < length(databaseID) && value(databaseID, i) > 32; ++i) {
+    for (typename Position<TID>::Type i = 0; i < length(databaseID) && value(databaseID, i) > 32; ++i) {
         file << value(databaseID, i);
     }
 
@@ -261,7 +261,7 @@ _writeMatchGff(TId const & databaseID,
     file << "\t" << (databaseStrand ? '+' : '-');
 
     file << "\t.\t";
-    for (typename Position<TId>::Type i = 0; i < length(patternID) && value(patternID, i) > 32; ++i) {
+    for (typename Position<TID>::Type i = 0; i < length(patternID) && value(patternID, i) > 32; ++i) {
         file << value(patternID, i);
     }
 
@@ -282,10 +282,10 @@ _writeMatchGff(TId const & databaseID,
 
 ///////////////////////////////////////////////////////////////////////////////
 // Writes rows of a StellarMatch in human readable format to file.
-template<typename TId, typename TSize, typename TRow, typename TFile>
+template<typename TID, typename TSize, typename TRow, typename TFile>
 void
-_writeMatch(TId const & databaseID,
-            TId const & patternID,
+_writeMatch(TID const & databaseID,
+            TID const & patternID,
             bool const databaseStrand,
 			TSize lengthAdjustment,
             TRow const & row0,
@@ -338,16 +338,16 @@ _writeMatch(TId const & databaseID,
 ///////////////////////////////////////////////////////////////////////////////
 // Calls _writeMatchGff for each match in StringSet of String of matches.
 //   = Writes matches in gff format to a file.
-template<typename TInfix, typename TQueryId, typename TIds, typename TDatabases, typename TMode, typename TFile,
+template<typename TInfix, typename TQueryID, typename TIDs, typename TDatabases, typename TMode, typename TFile,
          typename TString>
 bool
-_outputMatches(StringSet<QueryMatches<StellarMatch<TInfix, TQueryId> > > & matches,
-			   TIds const & ids,
+_outputMatches(StringSet<QueryMatches<StellarMatch<TInfix, TQueryID> > > & matches,
+			   TIDs const & ids,
 			   TDatabases & databases,
 			   TMode verbose,
 			   TFile & fileName,
 			   TString & format) {
-	typedef StellarMatch<TInfix, TQueryId> TMatch;
+	typedef StellarMatch<TInfix, TQueryID> TMatch;
 	typedef typename Size<typename TMatch::TAlign>::Type TSize;
 	typedef typename Iterator<String<TMatch> >::Type TIterator;
     typedef typename Value<TInfix>::Type TAlphabet;
@@ -434,18 +434,18 @@ _outputMatches(StringSet<QueryMatches<StellarMatch<TInfix, TQueryId> > > & match
 // Calls _writeMatchGff for each match in StringSet of String of matches.
 //   = Writes matches in gff format to a file.
 // Writes disabled query sequences to disabledFile.
-template<typename TInfix, typename TQueryId, typename TQueries, typename TDatabases, typename TIds,
+template<typename TInfix, typename TQueryID, typename TQueries, typename TDatabases, typename TIDs,
          typename TMode, typename TFile, typename TString>
 bool 
-_outputMatches(StringSet<QueryMatches<StellarMatch<TInfix, TQueryId> > > & matches, 
+_outputMatches(StringSet<QueryMatches<StellarMatch<TInfix, TQueryID> > > & matches, 
 			   TQueries & queries,
-			   TIds const & ids,
+			   TIDs const & ids,
 			   TDatabases & databases,
 			   TMode verbose,
 			   TFile & fileName,
 			   TString & format,
 			   TString & disabledFile) {
-	typedef StellarMatch<TInfix, TQueryId> TMatch;
+	typedef StellarMatch<TInfix, TQueryID> TMatch;
 	typedef typename Size<typename TMatch::TAlign>::Type TSize;
 	typedef typename Iterator<String<TMatch> >::Type TIterator;
     typedef typename Value<TInfix>::Type TAlphabet;

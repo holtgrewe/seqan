@@ -147,7 +147,7 @@ void testBamIOBamFileReadRecords(char const * pathFragment)
     SEQAN_ASSERT_EQ(alignments[0].cigar[1].operation, 'I');
     SEQAN_ASSERT_EQ(alignments[0].cigar[2].count, 4u);
     SEQAN_ASSERT_EQ(alignments[0].cigar[2].operation, 'M');
-    SEQAN_ASSERT_EQ(alignments[0].rNextId, 0);
+    SEQAN_ASSERT_EQ(alignments[0].rNextID, 0);
     SEQAN_ASSERT_EQ(alignments[0].pNext, 30);
     SEQAN_ASSERT_EQ(alignments[0].tLen, 40);
     SEQAN_ASSERT_EQ(alignments[0].seq, "AAAAAAAAAA");
@@ -166,7 +166,7 @@ void testBamIOBamFileReadRecords(char const * pathFragment)
     SEQAN_ASSERT_EQ(alignments[1].cigar[1].operation, 'I');
     SEQAN_ASSERT_EQ(alignments[1].cigar[2].count, 4u);
     SEQAN_ASSERT_EQ(alignments[1].cigar[2].operation, 'M');
-    SEQAN_ASSERT_EQ(alignments[1].rNextId, 0);
+    SEQAN_ASSERT_EQ(alignments[1].rNextID, 0);
     SEQAN_ASSERT_EQ(alignments[1].pNext, 30);
     SEQAN_ASSERT_EQ(alignments[1].tLen, 40);
     SEQAN_ASSERT_EQ(alignments[1].seq, "AAAAAAAAAA");
@@ -185,8 +185,8 @@ void testBamIOBamFileReadRecords(char const * pathFragment)
     SEQAN_ASSERT_EQ(alignments[2].cigar[1].operation, 'I');
     SEQAN_ASSERT_EQ(alignments[2].cigar[2].count, 4u);
     SEQAN_ASSERT_EQ(alignments[2].cigar[2].operation, 'M');
-    SEQAN_ASSERT_EQ(alignments[2].rNextId, -1);
-//    SEQAN_ASSERT_EQ(alignments[2].rNextId, alignments[2].INVALID_REFID);
+    SEQAN_ASSERT_EQ(alignments[2].rNextID, -1);
+//    SEQAN_ASSERT_EQ(alignments[2].rNextID, alignments[2].INVALID_REFID);
     SEQAN_ASSERT_EQ(alignments[2].pNext, -1);
 //    SEQAN_ASSERT_EQ(alignments[2].pNext, alignments[2].INVALID_POS);
     SEQAN_ASSERT_EQ(alignments[2].tLen, 0);
@@ -220,8 +220,8 @@ SEQAN_DEFINE_TEST(test_bam_io_bam_file_bam_read_ex1)
 
     SEQAN_ASSERT_EQ(contigNames(context(bamIO))[0], "seq1");
     SEQAN_ASSERT_EQ(contigNames(context(bamIO))[1], "seq2");
-    SEQAN_ASSERT_EQ(context(bamIO).translateFile2GlobalRefId[0], 0u);
-    SEQAN_ASSERT_EQ(context(bamIO).translateFile2GlobalRefId[1], 1u);
+    SEQAN_ASSERT_EQ(context(bamIO).translateFile2GlobalRefID[0], 0u);
+    SEQAN_ASSERT_EQ(context(bamIO).translateFile2GlobalRefID[1], 1u);
 
     seqan::BamAlignmentRecord record;
     seqan::String<int> counts;
@@ -256,7 +256,7 @@ void testBamIOBamFileWriteHeader(char const * pathFragmentExpected)
     seqan::BamFileOut bamIO(toCString(tmpPath));
 
     seqan::BamHeader header;
-    assignValueById(contigLengths(context(bamIO)), nameToId(contigNamesCache(context(bamIO)), "REFERENCE"), 10000);
+    assignValueByID(contigLengths(context(bamIO)), nameToID(contigNamesCache(context(bamIO)), "REFERENCE"), 10000);
     resize(header, 2);
     resize(header[0].tags, 2);
     header[0].type = seqan::BAM_HEADER_FIRST;
@@ -311,7 +311,7 @@ void testBamIOBamFileWriteRecords(char const * pathFragmentExpected)
     seqan::BamFileOut bamIO(toCString(tmpPath));
 
     seqan::BamHeader header;
-    assignValueById(contigLengths(context(bamIO)), nameToId(contigNamesCache(context(bamIO)), "REFERENCE"), 10000);
+    assignValueByID(contigLengths(context(bamIO)), nameToID(contigNamesCache(context(bamIO)), "REFERENCE"), 10000);
     resize(header, 2);
     resize(header[0].tags, 2);
     header[0].type = seqan::BAM_HEADER_FIRST;
@@ -342,7 +342,7 @@ void testBamIOBamFileWriteRecords(char const * pathFragmentExpected)
     record.cigar[1].operation = 'I';
     record.cigar[2].count = 4;
     record.cigar[2].operation = 'M';
-    record.rNextId = 0;
+    record.rNextID = 0;
     record.pNext = 30;
     record.tLen = 40;
     record.seq = "AAAAAAAAAA";
@@ -361,7 +361,7 @@ void testBamIOBamFileWriteRecords(char const * pathFragmentExpected)
     record.cigar[1].operation = 'I';
     record.cigar[2].count = 4;
     record.cigar[2].operation = 'M';
-    record.rNextId = 0;
+    record.rNextID = 0;
     record.pNext = 30;
     record.tLen = 40;
     record.seq = "AAAAAAAAAA";
@@ -380,7 +380,7 @@ void testBamIOBamFileWriteRecords(char const * pathFragmentExpected)
     record.cigar[1].operation = 'I';
     record.cigar[2].count = 4;
     record.cigar[2].operation = 'M';
-    record.rNextId = seqan::BamAlignmentRecord::INVALID_REFID;
+    record.rNextID = seqan::BamAlignmentRecord::INVALID_REFID;
     record.pNext = seqan::BamAlignmentRecord::INVALID_POS;
     record.tLen = seqan::BamAlignmentRecord::INVALID_LEN;
     record.seq = "AAAAAAAAAA";

@@ -56,7 +56,7 @@ namespace SEQAN_NAMESPACE_MAIN
  *
  * @tparam TAlphabet The alphabet of the HMM.  Default: @link Dna @endlink.
  * @tparam TCargo    The edge cargos.  Default: <tt>void</tt>.
- * @tparam TSpec     The specialization type.  Default: <tt>Default</tt>.  Use <tt>WithoutEdgeIds</tt> here to omit
+ * @tparam TSpec     The specialization type.  Default: <tt>Default</tt>.  Use <tt>WithoutEdgeIDs</tt> here to omit
  *                   edge ids.  NB: if edges do not store ids then external property maps do not work.
  */
 
@@ -120,23 +120,23 @@ _getVertexString(Graph<Hmm<TAlphabet, TCargo, TSpec> > const& g) {
 /////////////////////////////////////////////////////////////////////////////
 
 template<typename TAlphabet, typename TCargo, typename TSpec>
-inline typename VertexIdHandler<Graph<Hmm<TAlphabet, TCargo, TSpec> > >::Type&
-_getVertexIdManager(Graph<Hmm<TAlphabet, TCargo, TSpec> > const& g) {
+inline typename VertexIDHandler<Graph<Hmm<TAlphabet, TCargo, TSpec> > >::Type&
+_getVertexIDManager(Graph<Hmm<TAlphabet, TCargo, TSpec> > const& g) {
 	SEQAN_CHECKPOINT
 	typedef Graph<Hmm<TAlphabet, TCargo, TSpec> > TGraph;
-	typedef typename VertexIdHandler<TGraph>::Type TVertexIdManager;
-	return const_cast<TVertexIdManager&>(g.data_model.data_id_managerV);
+	typedef typename VertexIDHandler<TGraph>::Type TVertexIDManager;
+	return const_cast<TVertexIDManager&>(g.data_model.data_id_managerV);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TAlphabet, typename TCargo, typename TSpec>
-inline typename EdgeIdHandler<Graph<Hmm<TAlphabet, TCargo, TSpec> > >::Type&
-_getEdgeIdManager(Graph<Hmm<TAlphabet, TCargo, TSpec> > const& g) {
+inline typename EdgeIDHandler<Graph<Hmm<TAlphabet, TCargo, TSpec> > >::Type&
+_getEdgeIDManager(Graph<Hmm<TAlphabet, TCargo, TSpec> > const& g) {
 	SEQAN_CHECKPOINT
 	typedef Graph<Hmm<TAlphabet, TCargo, TSpec> > TGraph;
-	typedef typename EdgeIdHandler<TGraph>::Type TEdgeIdManager;
-	return const_cast<TEdgeIdManager&>(g.data_model.data_id_managerE);
+	typedef typename EdgeIDHandler<TGraph>::Type TEdgeIDManager;
+	return const_cast<TEdgeIDManager&>(g.data_model.data_id_managerE);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -532,7 +532,7 @@ write(TFile & target,
 	TIterConst itEnd = end(_getVertexString(g), Standard());
 	bool first = true;
 	for(TSize pos = 0;it!=itEnd;goNext(it), ++pos) {
-		if (!idInUse(_getVertexIdManager(g), pos)) continue;
+		if (!idInUse(_getVertexIDManager(g), pos)) continue;
 		if (!first) writeValue(target, ',');
 		else first = false;
 		appendNumber(target, (int)pos);	
@@ -554,7 +554,7 @@ write(TFile & target,
 	itEnd = end(_getVertexString(g));
 	it = begin(_getVertexString(g));
 	for(TSize pos = 0;it!=itEnd;goNext(it), ++pos) {
-		if (!idInUse(_getVertexIdManager(g), pos)) continue;
+		if (!idInUse(_getVertexIDManager(g), pos)) continue;
 		TEdgeStump* current = getValue(it);
 		appendNumber(target, (int)pos);
 		write(target, " -> ");
@@ -578,7 +578,7 @@ write(TFile & target,
 	it = begin(_getVertexString(g), Standard());	
 	first = true;
 	for(TSize pos = 0;it!=itEnd;++it, ++pos) {
-		if (!idInUse(_getVertexIdManager(g), pos)) continue;
+		if (!idInUse(_getVertexIDManager(g), pos)) continue;
 		if (isSilent(g, pos)) continue;
 		if (!first) writeValue(target, '\n');
 		else first = false;
@@ -620,7 +620,7 @@ assignBeginState(Graph<Hmm<TAlphabet, TCargo, TSpec> >& g,
 				 TVertexDescriptor const vertex)
 {
 	SEQAN_CHECKPOINT;
-	SEQAN_ASSERT(idInUse(_getVertexIdManager(g), vertex));
+	SEQAN_ASSERT(idInUse(_getVertexIDManager(g), vertex));
 
 	g.data_begin = vertex;
 	g.data_silent[vertex] = true;
@@ -645,7 +645,7 @@ assignEndState(Graph<Hmm<TAlphabet, TCargo, TSpec> >& g,
 			   TVertexDescriptor const vertex)
 {
 	SEQAN_CHECKPOINT
-	SEQAN_ASSERT(idInUse(_getVertexIdManager(g), vertex));
+	SEQAN_ASSERT(idInUse(_getVertexIDManager(g), vertex));
 
 	g.data_end = vertex;
 	g.data_silent[vertex] = true;
@@ -956,7 +956,7 @@ assignSilentStatus(Graph<Hmm<TAlphabet, TCargo, TSpec> >& g,
 				   bool const silent)
 {
 	SEQAN_CHECKPOINT
-	SEQAN_ASSERT(idInUse(_getVertexIdManager(g), vertex));
+	SEQAN_ASSERT(idInUse(_getVertexIDManager(g), vertex));
 	g.data_silent[vertex] = silent;
 }
 

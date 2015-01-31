@@ -90,10 +90,10 @@ SEQAN_BEGIN_TESTSUITE(Sequence tests)
     SEQAN_CALL_TEST(StringSet_Owner_Default);
     SEQAN_CALL_TEST(StringSet_Concat_Owner_Default);
     SEQAN_CALL_TEST(StringSet_Concat_Owner_ConcatDirect);
-    SEQAN_CALL_TEST(StringSet_Id_Dependent_Tight);
-    SEQAN_CALL_TEST(StringSet_Id_Dependent_Generous);
-    SEQAN_CALL_TEST(StringSetIdHolder_Char_Dependent_Tight);
-    SEQAN_CALL_TEST(StringSetIdHolder_Char_Dependent_Generous);
+    SEQAN_CALL_TEST(StringSet_ID_Dependent_Tight);
+    SEQAN_CALL_TEST(StringSet_ID_Dependent_Generous);
+    SEQAN_CALL_TEST(StringSetIDHolder_Char_Dependent_Tight);
+    SEQAN_CALL_TEST(StringSetIDHolder_Char_Dependent_Generous);
 
 //	debug::verifyCheckpoints("include/seqan/sequence/sequence_multiple.h");
 

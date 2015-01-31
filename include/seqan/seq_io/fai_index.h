@@ -177,14 +177,14 @@ inline void clear(FaiIndex & index)
 }
 
 // ----------------------------------------------------------------------------
-// Function getIdByName()
+// Function getIDByName()
 // ----------------------------------------------------------------------------
 
 /*!
- * @fn FaiIndex#getIdByName
+ * @fn FaiIndex#getIDByName
  * @brief Return reference ID (numeric index in the file) of a sequence in a FAI file.
  *
- * @signature bool getIdByName(rID, faiIndex, name);
+ * @signature bool getIDByName(rID, faiIndex, name);
  *
  * @param[in]  faiIndex The FaiIndex to query.
  * @param[in]  name     The name of the sequence to look the id up for.  Type: @link ContainerConcept @endlink.
@@ -193,10 +193,10 @@ inline void clear(FaiIndex & index)
  * @return bool <tt>true</tt> if a sequence with the given name is known in the index, <tt>false</tt> otherwise.
  */
 
-template <typename TName, typename TId>
-inline bool getIdByName(TId & rID, FaiIndex const & index, TName const & name)
+template <typename TName, typename TID>
+inline bool getIDByName(TID & rID, FaiIndex const & index, TName const & name)
 {
-    return getIdByName(rID, index.seqNameStoreCache, name);
+    return getIDByName(rID, index.seqNameStoreCache, name);
 }
 
 // ----------------------------------------------------------------------------
@@ -215,16 +215,16 @@ inline bool getIdByName(TId & rID, FaiIndex const & index, TName const & name)
  * @return __uint64 The length of the sequence with index rID in faiIndex.
  */
 
-template <typename TSeqId>
-inline __uint64 sequenceLength(FaiIndex const & index, TSeqId rID)
+template <typename TSeqID>
+inline __uint64 sequenceLength(FaiIndex const & index, TSeqID rID)
 {
     return index.indexEntryStore[rID].sequenceLength;
 }
 
 // TODO(holtgrew): Wrapper and template only here because sequenceLength in string_set_base.h is weird.
 
-template <typename TSeqId>
-inline __uint64 sequenceLength(FaiIndex & index, TSeqId rID)
+template <typename TSeqID>
+inline __uint64 sequenceLength(FaiIndex & index, TSeqID rID)
 {
     return index.indexEntryStore[rID].sequenceLength;
 }
@@ -289,10 +289,10 @@ inline __uint64 numSeqs(FaiIndex const & index)
  * @param[in]  region   The @link GenomicRegion @endlink to read.
  */
 
-template <typename TValue, typename TSpec, typename TSeqId, typename TBeginPos, typename TEndPos>
+template <typename TValue, typename TSpec, typename TSeqID, typename TBeginPos, typename TEndPos>
 inline void readRegion(String<TValue, TSpec> & str,
                        FaiIndex const & index,
-                       TSeqId rID,
+                       TSeqID rID,
                        TBeginPos beginPos,
                        TEndPos endPos)
 {
@@ -365,7 +365,7 @@ inline bool readRegion(String<TValue, TSpec> & str,
 {
     int rID = region.rID;
     if (rID == GenomicRegion::INVALID_ID)
-        if (!getIdByName(rID, index, region.seqName))
+        if (!getIDByName(rID, index, region.seqName))
             return false;  // Sequence with this name could not be found.
 
     int beginPos = (region.beginPos != GenomicRegion::INVALID_POS)? region.beginPos : 0;

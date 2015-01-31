@@ -46,10 +46,10 @@ SEQAN_DEFINE_TEST(Sequence_Interface)
 	DummyClass e;
 
     void* const nullPtr = 0;
-	SEQAN_ASSERT_NEQ(getObjectId(c), getObjectId(e));
-	SEQAN_ASSERT_NEQ(getObjectId(d), getObjectId(e));
-	SEQAN_ASSERT_NEQ(getObjectId(c), nullPtr);
-	SEQAN_ASSERT_NEQ(getObjectId(d), nullPtr);
+	SEQAN_ASSERT_NEQ(getObjectID(c), getObjectID(e));
+	SEQAN_ASSERT_NEQ(getObjectID(d), getObjectID(e));
+	SEQAN_ASSERT_NEQ(getObjectID(c), nullPtr);
+	SEQAN_ASSERT_NEQ(getObjectID(d), nullPtr);
 
 	SEQAN_ASSERT_EQ(begin(c, Standard()), & c);		//begin
 	SEQAN_ASSERT_EQ(begin(d, Standard()), & d);
@@ -734,14 +734,14 @@ SEQAN_DEFINE_TEST(String_CStyle)
 
 	str2 = strac;
 	SEQAN_ASSERT_EQ(str2, strac);
-	SEQAN_ASSERT_NEQ(getObjectId(str2), getObjectId(strac));
+	SEQAN_ASSERT_NEQ(getObjectID(str2), getObjectID(strac));
 
 	clear(str2);
 	SEQAN_ASSERT_EQ(length(str2), 0u);
 
 	assign(str2, stra);
 	SEQAN_ASSERT_EQ(str2, stra);
-	SEQAN_ASSERT_EQ(getObjectId(str2), getObjectId(stra));
+	SEQAN_ASSERT_EQ(getObjectID(str2), getObjectID(stra));
 	SEQAN_ASSERT_EQ(str2, toCString(stra));
 
 //  weese: Is there a reason why CStyle strings don't support append?
@@ -750,12 +750,12 @@ SEQAN_DEFINE_TEST(String_CStyle)
 
 	str2 = strac;
 	SEQAN_ASSERT_EQ(str2, strac);
-	SEQAN_ASSERT_NEQ(getObjectId(str2), getObjectId(strac));
+	SEQAN_ASSERT_NEQ(getObjectID(str2), getObjectID(strac));
 
 	String<Dna> str_dna("acgt");
 	str2 = str_dna;
 	SEQAN_ASSERT_EQ(str2, str_dna);
-	SEQAN_ASSERT_NEQ(getObjectId(str2), getObjectId(strac));
+	SEQAN_ASSERT_NEQ(getObjectID(str2), getObjectID(strac));
 
 	String<Dna, CStyle> str9(str_dna);
 	SEQAN_ASSERT_EQ(str2, str_dna);
@@ -763,11 +763,11 @@ SEQAN_DEFINE_TEST(String_CStyle)
 	char * strp = (char *) "this is a long array of chars";
 	create(str2, strp);
 	SEQAN_ASSERT_EQ(str2, strp);
-	SEQAN_ASSERT_NEQ(getObjectId(str2), getObjectId(strp));
+	SEQAN_ASSERT_NEQ(getObjectID(str2), getObjectID(strp));
 
 	assign(str2, strp);
 	SEQAN_ASSERT_EQ(str2, strp);
-	SEQAN_ASSERT_EQ(getObjectId(str2), getObjectId(strp));
+	SEQAN_ASSERT_EQ(getObjectID(str2), getObjectID(strp));
 
 	str2 = "hello";
 	String<char, CStyle > str10;
@@ -788,7 +788,7 @@ SEQAN_DEFINE_TEST(Segment)
 	String<char> str_1 = "this is a string";
 	setHost(infix_1, str_1);
 	SEQAN_ASSERT_EQ(length(infix_1), 0u);
-	SEQAN_ASSERT_EQ(getObjectId(infix_1), getObjectId(str_1));
+	SEQAN_ASSERT_EQ(getObjectID(infix_1), getObjectID(str_1));
 
 	setEnd(infix_1, end(str_1));
 	SEQAN_ASSERT_EQ(infix_1, str_1);
@@ -800,7 +800,7 @@ SEQAN_DEFINE_TEST(Segment)
 	Infix<String<char> >::Type infix_2(infix_1);
 	SEQAN_ASSERT_EQ(infix_2, infix(str_1, 0, 9));
 	SEQAN_ASSERT_EQ(infix_2, infix_1);
-	SEQAN_ASSERT_EQ(getObjectId(infix_1), getObjectId(infix_2));
+	SEQAN_ASSERT_EQ(getObjectID(infix_1), getObjectID(infix_2));
 
 	setBeginPosition(infix_2, 5);
 	SEQAN_ASSERT_EQ(infix_2, "is a");
@@ -810,7 +810,7 @@ SEQAN_DEFINE_TEST(Segment)
 
 	Infix<String<char> >::Type infix_3(str_1);
 	SEQAN_ASSERT_EQ(infix_3, str_1);
-	SEQAN_ASSERT_EQ(getObjectId(infix_3), getObjectId(str_1));
+	SEQAN_ASSERT_EQ(getObjectID(infix_3), getObjectID(str_1));
 
 	Infix<String<char> >::Type infix_4(str_1, 5, 9);
 	SEQAN_ASSERT_EQ(infix_4, "is a");
@@ -869,11 +869,11 @@ SEQAN_DEFINE_TEST(Segment)
 	Suffix<String<char> >::Type suffix_1;
 	setHost(suffix_1, str_1);
 	SEQAN_ASSERT_EQ(length(suffix_1), length(str_1));
-	SEQAN_ASSERT_EQ(getObjectId(suffix_1), getObjectId(str_1));
+	SEQAN_ASSERT_EQ(getObjectID(suffix_1), getObjectID(str_1));
 
 	Suffix<String<char> >::Type suffix_2(suffix_1);
 	SEQAN_ASSERT_EQ(suffix_2, suffix_1);
-	SEQAN_ASSERT_EQ(getObjectId(suffix_1), getObjectId(suffix_2));
+	SEQAN_ASSERT_EQ(getObjectID(suffix_1), getObjectID(suffix_2));
 
 	setBeginPosition(suffix_2, 5);
 	SEQAN_ASSERT_EQ(suffix_2, "is a string");
@@ -883,7 +883,7 @@ SEQAN_DEFINE_TEST(Segment)
 
 	Suffix<String<char> >::Type suffix_3(str_1);
 	SEQAN_ASSERT_EQ(suffix_3, str_1);
-	SEQAN_ASSERT_EQ(getObjectId(suffix_3), getObjectId(str_1));
+	SEQAN_ASSERT_EQ(getObjectID(suffix_3), getObjectID(str_1));
 
 	Suffix<String<char> >::Type suffix_4(str_1, 5);
 	SEQAN_ASSERT_EQ(suffix_4, "is a string");

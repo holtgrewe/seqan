@@ -350,8 +350,8 @@ bandedChainAlignment(Graph<Alignment<TStringSet, TCargo, TGraphSpec> > & alignme
     if (empty(traceSet))
         return score;
 
-    _adaptTraceSegmentsTo(alignmentGraph, positionToId(stringSet(alignmentGraph), 0),
-                          positionToId(stringSet(alignmentGraph), 1), value(traceSet, 0));
+    _adaptTraceSegmentsTo(alignmentGraph, positionToID(stringSet(alignmentGraph), 0),
+                          positionToID(stringSet(alignmentGraph), 1), value(traceSet, 0));
     return score;
 }
 
@@ -421,7 +421,7 @@ bandedChainAlignment(String<Fragment<TSize, TFragmentSpec>, TStringSpec> & fragm
     if (empty(traceSet))
         return score;
 
-    _adaptTraceSegmentsTo(fragmentString, positionToId(strings, 0), positionToId(strings, 1), value(traceSet, 0));
+    _adaptTraceSegmentsTo(fragmentString, positionToID(strings, 0), positionToID(strings, 1), value(traceSet, 0));
     return score;
 }
 

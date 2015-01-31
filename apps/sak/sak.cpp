@@ -225,13 +225,13 @@ parseArgs(SakOptions & options,
 
     if (isSet(parser, "sequence"))
     {
-        std::vector<std::string> sequenceIds = getOptionValues(parser, "sequence");
-        for (unsigned i = 0; i < seqan::length(sequenceIds); ++i)
+        std::vector<std::string> sequenceIDs = getOptionValues(parser, "sequence");
+        for (unsigned i = 0; i < seqan::length(sequenceIDs); ++i)
         {
             unsigned idx = 0;
-            if (!seqan::lexicalCast(idx, sequenceIds[i]))
+            if (!seqan::lexicalCast(idx, sequenceIDs[i]))
             {
-                std::cerr << "ERROR: Invalid sequence index " << sequenceIds[i] << "\n";
+                std::cerr << "ERROR: Invalid sequence index " << sequenceIDs[i] << "\n";
                 return seqan::ArgumentParser::PARSE_ERROR;
             }
             appendValue(options.seqIndices, idx);

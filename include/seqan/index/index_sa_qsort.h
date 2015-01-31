@@ -38,7 +38,7 @@
 namespace SEQAN_NAMESPACE_MAIN
 {
 
-	struct SAQSort {};
+	struct SaqSort {};
 
 	// compare two suffices of a given text
     template < typename TSAValue, typename TText >
@@ -157,7 +157,7 @@ namespace SEQAN_NAMESPACE_MAIN
     inline void createSuffixArray(
 		TSA &SA,
 		TText const &s,
-		SAQSort const &)
+		SaqSort const &)
 	{
 	SEQAN_CHECKPOINT
 		typedef typename Size<TSA>::Type TSize;
@@ -182,7 +182,7 @@ namespace SEQAN_NAMESPACE_MAIN
     inline void createSuffixArray(
 		TSA &SA,
 		StringSet< TString, TSSetSpec > const &s,
-		SAQSort const &)
+		SaqSort const &)
 	{
 	SEQAN_CHECKPOINT
         typedef StringSet< TString, TSSetSpec > TText;
@@ -208,7 +208,7 @@ namespace SEQAN_NAMESPACE_MAIN
     //////////////////////////////////////////////////////////////////////////////
     // suffix quicksort pipe
     template < typename TInput >
-    struct Pipe< TInput, SAQSort >
+    struct Pipe< TInput, SaqSort >
     {
 		typedef typename Value<TInput>::Type	TValue;
 		typedef typename SAValue<TInput>::Type	TSAValue;
@@ -227,7 +227,7 @@ namespace SEQAN_NAMESPACE_MAIN
 			text << _textIn;
 
 			resize(sa, length(_textIn), Exact());
-			createSuffixArray(sa, text, SAQSort());
+			createSuffixArray(sa, text, SaqSort());
 		}
 
 		inline typename Value<TSource>::Type const & operator*() {

@@ -104,7 +104,7 @@ SEQAN_DEFINE_TEST(testIndexModifiedStringViewFM)
 SEQAN_DEFINE_TEST(testIssue519)
 {
     // Originally from Sascha on Trac
-    // Bug in SAQSort: For StringSets, the sorting method gives a wrong order.
+    // Bug in SaqSort: For StringSets, the sorting method gives a wrong order.
     CharString text = "bananamama";
     CharString text2 = "bananajoe";
     CharString text3 = "joesmama";
@@ -115,7 +115,7 @@ SEQAN_DEFINE_TEST(testIssue519)
     Index<StringSet<CharString>, IndexEsa<> > index2(strSet);
 
     indexCreate(index1, EsaSA(), Skew7());
-    indexCreate(index2, EsaSA(), SAQSort());
+    indexCreate(index2, EsaSA(), SaqSort());
 
     SEQAN_ASSERT_EQ(indexSA(index1), indexSA(index2));
 
@@ -176,9 +176,9 @@ SEQAN_DEFINE_TEST(testIndexCreation)
     }
 
     blank(sa);
-    createSuffixArray(sa, text, SAQSort());
+    createSuffixArray(sa, text, SaqSort());
     if (!isSuffixArray(sa, text)) {
-        std::cout << "suffix array creation (internal SAQSort) failed." << std::endl;
+        std::cout << "suffix array creation (internal SaqSort) failed." << std::endl;
     }
 
 //    blank(sa);
@@ -221,19 +221,19 @@ SEQAN_DEFINE_TEST(testIndexCreation)
 
     blank(lcp);
     createLcpTable(lcp, text, sa, KasaiOriginal());
-    if (!isLCPTable(lcp, sa, text)) {
+    if (!isLcpTable(lcp, sa, text)) {
         std::cout << "suffix array creation (internal Kasai) failed." << std::endl;
     }
 
     blank(lcp);
     createLcpTable(lcp, text, sa, Kasai());
-    if (!isLCPTable(lcp, sa, text)) {
+    if (!isLcpTable(lcp, sa, text)) {
         std::cout << "suffix array creation (internal in-place Kasai) failed." << std::endl;
     }
 
     blank(lcp);
     _createLCPTablePipelining(lcp, text, sa, Kasai());
-    if (!isLCPTable(lcp, sa, text)) {
+    if (!isLcpTable(lcp, sa, text)) {
         std::cout << "suffix array creation (external Kasai) failed." << std::endl;
     }
 

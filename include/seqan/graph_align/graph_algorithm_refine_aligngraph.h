@@ -44,14 +44,14 @@ namespace seqan {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////	
 //Functios for Align Graphs
 //project onto other sequence for Graph<Alignment>
-template<typename TAlignment,typename TId1, typename TPos1, typename TId2, typename TPos2, typename TValue,typename TMap>
+template<typename TAlignment,typename TID1, typename TPos1, typename TID2, typename TPos2, typename TValue,typename TMap>
 void
 _getOtherSequenceAndProject(Graph<TAlignment> & segment, 
 			    TValue seg_num,
                             TMap &, 
- 							TId1 seq_i_id, 
+ 							TID1 seq_i_id, 
 							TPos1 pos_i, 
-							TId2 & seq_j_id, 
+							TID2 & seq_j_id, 
 							TPos2 & pos_j)
 {
 	getProjectedPosition(segment,seg_num,seq_i_id, pos_i,seq_j_id,pos_j);
@@ -61,17 +61,17 @@ _getOtherSequenceAndProject(Graph<TAlignment> & segment,
 
 
 
-//given seq and segment, get the sequenceId (seq_i) and its begin and end
+//given seq and segment, get the sequenceID (seq_i) and its begin and end
 //if seq = 0 get first sequence (that takes part in the segment match)
 //if seq = 1 get second sequence
-template<typename TAlign, typename TId, typename TPosition, typename TId2>
+template<typename TAlign, typename TID, typename TPosition, typename TID2>
 void
 _getSeqBeginAndEnd(Graph<TAlign> & segment,
 				  std::map<const void * ,int> &, 
-				  TId & seq_i_id, 
+				  TID & seq_i_id, 
 				  TPosition & begin_i, 
 				  TPosition & end_i,
-				  TId2 seq)
+				  TID2 seq)
 {
 SEQAN_CHECKPOINT
 	//walk through edges, take first edge, target, source,
@@ -86,12 +86,12 @@ SEQAN_CHECKPOINT
 	if(seq==0)
 	{
 		TVertexDescriptor src = sourceVertex(ed_it);
-		seq_i_id = sequenceId(segment,src);
+		seq_i_id = sequenceID(segment,src);
 	}
 	else
 	{
 		TVertexDescriptor trg = targetVertex(ed_it);
-		seq_i_id = sequenceId(segment,trg);
+		seq_i_id = sequenceID(segment,trg);
 	}
 	begin_i = getFirstCoveredPosition(segment,seq_i_id);
 	end_i = getLastCoveredPosition(segment,seq_i_id);
@@ -123,8 +123,8 @@ SEQAN_CHECKPOINT
 //	TValue last_pos_j;
 //	_getOtherSequenceAndProject(segment,pseudo_map,seq_i_id,last_pos_i,seq_j_id,last_pos_j);
 //
-////	typename Infix<typename Value<TStringSet>::Type>::Type label0 = infix(getValueById(seqs,seq_i_id),pos_i,last_pos_i);
-////	typename Infix<typename Value<TStringSet>::Type>::Type label1 = infix(getValueById(seqs,seq_j_id),pos_j,last_pos_j);
+////	typename Infix<typename Value<TStringSet>::Type>::Type label0 = infix(getValueByID(seqs,seq_i_id),pos_i,last_pos_i);
+////	typename Infix<typename Value<TStringSet>::Type>::Type label1 = infix(getValueByID(seqs,seq_j_id),pos_j,last_pos_j);
 //	
 //	typename Value<TScore>::Type score = 0;
 //	TValue i = 0;
@@ -143,7 +143,7 @@ SEQAN_CHECKPOINT
 //			}
 //		}		
 //		pos_j = next_pos_j;
-//		score += score(score_type,getValueById(seqs,seq_i_id)[pos_i],getValueById(seqs,seq_j_id)[pos_j]);
+//		score += score(score_type,getValueByID(seqs,seq_i_id)[pos_i],getValueByID(seqs,seq_j_id)[pos_j]);
 //		++i;
 //		++pos_i;
 //	}
@@ -201,7 +201,7 @@ SEQAN_CHECKPOINT
 	TValue seq_i_id;
 	TEdgeIterator ed(segment);
 	//goBegin(ed);
-	seq_i_id = sequenceId(segment,sourceVertex(ed));
+	seq_i_id = sequenceID(segment,sourceVertex(ed));
 		
 	int pseudo_map = 0;
 	TValue pos_j_check,seq_j_id;
@@ -255,7 +255,7 @@ SEQAN_CHECKPOINT
 				TValue i = 0;
 				while(i < rest && i < len)
 				{
-					ret_score += score(score_type,getValueById(seqs,seq_i_id)[pos_i++],getValueById(seqs,seq_j_id)[pos_j++]);
+					ret_score += score(score_type,getValueByID(seqs,seq_i_id)[pos_i++],getValueByID(seqs,seq_j_id)[pos_j++]);
 					++i;
 				}
 				if(rest>len) return ret_score; //done (last_pos_i is somewhere inside the current node)

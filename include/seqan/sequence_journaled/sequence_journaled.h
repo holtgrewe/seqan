@@ -1052,25 +1052,25 @@ replace(String<TTargetValue, Journaled<TTargetHostSpec, TTargetJournalSpec, TTar
 }
 
 // --------------------------------------------------------------------------
-// Function getObjectId()
+// Function getObjectID()
 // --------------------------------------------------------------------------
 
 template <typename TValue, typename THostSpec, typename TJournalSpec, typename TBufferSpec>
 inline
 const void *
-getObjectId(String<TValue, Journaled<THostSpec, TJournalSpec, TBufferSpec> > & journaledString)
+getObjectID(String<TValue, Journaled<THostSpec, TJournalSpec, TBufferSpec> > & journaledString)
 {
     SEQAN_CHECKPOINT;
-    return getObjectId(value(journaledString._holder));
+    return getObjectID(value(journaledString._holder));
 }
 
 template <typename TValue, typename THostSpec, typename TJournalSpec, typename TBufferSpec>
 inline
 const void *
-getObjectId(String<TValue, Journaled<THostSpec, TJournalSpec, TBufferSpec> > const & journaledString)
+getObjectID(String<TValue, Journaled<THostSpec, TJournalSpec, TBufferSpec> > const & journaledString)
 {
     SEQAN_CHECKPOINT;
-    return getObjectId(value(journaledString._holder));
+    return getObjectID(value(journaledString._holder));
 }
 
 // --------------------------------------------------------------------------

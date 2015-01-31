@@ -364,13 +364,13 @@ _alignBandedSmithWatermanDeclump(LocalAlignmentFinder<TScoreValue>& finder,
 // Function _alignBandedSmithWatermanTrace()
 // ----------------------------------------------------------------------------
 
-template <typename TScoreValue, typename TSequenceH, typename TSequenceV, typename TId, typename TScore, typename TDiagonal>
+template <typename TScoreValue, typename TSequenceH, typename TSequenceV, typename TID, typename TScore, typename TDiagonal>
 inline Pair<Pair<TDiagonal> >
 _alignBandedSmithWatermanTrace(LocalAlignmentFinder<TScoreValue> & finder,
                                TSequenceH const & seqH,
                                TSequenceV const & seqV,
-                               TId id1,
-                               TId id2,
+                               TID id1,
+                               TID id2,
                                TScore& sc,
                                TDiagonal diagL,
                                TDiagonal diagU)
@@ -458,8 +458,8 @@ _alignBandedSmithWatermanTrace(LocalAlignmentFinder<TScoreValue> & finder,
     }
     
 	// Handle the remaining sequence
-	if (actualCol != 0) _alignTracePrint(finder.trace, seqH, seqV, (TId) id1, (TSize) 0, (TId) 0, (TSize) 0, (TSize) actualCol, Horizontal);
-	if (actualRow != 0) _alignTracePrint(finder.trace, seqH, seqV, (TId) 0, (TSize) 0, (TId) id2, (TSize) 0, (TSize) actualRow, Vertical);
+	if (actualCol != 0) _alignTracePrint(finder.trace, seqH, seqV, (TID) id1, (TSize) 0, (TID) 0, (TSize) 0, (TSize) actualCol, Horizontal);
+	if (actualRow != 0) _alignTracePrint(finder.trace, seqH, seqV, (TID) 0, (TSize) 0, (TID) id2, (TSize) 0, (TSize) actualRow, Vertical);
 
     goNext(matIt, 1); // assumes that each trace ends with a diagonal
     finder.bestBeginPos = position(matIt);

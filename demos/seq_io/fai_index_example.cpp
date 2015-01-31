@@ -34,7 +34,7 @@ int main()
 
     // Now, read the first 1000 characters of chr1.
     unsigned idx = 0;
-    if (!getIdByName(idx, faiIndex, "chr"))
+    if (!getIDByName(idx, faiIndex, "chr"))
     {
         std::cerr << "FATAL: chr1 not found in FAI index.\n";
         return 1;

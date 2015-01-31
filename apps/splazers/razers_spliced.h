@@ -252,7 +252,7 @@ bool loadReadsSam(
         // Read reference name.  Same behaviour as for query name:  Read up to
         // the first whitespace character and skip to next tab char.
         String<char> chrname = contigNames(context(file))[record.rID];
-        //need gnameToIdMap !!
+        //need gnameToIDMap !!
 
         // Get read begin position.
         TContigPos beginPos = record.beginPos;
@@ -286,7 +286,7 @@ bool loadReadsSam(
 		// now store the information
 		if (options.readNaming == 0
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
-			|| options.fastaIdQual
+			|| options.fastaIDQual
 #endif
 			)  //15578976
 			appendValue(fastaIDs, qname);	// append read name Fasta id
@@ -319,7 +319,7 @@ bool loadReadsSam(
 			// expected end position of read
 			//readRegions[i].i2 = - _min((int)beginPos,(int)beginPos-options.libraryLength+2*readLength);//+options.maxGap);
 		}
-//		readRegions[i].i1 = 0; //currently just ment for one chr at a time... need to add genomeId map
+//		readRegions[i].i1 = 0; //currently just ment for one chr at a time... need to add genomeID map
 		if(regionEnd > (TContigPos) options.maxReadRegionsEnd) options.maxReadRegionsEnd = (unsigned) regionEnd;
 		if(regionBegin < (TContigPos)options.minReadRegionsStart) options.minReadRegionsStart = (unsigned) regionBegin;
         //lastFlag = flag;  
@@ -454,7 +454,7 @@ void compactAndCountSplicedMatches(TMatches &matches,
 	TIterator itEnd = end(matches, Standard());
 	TIterator dit = it;
 	TIterator ditBeg = it;
-	// int lastPairId = 0;
+	// int lastPairID = 0;
 	// sort 
 	::std::sort(it, itEnd, LessSplicedScoreGPos<TMatch>());
 //	::std::sort(it, itEnd, LessSplicedErrorsGPos<TMatch>());
@@ -500,22 +500,22 @@ void compactAndCountSplicedMatches(TMatches &matches,
 				}
 				else // state > 0
 					appendValue(states, state); // either current match is multi or suboptimal, same state
-				//std::cout << "state = "<< state << " for PairId = " << lastPairId << std::endl;
+				//std::cout << "state = "<< state << " for PairID = " << lastPairID << std::endl;
 			}
 			if ((int)(*it).pairScore < bestScore)
 			{
 				appendValue(states, state); // either current match is suboptimal, state before is what it was
-				//std::cout << "state = "<< state << " for PairId = " << lastPairId << std::endl;
+				//std::cout << "state = "<< state << " for PairID = " << lastPairID << std::endl;
 				state = 2;		// the current one is suboptimal
 			}
-			// lastPairId = (*it).pairId;
+			// lastPairID = (*it).pairID;
 		}
 		else
 		{
 			if(state != -1)
 			{
 				appendValue(states, state); // append state of the match before
-				//std::cout << "state = "<< state << " for PairId = " << lastPairId << std::endl;
+				//std::cout << "state = "<< state << " for PairID = " << lastPairID << std::endl;
 			}
 			readNo = (*it).rseqNo;// >> 1;
 			hitCount = 0;
@@ -525,7 +525,7 @@ void compactAndCountSplicedMatches(TMatches &matches,
 			numSuccesful = (dit - begin(matches, Standard()))/2;
 			//std::cout << "numSuccesful=" << numSuccesful << std::endl;
 			bestScore = (*it).pairScore;
-			// lastPairId = (*it).pairId;
+			// lastPairID = (*it).pairID;
 			state = 0;
 		}
 		*dit = *it;	++dit; ++it;
@@ -535,7 +535,7 @@ void compactAndCountSplicedMatches(TMatches &matches,
 	if(state != -1)
 	{
 		appendValue(states, state);
-		//std::cout << "state = "<< state << " for PairId = " << lastPairId << std::endl;
+		//std::cout << "state = "<< state << " for PairID = " << lastPairID << std::endl;
 	}
 	
 	resize(matches, dit - begin(matches, Standard()));
@@ -1169,7 +1169,7 @@ _alignBandedNeedlemanWunschTrace(TAlign& align,
 {
 	SEQAN_CHECKPOINT
 	typedef typename Value<TStringSet>::Type TString;
-	typedef typename Id<TStringSet>::Type TId;
+	typedef typename ID<TStringSet>::Type TID;
 	typedef typename Size<TTrace>::Type TSize;
 	typedef typename Value<TTrace>::Type TTraceValue;
 
@@ -1179,8 +1179,8 @@ _alignBandedNeedlemanWunschTrace(TAlign& align,
 	// Initialization
 	TString const& str1 = str[0];
 	TString const& str2 = str[1];	
-	TId id1 = positionToId(const_cast<TStringSet&>(str), 0);
-	TId id2 = positionToId(const_cast<TStringSet&>(str), 1);
+	TID id1 = positionToID(const_cast<TStringSet&>(str), 0);
+	TID id2 = positionToID(const_cast<TStringSet&>(str), 1);
 	TSize len1 = length(str1) + 1;
 	TSize len2 = length(str2) + 1;
 	TSize lo_row = (diagU <= 0) ? -1 * diagU : 0;
@@ -1271,8 +1271,8 @@ _alignBandedNeedlemanWunschTrace(TAlign& align,
 	}
 
 	// Handle the remaining sequence
-	if (actualCol != 0) _alignTracePrint(align, str[0], str[1], (TId) id1, (TSize) 0, (TId) 0, (TSize) 0, (TSize) actualCol,  Horizontal);
-	else if (actualRow != 0) _alignTracePrint(align, str[0], str[1], (TId) 0, (TSize) 0, (TId) id2, (TSize) 0, (TSize) actualRow,  Vertical);
+	if (actualCol != 0) _alignTracePrint(align, str[0], str[1], (TID) id1, (TSize) 0, (TID) 0, (TSize) 0, (TSize) actualCol,  Horizontal);
+	else if (actualRow != 0) _alignTracePrint(align, str[0], str[1], (TID) 0, (TSize) 0, (TID) id2, (TSize) 0, (TSize) actualRow,  Vertical);
 }
 
 template <typename TTrace, typename TStringSet, typename TScore, typename TValPair, typename TIndexPair, typename TDiagonal, typename TAlignConfig>
@@ -2738,9 +2738,9 @@ void mapSplicedReads(
 						outerDistance = -outerDistance;
 					}
 					// set a unique pair id
-					mLtmp.pairId = mRtmp.pairId = options.nextMatePairId;
-					if (++options.nextMatePairId == 0)
-						options.nextMatePairId = 1;
+					mLtmp.pairID = mRtmp.pairID = options.nextMatePairID;
+					if (++options.nextMatePairID == 0)
+						options.nextMatePairID = 1;
 						
 					// score the whole match pair
 					//mLtmp.pairScore = mRtmp.pairScore = 0 - mLtmp.editDist - mRtmp.editDist;

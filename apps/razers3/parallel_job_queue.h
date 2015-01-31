@@ -222,25 +222,25 @@ popBack(TJob & job, TaskQueue<TJob, OmpLock> & queue, TPredicate const & predica
 // void
 // setWorking(ThreadLocalStorage<TJob> & tls, bool b);
 
-// template <typename TJob, typename TSpec, typename TPredicate, typename TThreadId>
+// template <typename TJob, typename TSpec, typename TPredicate, typename TThreadID>
 // inline
 // bool
-// work(ThreadLocalStorage<TJob, TSpec> & tls, TPredicate & predicate, TThreadId threadId)
+// work(ThreadLocalStorage<TJob, TSpec> & tls, TPredicate & predicate, TThreadID threadID)
 // {
 //     // fprintf(stderr, "Thread %d tries to work...\n", omp_get_thread_num());
 //     TJob job;
 //     if (!popFront(job, jobQueue(tls), predicate))
 //         return false;
-//     work(tls, job, threadId, threadId);
+//     work(tls, job, threadID, threadID);
 //     return true;
 // }
 
-// template <typename TJob, typename TSpec, typename TThreadId>
+// template <typename TJob, typename TSpec, typename TThreadID>
 // inline
 // bool
-// work(ThreadLocalStorage<TJob, TSpec> & tls, TThreadId threadId)
+// work(ThreadLocalStorage<TJob, TSpec> & tls, TThreadID threadID)
 // {
-//     return work(tls, predicateTrue<TJob>, threadId);
+//     return work(tls, predicateTrue<TJob>, threadID);
 // }
 
 // template <typename TJob, typename TSpec, typename TPredicate>
@@ -278,13 +278,13 @@ popBack(TJob & job, TaskQueue<TJob, OmpLock> & queue, TPredicate const & predica
 //             if (!isWorking(threadLocalStorages[p]) && maxThreads > 1) {
 //                 // Select thread to steal from.
 //                 x = 1664525 * x + 1013904223;
-//                 int targetId = x % (maxThreads - 1);
-//                 targetId += targetId >= p;
+//                 int targetID = x % (maxThreads - 1);
+//                 targetID += targetID >= p;
 
 //                 // Try to steal a job and process it if successful.
 //                 TJob stolenJob;
-//                 if (stealWork(stolenJob, threadLocalStorages[targetId], predicate)) {
-//                     //fprintf(stderr, "Thread %d stole from %d\n", p, targetId);
+//                 if (stealWork(stolenJob, threadLocalStorages[targetID], predicate)) {
+//                     //fprintf(stderr, "Thread %d stole from %d\n", p, targetID);
 //                     // Stealing was successful, become active again.
 //                     SEQAN_OMP_PRAGMA(atomic)
 //                     workingCount += 1;
@@ -292,7 +292,7 @@ popBack(TJob & job, TaskQueue<TJob, OmpLock> & queue, TPredicate const & predica
 //                     SEQAN_OMP_PRAGMA(flush(workingCount))
 
 //                     // fprintf(stderr, "%d could steal\n", p);
-//                     work(threadLocalStorages[p], stolenJob, p, targetId);
+//                     work(threadLocalStorages[p], stolenJob, p, targetID);
 //                 }
 //                 continue;  // Next iteration.
 //             }

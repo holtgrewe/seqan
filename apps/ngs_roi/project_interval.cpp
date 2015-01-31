@@ -48,7 +48,7 @@ void IntersectBed::pushBed(TBedRecord const & bedRecord)
         writeRecord(std::cerr, bedRecord, seqan::Bed());
     }
 
-    // Handle contig transition, we can unconditionally update rId.
+    // Handle contig transition, we can unconditionally update rID.
     if (bedRecord.ref != ref)
         finishContig();
     ref = bedRecord.ref;

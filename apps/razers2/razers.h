@@ -90,7 +90,7 @@ namespace SEQAN_NAMESPACE_MAIN
 	// mate-pair parameters
 		int			libraryLength;		// offset between two mates
 		int			libraryError;		// offset tolerance
-		unsigned	nextPairMatchId;	// use this id for the next mate-pair
+		unsigned	nextPairMatchID;	// use this id for the next mate-pair
 
 	// verification parameters
 		bool		matchN;				// false..N is always a mismatch, true..N matches with all
@@ -104,7 +104,7 @@ namespace SEQAN_NAMESPACE_MAIN
 		double		timeDumpResults;	// time for dumping the results
 		
 		bool		lowMemory;		// set maximum shape weight to 13 to limit size of q-gram index
-		bool		fastaIdQual;		// hidden option for special fasta+quality format we use
+		bool		fastaIDQual;		// hidden option for special fasta+quality format we use
 
 
 	// misc
@@ -145,7 +145,7 @@ namespace SEQAN_NAMESPACE_MAIN
 
 			libraryLength = 220;
 			libraryError = 50;
-			nextPairMatchId = 0;
+			nextPairMatchID = 0;
 			
 			for (unsigned i = 0; i < 4; ++i)
 				compMask[i] = 1 << i;
@@ -154,7 +154,7 @@ namespace SEQAN_NAMESPACE_MAIN
 			compactThresh = 1024;
 
 			lowMemory = false;		// set maximum shape weight to 13 to limit size of q-gram index
-			fastaIdQual = false;
+			fastaIDQual = false;
 
 		}
 	};
@@ -173,7 +173,7 @@ namespace SEQAN_NAMESPACE_MAIN
 		TGPos			beginPos;			// begin position of the match in the genome
 		TGPos			gEnd;			// end position of the match in the genome
 #ifdef RAZERS_MATEPAIRS
-		unsigned		pairId;			// unique id for the two mate-pair matches (0 if unpaired)
+		unsigned		pairID;			// unique id for the two mate-pair matches (0 if unpaired)
 		int				mateDelta:24;	// outer coordinate delta to the other mate 
 		int				pairScore:8;	// combined score of both mates
 #endif
@@ -356,7 +356,7 @@ namespace SEQAN_NAMESPACE_MAIN
 			{
 				m.id = length(store.alignedReadStore);
 				appendValue(store.alignedReadStore, m, Generous());
-//				if (infix(store.readNameStore[m.readId], 0, length("SRR049254.14375884")) == "SRR049254.14375884")
+//				if (infix(store.readNameStore[m.readID], 0, length("SRR049254.14375884")) == "SRR049254.14375884")
 //				    std::cerr << "append value " << m.beginPos << ", " << m.endPos << std::endl;
 				appendValue(store.alignQualityStore, q, Generous());
 				if (length(store.alignedReadStore) > options.compactThresh)
@@ -388,7 +388,7 @@ bool loadReads(
 {
 	bool countN = !(options.matchN || options.outputFormat == 1);
 
-	CharString      fastaId;
+	CharString      fastaID;
 	String<Dna5Q>	seq;
 	CharString		qual;
 
@@ -396,9 +396,9 @@ bool loadReads(
 	unsigned maxReadLength = 0;
 	while (!atEnd(seqFile))
 	{
-        readRecord(fastaId, seq, qual, seqFile);
+        readRecord(fastaID, seq, qual, seqFile);
 		if (!(options.readNaming == 0 || options.readNaming == 3))
-			clear(fastaId);
+			clear(fastaID);
 		if (countN)
 		{
 			int count = 0;
@@ -409,7 +409,7 @@ bool loadReads(
 					{
 						clear(seq);
                         clear(qual);  // So no qualities are assigned below.
-						clear(fastaId);
+						clear(fastaID);
 						++kickoutcount;
 						break;
 					}
@@ -422,7 +422,7 @@ bool loadReads(
 		if (options.trimLength > 0 && length(seq) > (unsigned)options.trimLength)
 			resize(seq, options.trimLength);
 
-		appendRead(store, seq, fastaId);
+		appendRead(store, seq, fastaID);
 		if (maxReadLength < length(seq))
 			maxReadLength = length(seq);
 	}
@@ -472,8 +472,8 @@ inline int estimateReadLength(SeqFileIn &seqFile)
 
     // parse record from buffer
     DirectionIterator<TBuffer, Input>::Type iter = directionIterator(buffer, Input());
-    CharString fastaId, seq;
-    readRecord(fastaId, seq, iter, seqFile.format);
+    CharString fastaID, seq;
+    readRecord(fastaID, seq, iter, seqFile.format);
     return length(seq);
 }
 	
@@ -491,12 +491,12 @@ inline int estimateReadLength(SeqFileIn &seqFile)
 		inline bool operator() (TAlignedRead const &a, TAlignedRead const &b) const 
 		{
 			// read number
-			if (a.readId < b.readId) return true;
-			if (a.readId > b.readId) return false;
+			if (a.readID < b.readID) return true;
+			if (a.readID > b.readID) return false;
 
 			// contig number
-			if (a.contigId < b.contigId) return true;
-			if (a.contigId > b.contigId) return false;
+			if (a.contigID < b.contigID) return true;
+			if (a.contigID > b.contigID) return false;
 
 			// beginning position
 			typename TAlignedRead::TPos ba = _min(a.beginPos, a.endPos);
@@ -540,12 +540,12 @@ inline int estimateReadLength(SeqFileIn &seqFile)
 			typename Value<TAlignedReadStore>::Type const &b) const 
 		{
 			// read number
-			if (a.readId < b.readId) return true;
-			if (a.readId > b.readId) return false;
+			if (a.readID < b.readID) return true;
+			if (a.readID > b.readID) return false;
 
 			// contig number
-			if (a.contigId < b.contigId) return true;
-			if (a.contigId > b.contigId) return false;
+			if (a.contigID < b.contigID) return true;
+			if (a.contigID > b.contigID) return false;
 
 			// end position
 			typename TAlignedRead::TPos ea = _max(a.beginPos, a.endPos);
@@ -587,12 +587,12 @@ inline int estimateReadLength(SeqFileIn &seqFile)
 		inline bool operator() (TAlignedRead const &a, TAlignedRead const &b) const 
 		{
 			// read name
-			if (contigNames[a.readId] < contigNames[b.readId]) return true;
-			if (contigNames[a.readId] > contigNames[b.readId]) return false;
+			if (contigNames[a.readID] < contigNames[b.readID]) return true;
+			if (contigNames[a.readID] > contigNames[b.readID]) return false;
 
 			// contig number
-			if (a.contigId < b.contigId) return true;
-			if (a.contigId > b.contigId) return false;
+			if (a.contigID < b.contigID) return true;
+			if (a.contigID > b.contigID) return false;
 
 			// beginning position
 			typename TAlignedRead::TPos ba = _min(a.beginPos, a.endPos);
@@ -636,14 +636,14 @@ inline int estimateReadLength(SeqFileIn &seqFile)
 			typedef typename Value<TAlignedReadStore>::Type TAlignedRead;
 
 			// read number
-			if (a.readId < b.readId) return true;
-			if (a.readId > b.readId) return false;
+			if (a.readID < b.readID) return true;
+			if (a.readID > b.readID) return false;
 
 			// quality
 			SEQAN_ASSERT_NEQ(a.id, TAlignedRead::INVALID_ID);
 			SEQAN_ASSERT_NEQ(b.id, TAlignedRead::INVALID_ID);
-			if (a.contigId == TAlignedRead::INVALID_ID) return false;
-			if (b.contigId == TAlignedRead::INVALID_ID) return true;
+			if (a.contigID == TAlignedRead::INVALID_ID) return false;
+			if (b.contigID == TAlignedRead::INVALID_ID) return true;
 			return qualStore[a.id].errors < qualStore[b.id].errors;
 		}
 	};
@@ -668,8 +668,8 @@ void maskDuplicates(TFragmentStore &store)
 
 	TContigPos	beginPos = -1;
 	TContigPos	endPos = -1;
-	unsigned	contigId = TAlignedRead::INVALID_ID;
-	unsigned	readId = TAlignedRead::INVALID_ID;
+	unsigned	contigID = TAlignedRead::INVALID_ID;
+	unsigned	readID = TAlignedRead::INVALID_ID;
 	bool		orientation = false;
 
 	TIterator it = begin(store.alignedReadStore, Standard());
@@ -677,16 +677,16 @@ void maskDuplicates(TFragmentStore &store)
 
 	for (; it != itEnd; ++it) 
 	{
-		if ((*it).pairMatchId != TAlignedRead::INVALID_ID && getMateNo(store, it->readId) != 0) continue;	// remove only single reads or left mates
+		if ((*it).pairMatchID != TAlignedRead::INVALID_ID && getMateNo(store, it->readID) != 0) continue;	// remove only single reads or left mates
 		TContigPos itEndPos = _max((*it).beginPos, (*it).endPos);
 		if (endPos == itEndPos && orientation == ((*it).beginPos < (*it).endPos) &&
-			contigId == (*it).contigId && readId == (*it).readId) 
+			contigID == (*it).contigID && readID == (*it).readID) 
 		{
-			(*it).contigId = TAlignedRead::INVALID_ID;	// mark this alignment for deletion
+			(*it).contigID = TAlignedRead::INVALID_ID;	// mark this alignment for deletion
 			continue;
 		}
-		readId = (*it).readId;
-		contigId = (*it).contigId;
+		readID = (*it).readID;
+		contigID = (*it).contigID;
 		endPos = itEndPos;
 		orientation = (*it).beginPos < (*it).endPos;
 	}
@@ -696,24 +696,24 @@ void maskDuplicates(TFragmentStore &store)
 
 	sortAlignedReads(store.alignedReadStore, LessRNoGPos<TAlignedReadStore, TAlignQualityStore>(store.alignQualityStore));
 
-	contigId = TAlignedRead::INVALID_ID;
+	contigID = TAlignedRead::INVALID_ID;
 	it = begin(store.alignedReadStore, Standard());
 	itEnd = end(store.alignedReadStore, Standard());
 
 	for (; it != itEnd; ++it) 
 	{
-		if ((*it).contigId == TAlignedRead::INVALID_ID) continue;
-		if ((*it).pairMatchId != TAlignedRead::INVALID_ID && getMateNo(store, it->readId) != 0) continue;	// remove only single reads or left mates
+		if ((*it).contigID == TAlignedRead::INVALID_ID) continue;
+		if ((*it).pairMatchID != TAlignedRead::INVALID_ID && getMateNo(store, it->readID) != 0) continue;	// remove only single reads or left mates
 
 		TContigPos itBeginPos = _min((*it).beginPos, (*it).endPos);
-		if (beginPos == itBeginPos && readId == (*it).readId &&
-			contigId == (*it).contigId && orientation == ((*it).beginPos < (*it).endPos))
+		if (beginPos == itBeginPos && readID == (*it).readID &&
+			contigID == (*it).contigID && orientation == ((*it).beginPos < (*it).endPos))
 		{
-			(*it).contigId = TAlignedRead::INVALID_ID;	// mark this alignment for deletion
+			(*it).contigID = TAlignedRead::INVALID_ID;	// mark this alignment for deletion
 			continue;
 		}
-		readId = (*it).readId;
-		contigId = (*it).contigId;
+		readID = (*it).readID;
+		contigID = (*it).contigID;
 		beginPos = itBeginPos;
 		orientation = (*it).beginPos < (*it).endPos;
 	}
@@ -742,32 +742,32 @@ void countMatches(TFragmentStore &store, TCounts &cnt)
 /*	
 	for (; it != itEnd; ++it)
 	{
-		if (it->contigId == TAlignedRead::INVALID_ID) continue;
+		if (it->contigID == TAlignedRead::INVALID_ID) continue;
 		unsigned errors = store.alignQualityStore[it->id].errors;
 		if (errors >= maxError) continue;		
-		if (cnt[errors][it->readId] < maxVal)
-			++cnt[errors][it->readId];
+		if (cnt[errors][it->readID] < maxVal)
+			++cnt[errors][it->readID];
 	}
 */
 	short errors = -1;
 	__int64 count = 0;
-	unsigned readId = TAlignedRead::INVALID_ID;
+	unsigned readID = TAlignedRead::INVALID_ID;
 	for (; it != itEnd; ++it)
 	{
-		if (it->contigId == TAlignedRead::INVALID_ID) continue;
-		if (readId == it->readId && errors == store.alignQualityStore[it->id].errors)
+		if (it->contigID == TAlignedRead::INVALID_ID) continue;
+		if (readID == it->readID && errors == store.alignQualityStore[it->id].errors)
 			++count;
 		else
 		{
-			if (readId != TAlignedRead::INVALID_ID && (unsigned)errors < maxError)
-				cnt[errors][readId] = (maxVal < count)? (TValue)maxVal : (TValue)count;
-			readId = it->readId;
+			if (readID != TAlignedRead::INVALID_ID && (unsigned)errors < maxError)
+				cnt[errors][readID] = (maxVal < count)? (TValue)maxVal : (TValue)count;
+			readID = it->readID;
 			errors = store.alignQualityStore[it->id].errors;
 			count = 1;
 		}
 	}
-	if (readId != TAlignedRead::INVALID_ID && (unsigned)errors < maxError)
-		cnt[errors][readId] = (TValue)count;
+	if (readID != TAlignedRead::INVALID_ID && (unsigned)errors < maxError)
+		cnt[errors][readID] = (TValue)count;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -813,9 +813,9 @@ void compactMatches(TFragmentStore &store, RazerSOptions<TSpec> &options, TSwift
 
 	for (; it != itEnd; ++it) 
 	{
-		if ((*it).contigId == TAlignedRead::INVALID_ID) continue;
+		if ((*it).contigID == TAlignedRead::INVALID_ID) continue;
 		unsigned errors = store.alignQualityStore[(*it).id].errors;
-		if (readNo == (*it).readId && (*it).pairMatchId == TAlignedRead::INVALID_ID)
+		if (readNo == (*it).readID && (*it).pairMatchID == TAlignedRead::INVALID_ID)
 		{ 
 			if (errors >= errorsCutOff) continue;
 			if (++hitCount >= hitCountCutOff)
@@ -850,7 +850,7 @@ void compactMatches(TFragmentStore &store, RazerSOptions<TSpec> &options, TSwift
 		}
 		else
 		{
-			readNo = (*it).readId;
+			readNo = (*it).readID;
 			hitCount = 0;
 			if (options.distanceRange > 0)
 				errorsCutOff = errors + options.distanceRange;
@@ -879,7 +879,7 @@ inline bool
 matchVerify(
 	TMatchVerifier &verifier,
 	Segment<TGenome, InfixSegment> inf,		// potential match genome region
-	unsigned readId,						// read number
+	unsigned readID,						// read number
 	TReadSet &readSet,						// reads
 	SwiftSemiGlobalHamming)					// Hamming only
 {
@@ -891,11 +891,11 @@ matchVerify(
 #ifdef RAZERS_DEBUG
 	::std::cout<<"Verify: "<<::std::endl;
 	::std::cout<<"Genome: "<<inf<<"\t" << beginPosition(inf) << "," << endPosition(inf) << ::std::endl;
-	::std::cout<<"Read:   "<<readSet[readId] << ::std::endl;
+	::std::cout<<"Read:   "<<readSet[readID] << ::std::endl;
 #endif
 
 	// verify
-	TRead &read				= readSet[readId];
+	TRead &read				= readSet[readID];
 	TReadIterator ritBeg	= begin(read, Standard());
 	TReadIterator ritEnd	= end(read, Standard());
 	unsigned ndlLength		= ritEnd - ritBeg;
@@ -957,7 +957,7 @@ inline bool
 matchVerify(
 	TMatchVerifier &verifier,
 	Segment<TGenome, InfixSegment> inf,		// potential match genome region
-	unsigned readId,						// read number
+	unsigned readID,						// read number
 	TReadSet &readSet,						// reads
 	SwiftSemiGlobal)						// Mismatches and Indels
 {
@@ -983,7 +983,7 @@ matchVerify(
 	typedef Pattern<TReadRev, MyersUkkonenGlobal>			TMyersPatternRev;
 #endif
 
-    unsigned ndlLength = sequenceLength(readId, readSet);
+    unsigned ndlLength = sequenceLength(readID, readSet);
 	int maxScore = MinValue<int>::VALUE;
 	int minScore = -(int)(ndlLength * verifier.options.errorRate);
 	TPosition maxPos = 0;
@@ -998,12 +998,12 @@ matchVerify(
 #endif
 
 	TMyersFinder myersFinder(inf);
-	TMyersPattern &myersPattern = verifier.preprocessing[readId];
+	TMyersPattern &myersPattern = verifier.preprocessing[readID];
 
 #ifdef RAZERS_DEBUG
 	::std::cout<<"Verify: "<<::std::endl;
 	::std::cout<<"Genome: "<<inf<<"\t" << beginPosition(inf) << "," << endPosition(inf) << "; " << length(host(inf)) - beginPosition(inf) << "," << length(host(inf)) - endPosition(inf) << ::std::endl;
-	::std::cout<<"Read:   "<<readSet[readId]<<::std::endl;
+	::std::cout<<"Read:   "<<readSet[readID]<<::std::endl;
 #endif
 
 	// find end of best semi-global alignment
@@ -1021,7 +1021,7 @@ matchVerify(
 		// We also have to adjust inf and remove the last base of the
 		// genomic region that has to be verified.
 		SEQAN_ASSERT_LT(pos + 1, length(origInf));
-		if ((verifier.options.compMask[ordValue(origInf[pos + 1])] & verifier.options.compMask[ordValue(back(readSet[readId]))]) == 0)
+		if ((verifier.options.compMask[ordValue(origInf[pos + 1])] & verifier.options.compMask[ordValue(back(readSet[readID]))]) == 0)
 			if (--score < minScore) continue;
 #endif		
 		if (lastPos + minDistance < pos)
@@ -1038,13 +1038,13 @@ matchVerify(
 
 #ifdef RAZERS_NOOUTERREADGAPS
 				// The best score must be corrected to hold the score of the prefix w/o the last read base
-				if ((verifier.options.compMask[ordValue(origInf[maxPos + 1])] & verifier.options.compMask[ordValue(back(readSet[readId]))]) == 0)
+				if ((verifier.options.compMask[ordValue(origInf[maxPos + 1])] & verifier.options.compMask[ordValue(back(readSet[readID]))]) == 0)
 					++maxScore;
 
-				TReadPrefixRev		readRev(prefix(readSet[readId], ndlLength));
+				TReadPrefixRev		readRev(prefix(readSet[readID], ndlLength));
 				TMyersPatternRev	myersPatternRev(readRev);
 #else
-				TReadRev			readRev(readSet[readId]);
+				TReadRev			readRev(readSet[readID]);
 				TMyersPatternRev	myersPatternRev(readRev);
 #endif
 
@@ -1097,13 +1097,13 @@ matchVerify(
 
 #ifdef RAZERS_NOOUTERREADGAPS
 		// The best score must be corrected to hold the score of the prefix w/o the last read base
-		if ((verifier.options.compMask[ordValue(origInf[maxPos + 1])] & verifier.options.compMask[ordValue(back(readSet[readId]))]) == 0)
+		if ((verifier.options.compMask[ordValue(origInf[maxPos + 1])] & verifier.options.compMask[ordValue(back(readSet[readID]))]) == 0)
 			++maxScore;
 
-		TReadPrefixRev		readRev(prefix(readSet[readId], ndlLength));
+		TReadPrefixRev		readRev(prefix(readSet[readID], ndlLength));
 		TMyersPatternRev	myersPatternRev(readRev);
 #else
-		TReadRev			readRev(readSet[readId]);
+		TReadRev			readRev(readSet[readID]);
 		TMyersPatternRev	myersPatternRev(readRev);
 #endif
 
@@ -1156,7 +1156,7 @@ template <
 void mapSingleReads(
 	TFragmentStore							& store,
 	TGenome									& genome,				// genome ...
-	unsigned								  contigId,				// ... and its sequence number
+	unsigned								  contigID,				// ... and its sequence number
 	Pattern<TReadIndex, Swift<TSwiftSpec> >	& swiftPattern,
 	TPreprocessing							& preprocessing,
 	char									  orientation,				// q-gram index of reads
@@ -1177,7 +1177,7 @@ void mapSingleReads(
 	// iterate all genomic sequences
 	if (options._debugLevel >= 1)
 	{
-		::std::cerr << ::std::endl << "Process genome seq #" << contigId;
+		::std::cerr << ::std::endl << "Process genome seq #" << contigID;
 		if (orientation == 'F') ::std::cerr << "[fwd]";
 		else                    ::std::cerr << "[rev]";
 	}
@@ -1188,14 +1188,14 @@ void mapSingleReads(
 
 	verifier.onReverseComplement = (orientation == 'R');
 	verifier.genomeLength = length(genome);
-	verifier.m.contigId = contigId;
+	verifier.m.contigID = contigID;
 
 	// iterate all verification regions returned by SWIFT
 	while (find(swiftFinder, swiftPattern, options.errorRate))
 	{
-		verifier.m.readId = (*swiftFinder.curHit).ndlSeqNo;
+		verifier.m.readID = (*swiftFinder.curHit).ndlSeqNo;
 		if (!options.spec.DONT_VERIFY)
-			matchVerify(verifier, infix(swiftFinder), verifier.m.readId, readSet, TSwiftSpec());
+			matchVerify(verifier, infix(swiftFinder), verifier.m.readID, readSet, TSwiftSpec());
 		++options.countFiltration;
 	}
 }
@@ -1293,17 +1293,17 @@ int mapSingleReads(
 		::std::string genomeName = genomeFile.substr(lastPos);
 		
 
-		CharString	fastaId;
+		CharString	fastaID;
 		Dna5String	genome;
 		unsigned gseqNoWithinFile = 0;
 		// iterate over genome sequences
 		SEQAN_PROTIMESTART(find_time);
  		for(; !atEnd(file); ++gseqNo)
 		{
-            readRecord(fastaId, genome, file);			// read Fasta id and sequence
-            cropAfterFirst(fastaId, IsWhitespace());    // crop id after the first whitespace
+            readRecord(fastaID, genome, file);			// read Fasta id and sequence
+            cropAfterFirst(fastaID, IsWhitespace());    // crop id after the first whitespace
 			if (options.genomeNaming == 0)
-				appendValue(store.contigNameStore, fastaId, Generous());
+				appendValue(store.contigNameStore, fastaID, Generous());
 			
 			appendValue(gnoToFileMap, TGNoToFile(genomeName, gseqNoWithinFile));
 			

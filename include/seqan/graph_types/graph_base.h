@@ -134,38 +134,38 @@ struct Alphabet;
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
- * @mfn Graph#EdgeIdHandler
- * @brief Type of an object that represents an IdManager.
+ * @mfn Graph#EdgeIDHandler
+ * @brief Type of an object that represents an IDManager.
  *
- * @signature EdgeIdHandler<T>::Type;
+ * @signature EdgeIDHandler<T>::Type;
  *
  * @tparam T The Graph to query.
  *
- * @return Type The IdManager type.
+ * @return Type The IDManager type.
  *
- * The exact IdManager type depends on the edge stump type.  If the edge stump has no ids then the IdManager simply
+ * The exact IDManager type depends on the edge stump type.  If the edge stump has no ids then the IDManager simply
  * counts edge ids and otherwise it manages a list of free and used ids.
  */
 
 template<typename T>
-struct EdgeIdHandler;
+struct EdgeIDHandler;
 
 
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
- * @mfn Graph#VertexIdHandler
- * @brief Type of an object that repreestns an IdManager.
+ * @mfn Graph#VertexIDHandler
+ * @brief Type of an object that repreestns an IDManager.
  *
- * @signature VertexIdHandler<T>::Type;
+ * @signature VertexIDHandler<T>::Type;
  *
  * @tparam T The Graph to query.
  *
- * @return Type The IdManager type.
+ * @return Type The IDManager type.
  */
 
 template<typename T>
-struct VertexIdHandler;
+struct VertexIDHandler;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -174,8 +174,8 @@ struct VertexIdHandler;
 
 //////////////////////////////////////////////////////////////////////////////
 
-struct WithoutEdgeId_;
-typedef Tag<WithoutEdgeId_> const WithoutEdgeId;
+struct WithoutEdgeID_;
+typedef Tag<WithoutEdgeID_> const WithoutEdgeID;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -260,56 +260,56 @@ typedef Tag<DfsPreorder_> const DfsPreorder;
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TCargo = void, bool TList = true, bool TSource = false, bool TId = true, typename TSpec = Default>
+template<typename TCargo = void, bool TList = true, bool TSource = false, bool TID = true, typename TSpec = Default>
 class EdgeStump;
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TCargo, bool TList, bool TSource, bool TId, typename TSpec>
-struct VertexDescriptor<EdgeStump<TCargo, TList, TSource, TId, TSpec> > 
+template<typename TCargo, bool TList, bool TSource, bool TID, typename TSpec>
+struct VertexDescriptor<EdgeStump<TCargo, TList, TSource, TID, TSpec> > 
 {
-	typedef typename Id<EdgeStump<TCargo, TList, TSource, TId, TSpec> >::Type Type;
+	typedef typename ID<EdgeStump<TCargo, TList, TSource, TID, TSpec> >::Type Type;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TCargo, bool TList, bool TSource, bool TId, typename TSpec>
-struct VertexDescriptor<EdgeStump<TCargo, TList, TSource, TId, TSpec> const> 
+template<typename TCargo, bool TList, bool TSource, bool TID, typename TSpec>
+struct VertexDescriptor<EdgeStump<TCargo, TList, TSource, TID, TSpec> const> 
 {
-	typedef typename Id<EdgeStump<TCargo, TList, TSource, TId, TSpec> >::Type Type;
+	typedef typename ID<EdgeStump<TCargo, TList, TSource, TID, TSpec> >::Type Type;
 };
 
 
 
 
 //////////////////////////////////////////////////////////////////////////////
-// Graph - Default Id Manager
+// Graph - Default ID Manager
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TIdType = unsigned int, typename TSpec = Default>
-class IdManager;
+template<typename TIDType = unsigned int, typename TSpec = Default>
+class IDManager;
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo, bool TList, bool TSource, typename TSpec>
-struct EdgeIdHandler<EdgeStump<TCargo, TList, TSource, false, TSpec> > {
-	typedef IdManager<void> Type;
+struct EdgeIDHandler<EdgeStump<TCargo, TList, TSource, false, TSpec> > {
+	typedef IDManager<void> Type;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo, bool TList, bool TSource, typename TSpec>
-struct EdgeIdHandler<EdgeStump<TCargo, TList, TSource, true, TSpec> > {
-	typedef IdManager<typename Id<EdgeStump<TCargo, TList, TSource, true, TSpec> >::Type> Type;
+struct EdgeIDHandler<EdgeStump<TCargo, TList, TSource, true, TSpec> > {
+	typedef IDManager<typename ID<EdgeStump<TCargo, TList, TSource, true, TSpec> >::Type> Type;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-struct VertexIdHandler {
-	typedef IdManager<> Type;
+struct VertexIDHandler {
+	typedef IDManager<> Type;
 };
 
 }// namespace SEQAN_NAMESPACE_MAIN

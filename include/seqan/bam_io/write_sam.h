@@ -88,7 +88,7 @@ inline void write(TTarget & target,
     String<bool> writtenSeqInfos;
     resize(writtenSeqInfos, length(contigNames(context)), false);
 
-    size_t globalRefId = 0;
+    size_t globalRefID = 0;
     for (unsigned i = 0; i < length(header); ++i)
     {
         BamHeaderRecord const & record = header[i];
@@ -96,8 +96,8 @@ inline void write(TTarget & target,
             for (unsigned j = 0; j < length(record.tags); ++j)
                 if (record.tags[j].i1 == "SN")
                 {
-                    if (getIdByName(globalRefId, contigNamesCache(context), record.tags[j].i2))
-                        writtenSeqInfos[globalRefId] = true;
+                    if (getIDByName(globalRefID, contigNamesCache(context), record.tags[j].i2))
+                        writtenSeqInfos[globalRefID] = true;
                     break;
                 }
 
@@ -160,12 +160,12 @@ inline void write(TTarget & target,
 
     writeValue(target, '\t');
 
-    if (record.rNextId == BamAlignmentRecord::INVALID_REFID)
+    if (record.rNextID == BamAlignmentRecord::INVALID_REFID)
         writeValue(target, '*');
-    else if (record.rID == record.rNextId)
+    else if (record.rID == record.rNextID)
         writeValue(target, '=');
     else
-        write(target, contigNames(context)[record.rNextId]);
+        write(target, contigNames(context)[record.rNextID]);
 
     writeValue(target, '\t');
 

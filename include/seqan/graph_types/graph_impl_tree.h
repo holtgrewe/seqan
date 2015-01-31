@@ -61,7 +61,7 @@ template<typename TCargo, typename TSpec>
 class Graph<Tree<TCargo, TSpec> > 
 {
 	public:
-		typedef typename VertexIdHandler<Graph>::Type TVertexIdManager_;
+		typedef typename VertexIDHandler<Graph>::Type TVertexIDManager_;
 		typedef typename VertexDescriptor<Graph>::Type TVertexDescriptor_;
 		typedef typename EdgeType<Graph>::Type TEdgeStump_;	
 		typedef Allocator<SinglePool<sizeof(TEdgeStump_)> > TAllocator_;
@@ -69,7 +69,7 @@ class Graph<Tree<TCargo, TSpec> >
 		TVertexDescriptor_ data_root;
 		String<TEdgeStump_*> data_vertex;			// Pointers to EdgeStumpT lists
 		String<TVertexDescriptor_> data_parent;		// Map to the parents of each node
-		TVertexIdManager_ data_id_managerV;
+		TVertexIDManager_ data_id_managerV;
 		TAllocator_ data_allocator;
 		
 
@@ -124,32 +124,32 @@ _getVertexString(Graph<Tree<TCargo, TSpec> > const& g) {
 /////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo, typename TSpec>
-inline IdManager<typename Id<Graph<Tree<TCargo, TSpec> > >::Type, Default> const &
-_getVertexIdManager(Graph<Tree<TCargo, TSpec> > const& g) {
+inline IDManager<typename ID<Graph<Tree<TCargo, TSpec> > >::Type, Default> const &
+_getVertexIDManager(Graph<Tree<TCargo, TSpec> > const& g) {
 	return g.data_id_managerV;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo, typename TSpec>
-inline IdManager<typename Id<Graph<Tree<TCargo, TSpec> > >::Type, Default> &
-_getVertexIdManager(Graph<Tree<TCargo, TSpec> >& g) {
+inline IDManager<typename ID<Graph<Tree<TCargo, TSpec> > >::Type, Default> &
+_getVertexIDManager(Graph<Tree<TCargo, TSpec> >& g) {
 	return g.data_id_managerV;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo, typename TSpec>
-inline IdManager<typename Id<Graph<Tree<TCargo, TSpec> > >::Type, Default> const &
-_getEdgeIdManager(Graph<Tree<TCargo, TSpec> > const& g) {
+inline IDManager<typename ID<Graph<Tree<TCargo, TSpec> > >::Type, Default> const &
+_getEdgeIDManager(Graph<Tree<TCargo, TSpec> > const& g) {
 	return g.data_id_managerV;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo, typename TSpec>
-inline IdManager<typename Id<Graph<Tree<TCargo, TSpec> > >::Type, Default> &
-_getEdgeIdManager(Graph<Tree<TCargo, TSpec> >& g) {
+inline IDManager<typename ID<Graph<Tree<TCargo, TSpec> > >::Type, Default> &
+_getEdgeIDManager(Graph<Tree<TCargo, TSpec> >& g) {
 	return g.data_id_managerV;
 }
 
@@ -423,8 +423,8 @@ addVertex(Graph<Tree<TCargo, TSpec> >& g)
 	typedef typename EdgeType<TGraph>::Type TEdgeStump;
 	TVertexDescriptor nilVertex = getNil<TVertexDescriptor>();
 	TVertexDescriptor vd;
-	if (empty(g)) g.data_root = vd = obtainId(g.data_id_managerV);
-	else vd = obtainId(g.data_id_managerV);
+	if (empty(g)) g.data_root = vd = obtainID(g.data_id_managerV);
+	else vd = obtainID(g.data_id_managerV);
 	if (vd == length(g.data_vertex)) {
 		appendValue(g.data_vertex, (TEdgeStump*) 0);
 		resize(g.data_parent, vd + 1, nilVertex, Generous());
@@ -456,7 +456,7 @@ removeVertex(Graph<Tree<TCargo, TSpec> >& g,
 	g.data_parent[v] = nilVertex;
 	removeOutEdges(g,v); // Remove all outgoing edges
 	removeInEdges(g,v); // Remove all incoming edges
-	releaseId(g.data_id_managerV, v); // Release id
+	releaseID(g.data_id_managerV, v); // Release id
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -647,7 +647,7 @@ getAdjacencyMatrix(Graph<Tree<TCargo, TSpec> > const& g,
 	typedef typename VertexDescriptor<TGraph>::Type TVertexDescriptor;
 	typedef typename EdgeType<TGraph>::Type TEdgeStump;
 	typedef typename Size<TMatrix>::Type TSize;
-	TSize len = getIdUpperBound(g.data_id_managerV);
+	TSize len = getIDUpperBound(g.data_id_managerV);
 	resize(mat, len*len, 0);
 	
 	typedef typename Iterator<String<TEdgeStump*> const, Standard>::Type TIterConst;
@@ -714,7 +714,7 @@ write(TFile & target,
 	TVertexDescriptor pos = 0;
 	write(target, "Adjacency list:\n");
 	for(;it!=itEnd;++it, ++pos) {
-		if (!idInUse(_getVertexIdManager(g),pos)) continue;
+		if (!idInUse(_getVertexIDManager(g),pos)) continue;
 		TEdgeStump* current = *it;
 		appendNumber(target, (int)pos);
 		write(target, " -> ");
@@ -737,8 +737,8 @@ write(TFile & target,
 			write(target, "Target: ");
 			appendNumber(target, (int)getTarget(current));
 			writeValue(target, ' ');
-			write(target, "(Id: ");
-			appendNumber(target, (int)_getId(current));
+			write(target, "(ID: ");
+			appendNumber(target, (int)_getID(current));
 			writeValue(target, ')');
 			writeValue(target, '\n');
 			current=getNextT(current);
@@ -988,7 +988,7 @@ removeChild(Graph<Tree<TCargo, TSpec> >& g,
 	SEQAN_CHECKPOINT
 	if (!isLeaf(g,child)) removeAllChildren(g,child);
 	removeEdge(g,parent, child);  // Parent map is cleared in removeEdge
-	releaseId(g.data_id_managerV, child); // Release id
+	releaseID(g.data_id_managerV, child); // Release id
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1017,7 +1017,7 @@ removeAllChildren(Graph<Tree<TCargo, TSpec> >& g,
 		TVertexDescriptor child = childVertex(g,g.data_vertex[parent]);
 		if (!isLeaf(g,child)) removeAllChildren(g,child);
 		removeEdge(g,parent, child);  // Parent map is cleared in removeEdge
-		releaseId(g.data_id_managerV, child); // Release id
+		releaseID(g.data_id_managerV, child); // Release id
 	}
 }
 

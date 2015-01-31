@@ -198,7 +198,7 @@ typedef TagList<int,
  * @var TCigarString BamAlignmentRecord::cigar;
  * @brief The CIGAR string for the BAM alignment (of type String<CigarElement<> >).
  *
- * @var __int32 BamAlignmentRecord::rNextId;
+ * @var __int32 BamAlignmentRecord::rNextID;
  * @brief The ID of the reference where the next fragment in this template aligns.
  *
  * <tt>INVALID_REFID</tt> for '*'.
@@ -233,7 +233,7 @@ struct BamAlignmentRecordCore
     mutable __uint32 _n_cigar:16;
             __uint32 flag:16;
     mutable __int32 _l_qseq;  // _l_qname, _n_cigar and _l_qseq for internal usage
-            __int32 rNextId;
+            __int32 rNextID;
             __int32 pNext;
             __int32 tLen;
 };
@@ -287,7 +287,7 @@ clear(BamAlignmentRecord & record)
     record.mapQ = 255;
     record.bin = 0;
     clear(record.cigar);
-    record.rNextId = BamAlignmentRecord::INVALID_REFID;
+    record.rNextID = BamAlignmentRecord::INVALID_REFID;
     record.pNext = BamAlignmentRecord::INVALID_POS;
     record.tLen = BamAlignmentRecord::INVALID_LEN;
     clear(record.seq);

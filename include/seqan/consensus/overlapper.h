@@ -236,8 +236,8 @@ Overlap_ Overlapper_<TFragments, TSequence>::overlapFromAlignment(
     {
         std::cerr << "FRAGMENTS\n";
         for (unsigned i = 0; i < length(fragments); ++i)
-            std::cerr << "  Fragment(" << fragments[i].seqId1 << ", " << fragments[i].begin1
-                      << ", " << fragments[i].seqId2 << ", " << fragments[i].begin2 << ", "
+            std::cerr << "  Fragment(" << fragments[i].seqID1 << ", " << fragments[i].begin1
+                      << ", " << fragments[i].seqID2 << ", " << fragments[i].begin2 << ", "
                       << fragments[i].len << ")\n";
     }
 
@@ -247,8 +247,8 @@ Overlap_ Overlapper_<TFragments, TSequence>::overlapFromAlignment(
     std::sort(begin(frags, seqan::Standard()), end(frags, seqan::Standard()));
 
     typename Value<TFragments>::Type frag0 = front(frags);  // first
-    unsigned id0 = sequenceId(frag0, 0);
-    unsigned id1 = sequenceId(frag0, 1);
+    unsigned id0 = sequenceID(frag0, 0);
+    unsigned id1 = sequenceID(frag0, 1);
     unsigned len0 = length(strings[0]);
     unsigned len1 = length(strings[1]);
 
@@ -369,8 +369,8 @@ inline bool Overlapper_<TFragments, TSequence>::computeOverlap(Overlap_ & overla
     overlap.seq1 = candidate.seq1;
     for (unsigned i = 0; i < length(frags); ++i)
     {
-        sequenceId(frags[i], 0) = candidate.seq0;
-        sequenceId(frags[i], 1) = candidate.seq1;
+        sequenceID(frags[i], 0) = candidate.seq0;
+        sequenceID(frags[i], 1) = candidate.seq1;
     }
 
     int ovlLen = overlap.length();

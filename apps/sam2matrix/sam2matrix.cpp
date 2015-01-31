@@ -144,19 +144,19 @@ bool _initializeMap(std::map<String<char>, unsigned> & nameToPos, SamToGasicOpti
 
     SeqFileIn seqStream(toCString(options.readNameFileName));
 
-    seqan::CharString fixedId;
+    seqan::CharString fixedID;
     for (unsigned i = 0; !atEnd(seqStream); ++i)
     {
         readRecord(id, seq, seqStream);
 
-        clear(fixedId);
+        clear(fixedID);
         for(unsigned s = 0; s < length(id); ++s)
         {
             if(id[s] == ' ') break;
-            appendValue(fixedId, id[s]);
+            appendValue(fixedID, id[s]);
         }
 
-        nameToPos[fixedId] = i;
+        nameToPos[fixedID] = i;
     }
 
     return true;

@@ -58,10 +58,10 @@ namespace seqan {
  * @headerfile <seqan/parse_lm.h>
  * @brief Stores information about local matches.
  * 
- * @signature template <typename TId, typename TPosition>
+ * @signature template <typename TID, typename TPosition>
  *            class LocalMatch;
  * 
- * @tparam TId       Type to use for subject/query id.
+ * @tparam TID       Type to use for subject/query id.
  * @tparam TPosition Type to use for storing positions.
  * 
  * Matches on the reverse-complement are encoded by the begin position being greater than the end position.
@@ -71,7 +71,7 @@ namespace seqan {
  * @see LocalMatchStore
  * 
  *
- * @var TId LocalMatch::queryId
+ * @var TID LocalMatch::queryID
  * @brief The id of the query.
  * 
  * @var TPosition LocalMatch::queryBeginPos
@@ -86,52 +86,52 @@ namespace seqan {
  * @var TPosition LocalMatch::subjectEndPos
  * @brief End position of local match in the subject.
  * 
- * @var TId LocalMatch::subjectId
+ * @var TID LocalMatch::subjectID
  * @brief The id of the subject.
  */
 
-template <typename TId, typename TPosition>
+template <typename TID, typename TPosition>
 class LocalMatch
 {
 public:
-    TId id;
-    TId subjectId;
+    TID id;
+    TID subjectID;
     TPosition subjectBeginPos;
     TPosition subjectEndPos;
-    TId queryId;
+    TID queryID;
     TPosition queryBeginPos;
     TPosition queryEndPos;
 
     LocalMatch() :
-            id(MaxValue<TId>::VALUE),
-            subjectId(MaxValue<TId>::VALUE),
+            id(MaxValue<TID>::VALUE),
+            subjectID(MaxValue<TID>::VALUE),
             subjectBeginPos(MaxValue<TPosition>::VALUE),
             subjectEndPos(MaxValue<TPosition>::VALUE),
-            queryId(MaxValue<TId>::VALUE),
+            queryID(MaxValue<TID>::VALUE),
             queryBeginPos(MaxValue<TPosition>::VALUE),
             queryEndPos(MaxValue<TPosition>::VALUE)
     {}
 
-    LocalMatch(TId id_,
-               TId subjectId_,
+    LocalMatch(TID id_,
+               TID subjectID_,
                TPosition subjectBeginPos_,
                TPosition subjectEndPos_,
-               TId queryId_,
+               TID queryID_,
                TPosition queryBeginPos_,
                TPosition queryEndPos_) :
             id(id_),
-            subjectId(subjectId_),
+            subjectID(subjectID_),
             subjectBeginPos(subjectBeginPos_),
             subjectEndPos(subjectEndPos_),
-            queryId(queryId_),
+            queryID(queryID_),
             queryBeginPos(queryBeginPos_),
             queryEndPos(queryEndPos_)
     {}
 
     bool operator==(LocalMatch const & other) const
     {
-        return id == other.id && subjectId == other.subjectId && subjectBeginPos == other.subjectBeginPos &&
-                subjectEndPos == other.subjectEndPos && queryId == other.queryId &&
+        return id == other.id && subjectID == other.subjectID && subjectBeginPos == other.subjectBeginPos &&
+                subjectEndPos == other.subjectEndPos && queryID == other.queryID &&
                 queryBeginPos == other.queryBeginPos && queryEndPos == other.queryEndPos;
     }
 };
@@ -147,9 +147,9 @@ public:
  * @tparam TSpec Specializing type.
  *
  *
- * @typedef LocalMatchStoreConfig::TId;
+ * @typedef LocalMatchStoreConfig::TID;
  * @brief Type to use for ids.
- * @signature typedef unsigned LocalMatchStoreConfig::TId;
+ * @signature typedef unsigned LocalMatchStoreConfig::TID;
  *
  * @typedef LocalMatchStoreConfig::TPosition;
  * @brief The type to use for positions.
@@ -159,7 +159,7 @@ public:
 template <typename TSpec>
 struct LocalMatchStoreConfig
 {
-    typedef unsigned TId;
+    typedef unsigned TID;
     typedef typename Position<Dna5String>::Type TPosition;
 };
 
@@ -199,10 +199,10 @@ struct LocalMatchStoreConfig
  * std::cout << "# Reverse strandness is indicated by end < begin\n"
  *           << "#db\tdb_beg\tdb_end\tquery\tq_beg\tq_end\n";
  * for (unsigned i = 0; i < length(lmStore.matchStore); ++i)
- *     std::cout << lmStore.sequenceNameStore[lmStore.matchStore[i].queryId] << "\t"
+ *     std::cout << lmStore.sequenceNameStore[lmStore.matchStore[i].queryID] << "\t"
  *               << lmStore.matchStore[i].queryBeginPos << "\t"
  *               << lmStore.matchStore[i].queryEndPos << "\t"
- *               << lmStore.sequenceNameStore[lmStore.matchStore[i].subjectId] << "\t"
+ *               << lmStore.sequenceNameStore[lmStore.matchStore[i].subjectID] << "\t"
  *               << lmStore.matchStore[i].subjectBeginPos << "\t"
  *               << lmStore.matchStore[i].subjectEndPos << "\n";
  * @endcode
@@ -242,10 +242,10 @@ public:
     // Typedefs
     // ----------------------------------------------------------------------------
 
-    typedef typename TConfig::TId TId;
+    typedef typename TConfig::TID TID;
     typedef typename TConfig::TPosition TPosition;
     
-    typedef LocalMatch<TId, TPosition> TLocalMatch;
+    typedef LocalMatch<TID, TPosition> TLocalMatch;
     typedef String<TLocalMatch> TMatchStore;
 
     typedef String<CigarElement<> > TCigarString;
@@ -287,7 +287,7 @@ registerSequenceName(TLocalMatchStore & store,
                      CharString const & sequenceName)
 {
     unsigned id = 0;
-	if (!getIdByName(store.sequenceNameStore, sequenceName, id, store._sequenceNameStoreCache))
+	if (!getIDByName(store.sequenceNameStore, sequenceName, id, store._sequenceNameStoreCache))
     {
         id = length(store.sequenceNameStore);
         appendName(store.sequenceNameStore, sequenceName, store._sequenceNameStoreCache);
@@ -302,15 +302,15 @@ registerSequenceName(TLocalMatchStore & store,
  * @fn LocalMatchStore#appendLocalMatch
  * @brief Append a new local match to a @link LocalMatchStore @endlink
  * 
- * @signature void appendLocalMatchStore(store, subjectId, subjectBeginPos, subjectEndPos, queryId, queryBeginPos, queryEndPos);
+ * @signature void appendLocalMatchStore(store, subjectID, subjectBeginPos, subjectEndPos, queryID, queryBeginPos, queryEndPos);
  * @signature void appendLocalMatchStore(store, subjectName, subjectBeginPos, subjectEndPos, queryName, queryBeginPos, queryEndPos, cigarStringBuffer);
  * 
  * @param[in,out] store             The LocalMatchStore to add the local match to.
- * @param[in]     subjectId         Numeric subject sequence identifier, @link IntegerConcept @endlink.
+ * @param[in]     subjectID         Numeric subject sequence identifier, @link IntegerConcept @endlink.
  * @param[in]     subjectName       The textual name of the query sequence, @link CharString @endlink.
  * @param[in]     subjectBegin      The begin position of the match in the subject, @link IntegerConcept @endlink.
  * @param[in]     subjectEnd        The end position of the match in the subject, @link IntegerConcept @endlink.
- * @param[in]     queryId           Numeric query sequence identifier, @link IntegerConcept @endlink.
+ * @param[in]     queryID           Numeric query sequence identifier, @link IntegerConcept @endlink.
  * @param[in]     queryName         The textual name of the query sequence, @link CharString @endlink.
  * @param[in]     queryBegin        The begin position of the match in the query, @link IntegerConcept @endlink.
  * @param[in]     queryEnd          The end position of the match in the query, @link IntegerConcept @endlink.
@@ -322,23 +322,23 @@ registerSequenceName(TLocalMatchStore & store,
 template <typename TLocalMatchStore, typename TPosition>
 inline void
 appendLocalMatch(TLocalMatchStore & store,
-                 unsigned const & subjectId,
+                 unsigned const & subjectID,
                  TPosition const subjectBeginPos,
                  TPosition const subjectEndPos,
-                 unsigned const & queryId,
+                 unsigned const & queryID,
                  TPosition const queryBeginPos,
                  TPosition const queryEndPos)
 {
     typedef typename TLocalMatchStore::TLocalMatch TLocalMatch;
 
-    SEQAN_ASSERT_LT(subjectId, length(store.sequenceNameStore));
-    SEQAN_ASSERT_LT(queryId, length(store.sequenceNameStore));
+    SEQAN_ASSERT_LT(subjectID, length(store.sequenceNameStore));
+    SEQAN_ASSERT_LT(queryID, length(store.sequenceNameStore));
 
     TLocalMatch localMatch(length(store.matchStore),
-                           subjectId,
+                           subjectID,
                            subjectBeginPos,
                            subjectEndPos,
-                           queryId,
+                           queryID,
                            queryBeginPos,
                            queryEndPos);
     appendValue(store.matchStore, localMatch);
@@ -354,23 +354,23 @@ appendLocalMatch(TLocalMatchStore & store,
                  TPosition const queryBeginPos,
                  TPosition const queryEndPos)
 {
-    typedef typename TLocalMatchStore::TId         TId;
+    typedef typename TLocalMatchStore::TID         TID;
 
     // Get id for subject and query sequences;  Insert sequences into name stores/caches if not already there.
-    TId subjectId = 0;
-	if (!getIdByName(store.sequenceNameStore, subjectName, subjectId, store._sequenceNameStoreCache))
+    TID subjectID = 0;
+	if (!getIDByName(store.sequenceNameStore, subjectName, subjectID, store._sequenceNameStoreCache))
     {
-        subjectId = length(store.sequenceNameStore);
+        subjectID = length(store.sequenceNameStore);
         appendName(store.sequenceNameStore, subjectName, store._sequenceNameStoreCache);
     }
-    TId queryId = 0;
-	if (!getIdByName(store.sequenceNameStore, queryName, queryId, store._sequenceNameStoreCache))
+    TID queryID = 0;
+	if (!getIDByName(store.sequenceNameStore, queryName, queryID, store._sequenceNameStoreCache))
     {
-        queryId = length(store.sequenceNameStore);
+        queryID = length(store.sequenceNameStore);
         appendName(store.sequenceNameStore, queryName, store._sequenceNameStoreCache);
     }
 
-    appendLocalMatch(store, subjectId, subjectBeginPos, subjectEndPos, queryId, queryBeginPos, queryEndPos);
+    appendLocalMatch(store, subjectID, subjectBeginPos, subjectEndPos, queryID, queryBeginPos, queryEndPos);
 }
 
 template <typename TLocalMatchStore, typename TPosition>

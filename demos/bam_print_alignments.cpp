@@ -50,7 +50,7 @@ using namespace seqan;
 
 #if SEQAN_HAS_ZLIB
 
-void trimSeqHeaderToId(CharString & header)
+void trimSeqHeaderToID(CharString & header)
 {
     unsigned i = 0;
     for (; i < length(header); ++i)
@@ -80,7 +80,7 @@ int main(int argc, char const ** argv)
     }
     readRecords(refNameStore, seqs, inSeq);
     for (unsigned i = 0; i < length(refNameStore); ++i)
-        trimSeqHeaderToId(refNameStore[i]);
+        trimSeqHeaderToID(refNameStore[i]);
 
     // Open BGZF stream.
     std::cerr << "Opening BAM " << argv[2] << std::endl;

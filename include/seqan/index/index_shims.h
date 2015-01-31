@@ -282,7 +282,7 @@ namespace SEQAN_NAMESPACE_MAIN
 
 		LCP << creator;
 		#ifdef SEQAN_TEST_INDEX
-			isLCPTable(LCP, suffixArray, text);
+			isLcpTable(LCP, suffixArray, text);
 		#endif
 	}
 
@@ -319,7 +319,7 @@ namespace SEQAN_NAMESPACE_MAIN
 
 		LCP << creator;
 		#ifdef SEQAN_TEST_INDEX
-			isLCPTable(LCP, suffixArray, text);
+			isLcpTable(LCP, suffixArray, text);
 		#endif
 	}
 
@@ -429,7 +429,7 @@ namespace SEQAN_NAMESPACE_MAIN
 		creator_t	creator(bundle2(srcText, srcSA));
 
 		#ifdef SEQAN_TEST_INDEX
-			isLCPTable(creator, suffixArray, text);
+			isLcpTable(creator, suffixArray, text);
 		#endif
 		createLcpBinTree(LCPE, creator);
 	}
@@ -455,8 +455,8 @@ namespace SEQAN_NAMESPACE_MAIN
         //resize(LCP, length(s), Exact());
 		// we use LCPE[n-lcpSize..n-1] as a temporary buffer instead of allocating one
         typename Size<TText>::Type lcpSize = length(s) > 1? length(s) - 1: 0;
-		typename Suffix<String< TValue, TSpec > >::Type LCPcopy = suffix(LCPE, length(LCPE) - lcpSize);
-        LCPcopy = prefix(LCP, lcpSize);
+		typename Suffix<String< TValue, TSpec > >::Type lcpCopy = suffix(LCPE, length(LCPE) - lcpSize);
+        lcpCopy = prefix(LCP, lcpSize);
         createLcpBinTree(LCPE, LCP);
     }
 

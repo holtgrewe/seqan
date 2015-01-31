@@ -161,7 +161,7 @@ SEQAN_DEFINE_TEST(RefineInexactFragment)
 //	// import sequences
 //	file.clear();
 //	file.seekg(0, ios_base::beg);
-//	for(unsigned i = 0; (i < seqCount) && !_streamEOF(file); ++i) 
+//	for(unsigned i = 0; (i < seqCount) && !_streamEof(file); ++i) 
 //	{
 //		TString str;
 //		//String<TraceBack, External<> > trace;
@@ -199,7 +199,7 @@ SEQAN_DEFINE_TEST(GraphMatchRefine)
 	// Sequences
 	typedef String<Dna5, External<ExternalConfig<File<>, 64*1024> > > TString;
 	typedef StringSet<TString, Owner<> > TStringSet;
-	typedef Id<TStringSet>::Type TId;
+	typedef ID<TStringSet>::Type TID;
 	typedef Size<TStringSet>::Type TSize;
 
 	// Matches
@@ -261,10 +261,10 @@ SEQAN_DEFINE_TEST(GraphMatchRefine)
 	}
 
 	// Build a map:
-	// SeqId -> Identifier
-	typedef std::map<TId, String<char> > TIdToNameMap;
-	TIdToNameMap idToName;
-	for(TId i = 0; i < length(str); ++i) {
+	// SeqID -> Identifier
+	typedef std::map<TID, String<char> > TIDToNameMap;
+	TIDToNameMap idToName;
+	for(TID i = 0; i < length(str); ++i) {
 		TSize index = 0;
 		std::stringstream s;
 		if (i < 24) {
@@ -285,7 +285,7 @@ SEQAN_DEFINE_TEST(GraphMatchRefine)
 
 	// Just to check that everything worked
 	std::cout << "Number of sequences: " << length(str) << std::endl;
-	for(TIdToNameMap::const_iterator pos =  idToName.begin(); pos != idToName.end(); ++pos) {
+	for(TIDToNameMap::const_iterator pos =  idToName.begin(); pos != idToName.end(); ++pos) {
 		std::cout << pos->second << ") ";
 		for(TSize i=0; ((i<10) && (i <length(str[pos->first])));++i) {
 			std::cout << str[pos->first][i];
@@ -327,8 +327,8 @@ SEQAN_DEFINE_TEST(GraphMatchRefine)
 	typedef Graph<Alignment<TAlignmentStringSet> > TAliGraph;
 	//typedef VertexDescriptor<TAliGraph>::Type TVD;
 	TAlignmentStringSet aliStr;
-	for(TId i = 0; i<length(str); ++i) {
-		assignValueById(aliStr, str, i);
+	for(TID i = 0; i<length(str); ++i) {
+		assignValueByID(aliStr, str, i);
 	}
 	Score<int> score_type = Score<int>(1,-1,-2,0) ;
 	TAliGraph ali_graph(aliStr);
@@ -343,17 +343,17 @@ SEQAN_DEFINE_TEST(GraphMatchRefine)
 	//for(;!atEnd(it);goNext(it)) {
 	//	TVD sV = sourceVertex(it);
 	//	TVD tV = targetVertex(it);
-	//	TId seqId1 = sequenceId(ali_graph,sV);
-	//	TId seqId2 = sequenceId(ali_graph,tV);
+	//	TID seqID1 = sequenceID(ali_graph,sV);
+	//	TID seqID2 = sequenceID(ali_graph,tV);
 	//	TSize seqBegin1 = fragmentBegin(ali_graph, sV);
 	//	TSize seqBegin2 = fragmentBegin(ali_graph, tV);
 	//	TSize len = fragmentLength(ali_graph, sV);
-	//	TIdToNameMap::const_iterator pos1 =  idToName.find(seqId1);
-	//	TIdToNameMap::const_iterator pos2 =  idToName.find(seqId2);
+	//	TIDToNameMap::const_iterator pos1 =  idToName.find(seqID1);
+	//	TIDToNameMap::const_iterator pos2 =  idToName.find(seqID2);
 	//	std::cout << pos1->second << "," << seqBegin1  << "," << len << "," << pos2->second << "," << seqBegin2 << "," << len << std::endl;
 	//}
 
-	for(TIdToNameMap::const_iterator pos =  idToName.begin(); pos != idToName.end(); ++pos) {
+	for(TIDToNameMap::const_iterator pos =  idToName.begin(); pos != idToName.end(); ++pos) {
 		close(str[pos->first]);
 	}
 	close(matches);
@@ -609,8 +609,8 @@ SEQAN_DEFINE_TEST(RefineAlign)
 //		for(int j = i+1; j < length(seq); ++j)
 //		{
 //			TAliStringSet str;
-//			assignValueById(str, seq[i],positionToId(seq, i));
-//			assignValueById(str, seq[j],positionToId(seq, j));
+//			assignValueByID(str, seq[i],positionToID(seq, i));
+//			assignValueByID(str, seq[j],positionToID(seq, j));
 //			TAlign ali_g(str);
 //			typename Value<TScore>::Type score = localAlignment(ali_g, score_type, WatermanEggert());
 //			if(score==0)
@@ -653,19 +653,19 @@ SEQAN_DEFINE_TEST(RefineAlign)
 //
 //	TString str = "GARFIELDTHELASTFATCAT";
 //	//appendValue(seq_set,str);
-//	assignValueById(seq_set,str);
+//	assignValueByID(seq_set,str);
 //
 //	str = "GARFIELDTHEFASTCAT";
 //	//appendValue(seq_set,str);
-//	assignValueById(seq_set,str);
+//	assignValueByID(seq_set,str);
 //
 //	str = "GARFIELDTHEVERYFASTCAT";
 //	//appendValue(seq_set,str);
-//	assignValueById(seq_set,str);
+//	assignValueByID(seq_set,str);
 //	
 //	str = "THEFATCAT";
 //	//appendValue(seq_set,str);
-//	assignValueById(seq_set,str);
+//	assignValueByID(seq_set,str);
 //
 //	int numSequences = length(seq_set);
 //
@@ -830,11 +830,11 @@ SEQAN_DEFINE_TEST(GraphMatchRefinement_Problem)
 	TString str5 = "";
 
 	TStringSet strSet;
-	assignValueById(strSet,str1,0u);
-	assignValueById(strSet,str2,1u);
-	assignValueById(strSet,str3,2u);
-	assignValueById(strSet,str4,3u);
-	assignValueById(strSet,str5,4u);
+	assignValueByID(strSet,str1,0u);
+	assignValueByID(strSet,str2,1u);
+	assignValueByID(strSet,str3,2u);
+	assignValueByID(strSet,str4,3u);
+	assignValueByID(strSet,str5,4u);
 	//cout << length(strSet)<<"\n";
 	//cout << idToPosition(strSet,0) <<"\n";
 	//cout << idToPosition(strSet,3) <<"\n";
@@ -842,8 +842,8 @@ SEQAN_DEFINE_TEST(GraphMatchRefinement_Problem)
 	//cout << strSet[1] <<"\n";
 	//cout << strSet[2] <<"\n";
 	//cout << strSet[3] <<"\n";
-	//cout << positionToId(strSet,0) <<"\n";
-	//cout << positionToId(strSet,1) <<"\n";
+	//cout << positionToID(strSet,0) <<"\n";
+	//cout << positionToID(strSet,1) <<"\n";
 
 
 	TFragment frag(0,28,3,35,18);

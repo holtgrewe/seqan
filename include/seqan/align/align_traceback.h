@@ -140,14 +140,14 @@ struct AlignTraceback
 
 // _alignTracePrint: this function is called by various alignment algorithm to build up the alignment during traceback
 
-template <typename TSize, typename TSequenceH, typename TSequenceV, typename TId, typename TPos, typename TTraceValue>
+template <typename TSize, typename TSequenceH, typename TSequenceV, typename TID, typename TPos, typename TTraceValue>
 inline void
 _alignTracePrint(AlignTraceback<TSize> & tb,
                  TSequenceH const &,
                  TSequenceV const &,
-                 TId const,
+                 TID const,
                  TPos const,
-                 TId const,
+                 TID const,
                  TPos const,
                  TPos const segLen,
                  TTraceValue const tv)

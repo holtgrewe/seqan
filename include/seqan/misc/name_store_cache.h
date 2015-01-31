@@ -33,7 +33,7 @@
 // ==========================================================================
 
 //TODO(weese): Make the name stores thread-safe, i.e. provide an atomic
-//             getIdByName() that returns the id of an existing name or append
+//             getIDByName() that returns the id of an existing name or append
 //             the new one with its id
 
 
@@ -57,7 +57,7 @@ namespace seqan {
 template <typename TNameStore, typename TName>
 struct NameStoreLess_
 {
-    typedef typename Position<TNameStore>::Type TId;
+    typedef typename Position<TNameStore>::Type TID;
 
     TNameStore *nameStore;
     TName *name;
@@ -68,8 +68,8 @@ struct NameStoreLess_
         nameStore(&_nameStore),
         name(&_name) {}
     
-    template <typename TId>
-    inline bool operator() (TId a, TId b) const
+    template <typename TID>
+    inline bool operator() (TID a, TID b) const
     {
         if (a != maxValue(a))
         {
@@ -104,8 +104,8 @@ struct NameStoreLess_
  * @endlink, you have to use @link NameStoreCache#refresh @endlink to update the cache after modifying and before
  * querying.
  *
- * The fast lookups can be performed using @link NameStoreCache#getIdByName @endlink and @link NameStoreCache#nameToId
- * @endlink.  The query function @link NameStoreCache#nameToId @endlink, the cache can also be modified (and thus
+ * The fast lookups can be performed using @link NameStoreCache#getIDByName @endlink and @link NameStoreCache#nameToID
+ * @endlink.  The query function @link NameStoreCache#nameToID @endlink, the cache can also be modified (and thus
  * updated).
  *
  * @signature template <typename TNameStore[, typename TName]>
@@ -145,9 +145,9 @@ template <typename TNameStore, typename TName = String<typename Value<typename V
 class NameStoreCache
 {
 public:
-    typedef typename Position<TNameStore>::Type TId;
+    typedef typename Position<TNameStore>::Type TID;
     typedef NameStoreLess_<TNameStore, TName> TLess;
-    typedef std::set<TId, TLess> TSet;
+    typedef std::set<TID, TLess> TSet;
     
     TSet nameSet;
     // TODO(holtgrew): Mutable here necessary for conceptual const-ness.  However, we would rather have a thread-safe interface!
@@ -312,14 +312,14 @@ void appendName(TNameStore &nameStore, TName const & name, NameStoreCache<TCName
 }
 
 // ----------------------------------------------------------------------------
-// Function getIdByName()
+// Function getIDByName()
 // ----------------------------------------------------------------------------
 
 /*!
- * @fn NameStoreCache#getIdByName
+ * @fn NameStoreCache#getIDByName
  * @brief Get id/index of a string in a name store using a NameStoreCache.
  *
- * @signature bool getIdByName(idx, cache, name);
+ * @signature bool getIDByName(idx, cache, name);
  *
  * @param[out]    idx       The variable to store the index in the store of (@link IntegerConcept @endlink).
  * @param[in]     cache     The NameStoreCache to use for speeding up the lookup.
@@ -330,7 +330,7 @@ void appendName(TNameStore &nameStore, TName const & name, NameStoreCache<TCName
  */
 
 template <typename TPos, typename TNameStore, typename TName>
-bool getIdByName(TPos & pos, TNameStore const & nameStore, TName const & name)
+bool getIDByName(TPos & pos, TNameStore const & nameStore, TName const & name)
 {
     typedef typename Iterator<TNameStore const, Standard>::Type TNameStoreIter;
     
@@ -351,9 +351,9 @@ bool getIdByName(TPos & pos, TNameStore const & nameStore, TName const & name)
 
 template <typename TCNameStore, typename TCName, typename TName, typename TPos>
 inline bool
-getIdByName(TPos & pos, NameStoreCache<TCNameStore, TCName> const & context, TName const & name)
+getIDByName(TPos & pos, NameStoreCache<TCNameStore, TCName> const & context, TName const & name)
 {
-    typedef typename Position<TCNameStore const>::Type TId;
+    typedef typename Position<TCNameStore const>::Type TID;
     typedef NameStoreCache<TCNameStore, TCName> const TNameStoreCache;
     typedef typename TNameStoreCache::TSet TSet;
 
@@ -368,7 +368,7 @@ getIdByName(TPos & pos, NameStoreCache<TCNameStore, TCName> const & context, TNa
     {
 
         context.name = name;
-        it = set.find(maxValue<TId>());
+        it = set.find(maxValue<TID>());
     }
     
     if (it != set.end())
@@ -382,28 +382,28 @@ getIdByName(TPos & pos, NameStoreCache<TCNameStore, TCName> const & context, TNa
 // deprecated.
 template <typename TNameStore, typename TName, typename TPos, typename TContext>
 inline bool
-getIdByName(TNameStore const & nameStore, TName const & name, TPos & pos, TContext const & /*not a cache*/)
+getIDByName(TNameStore const & nameStore, TName const & name, TPos & pos, TContext const & /*not a cache*/)
 {
-    return getIdByName(pos, nameStore, name);
+    return getIDByName(pos, nameStore, name);
 }
 
 // deprecated.
 template<typename TNameStore, typename TName, typename TPos, typename TCNameStore, typename TCName>
 inline bool
-getIdByName(TNameStore const & /*nameStore*/, TName const & name, TPos & pos, NameStoreCache<TCNameStore, TCName> const & context)
+getIDByName(TNameStore const & /*nameStore*/, TName const & name, TPos & pos, NameStoreCache<TCNameStore, TCName> const & context)
 {
-    return getIdByName(pos, context, name);
+    return getIDByName(pos, context, name);
 }
 
 // ----------------------------------------------------------------------------
-// Function nametoId()
+// Function nametoID()
 // ----------------------------------------------------------------------------
 
 /*!
- * @fn NameStoreCache#nameToId
+ * @fn NameStoreCache#nameToID
  * @brief Translate a name to a numeric id, adding the name to the store and cache if new.
  *
- * @signature TPos nameToId(cache, name);
+ * @signature TPos nameToID(cache, name);
  *
  * @param[in,out] cache The NameStoreCache use for translating the name to a numeric id.
  * @param[in]     name  The name to add (@link ContainerConcept#Value @endlink of <tt>TNameStore</tt>).
@@ -421,15 +421,15 @@ getIdByName(TNameStore const & /*nameStore*/, TName const & name, TPos & pos, Na
 // Append contig name to name store, if not known already.
 template <typename TNameStore, typename TName, typename TName2>
 typename Position<TNameStore>::Type
-nameToId(NameStoreCache<TNameStore, TName> & cache, TName2 const & name)
+nameToID(NameStoreCache<TNameStore, TName> & cache, TName2 const & name)
 {
-    typename Size<TNameStore>::Type nameId = 0;
-    if (!getIdByName(nameId, cache, name))
+    typename Size<TNameStore>::Type nameID = 0;
+    if (!getIDByName(nameID, cache, name))
     {
-        nameId = length(host(cache));
+        nameID = length(host(cache));
         appendName(cache, name);
     }
-    return nameId;
+    return nameID;
 }
 
 }  // namespace seqan

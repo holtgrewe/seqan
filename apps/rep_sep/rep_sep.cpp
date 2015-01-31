@@ -14,7 +14,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ==========================================================================
-  $Id$
+  $ID$
  ==========================================================================*/
 
 #define SEQAN_PROFILE
@@ -182,14 +182,14 @@ int main(int argc, const char * argv[])
 
     // construct matrix for parsing
     typedef char TAlpahbet;
-    typedef Id<TFragmentStore::TAlignedReadStore>::Type TId;
+    typedef ID<TFragmentStore::TAlignedReadStore>::Type TID;
     typedef Size<TFragmentStore::TReadSeq>::Type TReadPos;
 
-    typedef Triple<TAlpahbet, TId, TReadPos> TMatrixValue;
+    typedef Triple<TAlpahbet, TID, TReadPos> TMatrixValue;
     typedef String<TMatrixValue> TMatrix;
 
     TMatrix matrix;
-    typedef Triple<char, TId, TReadPos> TColumnAlphabet;
+    typedef Triple<char, TID, TReadPos> TColumnAlphabet;
     typedef String<TColumnAlphabet> TCandidateColumn;
     typedef Pair<TReadPos, TCandidateColumn> TAnnotatedCandidateColumn;
     String<TAnnotatedCandidateColumn> candidates;
@@ -282,7 +282,7 @@ int main(int argc, const char * argv[])
         cout << "Component <" << c << "> contains " << length(components[c]) << " reads " << endl;
         for (TSize r = 0; r < length(components[c]); ++r)
         {
-            cout << value(rgraph.vertexCargo, components[c][r]).alignedRead.readId << " (" << fragStore.readNameStore[value(rgraph.vertexCargo, value(components[c], r)).alignedRead.readId] << ")" << endl;
+            cout << value(rgraph.vertexCargo, components[c][r]).alignedRead.readID << " (" << fragStore.readNameStore[value(rgraph.vertexCargo, value(components[c], r)).alignedRead.readID] << ")" << endl;
         }
     }
     // TODO: implement IO stuff

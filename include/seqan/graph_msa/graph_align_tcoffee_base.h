@@ -125,7 +125,7 @@ buildAlignmentGraph(String<TFragment, TSpec1>& matches,
 	typedef typename Iterator<TScoreValues, Standard>::Type TScoreValuesIter;
 	typedef Graph<Alignment<TStringSet, TCargo, TSpec> > TOutGraph;
 	typedef typename Size<TFragmentString>::Type TSize;
-	typedef typename Id<TOutGraph>::Type TId;
+	typedef typename ID<TOutGraph>::Type TID;
 	//typedef typename EdgeDescriptor<TOutGraph>::Type TEdgeDescriptor;
 	typedef typename VertexDescriptor<TOutGraph>::Type TVertexDescriptor;
 
@@ -146,8 +146,8 @@ buildAlignmentGraph(String<TFragment, TSpec1>& matches,
 	TFragmentStringIter endIt = end(matches, Standard() );
 	TScoreValuesIter scoreIt = begin(scores, Standard() );
 	for(; it != endIt; ++it, ++scoreIt) {
-		TId id1 = sequenceId(*it,0);
-		TId id2 = sequenceId(*it,1);
+		TID id1 = sequenceID(*it,0);
+		TID id2 = sequenceID(*it,1);
 		TSize pos1 = fragmentBegin(*it, id1);
 		TSize pos2 = fragmentBegin(*it, id2);
 		TSize fragLen = fragmentLength(*it, id1);
@@ -207,7 +207,7 @@ _scoreMatches(StringSet<TString, TSpec> const & seqSet,
 			  TScoreValue offset)
 {
 	typedef String<Fragment<TSize, ExactFragment<> >, TSpec2> const TFragmentString;
-	typedef typename Id<typename Value<TFragmentString>::Type>::Type TId;
+	typedef typename ID<typename Value<TFragmentString>::Type>::Type TID;
 	typedef typename Iterator<TFragmentString, Standard>::Type TFragmentStringIter;
 	typedef typename Iterator<TString const, Standard>::Type TStringIter;
 	typedef typename Iterator<TScoreString, Standard>::Type TScoreStringIter;
@@ -217,11 +217,11 @@ _scoreMatches(StringSet<TString, TSpec> const & seqSet,
 	TFragmentStringIter itF = begin(matches, Standard() );
 	TFragmentStringIter itFEnd = end(matches, Standard() );
 	TScoreStringIter itSc = begin(scores, Standard() );
-	TId id1 = 0; TId id2 = 0;
+	TID id1 = 0; TID id2 = 0;
 	TSize pos1 = 0; TSize pos2 = 0;	TSize fragLen = 0;
 	for(; itF != itFEnd; ++itF, ++itSc) {
-		id1 = sequenceId(*itF,0);
-		id2 = sequenceId(*itF,1);
+		id1 = sequenceID(*itF,0);
+		id2 = sequenceID(*itF,1);
 		pos1 = fragmentBegin(*itF, id1);
 		pos2 = fragmentBegin(*itF, id2);
 		fragLen = fragmentLength(*itF, id1);
@@ -358,7 +358,7 @@ tripletLibraryExtension(Graph<Alignment<TStringSet, TCargo, TSpec> >& g)
 	for(; itEdges1 != itEdgesEnd; ++itEdges1) {
 		for(TEdgeIter itEdges2 = itEdges1; ++itEdges2 != itEdgesEnd;) {
 			if ((*itEdges1).v1 != (*itEdges2).v1) break;
-			if (sequenceId(g, (*itEdges1).v2) != sequenceId(g, (*itEdges2).v2)) {
+			if (sequenceID(g, (*itEdges1).v2) != sequenceID(g, (*itEdges2).v2)) {
 				TCargo weight = ((*itEdges1).c < (*itEdges2).c) ? (*itEdges1).c : (*itEdges2).c;
 				if ((*itEdges1).v2 < (*itEdges2).v2) {
 					TEdgeMapIter pos = newEMap.find(TNewEdge((*itEdges1).v2, (*itEdges2).v2));
@@ -456,7 +456,7 @@ _subTreeSearch(TGuideTree& guideTree,
 	// Label all internal vertices with the closest root node
 	typedef Pair<TSize, TSize> TDistGroup; // Distance, group index
 	String<TDistGroup> closestRoot;  
-	resize(closestRoot, getIdUpperBound(_getVertexIdManager(guideTree)), TDistGroup(0,0), Exact());
+	resize(closestRoot, getIDUpperBound(_getVertexIDManager(guideTree)), TDistGroup(0,0), Exact());
 	for(TSize i=0; i< (TSize) length(groupRoot); ++i) {
 		TVertexDescriptor v = groupRoot[i];
 		TSize dist = 0;
@@ -575,8 +575,8 @@ tripletLibraryExtension(Graph<Alignment<TStringSet, TCargo, TSpec> >& g,
 		TEdgeIter itInitial = begin(initialEdges, Standard());
 		TEdgeIter itInitialEnd = end(initialEdges, Standard());
 		for(; itInitial != itInitialEnd; ++itInitial) {
-			TSize seq1 = idToPosition(strSet, sequenceId(g, (*itInitial).v1));
-			TSize seq2 = idToPosition(strSet, sequenceId(g, (*itInitial).v2));
+			TSize seq1 = idToPosition(strSet, sequenceID(g, (*itInitial).v1));
+			TSize seq2 = idToPosition(strSet, sequenceID(g, (*itInitial).v2));
 			if ((seqLabels[seq1] == i) && (seqLabels[seq2] == i)) {
 				appendValue(fullEdges, *itInitial, Generous());
 				appendValue(fullEdges, TEdge((*itInitial).v2, (*itInitial).v1, (*itInitial).c), Generous());
@@ -589,7 +589,7 @@ tripletLibraryExtension(Graph<Alignment<TStringSet, TCargo, TSpec> >& g,
 		for(; itEdges1 != itEdgesEnd; ++itEdges1) {
 			for(TEdgeIter itEdges2 = itEdges1; ++itEdges2 != itEdgesEnd;) {
 				if ((*itEdges1).v1 != (*itEdges2).v1) break;
-				if (sequenceId(g, (*itEdges1).v2) != sequenceId(g, (*itEdges2).v2)) {
+				if (sequenceID(g, (*itEdges1).v2) != sequenceID(g, (*itEdges2).v2)) {
 					TCargo weight = ((*itEdges1).c < (*itEdges2).c) ? (*itEdges1).c : (*itEdges2).c;
 					if ((*itEdges1).v2 < (*itEdges2).v2) {
 						TEdgeMapIter pos = newEMap.find(TNewEdge((*itEdges1).v2, (*itEdges2).v2));
@@ -637,7 +637,7 @@ graphBasedTripletLibraryExtension(Graph<Alignment<TStringSet, TCargo, TSpec> >& 
 	typedef typename Iterator<TGraph, OutEdgeIterator>::Type TOutEdgeIterator;
 
 	// Remember the old cargo
-	resize(newCargoMap, getIdUpperBound(_getEdgeIdManager(g)), Exact());
+	resize(newCargoMap, getIDUpperBound(_getEdgeIDManager(g)), Exact());
 	TEdgeIterator it(g);
 	for(;!atEnd(it);++it) 
 		property(newCargoMap, *it) = cargo(*it);
@@ -652,7 +652,7 @@ graphBasedTripletLibraryExtension(Graph<Alignment<TStringSet, TCargo, TSpec> >& 
 			while (!atEnd(outIt2)) {
 				TVertexDescriptor tV1 = targetVertex(outIt1);
 				TVertexDescriptor tV2 = targetVertex(outIt2);
-				if (sequenceId(g, tV1) != sequenceId(g,tV2)) {
+				if (sequenceID(g, tV1) != sequenceID(g,tV2)) {
 					TEdgeDescriptor e = findEdge(g, tV1, tV2);
 					if (e == 0) {
 						// New edge
@@ -717,7 +717,7 @@ graphBasedTripletLibraryExtension(Graph<Alignment<TStringSet, TCargo, TSpec> >& 
 //
 //	// Just augment existing edges
 //	String<TCargo> newCargoMap;
-//	resize(newCargoMap, getIdUpperBound(_getEdgeIdManager(g)), Exact());
+//	resize(newCargoMap, getIDUpperBound(_getEdgeIDManager(g)), Exact());
 //	TEdgeIterator it(g);
 //	for(;!atEnd(it);++it) assignProperty(newCargoMap, *it, cargo(*it));
 //
@@ -731,7 +731,7 @@ graphBasedTripletLibraryExtension(Graph<Alignment<TStringSet, TCargo, TSpec> >& 
 //			while (!atEnd(outIt2)) {
 //				TVertexDescriptor tV1 = targetVertex(outIt1);
 //				TVertexDescriptor tV2 = targetVertex(outIt2);
-//				if (sequenceId(g, tV1) != sequenceId(g,tV2)) {
+//				if (sequenceID(g, tV1) != sequenceID(g,tV2)) {
 //					TEdgeDescriptor e = findEdge(g, tV1, tV2);
 //					if (e != 0) {
 //						// Increase weight of existing edge

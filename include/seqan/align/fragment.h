@@ -99,14 +99,14 @@ struct ExactReversableFragment;
  *
  * @code{.cpp}
  * // Construct fragment.
- * unsigned seqId1 = 0, beg1 = 0, seqId2 = 32, beg2 = 42, len = 33;
- * Fragment<> fragment(seqId1, beg1, seqId2, beg2, len);
+ * unsigned seqID1 = 0, beg1 = 0, seqID2 = 32, beg2 = 42, len = 33;
+ * Fragment<> fragment(seqID1, beg1, seqID2, beg2, len);
  * 
  * // Update fragment's properties.
  * fragmentBegin(fragment, 0) = 10;
  * fragmentBegin(fragment, 1) = 10;
- * sequenceId(fragment, 0) = 33;
- * sequenceId(fragment, 1) = 44;
+ * sequenceID(fragment, 0) = 33;
+ * sequenceID(fragment, 1) = 44;
  * fragmentLength(fragment) += 42;
  * @endcode
  */
@@ -140,11 +140,11 @@ struct Size<Fragment<TSize, TSpec> const> {
 template<typename TSize, typename TSpec>
 class Fragment<TSize, ExactFragment<TSpec> > {
 public:
-    typedef typename Id<Fragment>::Type TId;
+    typedef typename ID<Fragment>::Type TID;
 
-    TId seqId1;
+    TID seqID1;
     TSize begin1;
-    TId seqId2;
+    TID seqID2;
     TSize begin2;
     TSize len;
 
@@ -155,17 +155,17 @@ public:
  * @signature Fragment::Fragment();
  * @signature Fragment::Fragment(seqID1, beg1, seqID2, beg2, l);
  *
- * @param[in] seqID1  ID of the first sequence.  Type: <tt>TId</tt>.
+ * @param[in] seqID1  ID of the first sequence.  Type: <tt>TID</tt>.
  * @param[in] beg1    Begin position of segment match in first sequence.  Type: <tt>TSize</tt>.
- * @param[in] seqID2  ID of the second sequence.  Type: <tt>TId</tt>.
+ * @param[in] seqID2  ID of the second sequence.  Type: <tt>TID</tt>.
  * @param[in] beg2    Begin position of segment match in second sequence.  Type: <tt>TSize</tt>.
  * @param[in] l       The length of the segment match.  Type: <tt>TSize</tt>.
  */
   
-    Fragment() : seqId1(0), begin1(0), seqId2(0), begin2(0), len(0) {}
+    Fragment() : seqID1(0), begin1(0), seqID2(0), begin2(0), len(0) {}
 
-    Fragment(TId sqId1, TSize beg1, TId sqId2, TSize beg2, TSize l) :
-            seqId1(sqId1), begin1(beg1), seqId2(sqId2), begin2(beg2), len(l) 
+    Fragment(TID sqID1, TSize beg1, TID sqID2, TSize beg2, TSize l) :
+            seqID1(sqID1), begin1(beg1), seqID2(sqID2), begin2(beg2), len(l) 
     {}
 
 };
@@ -175,9 +175,9 @@ inline bool
 operator==(Fragment<TSize, ExactFragment<TSpec> > const & left,
            Fragment<TSize, ExactFragment<TSpec> > const & right)
 {
-    return (left.seqId1 == right.seqId1 &&
+    return (left.seqID1 == right.seqID1 &&
             left.begin1 == right.begin1 &&
-            left.seqId2 == right.seqId2 &&
+            left.seqID2 == right.seqID2 &&
             left.begin2 == right.begin2 &&
             left.len == right.len);
 }
@@ -187,17 +187,17 @@ inline bool
 operator<(Fragment<TSize, ExactFragment<TSpec> > const & left,
           Fragment<TSize, ExactFragment<TSpec> > const & right)
 {
-    if (left.seqId1 < right.seqId1)
+    if (left.seqID1 < right.seqID1)
         return true;
-    if (left.seqId1 > right.seqId1)
+    if (left.seqID1 > right.seqID1)
         return false;
     if (left.begin1 < right.begin1)
         return true;
     if (left.begin1 > right.begin1)
         return false;
-    if (left.seqId2 < right.seqId2)
+    if (left.seqID2 < right.seqID2)
         return true;
-    if (left.seqId2 > right.seqId2)
+    if (left.seqID2 > right.seqID2)
         return false;
     if (left.begin2 < right.begin2)
         return true;
@@ -218,11 +218,11 @@ operator<(Fragment<TSize, ExactFragment<TSpec> > const & left,
 template<typename TSize, typename TSpec>
 class Fragment<TSize, ExactReversableFragment<TSpec> > {
 public:
-    typedef typename Id<Fragment>::Type TId_;
+    typedef typename ID<Fragment>::Type TID_;
 
-    TId_ seqId1;
+    TID_ seqID1;
     TSize begin1;
-    TId_ seqId2;
+    TID_ seqID2;
     TSize begin2;
     TSize len;
     bool reversed;
@@ -234,23 +234,23 @@ public:
  * @signature Fragment::Fragment();
  * @signature Fragment::Fragment(seqID1, beg1, seqID2, beg2, l[, reversed]);
  *
- * @param[in] seqID1   ID of the first sequence.  Type: <tt>TId</tt>.
+ * @param[in] seqID1   ID of the first sequence.  Type: <tt>TID</tt>.
  * @param[in] beg1     Begin position of segment match in first sequence.  Type: <tt>TSize</tt>.
- * @param[in] seqID2   ID of the second sequence.  Type: <tt>TId</tt>.
+ * @param[in] seqID2   ID of the second sequence.  Type: <tt>TID</tt>.
  * @param[in] beg2     Begin position of segment match in second sequence.  Type: <tt>TSize</tt>.
  * @param[in] l        The length of the segment match.  Type: <tt>TSize</tt>.
  * @param[in] reversed A bool; <tt>true</tt> if the segments match in reverse orientation, <tt>false</tt> otherwise.
  */
 
     
-    Fragment() : seqId1(0), begin1(0), seqId2(0), begin2(0), len(0), reversed(false) {}
+    Fragment() : seqID1(0), begin1(0), seqID2(0), begin2(0), len(0), reversed(false) {}
     
-    Fragment(TId_ sqId1, TSize beg1, TId_ sqId2, TSize beg2, TSize l) :
-            seqId1(sqId1), begin1(beg1), seqId2(sqId2), begin2(beg2), len(l), reversed(false) 
+    Fragment(TID_ sqID1, TSize beg1, TID_ sqID2, TSize beg2, TSize l) :
+            seqID1(sqID1), begin1(beg1), seqID2(sqID2), begin2(beg2), len(l), reversed(false) 
     {}
 	
-    Fragment(TId_ sqId1, TSize beg1, TId_ sqId2, TSize beg2, TSize l, bool rev) :
-            seqId1(sqId1), begin1(beg1), seqId2(sqId2), begin2(beg2), len(l), reversed(rev) 
+    Fragment(TID_ sqID1, TSize beg1, TID_ sqID2, TSize beg2, TSize l, bool rev) :
+            seqID1(sqID1), begin1(beg1), seqID2(sqID2), begin2(beg2), len(l), reversed(rev) 
     {}
 };
 
@@ -259,9 +259,9 @@ inline bool
 operator==(Fragment<TSize, ExactReversableFragment<TSpec> > const & left,
            Fragment<TSize, ExactReversableFragment<TSpec> > const & right)
 {
-    return (left.seqId1 == right.seqId1 &&
+    return (left.seqID1 == right.seqID1 &&
             left.begin1 == right.begin1 &&
-            left.seqId2 == right.seqId2 &&
+            left.seqID2 == right.seqID2 &&
             left.begin2 == right.begin2 &&
             left.len == right.len &&
             left.reversed == right.reversed);
@@ -272,17 +272,17 @@ inline bool
 operator<(Fragment<TSize, ExactReversableFragment<TSpec> > const & left,
           Fragment<TSize, ExactReversableFragment<TSpec> > const & right)
 {
-    if (left.seqId1 < right.seqId1)
+    if (left.seqID1 < right.seqID1)
         return true;
-    if (left.seqId1 > right.seqId1)
+    if (left.seqID1 > right.seqID1)
         return false;
     if (left.begin1 < right.begin1)
         return true;
     if (left.begin1 > right.begin1)
         return false;
-    if (left.seqId2 < right.seqId2)
+    if (left.seqID2 < right.seqID2)
         return true;
-    if (left.seqId2 > right.seqId2)
+    if (left.seqID2 > right.seqID2)
         return false;
     if (left.begin2 < right.begin2)
         return true;
@@ -316,37 +316,37 @@ template<typename TSize, typename TSpec, typename TStringSet, typename TVal>
 inline typename Infix<typename Value<TStringSet>::Type>::Type
 label(Fragment<TSize, TSpec> const& f,
       TStringSet& str,
-      TVal const seqId)
+      TVal const seqID)
 {
 	SEQAN_CHECKPOINT
-	typedef typename Id<Fragment<TSize, TSpec> >::Type TId;
-	return ((TId) seqId == (f.seqId1)) ? infix(getValueById(str, (TId) seqId), f.begin1, f.begin1 + f.len) : infix(getValueById(str, (TId) seqId), f.begin2, f.begin2 + f.len);
+	typedef typename ID<Fragment<TSize, TSpec> >::Type TID;
+	return ((TID) seqID == (f.seqID1)) ? infix(getValueByID(str, (TID) seqID), f.begin1, f.begin1 + f.len) : infix(getValueByID(str, (TID) seqID), f.begin2, f.begin2 + f.len);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
- * @fn Fragment#sequenceId
+ * @fn Fragment#sequenceID
  * @brief Access to the sequence ID of a fragment.
  *
- * @signature TId sequenceId(frag, seqNum);
+ * @signature TID sequenceID(frag, seqNum);
  *
  * @param[in] frag   A Fragment.
  * @param[in] seqNum The sequence number fo rwhich the id should be retrieved.  Note that @link Fragment @endlink
                      stores information about exactly two sequences which can be accessed with seqNum 0 or 1 but whose
                      ids may differ from their seqNum.
  *
- * @return TId Reference to the sequence fragment id member.
+ * @return TID Reference to the sequence fragment id member.
  */
 
 template<typename TSize, typename TSpec, typename TVal>
-inline typename Id<Fragment<TSize, TSpec> >::Type &
-sequenceId(Fragment<TSize, TSpec> const& f,
-		   TVal const seqId)
+inline typename ID<Fragment<TSize, TSpec> >::Type &
+sequenceID(Fragment<TSize, TSpec> const& f,
+		   TVal const seqID)
 {
 	SEQAN_CHECKPOINT
-	typedef typename Id<Fragment<TSize, TSpec> >::Type TId;
-	return ((TId) seqId == 0) ? const_cast<TId &>(f.seqId1) : const_cast<TId &>(f.seqId2);
+	typedef typename ID<Fragment<TSize, TSpec> >::Type TID;
+	return ((TID) seqID == 0) ? const_cast<TID &>(f.seqID1) : const_cast<TID &>(f.seqID2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -355,10 +355,10 @@ sequenceId(Fragment<TSize, TSpec> const& f,
  * @fn Fragment#fragmentBegin
  * @brief Return fragment begin.
  *
- * @signature TSize fragmentBegin(frag, seqId);
+ * @signature TSize fragmentBegin(frag, seqID);
  *
  * @param[in] frag  The Fragment to query.
- * @param[in] seqId The id of the sequence to get the begin for.
+ * @param[in] seqID The id of the sequence to get the begin for.
  *
  * @return TSize Reference to the fragment begin position member.
  */
@@ -366,11 +366,11 @@ sequenceId(Fragment<TSize, TSpec> const& f,
 template<typename TSize, typename TSpec, typename TVal>
 inline TSize&
 fragmentBegin(Fragment<TSize, TSpec> const& f,
-			  TVal const seqId)
+			  TVal const seqID)
 {
 	SEQAN_CHECKPOINT
-	typedef typename Id<Fragment<TSize, TSpec> >::Type TId;
-	return ((TId) seqId == f.seqId1) ? const_cast<TSize&>(f.begin1) : const_cast<TSize&>(f.begin2);
+	typedef typename ID<Fragment<TSize, TSpec> >::Type TID;
+	return ((TID) seqID == f.seqID1) ? const_cast<TSize&>(f.begin1) : const_cast<TSize&>(f.begin2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -407,28 +407,28 @@ fragmentLength(Fragment<TSize, TSpec> const& f)
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TSize, typename TSpec, typename TId1, typename TPosition1, typename TId2, typename TPosition2>
+template<typename TSize, typename TSpec, typename TID1, typename TPosition1, typename TID2, typename TPosition2>
 inline void
 getProjectedPosition(Fragment<TSize, ExactFragment<TSpec> > const& f,
-					 TId1 const seqId,
+					 TID1 const seqID,
 					 TPosition1 const pos,
-					 TId2& seqId2,
+					 TID2& seqID2,
 					 TPosition2& pos2)
 {
 	SEQAN_CHECKPOINT
-	typedef typename Id<Fragment<TSize, TSpec> >::Type TId;
+	typedef typename ID<Fragment<TSize, TSpec> >::Type TID;
 	
-	if ((TId) seqId == f.seqId1) {
+	if ((TID) seqID == f.seqID1) {
 		SEQAN_ASSERT((TPosition1)f.begin1<=pos);
 		SEQAN_ASSERT(pos - f.begin1 < f.len)	;
 		pos2 = f.begin2 + (pos - f.begin1);
-		seqId2 = f.seqId2;
+		seqID2 = f.seqID2;
 		return;
 	} else {
 		SEQAN_ASSERT((TPosition1)f.begin2<=pos);
 		SEQAN_ASSERT(pos - f.begin2 < f.len);
 		pos2 = f.begin1 + (pos - f.begin2);
-		seqId2 = f.seqId1;
+		seqID2 = f.seqID1;
 		return;
 	}
 }
@@ -436,29 +436,29 @@ getProjectedPosition(Fragment<TSize, ExactFragment<TSpec> > const& f,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TSize, typename TSpec, typename TValue, typename TId1, typename TPosition1, typename TId2, typename TPosition2>
+template<typename TSize, typename TSpec, typename TValue, typename TID1, typename TPosition1, typename TID2, typename TPosition2>
 inline void
 getProjectedPosition(Fragment<TSize, ExactFragment<TSpec> > const& f,
 					TValue seg_num,
-					 TId1 const seqId,
+					 TID1 const seqID,
 					 TPosition1 const pos,
-					 TId2& seqId2,
+					 TID2& seqID2,
 					 TPosition2& pos2)
 {
-	(void) seqId;  // When compiled without assertions.
-	SEQAN_ASSERT((seg_num == 0 && seqId == f.seqId1) || (seg_num == 1 && seqId == f.seqId2));
+	(void) seqID;  // When compiled without assertions.
+	SEQAN_ASSERT((seg_num == 0 && seqID == f.seqID1) || (seg_num == 1 && seqID == f.seqID2));
 
 	if (seg_num == 0) {
 		SEQAN_ASSERT((TPosition1)f.begin1<=pos);
 		SEQAN_ASSERT(pos - f.begin1 < f.len)	;
 		pos2 = f.begin2 + (pos - f.begin1);
-		seqId2 = f.seqId2;
+		seqID2 = f.seqID2;
 		return;
 	} else {
 		SEQAN_ASSERT((TPosition1)f.begin2<=pos);
 		SEQAN_ASSERT(pos - f.begin2 < f.len);
 		pos2 = f.begin1 + (pos - f.begin2);
-		seqId2 = f.seqId1;
+		seqID2 = f.seqID1;
 		return;
 	}
 }
@@ -467,30 +467,30 @@ getProjectedPosition(Fragment<TSize, ExactFragment<TSpec> > const& f,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TSize, typename TSpec, typename TId1, typename TPosition1, typename TId2, typename TPosition2>
+template<typename TSize, typename TSpec, typename TID1, typename TPosition1, typename TID2, typename TPosition2>
 inline void
 getProjectedPosition(Fragment<TSize, ExactReversableFragment<TSpec> > const& f,
-					 TId1 const seqId,
+					 TID1 const seqID,
 					 TPosition1 const pos,
-					 TId2& seqId2,
+					 TID2& seqID2,
 					 TPosition2& pos2)
 {
 	SEQAN_CHECKPOINT
-	typedef typename Id<Fragment<TSize, TSpec> >::Type TId;
+	typedef typename ID<Fragment<TSize, TSpec> >::Type TID;
 	
-	if ((TId) seqId == f.seqId1) {
+	if ((TID) seqID == f.seqID1) {
 		SEQAN_ASSERT((TPosition1)f.begin1<=pos);
 		SEQAN_ASSERT(pos - f.begin1 < f.len)	;
 		if (f.reversed) pos2 = (f.begin2 + f.len - 1) - (pos - f.begin1);
 		else pos2 = f.begin2 + (pos - f.begin1);
-		seqId2 = f.seqId2;
+		seqID2 = f.seqID2;
 		return;
 	} else {
 		SEQAN_ASSERT((TPosition1)f.begin2<=pos);
 		SEQAN_ASSERT(pos - f.begin2 < f.len);
 		if (f.reversed) pos2 = (f.begin1 + f.len - 1) - (pos - f.begin2);
 		else pos2 = f.begin1 + (pos - f.begin2);
-		seqId2 = f.seqId1;
+		seqID2 = f.seqID1;
 		return;
 	}
 }
@@ -498,32 +498,32 @@ getProjectedPosition(Fragment<TSize, ExactReversableFragment<TSpec> > const& f,
 
 /////////////////////////////////////////////////////////////
 
-template<typename TSize, typename TSpec, typename TValue, typename TId1, typename TPosition1, typename TId2, typename TPosition2>
+template<typename TSize, typename TSpec, typename TValue, typename TID1, typename TPosition1, typename TID2, typename TPosition2>
 inline void
 getProjectedPosition(Fragment<TSize, ExactReversableFragment<TSpec> > const& f,
 					 TValue seg_num,
-					 TId1 const seqId,
+					 TID1 const seqID,
 					 TPosition1 const pos,
-					 TId2& seqId2,
+					 TID2& seqID2,
 					 TPosition2& pos2)
 {
 	SEQAN_CHECKPOINT
-	(void) seqId;  // When compiled without assertions.
-	SEQAN_ASSERT((seg_num == 0 && seqId==f.seqId1) || (seg_num == 1 && seqId==f.seqId2));
+	(void) seqID;  // When compiled without assertions.
+	SEQAN_ASSERT((seg_num == 0 && seqID==f.seqID1) || (seg_num == 1 && seqID==f.seqID2));
 
 	if (seg_num == 0) {
 		SEQAN_ASSERT((TPosition1)f.begin1<=pos);
 		SEQAN_ASSERT(pos - f.begin1 < f.len)	;
 		if (f.reversed) pos2 = (f.begin2 + f.len - 1) - (pos - f.begin1);
 		else pos2 = f.begin2 + (pos - f.begin1);
-		seqId2 = f.seqId2;
+		seqID2 = f.seqID2;
 		return;
 	} else {
 		SEQAN_ASSERT((TPosition1)f.begin2<=pos);
 		SEQAN_ASSERT(pos - f.begin2 < f.len);
 		if (f.reversed) pos2 = (f.begin1 + f.len - 1) - (pos - f.begin2);
 		else pos2 = f.begin1 + (pos - f.begin2);
-		seqId2 = f.seqId1;
+		seqID2 = f.seqID1;
 		return;
 	}
 }
@@ -555,15 +555,15 @@ template<typename TSize, typename TSpec>
 inline bool operator>(Fragment<TSize, ExactFragment<TSpec> > const & lhs,
                       Fragment<TSize, ExactFragment<TSpec> > const & rhs)
 {
-    if (lhs.seqId1 > rhs.seqId1)
+    if (lhs.seqID1 > rhs.seqID1)
         return true;
-    if (lhs.seqId1 == rhs.seqId1 && lhs.begin1 > rhs.begin1)
+    if (lhs.seqID1 == rhs.seqID1 && lhs.begin1 > rhs.begin1)
         return true;
-    if (lhs.seqId1 == rhs.seqId1 && lhs.begin1 == rhs.begin1 && lhs.seqId2 > rhs.seqId2)
+    if (lhs.seqID1 == rhs.seqID1 && lhs.begin1 == rhs.begin1 && lhs.seqID2 > rhs.seqID2)
         return true;
-    if (lhs.seqId1 == rhs.seqId1 && lhs.begin1 == rhs.begin1 && lhs.seqId2 == rhs.seqId2 && lhs.begin2 > rhs.begin2)
+    if (lhs.seqID1 == rhs.seqID1 && lhs.begin1 == rhs.begin1 && lhs.seqID2 == rhs.seqID2 && lhs.begin2 > rhs.begin2)
         return true;
-    if (lhs.seqId1 == rhs.seqId1 && lhs.begin1 == rhs.begin1 && lhs.seqId2 == rhs.seqId2 && lhs.begin2 == rhs.begin2 && lhs.len > rhs.len)
+    if (lhs.seqID1 == rhs.seqID1 && lhs.begin1 == rhs.begin1 && lhs.seqID2 == rhs.seqID2 && lhs.begin2 == rhs.begin2 && lhs.len > rhs.len)
         return true;
     return false;
 }

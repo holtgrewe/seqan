@@ -265,9 +265,9 @@ unsigned stripPair(TSeq& seq1, TSeq& adapter1, TSeq& seq2, TSeq& adapter2)
 	return insert;
 }
 
-template <typename TSeq, typename TId>
-unsigned stripPairBatch(seqan::StringSet<TSeq>& set1, seqan::StringSet<TId>& idSet1,
-    seqan::StringSet<TSeq>& set2, seqan::StringSet<TId>& idSet2, AdapterTrimmingStats& stats, bool tagOpt)
+template <typename TSeq, typename TID>
+unsigned stripPairBatch(seqan::StringSet<TSeq>& set1, seqan::StringSet<TID>& idSet1,
+    seqan::StringSet<TSeq>& set2, seqan::StringSet<TID>& idSet2, AdapterTrimmingStats& stats, bool tagOpt)
 {
     int t_num = 1;
 #ifdef _OPENMP
@@ -381,8 +381,8 @@ unsigned stripAdapter(TSeq& seq, TAdapter& adapter, TSpec const & spec)
 	    return 0;
     }
 }
-template <typename TSeq, typename TId, typename TAdapter, typename TSpec>
-unsigned stripAdapterBatch(seqan::StringSet<TSeq>& set, seqan::StringSet<TId>& idSet, TAdapter& adapter, TSpec const & spec,
+template <typename TSeq, typename TID, typename TAdapter, typename TSpec>
+unsigned stripAdapterBatch(seqan::StringSet<TSeq>& set, seqan::StringSet<TID>& idSet, TAdapter& adapter, TSpec const & spec,
 		AdapterTrimmingStats& stats, bool reverse = false, bool tagOpt = false)
 {
 	int t_num = omp_get_max_threads();
@@ -436,14 +436,14 @@ unsigned stripAdapterBatch(seqan::StringSet<TSeq>& set, seqan::StringSet<TId>& i
 	return a_count;
 }
 
-template <typename TSeq, typename TId, typename TSpec>
-unsigned stripReverseAdapterBatch(seqan::StringSet<TSeq>& set, seqan::StringSet<TId>& IdSet, TSeq& adapter, TSpec const & spec,
+template <typename TSeq, typename TID, typename TSpec>
+unsigned stripReverseAdapterBatch(seqan::StringSet<TSeq>& set, seqan::StringSet<TID>& IDSet, TSeq& adapter, TSpec const & spec,
 		AdapterTrimmingStats& stats, bool tagOpt)
 {
 	typedef typename Value<TSeq>::Type TAlphabet;
 	typedef typename STRING_REVERSE_COMPLEMENT<TAlphabet>::Type TReverseComplement;
 	TReverseComplement mod(adapter);
-	return stripAdapterBatch(set, IdSet, mod, spec, stats, true, tagOpt);
+	return stripAdapterBatch(set, IDSet, mod, spec, stats, true, tagOpt);
 }
 
 #endif  // #ifndef SANDBOX_GROUP3_APPS_SEQDPT_ADAPTERTRIMMING_H_

@@ -54,8 +54,8 @@ struct MatchRecord
 {
     typedef typename MakeSigned_<TContigPos_>::Type TContigPos;
 
-    unsigned        contigId;       // genome seqNo
-    unsigned        readId;         // read seqNo
+    unsigned        contigID;       // genome seqNo
+    unsigned        readID;         // read seqNo
     TContigPos      beginPos;       // begin position of the match in the genome
     TContigPos      endPos;         // end position of the match in the genome
 #ifdef RAZERS_DEFER_COMPACTION
@@ -63,19 +63,19 @@ struct MatchRecord
 #endif  // #ifdef RAZERS_DEFER_COMPACTION
     char            orientation;    // 'F', 'R', '-'
     short int       score;          // Levenshtein distance / score.
-    unsigned        pairMatchId;            // unique id for the two mate-pair matches (0 if unpaired)
+    unsigned        pairMatchID;            // unique id for the two mate-pair matches (0 if unpaired)
     int             libDiff : 24;     // outer distance difference from librarySize
     int             pairScore : 8;    // combined score of both mates
 
     static const unsigned INVALID_ID;
 
     MatchRecord() :
-        contigId(MaxValue<unsigned>::VALUE), readId(MaxValue<unsigned>::VALUE),
+        contigID(MaxValue<unsigned>::VALUE), readID(MaxValue<unsigned>::VALUE),
         beginPos(0), endPos(0),
 #ifdef RAZERS_DEFER_COMPACTION
         isRegistered(false),
 #endif  // #ifndef RAZERS_DEFER_COMPACTION
-        orientation('-'), score(0), pairMatchId(MaxValue<unsigned>::VALUE),
+        orientation('-'), score(0), pairMatchID(MaxValue<unsigned>::VALUE),
         libDiff(0), pairScore(0)
     {}
 };
@@ -84,7 +84,7 @@ template <typename TStream, typename TPos>
 TStream &
 operator<<(TStream & stream, MatchRecord<TPos> & record)
 {
-    stream << "(contigId=" << record.contigId << ", readId=" << record.readId << ", beginPos=" << record.beginPos << ", endPos = " << record.endPos << ", orientation=" << record.orientation << ", score=" << record.score << ", pairMatchId=" << record.pairMatchId << ", libDiff=" << record.libDiff << ", pairScore=" << record.pairScore << ")";
+    stream << "(contigID=" << record.contigID << ", readID=" << record.readID << ", beginPos=" << record.beginPos << ", endPos = " << record.endPos << ", orientation=" << record.orientation << ", score=" << record.score << ", pairMatchID=" << record.pairMatchID << ", libDiff=" << record.libDiff << ", pairScore=" << record.pairScore << ")";
     return stream;
 }
 
@@ -193,7 +193,7 @@ struct RazerSCoreOptions
                                         // 1..enumerate reads beginning with 1
                                         // 2..use the read sequence (only for short reads!)
                                         // 3..use Fasta id, do not append /L and /R for mate pairs.
-    bool        fullFastaId;            // read full FastaId or clip after first whitespace
+    bool        fullFastaID;            // read full FastaID or clip after first whitespace
     unsigned    sortOrder;              // 0..sort keys: 1. read number, 2. genome position
                                         // 1..           1. genome pos50ition, 2. read number
     int         positionFormat;         // 0..gap space
@@ -215,7 +215,7 @@ struct RazerSCoreOptions
     // mate-pair parameters
     int         libraryLength;          // offset between two mates
     int         libraryError;           // offset tolerance
-    unsigned    nextPairMatchId;        // use this id for the next mate-pair
+    unsigned    nextPairMatchID;        // use this id for the next mate-pair
 
     // verification parameters
     unsigned    prefixSeedLength;       // length of the prefix seed
@@ -250,7 +250,7 @@ struct RazerSCoreOptions
     int         absMaxQualSumErrors;
 
     bool        lowMemory;              // set maximum shape weight to 13 to limit size of q-gram index
-    bool        fastaIdQual;            // hidden option for special fasta+quality format we use
+    bool        fastaIDQual;            // hidden option for special fasta+quality format we use
 
     // misc
     double      noCompactFrac;          // If in last noCompactFrac of genome, don't compact.
@@ -305,7 +305,7 @@ struct RazerSCoreOptions
         dumpAlignment = false;
         genomeNaming = 0;
         readNaming = 0;
-        fullFastaId = false;
+        fullFastaID = false;
         sortOrder = 0;
         positionFormat = 0;
         runID = "s";        //
@@ -324,7 +324,7 @@ struct RazerSCoreOptions
 
         libraryLength = 220;
         libraryError = 50;
-        nextPairMatchId = 0;
+        nextPairMatchID = 0;
 
         prefixSeedLength = 28;      // the "artificial" seed length that is used for mapping quality assignment
         for (unsigned i = 0; i < 4; ++i)
@@ -338,7 +338,7 @@ struct RazerSCoreOptions
 
         absMaxQualSumErrors = 100;      // maximum for sum of mism qualities in total readlength
         lowMemory = false;          // set maximum shape weight to 13 to limit size of q-gram index
-        fastaIdQual = false;
+        fastaIDQual = false;
 
         threadCount = 1;
         // TODO(holtgrew): Tune this!
@@ -676,24 +676,24 @@ bool loadReads(
     String<__uint64> qualSum;
     String<Dna5Q>    seq;
     CharString       qual;
-    CharString       seqId;
+    CharString       seqID;
 
     unsigned seqCount = 0;
     unsigned kickoutcount = 0;
 
     while (!atEnd(seqFile))
     {
-        readRecord(seqId, seq, qual, seqFile);
+        readRecord(seqID, seq, qual, seqFile);
         ++seqCount;
 
         if (options.readNaming == 0 || options.readNaming == 3)
         {
-            if (!options.fullFastaId)
-                cropAfterFirst(seqId, IsWhitespace());  // read Fasta id up to the first whitespace
+            if (!options.fullFastaID)
+                cropAfterFirst(seqID, IsWhitespace());  // read Fasta id up to the first whitespace
         }
         else
         {
-            clear(seqId);
+            clear(seqID);
         }
 
         if (countN)
@@ -705,7 +705,7 @@ bool loadReads(
                     if (++count > cutoffCount)
                     {
                         clear(seq);
-                        clear(seqId);
+                        clear(seqID);
                         clear(qual);  // So no qualities are assigned below.
                         ++kickoutcount;
                         break;
@@ -720,7 +720,7 @@ bool loadReads(
             resize(seq, options.trimLength);
 
         // append read to fragment store
-        appendRead(store, seq, seqId);
+        appendRead(store, seq, seqID);
 
         unsigned len = length(seq);
         if (length(qualSum) <= len)
@@ -831,8 +831,8 @@ inline int estimateReadLength(SeqFileIn &seqFile)
 
     // parse record from buffer
     DirectionIterator<TBuffer, Input>::Type iter = directionIterator(buffer, Input());
-    CharString fastaId, seq;
-    readRecord(fastaId, seq, iter, seqFile.format);
+    CharString fastaID, seq;
+    readRecord(fastaID, seq, iter, seqFile.format);
     return length(seq);
 }
 
@@ -847,8 +847,8 @@ struct LessBeginPos :
     inline bool operator()(TReadMatch const & a, TReadMatch const & b) const
     {
         // genome position and orientation
-        if (a.contigId < b.contigId) return true;
-        if (a.contigId > b.contigId) return false;
+        if (a.contigID < b.contigID) return true;
+        if (a.contigID > b.contigID) return false;
 
         if (a.beginPos < b.beginPos) return true;
 
@@ -864,12 +864,12 @@ struct LessRNoBeginPos :
     inline bool operator()(TReadMatch const & a, TReadMatch const & b) const
     {
         // read number
-        if (a.readId < b.readId) return true;
-        if (a.readId > b.readId) return false;
+        if (a.readID < b.readID) return true;
+        if (a.readID > b.readID) return false;
 
         // genome position and orientation
-        if (a.contigId < b.contigId) return true;
-        if (a.contigId > b.contigId) return false;
+        if (a.contigID < b.contigID) return true;
+        if (a.contigID > b.contigID) return false;
 
         if (a.beginPos < b.beginPos) return true;
         if (a.beginPos > b.beginPos) return false;
@@ -898,12 +898,12 @@ struct LessRNoBeginPosMP :
     inline bool operator()(TReadMatch const & a, TReadMatch const & b) const
     {
         // read number
-        if (a.readId < b.readId) return true;
-        if (a.readId > b.readId) return false;
+        if (a.readID < b.readID) return true;
+        if (a.readID > b.readID) return false;
 
         // genome position and orientation
-        if (a.contigId < b.contigId) return true;
-        if (a.contigId > b.contigId) return false;
+        if (a.contigID < b.contigID) return true;
+        if (a.contigID > b.contigID) return false;
 
         if (a.beginPos < b.beginPos) return true;
         if (a.beginPos > b.beginPos) return false;
@@ -936,12 +936,12 @@ struct LessRNoEndPos :
     inline bool operator()(TReadMatch const & a, TReadMatch const & b) const
     {
         // read number
-        if (a.readId < b.readId) return true;
-        if (a.readId > b.readId) return false;
+        if (a.readID < b.readID) return true;
+        if (a.readID > b.readID) return false;
 
         // genome position and orientation
-        if (a.contigId < b.contigId) return true;
-        if (a.contigId > b.contigId) return false;
+        if (a.contigID < b.contigID) return true;
+        if (a.contigID > b.contigID) return false;
 
         if (a.endPos   < b.endPos) return true;
         if (a.endPos   > b.endPos) return false;
@@ -974,12 +974,12 @@ struct LessRNoEndPosMP :
     inline bool operator()(TReadMatch const & a, TReadMatch const & b) const
     {
         // read number
-        if (a.readId < b.readId) return true;
-        if (a.readId > b.readId) return false;
+        if (a.readID < b.readID) return true;
+        if (a.readID > b.readID) return false;
 
         // genome position and orientation
-        if (a.contigId < b.contigId) return true;
-        if (a.contigId > b.contigId) return false;
+        if (a.contigID < b.contigID) return true;
+        if (a.contigID > b.contigID) return false;
 
         if (a.endPos   < b.endPos) return true;
         if (a.endPos   > b.endPos) return false;
@@ -1011,8 +1011,8 @@ struct LessScoreBackport :
     inline bool operator()(TReadMatch const & a, TReadMatch const & b) const
     {
         // read number
-        if (a.readId < b.readId) return true;
-        if (a.readId > b.readId) return false;
+        if (a.readID < b.readID) return true;
+        if (a.readID > b.readID) return false;
 
         // quality
         if (a.orientation == '-') return false;
@@ -1022,8 +1022,8 @@ struct LessScoreBackport :
         if (b.score > a.score) return false;
 
         // Sort by leftmost begin pos, longest end pos on ties.
-        if (a.contigId < b.contigId) return true;
-        if (a.contigId > b.contigId) return false;
+        if (a.contigID < b.contigID) return true;
+        if (a.contigID > b.contigID) return false;
 
         if (a.orientation < b.orientation) return true;
         if (a.orientation > b.orientation) return false;
@@ -1048,8 +1048,8 @@ struct LessScoreBackport3Way :
     inline int operator()(TReadMatch const & a, TReadMatch const & b) const
     {
         // read number
-        if (a.readId < b.readId) return -1;
-        if (a.readId > b.readId) return 1;
+        if (a.readID < b.readID) return -1;
+        if (a.readID > b.readID) return 1;
 
         // quality
         if (a.orientation != '-' || b.orientation != '-')
@@ -1062,8 +1062,8 @@ struct LessScoreBackport3Way :
         if (b.score > a.score) return 1;
 
         // Sort by leftmost begin pos, longest end pos on ties.
-        if (a.contigId < b.contigId) return -1;
-        if (a.contigId > b.contigId) return 1;
+        if (a.contigID < b.contigID) return -1;
+        if (a.contigID > b.contigID) return 1;
 
         if (a.orientation < b.orientation) return -1;
         if (a.orientation > b.orientation) return 1;
@@ -1095,12 +1095,12 @@ struct LessRNoGPos :
     inline bool operator()(TAlignedRead const & a, TAlignedRead const & b) const
     {
         // read number
-        if (a.readId < b.readId) return true;
-        if (a.readId > b.readId) return false;
+        if (a.readID < b.readID) return true;
+        if (a.readID > b.readID) return false;
 
         // contig number
-        if (a.contigId < b.contigId) return true;
-        if (a.contigId > b.contigId) return false;
+        if (a.contigID < b.contigID) return true;
+        if (a.contigID > b.contigID) return false;
 
         // beginning position
         typename TAlignedRead::TPos ba = _min(a.beginPos, a.endPos);
@@ -1140,12 +1140,12 @@ struct LessRNoGEndPos :
         typename Value<TAlignedReadStore>::Type const & b) const
     {
         // read number
-        if (a.readId < b.readId) return true;
-        if (a.readId > b.readId) return false;
+        if (a.readID < b.readID) return true;
+        if (a.readID > b.readID) return false;
 
         // contig number
-        if (a.contigId < b.contigId) return true;
-        if (a.contigId > b.contigId) return false;
+        if (a.contigID < b.contigID) return true;
+        if (a.contigID > b.contigID) return false;
 
         // end position
         typename TAlignedRead::TPos ea = _max(a.beginPos, a.endPos);
@@ -1185,8 +1185,8 @@ struct LessScore :
         typedef typename Value<TAlignedReadStore>::Type TAlignedRead;
 
         // read number
-        if (a.readId < b.readId) return -1;
-        if (a.readId > b.readId) return 1;
+        if (a.readID < b.readID) return -1;
+        if (a.readID > b.readID) return 1;
 
         // quality
         if (a.id == TAlignedRead::INVALID_ID) return 1;
@@ -1229,8 +1229,8 @@ struct LessScore<TAlignedReadStore, TAlignedReadQualityStore, RazerSMode<RazerSP
         typedef typename Value<TAlignedReadStore>::Type TAlignedRead;
 
         // read number
-        if (a.readId < b.readId) return -1;
-        if (a.readId > b.readId) return 1;
+        if (a.readID < b.readID) return -1;
+        if (a.readID > b.readID) return 1;
 
         // quality
         if (a.id == TAlignedRead::INVALID_ID) return 1;
@@ -1284,7 +1284,7 @@ void maskDuplicates(TMatches &, TIterator const itBegin, TIterator const itEnd, 
     typedef typename TMatch::TContigPos     TContigPos;
 
     TContigPos  beginPos, endPos;
-    unsigned    contigId, readId;
+    unsigned    contigID, readID;
     char        orientation;
     unsigned    masked;
     TIterator   it;
@@ -1309,27 +1309,27 @@ void maskDuplicates(TMatches &, TIterator const itBegin, TIterator const itEnd, 
 
         beginPos = -1;
         endPos = -1;
-        contigId = TMatch::INVALID_ID;
-        readId = TMatch::INVALID_ID;
+        contigID = TMatch::INVALID_ID;
+        readID = TMatch::INVALID_ID;
         orientation = '-';
         masked = 0;
         it = itBegin;
 
         for (; it != itEnd; ++it)
         {
-            if ((*it).pairMatchId != TMatch::INVALID_ID && (it->readId & 1) != 0)
+            if ((*it).pairMatchID != TMatch::INVALID_ID && (it->readID & 1) != 0)
                 continue;                                                                   // remove only single reads or left mates
 
             TContigPos itEndPos = _max((*it).beginPos, (*it).endPos);
             if (endPos == itEndPos && orientation == (*it).orientation &&
-                contigId == (*it).contigId && readId == (*it).readId)
+                contigID == (*it).contigID && readID == (*it).readID)
             {
                 (*it).orientation = '-';
                 masked += 1;
                 continue;
             }
-            readId = (*it).readId;
-            contigId = (*it).contigId;
+            readID = (*it).readID;
+            contigID = (*it).contigID;
             endPos = itEndPos;
             orientation = (*it).orientation;
         }
@@ -1353,8 +1353,8 @@ void maskDuplicates(TMatches &, TIterator const itBegin, TIterator const itEnd, 
 
     beginPos = -1;
     endPos = -1;
-    contigId = TMatch::INVALID_ID;
-    readId = TMatch::INVALID_ID;
+    contigID = TMatch::INVALID_ID;
+    readID = TMatch::INVALID_ID;
     orientation = '-';
     masked = 0;
     it = itBegin;
@@ -1363,19 +1363,19 @@ void maskDuplicates(TMatches &, TIterator const itBegin, TIterator const itEnd, 
     {
         if ((*it).orientation == '-')
             continue;
-        if ((*it).pairMatchId != TMatch::INVALID_ID && (it->readId & 1) != 0)
+        if ((*it).pairMatchID != TMatch::INVALID_ID && (it->readID & 1) != 0)
             continue;                                                                   // remove only single reads or left mates
 
         TContigPos itBeginPos = _min((*it).beginPos, (*it).endPos);
-        if (beginPos == itBeginPos && readId == (*it).readId &&
-            contigId == (*it).contigId && orientation == ((*it).beginPos < (*it).endPos))
+        if (beginPos == itBeginPos && readID == (*it).readID &&
+            contigID == (*it).contigID && orientation == ((*it).beginPos < (*it).endPos))
         {
             (*it).orientation = '-';
             masked += 1;
             continue;
         }
-        readId = (*it).readId;
-        contigId = (*it).contigId;
+        readID = (*it).readID;
+        contigID = (*it).contigID;
         beginPos = itBeginPos;
         orientation = (*it).beginPos < (*it).endPos;
     }
@@ -1422,7 +1422,7 @@ void countMatches(TFragmentStore &store, TCounts &cnt, TBinFunctor &binF, TRazer
     TIterator it = begin(store.alignedReadStore, Standard());
     TIterator itEnd = end(store.alignedReadStore, Standard());
 
-    unsigned readId = TAlignedRead::INVALID_ID;
+    unsigned readID = TAlignedRead::INVALID_ID;
     int lastBin = -1;
     __int64 count = 0;
 
@@ -1432,7 +1432,7 @@ void countMatches(TFragmentStore &store, TCounts &cnt, TBinFunctor &binF, TRazer
         if ((*it).id == TAlignedRead::INVALID_ID) continue;
         int bin = binF((*it).id);
 
-        if (readId == (*it).readId)
+        if (readID == (*it).readID)
         {
             if (lastBin == bin)
                 ++count;
@@ -1445,16 +1445,16 @@ void countMatches(TFragmentStore &store, TCounts &cnt, TBinFunctor &binF, TRazer
         }
         else
         {
-            while (length(cnt) < readId)
+            while (length(cnt) < readID)
                 appendValue(cnt, empty, Generous());
             appendValue(cnt, row, Generous());
             clear(row);
-            readId = (*it).readId;
+            readID = (*it).readID;
             lastBin = bin;
             count = 1;
         }
     }
-    while (length(cnt) < readId)
+    while (length(cnt) < readID)
         appendValue(cnt, empty, Generous());
     appendValue(cnt, row, Generous());
 }
@@ -1475,7 +1475,7 @@ void countMatches(TFragmentStore & store, TCounts & cnt, TRazerSMode const &)
     TIterator it = begin(store.alignedReadStore, Standard());
     TIterator itEnd = end(store.alignedReadStore, Standard());
 
-    unsigned readId = TAlignedRead::INVALID_ID;
+    unsigned readID = TAlignedRead::INVALID_ID;
     short errors = -1;
     __int64 count = 0;
     __int64 maxVal = MaxValue<TValue>::VALUE;
@@ -1493,19 +1493,19 @@ void countMatches(TFragmentStore & store, TCounts & cnt, TRazerSMode const &)
     {
         if ((*it).id == TAlignedRead::INVALID_ID)
             continue;
-        if (readId == (*it).readId && errors == store.alignQualityStore[(*it).id].errors)
+        if (readID == (*it).readID && errors == store.alignQualityStore[(*it).id].errors)
             ++count;
         else
         {
-            if (readId != TAlignedRead::INVALID_ID && (unsigned)errors < length(cnt))
-                cnt[errors][readId] = (maxVal < count) ? (TValue)maxVal : (TValue)count;
-            readId = (*it).readId;
+            if (readID != TAlignedRead::INVALID_ID && (unsigned)errors < length(cnt))
+                cnt[errors][readID] = (maxVal < count) ? (TValue)maxVal : (TValue)count;
+            readID = (*it).readID;
             errors = store.alignQualityStore[(*it).id].errors;
             count = 1;
         }
     }
-    if (readId != TAlignedRead::INVALID_ID && (unsigned)errors < length(cnt))
-        cnt[errors][readId] = (TValue)count;
+    if (readID != TAlignedRead::INVALID_ID && (unsigned)errors < length(cnt))
+        cnt[errors][readID] = (TValue)count;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1620,7 +1620,7 @@ void compactMatches(
         ignoreUnusedVariableWarning(errors);
 
         //if (readNo == 643) std::cerr <<"["<<score<<","<<errors<<"] "<<std::flush;
-        if (readNo == (*it).readId && (*it).pairMatchId == TMatch::INVALID_ID)  // Only compact unpaired matches.
+        if (readNo == (*it).readID && (*it).pairMatchID == TMatch::INVALID_ID)  // Only compact unpaired matches.
         {
             if (score <= scoreCutOff)
             {
@@ -1628,7 +1628,7 @@ void compactMatches(
                 options.errorCutOff[readNo] = -scoreCutOff;
 //    std::cout<<"to "<<(unsigned)options.errorCutOff[readNo]<<std::endl;
                 setMaxErrors(swift, readNo, -scoreCutOff - 1);
-                while (it != itEnd && readNo == (*it).readId)
+                while (it != itEnd && readNo == (*it).readID)
                     ++it;
                 --it;
                 continue;
@@ -1684,7 +1684,7 @@ void compactMatches(
         }
         else
         {
-            readNo = (*it).readId;
+            readNo = (*it).readID;
             hitCount = 0;
             if (options.scoreDistanceRange > 0)
                 scoreCutOff = score - options.scoreDistanceRange;
@@ -1753,49 +1753,49 @@ void compactMatches(
     {
         if ((*it).orientation == '-')
             continue;
-        if (readNo == (*it).readId)
+        if (readNo == (*it).readID)
         {
             //second best match
             if (second)
             {
                 second = false;
-                if ((cnts[1][(*it).readId] & 31)  > (*it).editDist)
+                if ((cnts[1][(*it).readID] & 31)  > (*it).editDist)
                 {
                     //this second best match is better than any second best match before
-                    cnts[1][(*it).readId] = (*it).editDist; // second best dist is this editDist
+                    cnts[1][(*it).readID] = (*it).editDist; // second best dist is this editDist
                     // count is 0 (will be updated if countFirstTwo)
                 }
                 if (compactMode == COMPACT_FINAL)
-                    if ((cnts[1][(*it).readId] >> 5) != 2047)
-                        cnts[1][(*it).readId] += 32;
+                    if ((cnts[1][(*it).readID] >> 5) != 2047)
+                        cnts[1][(*it).readID] += 32;
             }
             else
             {
-                if ((*it).editDist <= (cnts[0][(*it).readId] & 31))
-                    if (cnts[0][(*it).readId] >> 5 != 2047)
-                        cnts[0][(*it).readId] += 32;
-                if ((*it).editDist <= (cnts[1][(*it).readId] & 31))
-                    if ((cnts[1][(*it).readId] >> 5) != 2047)
-                        cnts[1][(*it).readId] += 32;
+                if ((*it).editDist <= (cnts[0][(*it).readID] & 31))
+                    if (cnts[0][(*it).readID] >> 5 != 2047)
+                        cnts[0][(*it).readID] += 32;
+                if ((*it).editDist <= (cnts[1][(*it).readID] & 31))
+                    if ((cnts[1][(*it).readID] >> 5) != 2047)
+                        cnts[1][(*it).readID] += 32;
                 continue;
             }
         }
         else //best match
         {
             second = true;
-            readNo = (*it).readId;
+            readNo = (*it).readID;
             //cnts has 16bits, 11:5 for count:dist
-            if ((cnts[0][(*it).readId] & 31)  > (*it).editDist)
+            if ((cnts[0][(*it).readID] & 31)  > (*it).editDist)
             {
                 //this match is better than any match before
-                cnts[1][(*it).readId] = cnts[0][(*it).readId]; // best before is now second best
+                cnts[1][(*it).readID] = cnts[0][(*it).readID]; // best before is now second best
                 // (count will be updated when match is removed)
-                cnts[0][(*it).readId] = (*it).editDist; // best dist is this editDist
+                cnts[0][(*it).readID] = (*it).editDist; // best dist is this editDist
                 // count is 0 (will be updated if countFirstTwo)
             }
             if (compactMode == COMPACT_FINAL)
-                if ((cnts[0][(*it).readId] >> 5) != 2047)
-                    cnts[0][(*it).readId] += 32;
+                if ((cnts[0][(*it).readID] >> 5) != 2047)
+                    cnts[0][(*it).readID] += 32;
             // shift 5 to the right, add 1, shift 5 to the left, and keep count
         }
         *dit = *it;
@@ -1837,7 +1837,7 @@ inline bool
 matchVerify(
     TMatchVerifier & verifier,
     Segment<TGenome, InfixSegment> inf,                                 // potential match genome region
-    unsigned readId,                                                    // read number
+    unsigned readID,                                                    // read number
     TRead const & read,                                                 // read
     RazerSMode<RazerSPrefix, RazerSUngapped, RazerSErrors, TMatchNPolicy> const &)  // Hamming only
 {
@@ -1846,7 +1846,7 @@ matchVerify(
     typedef typename Iterator<TRead const, Standard>::Type  TReadIterator;
 
 //	unsigned maxErrors = (unsigned)(verifier.options->prefixSeedLength * verifier.options->errorRate);
-    unsigned maxErrors = verifier.options->errorCutOff[readId];
+    unsigned maxErrors = verifier.options->errorCutOff[readID];
     if (maxErrors == 0)
         return false;
 
@@ -1924,8 +1924,8 @@ matchVerify(
             verifier.push();
             // update maximal errors per read
             unsigned cutOff = maxErrors + 1;
-            if ((unsigned)verifier.options->errorCutOff[readId] > cutOff)
-                verifier.options->errorCutOff[readId] = cutOff;
+            if ((unsigned)verifier.options->errorCutOff[readID] > cutOff)
+                verifier.options->errorCutOff[readID] = cutOff;
         }
         return true;
     }
@@ -1961,7 +1961,7 @@ inline bool
 matchVerify(
     TMatchVerifier & verifier,
     Segment<TGenome, InfixSegment> inf,                             // potential match genome region
-    unsigned readId,                                            // read number
+    unsigned readID,                                            // read number
     TRead const & read,                                             // reads
     RazerSMode<RazerSGlobal, RazerSUngapped, TScoreMode, TMatchNPolicy> const &) // Semi-global, no gaps
 {
@@ -1980,7 +1980,7 @@ matchVerify(
     int minScore;
     if (IsSameType<TScoreMode, RazerSErrors>::VALUE)
     {
-        minScore = verifier.options->errorCutOff[readId];
+        minScore = verifier.options->errorCutOff[readID];
         if (minScore == 0)
             return false;
 
@@ -2088,8 +2088,8 @@ matchVerify(
 
             // update maximal errors per read
             unsigned cutOff = -minScore + 1;
-            if ((unsigned)verifier.options->errorCutOff[readId] > cutOff)
-                verifier.options->errorCutOff[readId] = cutOff;
+            if ((unsigned)verifier.options->errorCutOff[readID] > cutOff)
+                verifier.options->errorCutOff[readID] = cutOff;
         }
         return true;
     }
@@ -2107,7 +2107,7 @@ inline bool
 matchVerify(
     TMatchVerifier & verifier,
     Segment<TGenome, InfixSegment> inf,                                 // potential match genome region
-    unsigned readId,                                                    // read number
+    unsigned readID,                                                    // read number
     TRead const & read,                                                 // reads
     RazerSMode<RazerSGlobal, RazerSGapped, RazerSErrors, TMatchNPolicy> const &) // Mismatches and Indels
 {
@@ -2138,7 +2138,7 @@ matchVerify(
 
     unsigned ndlLength = length(read);
     int maxScore = MinValue<int>::VALUE;
-    int minScore = verifier.options->errorCutOff[readId];
+    int minScore = verifier.options->errorCutOff[readID];
     if (minScore == 0)
         return false;
 
@@ -2162,14 +2162,14 @@ matchVerify(
 
     TMyersFinder myersFinder(inf);
 #ifndef RAZERS_BANDED_MYERS
-    TMyersPattern & myersPattern = verifier.options->forwardPatterns[readId];
+    TMyersPattern & myersPattern = verifier.options->forwardPatterns[readID];
 #endif  // #ifdef RAZERS_BANDED_MYERS
     TPatternState & state = verifier.patternState;
 
 #ifdef RAZERS_DEBUG
     std::cout << "Verify: " << std::endl;
     std::cout << "Genome: " << inf << "\t" << beginPosition(inf) << "," << endPosition(inf) << std::endl;
-    std::cout << "Read:   " << read << "(id: " << readId << ")" << std::endl;
+    std::cout << "Read:   " << read << "(id: " << readID << ")" << std::endl;
 #endif
 
     // find end of best semi-global alignment
@@ -2390,12 +2390,12 @@ matchVerify(
 
             // update maximal errors per read
             unsigned cutOff = -minScore + 1;
-            if ((unsigned)verifier.options->errorCutOff[readId] > cutOff)
+            if ((unsigned)verifier.options->errorCutOff[readID] > cutOff)
             {
 //    std::cout<<"maxScore="<<verifier.m.score  << " minScore=" << minScore<<std::endl;
-//    std::cout<<"decreased errCutOff["<<readId<<"] from "<<(unsigned)verifier.options->errorCutOff[readId];
-                verifier.options->errorCutOff[readId] = cutOff;
-//    std::cout<<"to "<<(unsigned)verifier.options->errorCutOff[readId]<<std::endl;
+//    std::cout<<"decreased errCutOff["<<readID<<"] from "<<(unsigned)verifier.options->errorCutOff[readID];
+                verifier.options->errorCutOff[readID] = cutOff;
+//    std::cout<<"to "<<(unsigned)verifier.options->errorCutOff[readID]<<std::endl;
             }
         }
 
@@ -2909,7 +2909,7 @@ template <
 void _mapSingleReadsToContig(
     TMatches & matches,
     TFragmentStore & store,
-    unsigned                                  contigId,             // ... and its sequence number
+    unsigned                                  contigID,             // ... and its sequence number
     Pattern<TReadIndex, TFilterSpec> & filterPattern,
     TCounts & cnts,
     char                                      orientation,              // q-gram index of reads
@@ -2934,14 +2934,14 @@ void _mapSingleReadsToContig(
     // iterate all genomic sequences
     if (options._debugLevel >= 1)
     {
-        std::cerr << std::endl << "Process genome seq #" << contigId;
+        std::cerr << std::endl << "Process genome seq #" << contigID;
         if (orientation == 'F')
             std::cerr << "[fwd]";
         else
             std::cerr << "[rev]";
     }
-    lockContig(store, contigId);
-    TContigSeq & contigSeq = store.contigStore[contigId].seq;
+    lockContig(store, contigID);
+    TContigSeq & contigSeq = store.contigStore[contigID].seq;
     if (orientation == 'R')
         reverseComplement(contigSeq);
 
@@ -2956,7 +2956,7 @@ void _mapSingleReadsToContig(
     // initialize verifier
     verifier.onReverseComplement = (orientation == 'R');
     verifier.genomeLength = length(contigSeq);
-    verifier.m.contigId = contigId;
+    verifier.m.contigID = contigID;
 
     double beginTime = sysTime();
     // Build q-gram index separately, so we can better compute the time for it.
@@ -2974,12 +2974,12 @@ void _mapSingleReadsToContig(
         verifier.patternState.leftClip = (beginPosition(filterFinder) >= 0) ? 0 : -beginPosition(filterFinder);           // left clip if match begins left of the genome
         verifier.rightClip = (endPosition(filterFinder) <= contigLength) ? 0 : endPosition(filterFinder) - contigLength;  // right clip if match end right of the genome
 #endif
-        verifier.m.readId = (*filterFinder.curHit).ndlSeqNo;
+        verifier.m.readID = (*filterFinder.curHit).ndlSeqNo;
         if (!options.spec.DONT_VERIFY)
-            matchVerify(verifier, infix(filterFinder), verifier.m.readId, readSet[verifier.m.readId], mode);
+            matchVerify(verifier, infix(filterFinder), verifier.m.readID, readSet[verifier.m.readID], mode);
         ++options.countFiltration;
     }
-    if (!unlockAndFreeContig(store, contigId))                          // if the contig is still used
+    if (!unlockAndFreeContig(store, contigID))                          // if the contig is still used
         if (orientation == 'R')
             reverseComplement(contigSeq);
     // we have to restore original orientation
@@ -3044,23 +3044,23 @@ int _mapSingleReads(
     String<TMatchRecord> matches;
 
     // iterate over genome sequences
-    for (unsigned contigId = 0; contigId < length(store.contigStore); ++contigId)
+    for (unsigned contigID = 0; contigID < length(store.contigStore); ++contigID)
     {
         // lock to prevent releasing and loading the same contig twice
         // (once per _mapSingleReadsToContig call)
-        lockContig(store, contigId);
+        lockContig(store, contigID);
 #ifndef RAZERS_WINDOW
         if (options.forward)
-            _mapSingleReadsToContig(matches, store, contigId, filterPattern, cnts, 'F', options, mode);
+            _mapSingleReadsToContig(matches, store, contigID, filterPattern, cnts, 'F', options, mode);
         if (options.reverse)
-            _mapSingleReadsToContig(matches, store, contigId, filterPattern, cnts, 'R', options, mode);
+            _mapSingleReadsToContig(matches, store, contigID, filterPattern, cnts, 'R', options, mode);
 #else
         if (options.forward)
-            _mapSingleReadsToContigWindow(store, contigId, filterPattern, cnts, 'F', options, mode);
+            _mapSingleReadsToContigWindow(store, contigID, filterPattern, cnts, 'F', options, mode);
         if (options.reverse)
-            _mapSingleReadsToContigWindow(store, contigId, filterPattern, cnts, 'R', options, mode);
+            _mapSingleReadsToContigWindow(store, contigID, filterPattern, cnts, 'R', options, mode);
 #endif
-        unlockAndFreeContig(store, contigId);
+        unlockAndFreeContig(store, contigID);
     }
 
     options.timeMapReads = SEQAN_PROTIMEDIFF(find_time);
@@ -3085,7 +3085,7 @@ int _mapSingleReads(
         SEQAN_ASSERT_LEQ(it->beginPos, it->endPos);
         if (it->orientation == 'R')
             std::swap(it->beginPos, it->endPos);
-        appendValue(store.alignedReadStore, TAlignedReadStoreElem(length(store.alignQualityStore), it->readId, it->contigId, it->beginPos, it->endPos));
+        appendValue(store.alignedReadStore, TAlignedReadStoreElem(length(store.alignQualityStore), it->readID, it->contigID, it->beginPos, it->endPos));
         appendValue(store.alignQualityStore, TAlignedQualStoreElem(it->pairScore, it->score, -it->score));
     }
     options.timeFsCopy = sysTime() - beginCopyTime;

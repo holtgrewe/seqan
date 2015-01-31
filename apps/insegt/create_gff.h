@@ -15,7 +15,7 @@
   Lesser General Public License for more details.
 
  ============================================================================
-  $Id$
+  $ID$
  ==========================================================================*/
 
 #ifndef SEQAN_HEADER_CREATE_GFF_H
@@ -33,27 +33,27 @@ createReadCountGFF(TFile & readOutput, TReadAnnoStore & readAnnoStore, FragmentS
 {	
 	typedef typename Iterator<TReadAnnoStore>::Type 			TCountIter;
 	typedef typename Value<TReadAnnoStore>::Type				TReadAnnoStoreElement;
-	typedef typename TReadAnnoStoreElement::TAnnoIds			TAnnoIds;
-	typedef typename Iterator<TAnnoIds>::Type				TAnnoIdsIter;
-	typedef typename Value<TAnnoIds>::Type					TIds;
-	typedef typename Iterator<TIds>::Type					TIdsIter;	
+	typedef typename TReadAnnoStoreElement::TAnnoIDs			TAnnoIDs;
+	typedef typename Iterator<TAnnoIDs>::Type				TAnnoIDsIter;
+	typedef typename Value<TAnnoIDs>::Type					TIDs;
+	typedef typename Iterator<TIDs>::Type					TIDsIter;	
 					
 	typedef typename FragmentStore<TSpec, TConfig>::TAnnotationStore 	TAnnotationStore;
 	typedef typename Value<TAnnotationStore>::Type 				TAnnotationStoreElement;
-	typedef typename TAnnotationStoreElement::TId 				TId;
+	typedef typename TAnnotationStoreElement::TID 				TID;
 	
-	static const TId INVALID_ID = TAnnotationStoreElement::INVALID_ID;
+	static const TID INVALID_ID = TAnnotationStoreElement::INVALID_ID;
 	
 	TCountIter itCountStore = begin(readAnnoStore);
 	TCountIter itCountStoreEnd = end(readAnnoStore);
-	TAnnoIdsIter itAnnoIds;
-	TAnnoIdsIter itAnnoIdsEnd;
-	TId firstId;
-	TIds allParentIds;
-	TIdsIter itId;
-	TIdsIter itIdEnd;
-	TIdsIter itP;
-	TIdsIter itPEnd;
+	TAnnoIDsIter itAnnoIDs;
+	TAnnoIDsIter itAnnoIDsEnd;
+	TID firstID;
+	TIDs allParentIDs;
+	TIDsIter itID;
+	TIDsIter itIDEnd;
+	TIDsIter itP;
+	TIDsIter itPEnd;
 	bool help;
 	bool invalid;
 	for ( ; itCountStore != itCountStoreEnd; goNext(itCountStore))
@@ -62,29 +62,29 @@ createReadCountGFF(TFile & readOutput, TReadAnnoStore & readAnnoStore, FragmentS
         readOutput << getValue(fragStore.readNameStore, position(itCountStore, readAnnoStore))
                    << '\t';
 		
-		if (empty(getValue(itCountStore).annoIds) )
+		if (empty(getValue(itCountStore).annoIDs) )
 		{
             readOutput << ".\t.\t.\t.\t.";
 		}
 		else
 		{
 			// contig-name:
-			readOutput << getValue(fragStore.contigNameStore, getValue(itCountStore).contigId)
+			readOutput << getValue(fragStore.contigNameStore, getValue(itCountStore).contigID)
                                    << '\t';
 			
-			itAnnoIds = begin(getValue(itCountStore).annoIds);
-			itAnnoIdsEnd = end(getValue(itCountStore).annoIds);
-			while (itAnnoIds != itAnnoIdsEnd && front(getValue(itAnnoIds)) == INVALID_ID)
+			itAnnoIDs = begin(getValue(itCountStore).annoIDs);
+			itAnnoIDsEnd = end(getValue(itCountStore).annoIDs);
+			while (itAnnoIDs != itAnnoIDsEnd && front(getValue(itAnnoIDs)) == INVALID_ID)
 			{
-				goNext(itAnnoIds);
+				goNext(itAnnoIDs);
 			}
 	
-			if (itAnnoIds != itAnnoIdsEnd) // not only INVALID_IDS
+			if (itAnnoIDs != itAnnoIDsEnd) // not only INVALID_IDS
 			{
-				firstId = front(getValue(itAnnoIds));
+				firstID = front(getValue(itAnnoIDs));
 				
 				// orientation:
-				if (getValue(fragStore.annotationStore, firstId).beginPos <= getValue(fragStore.annotationStore, firstId).endPos)
+				if (getValue(fragStore.annotationStore, firstID).beginPos <= getValue(fragStore.annotationStore, firstID).endPos)
 				{
                     readOutput << "+\t";
 				}
@@ -93,64 +93,64 @@ createReadCountGFF(TFile & readOutput, TReadAnnoStore & readAnnoStore, FragmentS
                     readOutput << "-\t";
                 }
 				
-				// Annotation-Ids:
+				// Annotation-IDs:
 				
-				allParentIds =  getValue(itCountStore).parentIds;
-				// output for first parentId if possible; get other parentIds, in which the read doesn't map (entirely with all of his intervals)
-				itAnnoIds = begin(getValue(itCountStore).annoIds);
-				itAnnoIdsEnd = end(getValue(itCountStore).annoIds);
-				for ( ; itAnnoIds != itAnnoIdsEnd; goNext(itAnnoIds))
+				allParentIDs =  getValue(itCountStore).parentIDs;
+				// output for first parentID if possible; get other parentIDs, in which the read doesn't map (entirely with all of his intervals)
+				itAnnoIDs = begin(getValue(itCountStore).annoIDs);
+				itAnnoIDsEnd = end(getValue(itCountStore).annoIDs);
+				for ( ; itAnnoIDs != itAnnoIDsEnd; goNext(itAnnoIDs))
 				{
 					help = false;
-					itId = begin(*itAnnoIds);
-					itIdEnd = end(*itAnnoIds);
-					for ( ; itId != itIdEnd; goNext(itId))
+					itID = begin(*itAnnoIDs);
+					itIDEnd = end(*itAnnoIDs);
+					for ( ; itID != itIDEnd; goNext(itID))
 					{
-						if (!empty(getValue(itCountStore).parentIds) && getValue(itId) != INVALID_ID && 	// if current parentId == first id of parentIds (of read entry in readAnnoStore)
-						    getValue(fragStore.annotationStore, getValue(itId)).parentId == front(allParentIds))
+						if (!empty(getValue(itCountStore).parentIDs) && getValue(itID) != INVALID_ID && 	// if current parentID == first id of parentIDs (of read entry in readAnnoStore)
+						    getValue(fragStore.annotationStore, getValue(itID)).parentID == front(allParentIDs))
 						{
 							if (help) 	// not the first annotation for this read-interval -> ";" sign for overlapping annotations
                                 readOutput << ';';
-                            readOutput << getValue(fragStore.annotationNameStore, getValue(itId));
+                            readOutput << getValue(fragStore.annotationNameStore, getValue(itID));
 							help = true;
 						}
-						else if (getValue(itId) != INVALID_ID && getValue(fragStore.annotationStore, getValue(itId)).parentId != INVALID_ID &&	// get other parentIds 
-							!isElement_unsorted(getValue(fragStore.annotationStore, getValue(itId)).parentId, allParentIds) ) //?
+						else if (getValue(itID) != INVALID_ID && getValue(fragStore.annotationStore, getValue(itID)).parentID != INVALID_ID &&	// get other parentIDs 
+							!isElement_unsorted(getValue(fragStore.annotationStore, getValue(itID)).parentID, allParentIDs) ) //?
 						{
-							appendValue(allParentIds, getValue(fragStore.annotationStore, getValue(itId)).parentId, Generous() );
+							appendValue(allParentIDs, getValue(fragStore.annotationStore, getValue(itID)).parentID, Generous() );
 						}
 					}
-					if ( !empty(getValue(itCountStore).parentIds) && position(itAnnoIds, getValue(itCountStore).annoIds) != endPosition(getValue(itCountStore).annoIds) - 1)
+					if ( !empty(getValue(itCountStore).parentIDs) && position(itAnnoIDs, getValue(itCountStore).annoIDs) != endPosition(getValue(itCountStore).annoIDs) - 1)
                         readOutput << ':';
 				}
-				if (!empty(getValue(itCountStore).parentIds))
-					readOutput << '\t' << getValue(fragStore.annotationNameStore, front(allParentIds)) << '\t';
-				// outputs for all other parentIds
-				itP = begin(allParentIds);
-				itPEnd = end(allParentIds);
-				if (!empty(getValue(itCountStore).parentIds)) goNext(itP);
+				if (!empty(getValue(itCountStore).parentIDs))
+					readOutput << '\t' << getValue(fragStore.annotationNameStore, front(allParentIDs)) << '\t';
+				// outputs for all other parentIDs
+				itP = begin(allParentIDs);
+				itPEnd = end(allParentIDs);
+				if (!empty(getValue(itCountStore).parentIDs)) goNext(itP);
 				for ( ; itP != itPEnd; goNext(itP))
 				{
-					itAnnoIds = begin(getValue(itCountStore).annoIds);
-					itAnnoIdsEnd = end(getValue(itCountStore).annoIds);
-					for ( ; itAnnoIds != itAnnoIdsEnd; goNext(itAnnoIds))
+					itAnnoIDs = begin(getValue(itCountStore).annoIDs);
+					itAnnoIDsEnd = end(getValue(itCountStore).annoIDs);
+					for ( ; itAnnoIDs != itAnnoIDsEnd; goNext(itAnnoIDs))
 					{
 						invalid = true;				// if no annotation for the current parent in  interval -> UNKOWN_REGION
-						itId = begin(*itAnnoIds);	
-                        itIdEnd = end(*itAnnoIds);
-						for ( ; itId != itIdEnd; goNext(itId))
+						itID = begin(*itAnnoIDs);	
+                        itIDEnd = end(*itAnnoIDs);
+						for ( ; itID != itIDEnd; goNext(itID))
 						{
-							if (getValue(itId) != INVALID_ID && getValue(fragStore.annotationStore, getValue(itId)).parentId == getValue(itP))
+							if (getValue(itID) != INVALID_ID && getValue(fragStore.annotationStore, getValue(itID)).parentID == getValue(itP))
 							{
 								if (!invalid)	// not the first annotation for this interval -> ";" sign for overlapping annotations
                                     readOutput << ';';
-								readOutput << getValue(fragStore.annotationNameStore, getValue(itId));
+								readOutput << getValue(fragStore.annotationNameStore, getValue(itID));
 								invalid = false;
 							}
 						}
 						if (invalid)
                             readOutput << "UNKNOWN_REGION";
-						if (position(itAnnoIds, getValue(itCountStore).annoIds) != endPosition(getValue(itCountStore).annoIds) - 1)
+						if (position(itAnnoIDs, getValue(itCountStore).annoIDs) != endPosition(getValue(itCountStore).annoIDs) - 1)
                             readOutput << ':';
 					}
                     readOutput << '\t';
@@ -166,12 +166,12 @@ createReadCountGFF(TFile & readOutput, TReadAnnoStore & readAnnoStore, FragmentS
                 readOutput << ".\t";
 						
 				// invalid_ids for each interval
-				itAnnoIds = begin(getValue(itCountStore).annoIds);
-				itAnnoIdsEnd = end(getValue(itCountStore).annoIds);
-				for ( ; itAnnoIds != itAnnoIdsEnd; goNext(itAnnoIds))
+				itAnnoIDs = begin(getValue(itCountStore).annoIDs);
+				itAnnoIDsEnd = end(getValue(itCountStore).annoIDs);
+				for ( ; itAnnoIDs != itAnnoIDsEnd; goNext(itAnnoIDs))
 				{
                     readOutput << "UNKNOWN_REGION";
-					if (position(itAnnoIds, getValue(itCountStore).annoIds) != endPosition(getValue(itCountStore).annoIds) - 1)
+					if (position(itAnnoIDs, getValue(itCountStore).annoIDs) != endPosition(getValue(itCountStore).annoIDs) - 1)
                         readOutput << ':';
 				}
                 readOutput << "\tUNKNOWN_REGION";
@@ -194,12 +194,12 @@ createAnnoCountGFF(TFile & annoOutput, TAnnoCountStore & annoCountStore, TAnnoNo
 	typedef typename FragmentStore<TSpec, TConfig>::TContigPos 		TContigPos;
 	typedef typename FragmentStore<TSpec, TConfig>::TAnnotationStore 	TAnnotationStore;
 	typedef typename Value<TAnnotationStore>::Type 				TAnnotationStoreElement;
-	typedef typename TAnnotationStoreElement::TId 				TId;
+	typedef typename TAnnotationStoreElement::TID 				TID;
 	typedef typename Iterator<TAnnoCountStore>::Type 			TCountIter;
 	typedef typename Iterator<TAnnoNormStore>::Type				TNormIter;
 	typedef typename Iterator<TAnnotationStore>::Type 			TAnnoIter;
 	
-	static const TId INVALID_ID = TAnnotationStoreElement::INVALID_ID;
+	static const TID INVALID_ID = TAnnotationStoreElement::INVALID_ID;
 	static const TContigPos INVALID_POS = TAnnotationStoreElement::INVALID_POS;
 
 	TCountIter itCount = begin(annoCountStore);
@@ -209,19 +209,19 @@ createAnnoCountGFF(TFile & annoOutput, TAnnoCountStore & annoCountStore, TAnnoNo
 	
 	for ( ; itCount != itCountEnd; goNext(itCount), goNext(itAnno), goNext(itNorm))
 	{
-        if (getValue(itAnno).typeId != INVALID_ID)
-	        if (fragStore.annotationTypeStore[getValue(itAnno).typeId] == "<root>") continue;  
+        if (getValue(itAnno).typeID != INVALID_ID)
+	        if (fragStore.annotationTypeStore[getValue(itAnno).typeID] == "<root>") continue;  
 		// contig-name
-		if (getValue(itAnno).contigId == INVALID_ID )
+		if (getValue(itAnno).contigID == INVALID_ID )
 			annoOutput << "INVALID_ID\t";
 		else
-			annoOutput << getValue(fragStore.contigNameStore, getValue(itAnno).contigId) << '\t';
+			annoOutput << getValue(fragStore.contigNameStore, getValue(itAnno).contigID) << '\t';
 		annoOutput << "Annotation_Count\tregion\t";
 		// startposition endposition orientation . 
 		if (getValue(itAnno).beginPos == INVALID_POS)
 		{
 			annoOutput << ".\t.\t" << getValue(itCount);
-			if (getValue(itAnno).parentId == INVALID_ID || (fragStore.annotationStore[getValue(itAnno).parentId].typeId != INVALID_ID && fragStore.annotationTypeStore[fragStore.annotationStore[getValue(itAnno).parentId].typeId] == "<root>"))
+			if (getValue(itAnno).parentID == INVALID_ID || (fragStore.annotationStore[getValue(itAnno).parentID].typeID != INVALID_ID && fragStore.annotationTypeStore[fragStore.annotationStore[getValue(itAnno).parentID].typeID] == "<root>"))
 			{
 				if (mapValue(mapO, position(itAnno, fragStore.annotationStore)) == 0)
 					annoOutput << "\t+\t.\t";
@@ -251,7 +251,7 @@ createAnnoCountGFF(TFile & annoOutput, TAnnoCountStore & annoCountStore, TAnnoNo
 				           << "\t-\t.\t";
 		}
 		// annotation-name (parent annotation-name)
-		if (getValue(itAnno).parentId == INVALID_ID || (fragStore.annotationStore[getValue(itAnno).parentId].typeId != INVALID_ID && fragStore.annotationTypeStore[fragStore.annotationStore[getValue(itAnno).parentId].typeId] == "<root>"))
+		if (getValue(itAnno).parentID == INVALID_ID || (fragStore.annotationStore[getValue(itAnno).parentID].typeID != INVALID_ID && fragStore.annotationTypeStore[fragStore.annotationStore[getValue(itAnno).parentID].typeID] == "<root>"))
 			annoOutput << "ID="
 			           << getValue(fragStore.annotationNameStore, position(itAnno, fragStore.annotationStore))
 			           << ';';
@@ -259,7 +259,7 @@ createAnnoCountGFF(TFile & annoOutput, TAnnoCountStore & annoCountStore, TAnnoNo
 			annoOutput << "ID="
 			           << getValue(fragStore.annotationNameStore, position(itAnno, fragStore.annotationStore))
 			           << ";ParentID="
-			           << getValue(fragStore.annotationNameStore, getValue(itAnno).parentId)
+			           << getValue(fragStore.annotationNameStore, getValue(itAnno).parentID)
 			           << ';';
         annoOutput << formattedNumber("%f", *itNorm) << ";\n";
 	}
@@ -276,7 +276,7 @@ createTupleCountGFF(TFile & tupleOutput, TTupleCountStore & tupleCountStore, Fra
 {
 	typedef typename FragmentStore<TSpec, TConfig>::TAnnotationStore 	TAnnotationStore;
 	typedef typename Value<TAnnotationStore>::Type 				TAnnotationStoreElement;
-	typedef typename TAnnotationStoreElement::TId 				TId;
+	typedef typename TAnnotationStoreElement::TID 				TID;
 	
 	typedef typename Iterator<TTupleCountStore>::Type 			TCountStoreIter;
 	typedef typename Value<TTupleCountStore>::Type				TTupleCountStoreElement;
@@ -289,7 +289,7 @@ createTupleCountGFF(TFile & tupleOutput, TTupleCountStore & tupleCountStore, Fra
 	typedef typename Iterator<TTupleNorm>::Type				TNormIter;
 	typedef typename Iterator<TTupel>::Type					TTupelIter;
 	
-	static const TId INVALID_ID = TAnnotationStoreElement::INVALID_ID;
+	static const TID INVALID_ID = TAnnotationStoreElement::INVALID_ID;
 	
 	if (!empty(tupleCountStore))
 	{
@@ -300,8 +300,8 @@ createTupleCountGFF(TFile & tupleOutput, TTupleCountStore & tupleCountStore, Fra
 		TTupleListIter itTEnd;
 		TCountIter itC;
 		TNormIter itN;
-		TTupelIter itId;
-		TTupelIter itIdEnd;
+		TTupelIter itID;
+		TTupelIter itIDEnd;
 		for ( ; itCountStore != itCountStoreEnd; goNext(itCountStore))
 		{
 			currentElement = getValue(fragStore.annotationStore, position(itCountStore, tupleCountStore));
@@ -316,24 +316,24 @@ createTupleCountGFF(TFile & tupleOutput, TTupleCountStore & tupleCountStore, Fra
 				if (getValue(itC) >= thresholdCount && getValue(itN) >= thresholdRPKM)
 				{
 					// contig-name
-					tupleOutput << getValue(fragStore.contigNameStore, currentElement.contigId) << '\t';
+					tupleOutput << getValue(fragStore.contigNameStore, currentElement.contigID) << '\t';
 					// parent-name
-					if (currentElement.parentId == INVALID_ID )
+					if (currentElement.parentID == INVALID_ID )
 						tupleOutput << "NO_PARENT\t";
 					else
-						tupleOutput << getValue(fragStore.annotationNameStore, currentElement.parentId) << '\t';
+						tupleOutput << getValue(fragStore.annotationNameStore, currentElement.parentID) << '\t';
 					// orientation
 					if ( currentElement.beginPos <= currentElement.endPos )
 						tupleOutput << "+\t";
 					else
 						tupleOutput << "-\t";
-					// first annotationId of tuple (store implicit)
+					// first annotationID of tuple (store implicit)
 					tupleOutput << getValue(fragStore.annotationNameStore, position(itCountStore, tupleCountStore));
-					// other annotationIds
-					itId = begin(getValue(itT));
-					itIdEnd = end(getValue(itT));
-					for ( ; itId != itIdEnd; goNext(itId))
-						tupleOutput << ":" << getValue(fragStore.annotationNameStore, getValue(itId));
+					// other annotationIDs
+					itID = begin(getValue(itT));
+					itIDEnd = end(getValue(itT));
+					for ( ; itID != itIDEnd; goNext(itID))
+						tupleOutput << ":" << getValue(fragStore.annotationNameStore, getValue(itID));
 					tupleOutput << '\t';
 					// tuple count
 					tupleOutput << getValue(itC) << '\t';
@@ -351,31 +351,31 @@ createTupleCountGFF(TFile & tupleOutput, TTupleCountStore & tupleCountStore, Fra
 				if (getValue(itC) >= thresholdCount && getValue(itN) >= thresholdRPKM)
 				{
 					// contig-name
-					tupleOutput << getValue(fragStore.contigNameStore, currentElement.contigId) << '\t';
+					tupleOutput << getValue(fragStore.contigNameStore, currentElement.contigID) << '\t';
 					// parent-name
-					if (currentElement.parentId == INVALID_ID )
+					if (currentElement.parentID == INVALID_ID )
 						tupleOutput << "NO_PARENT\t";
 					else
-						tupleOutput << getValue(fragStore.annotationNameStore, currentElement.parentId) << '\t';
+						tupleOutput << getValue(fragStore.annotationNameStore, currentElement.parentID) << '\t';
 					// orientation
 					if ( currentElement.beginPos <= currentElement.endPos )
 						tupleOutput << "+\t";
 					else
 						tupleOutput << "-\t";
-					// first annotationId of tuple
+					// first annotationID of tuple
 					tupleOutput << getValue(fragStore.annotationNameStore, position(itCountStore, tupleCountStore));
-					// other annotationIds of first read
-					itId = begin(getValue(itT));
-					itIdEnd = end(getValue(itT));
-					for ( ; itId != itIdEnd && getValue(itId) != INVALID_ID; goNext(itId))
-						tupleOutput << ":" << getValue(fragStore.annotationNameStore, getValue(itId));
-					goNext(itId);
+					// other annotationIDs of first read
+					itID = begin(getValue(itT));
+					itIDEnd = end(getValue(itT));
+					for ( ; itID != itIDEnd && getValue(itID) != INVALID_ID; goNext(itID))
+						tupleOutput << ":" << getValue(fragStore.annotationNameStore, getValue(itID));
+					goNext(itID);
                     tupleOutput << '^';
-					// annotationIds of second read
-					tupleOutput << getValue(fragStore.annotationNameStore, getValue(itId));
-					goNext(itId);
-					for ( ; itId != itIdEnd; goNext(itId))
-						tupleOutput << ':' << getValue(fragStore.annotationNameStore, getValue(itId));
+					// annotationIDs of second read
+					tupleOutput << getValue(fragStore.annotationNameStore, getValue(itID));
+					goNext(itID);
+					for ( ; itID != itIDEnd; goNext(itID))
+						tupleOutput << ':' << getValue(fragStore.annotationNameStore, getValue(itID));
                     tupleOutput << '\t';
 					// tuple count
 					tupleOutput << *itC << '\t';

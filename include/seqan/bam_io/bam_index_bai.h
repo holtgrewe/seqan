@@ -201,7 +201,7 @@ template <typename TSpec>
 inline bool
 jumpToRegion(FormattedFile<Bam, Input, TSpec> & bamFile,
              bool & hasAlignments,
-             __int32 refId,
+             __int32 refID,
              __int32 pos,
              __int32 posEnd,
              BamIndex<Bai> const & index)
@@ -210,9 +210,9 @@ jumpToRegion(FormattedFile<Bam, Input, TSpec> & bamFile,
         return false;
 
     hasAlignments = false;
-    if (refId < 0)
+    if (refID < 0)
         return false;  // Cannot seek to invalid reference.
-    if (static_cast<unsigned>(refId) >= length(index._binIndices))
+    if (static_cast<unsigned>(refID) >= length(index._binIndices))
         return false;  // Cannot seek to invalid reference.
 
     // ------------------------------------------------------------------------
@@ -227,7 +227,7 @@ jumpToRegion(FormattedFile<Bam, Input, TSpec> & bamFile,
     // Retrieve the smallest required offset from the linear index.
     unsigned windowIdx = pos >> 14;  // Linear index consists of 16kb windows.
     __uint64 linearMinOffset = 0;
-    if (windowIdx >= length(index._linearIndices[refId]))
+    if (windowIdx >= length(index._linearIndices[refID]))
     {
         // TODO(holtgrew): Can we simply always take case 1?
 
@@ -235,9 +235,9 @@ jumpToRegion(FormattedFile<Bam, Input, TSpec> & bamFile,
         //
         // If there are no linear indices for this reference then we use the linear min offset of the next
         // reference that has an linear index.
-        if (empty(index._linearIndices[refId]))
+        if (empty(index._linearIndices[refID]))
         {
-            for (unsigned i = refId; i < length(index._linearIndices); ++i)
+            for (unsigned i = refID; i < length(index._linearIndices); ++i)
             {
                 if (!empty(index._linearIndices[i]))
                 {
@@ -259,12 +259,12 @@ jumpToRegion(FormattedFile<Bam, Input, TSpec> & bamFile,
         }
         else
         {
-            linearMinOffset = back(index._linearIndices[refId]);
+            linearMinOffset = back(index._linearIndices[refID]);
         }
     }
     else
     {
-        linearMinOffset = index._linearIndices[refId][windowIdx];
+        linearMinOffset = index._linearIndices[refID][windowIdx];
     }
 
     // Combine candidate bins and smallest required offset from linear index into candidate offset.
@@ -274,8 +274,8 @@ jumpToRegion(FormattedFile<Bam, Input, TSpec> & bamFile,
     for (TCandidateIter it = begin(candidateBins, Rooted()); !atEnd(it); goNext(it))
     {
         typedef typename std::map<__uint32, BaiBamIndexBinData_>::const_iterator TMapIter;
-        TMapIter mIt = index._binIndices[refId].find(*it);
-        if (mIt == index._binIndices[refId].end())
+        TMapIter mIt = index._binIndices[refID].find(*it);
+        if (mIt == index._binIndices[refID].end())
             continue;  // Candidate is not in index!
 
         typedef typename Iterator<String<Pair<__uint64, __uint64> > const, Rooted>::Type TBegEndIter;
@@ -299,7 +299,7 @@ jumpToRegion(FormattedFile<Bam, Input, TSpec> & bamFile,
 
         // std::cerr << "record.beginPos == " << record.beginPos << "\n";
         // __int32 endPos = record.beginPos + getAlignmentLengthInRef(record);
-        if (record.rID != refId)
+        if (record.rID != refID)
             continue;  // Wrong contig.
         if (!hasAlignments || record.beginPos <= pos)
         {
@@ -632,8 +632,8 @@ buildIndex(BamIndex<Bai> & index, char const * filename)
     BamAlignmentRecord record;
     __uint32 currBin    = maxValue<__uint32>();
     __uint32 prevBin    = maxValue<__uint32>();
-    __int32 currRefId   = BamAlignmentRecord::INVALID_REFID;
-    __int32 prevRefId   = BamAlignmentRecord::INVALID_REFID;
+    __int32 currRefID   = BamAlignmentRecord::INVALID_REFID;
+    __int32 prevRefID   = BamAlignmentRecord::INVALID_REFID;
     __uint64 currOffset = position(bamFile);
     __uint64 prevOffset = currOffset;
     __int32 prevPos     = minValue<__int32>();
@@ -644,18 +644,18 @@ buildIndex(BamIndex<Bai> & index, char const * filename)
         readRecord(record, bamFile);
 
         // Check ordering.
-        if (prevRefId == record.rID && prevPos > record.beginPos)
+        if (prevRefID == record.rID && prevPos > record.beginPos)
             return false;
 
         // The reference sequence changed, close bins for previous reference.
-        if (prevRefId != record.rID)
+        if (prevRefID != record.rID)
         {
-            if (prevRefId != BamAlignmentRecord::INVALID_REFID)
+            if (prevRefID != BamAlignmentRecord::INVALID_REFID)
             {
                 _baiAddAlignmentChunkToBin(index, currBin, currOffset, prevOffset);
 
-                // Add an index for all empty references between prevRefId (excluded) and record.rID (included).
-                for (int i = prevRefId + 1; i < record.rID; ++i)
+                // Add an index for all empty references between prevRefID (excluded) and record.rID (included).
+                for (int i = prevRefID + 1; i < record.rID; ++i)
                 {
                     BamIndex<Bai>::TBinIndex_ binIndex;
                     appendValue(index._binIndices, binIndex);
@@ -667,12 +667,12 @@ buildIndex(BamIndex<Bai> & index, char const * filename)
                 currOffset = prevOffset;
                 currBin    = record.bin;
                 prevBin    = record.bin;
-                currRefId  = record.rID;
+                currRefID  = record.rID;
             }
             else
             {
                 // Otherwise, this is the first pass.  Create an index for all empty references up to and including
-                // current refId.
+                // current refID.
                 for (int i = 0; i < record.rID; ++i)
                 {
                     BamIndex<Bai>::TBinIndex_ binIndex;
@@ -683,7 +683,7 @@ buildIndex(BamIndex<Bai> & index, char const * filename)
             }
 
             // Update reference book keeping.
-            prevRefId = record.rID;
+            prevRefID = record.rID;
             prevBin = minValue<__int32>();
         }
 
@@ -717,10 +717,10 @@ buildIndex(BamIndex<Bai> & index, char const * filename)
             currOffset = prevOffset;
             currBin    = record.bin;
             prevBin    = record.bin;
-            currRefId  = record.rID;
+            currRefID  = record.rID;
 
             // If the reference id is invalid then break out.
-            if (currRefId < 0)
+            if (currRefID < 0)
                 break;
         }
 
@@ -746,7 +746,7 @@ buildIndex(BamIndex<Bai> & index, char const * filename)
     }
 
     // After loading all alignments, if any data was read, perform checks.
-    if (currRefId >= 0)
+    if (currRefID >= 0)
     {
         // Store last alignment chunk to its bin and then write last reference entry with data.
         _baiAddAlignmentChunkToBin(index, currBin, currOffset, prevOffset);

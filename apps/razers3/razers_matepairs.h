@@ -130,7 +130,7 @@ bool loadReads(
     String<__uint64>    qualSum;
     String<Dna5Q>       seq[2];
     CharString          qual[2];
-    CharString          seqId[2];
+    CharString          seqID[2];
 
     unsigned seqCount = 0;
     unsigned kickoutcount = 0;
@@ -140,26 +140,26 @@ bool loadReads(
     {
         ++seqCount;
         
-        readRecord(seqId[0], seq[0], qual[0], leftMates);
-        readRecord(seqId[1], seq[1], qual[1], rightMates);
+        readRecord(seqID[0], seq[0], qual[0], leftMates);
+        readRecord(seqID[1], seq[1], qual[1], rightMates);
 
         if (options.readNaming == 0 || options.readNaming == 3)
         {
-            if (!options.fullFastaId)
+            if (!options.fullFastaID)
             {
-                cropAfterFirst(seqId[0], IsWhitespace());   // read Fasta id up to the first whitespace
-                cropAfterFirst(seqId[1], IsWhitespace());   // read Fasta id up to the first whitespace
+                cropAfterFirst(seqID[0], IsWhitespace());   // read Fasta id up to the first whitespace
+                cropAfterFirst(seqID[1], IsWhitespace());   // read Fasta id up to the first whitespace
             }
             if (options.readNaming == 0)
             {
-                append(seqId[0], "/L", Exact());
-                append(seqId[1], "/R", Exact());
+                append(seqID[0], "/L", Exact());
+                append(seqID[1], "/R", Exact());
             }
         }
         else
         {
-            clear(seqId[0]);
-            clear(seqId[1]);
+            clear(seqID[0]);
+            clear(seqID[1]);
         }
 
         if (countN)
@@ -175,8 +175,8 @@ bool loadReads(
 //						std::cout << "Ignoring mate-pair: " << seq[0] << " " << seq[1] << std::endl;
                         clear(seq[0]);
                         clear(seq[1]);
-                        clear(seqId[0]);
-                        clear(seqId[1]);
+                        clear(seqID[0]);
+                        clear(seqID[1]);
                         clear(qual[0]);
                         clear(qual[1]);
                         ++kickoutcount;
@@ -204,7 +204,7 @@ bool loadReads(
             for (unsigned i = 0; i < len; ++i)
                 qualSum[i] += getQualityValue(seq[j][i]);
         }
-        appendMatePair(store, seq[0], seq[1], seqId[0], seqId[1]);
+        appendMatePair(store, seq[0], seq[1], seqID[0], seqID[1]);
         if (maxReadLength < length(seq[0]))
             maxReadLength = length(seq[0]);
         if (maxReadLength < length(seq[1]))
@@ -283,18 +283,18 @@ struct LessPairScore :
         typedef typename Value<TReadStore>::Type            TRead;
         typedef typename Value<TAlignedReadStore>::Type     TAlignedRead;
         typedef typename Value<TAlignQualityStore>::Type    TQual;
-        //typedef typename Id<TRead>::Type                    TId;
+        //typedef typename ID<TRead>::Type                    TID;
 
         // pair number
-        if (b.readId == TAlignedRead::INVALID_ID) return false;
+        if (b.readID == TAlignedRead::INVALID_ID) return false;
 
-        if (a.readId == TAlignedRead::INVALID_ID) return true;
+        if (a.readID == TAlignedRead::INVALID_ID) return true;
 
-        TRead const & ra = mainStore.readStore[a.readId];
-        TRead const & rb = mainStore.readStore[b.readId];
-        if (ra.matePairId < rb.matePairId) return true;
+        TRead const & ra = mainStore.readStore[a.readID];
+        TRead const & rb = mainStore.readStore[b.readID];
+        if (ra.matePairID < rb.matePairID) return true;
 
-        if (ra.matePairId > rb.matePairId) return false;
+        if (ra.matePairID > rb.matePairID) return false;
 
         // quality
         if (a.id == TAlignedRead::INVALID_ID) return false;
@@ -311,7 +311,7 @@ struct LessPairScore :
 
         if (a.libDiff > b.libDiff) return false;
 
-        return a.pairMatchId < b.pairMatchId;
+        return a.pairMatchID < b.pairMatchID;
     }
 
 };
@@ -332,15 +332,15 @@ struct LessPairErrors :
     inline bool operator()(TReadMatch const & a, TReadMatch const & b) const
     {
         // read number
-        if (b.readId == TReadMatch::INVALID_ID) return false;
+        if (b.readID == TReadMatch::INVALID_ID) return false;
 
-        if (a.readId == TReadMatch::INVALID_ID) return true;
+        if (a.readID == TReadMatch::INVALID_ID) return true;
 
-        unsigned matePairIdA = a.readId >> 1;
-        unsigned matePairIdB = b.readId >> 1;
-        if (matePairIdA < matePairIdB) return true;
+        unsigned matePairIDA = a.readID >> 1;
+        unsigned matePairIDB = b.readID >> 1;
+        if (matePairIDA < matePairIDB) return true;
 
-        if (matePairIdA > matePairIdB) return false;
+        if (matePairIDA > matePairIDB) return false;
 
         // quality
         if (a.pairScore > b.pairScore) return true;
@@ -351,11 +351,11 @@ struct LessPairErrors :
 
         if (a.libDiff > b.libDiff) return false;
 
-        if (a.pairMatchId < b.pairMatchId) return true;
+        if (a.pairMatchID < b.pairMatchID) return true;
 
-        if (a.pairMatchId > b.pairMatchId) return false;
+        if (a.pairMatchID > b.pairMatchID) return false;
 
-        return a.readId < b.readId;
+        return a.readID < b.readID;
     }
 
 };
@@ -377,13 +377,13 @@ struct LessPairErrors3Way :
     inline int operator()(TReadMatch const & a, TReadMatch const & b) const
     {
         // read number
-        if (b.readId == TReadMatch::INVALID_ID) return -1;
-        if (a.readId == TReadMatch::INVALID_ID) return 1;
+        if (b.readID == TReadMatch::INVALID_ID) return -1;
+        if (a.readID == TReadMatch::INVALID_ID) return 1;
 
-        unsigned matePairIdA = a.readId >> 1;
-        unsigned matePairIdB = b.readId >> 1;
-        if (matePairIdA < matePairIdB) return -1;
-        if (matePairIdA > matePairIdB) return 1;
+        unsigned matePairIDA = a.readID >> 1;
+        unsigned matePairIDB = b.readID >> 1;
+        if (matePairIDA < matePairIDB) return -1;
+        if (matePairIDA > matePairIDB) return 1;
 
         // quality
         if (a.pairScore > b.pairScore) return -1;
@@ -392,11 +392,11 @@ struct LessPairErrors3Way :
         if (a.libDiff < b.libDiff) return -1;
         if (a.libDiff > b.libDiff) return 1;
 
-        if (a.pairMatchId < b.pairMatchId) return -1;
-        if (a.pairMatchId > b.pairMatchId) return 1;
+        if (a.pairMatchID < b.pairMatchID) return -1;
+        if (a.pairMatchID > b.pairMatchID) return 1;
 
-        if (a.readId < b.readId) return -1;
-        if (a.readId > b.readId) return 1;
+        if (a.readID < b.readID) return -1;
+        if (a.readID > b.readID) return 1;
 
         return 0;
     }
@@ -422,7 +422,7 @@ void compactPairMatches(
 
     // fprintf(stderr, "[pair-compact]");
     double beginTime = sysTime();
-    unsigned matePairId = -2;
+    unsigned matePairID = -2;
     unsigned hitCount = 0;
     unsigned hitCountCutOff = options.maxHits;
     int scoreDistCutOff = MinValue<int>::VALUE;
@@ -470,7 +470,7 @@ void compactPairMatches(
 
     for (; it != itEnd; ++it)
     {
-        SEQAN_ASSERT_EQ(it->pairMatchId, (it + 1)->pairMatchId);
+        SEQAN_ASSERT_EQ(it->pairMatchID, (it + 1)->pairMatchID);
 
         // ignore pair alignments if one of the mates is marked as deleted (<=> orientation is '-')
         if (it->orientation == '-' || (it + 1)->orientation == '-')
@@ -481,13 +481,13 @@ void compactPairMatches(
 
         // std::cerr << *it << std::endl;
         // std::cerr << *(it + 1) << std::endl;
-        // SEQAN_ASSERT(it->pairMatchId == (it + 1)->pairMatchId);
-        // if (*it).readId == TMatch::INVALID_ID || (*it).pairMatchId == TMatch::INVALID_ID) continue;
-        if (matePairId == store.readStore[it->readId].matePairId)
+        // SEQAN_ASSERT(it->pairMatchID == (it + 1)->pairMatchID);
+        // if (*it).readID == TMatch::INVALID_ID || (*it).pairMatchID == TMatch::INVALID_ID) continue;
+        if (matePairID == store.readStore[it->readID].matePairID)
         {
             if (it->pairScore <= scoreDistCutOff)
             {
-                typename Iterator<String<unsigned char>, Standard>::Type p = begin(options.errorCutOff, Standard()) + (2 * matePairId);
+                typename Iterator<String<unsigned char>, Standard>::Type p = begin(options.errorCutOff, Standard()) + (2 * matePairID);
 
                 int maxErrors = -scoreDistCutOff;
                 if (*p > (unsigned)maxErrors)
@@ -496,10 +496,10 @@ void compactPairMatches(
                 if (*p > (unsigned)maxErrors)
                     *p = maxErrors;
 
-                setMaxErrors(filterL, matePairId, maxErrors - 1);
-                setMaxErrors(filterR, matePairId, maxErrors - 1);
+                setMaxErrors(filterL, matePairID, maxErrors - 1);
+                setMaxErrors(filterR, matePairID, maxErrors - 1);
 
-                while (it != itEnd && matePairId == store.readStore[it->readId].matePairId)
+                while (it != itEnd && matePairID == store.readStore[it->readID].matePairID)
                     ++it;
                 --it;
                 continue;
@@ -515,10 +515,10 @@ void compactPairMatches(
                     if (options.purgeAmbiguous && (*it).pairScore > scoreRangeBest)
                         maxErrors = 0;
 
-                    setMaxErrors(filterL, matePairId, maxErrors - 1);
-                    setMaxErrors(filterR, matePairId, maxErrors - 1);
+                    setMaxErrors(filterL, matePairID, maxErrors - 1);
+                    setMaxErrors(filterR, matePairID, maxErrors - 1);
 
-                    typename Iterator<String<unsigned char>, Standard>::Type p = begin(options.errorCutOff, Standard()) + (2 * matePairId);
+                    typename Iterator<String<unsigned char>, Standard>::Type p = begin(options.errorCutOff, Standard()) + (2 * matePairID);
                     if (*p > (unsigned)maxErrors)
                         *p = maxErrors;
                     ++p;
@@ -527,7 +527,7 @@ void compactPairMatches(
 
                     if (maxErrors == 0 && options._debugLevel >= 2)
                         disabled += 1;
-                    // std::cerr << "(pair #" << matePairId << " disabled)";
+                    // std::cerr << "(pair #" << matePairID << " disabled)";
 
                     if (options.purgeAmbiguous)
                     {
@@ -550,7 +550,7 @@ void compactPairMatches(
         }
         else
         {
-            matePairId = store.readStore[(*it).readId].matePairId;
+            matePairID = store.readStore[(*it).readID].matePairID;
             hitCount = 0;
             if (options.scoreDistanceRange > 0)
                 scoreDistCutOff = (*it).pairScore - options.scoreDistanceRange;
@@ -588,7 +588,7 @@ template <
 void _mapMatePairReads(
     TMatches & matches,
     FragmentStore<TFSSpec, TFSConfig> & store,
-    unsigned                                  contigId,             // ... and its sequence number
+    unsigned                                  contigID,             // ... and its sequence number
     Pattern<TReadIndex, TFilterSpec> & filterPatternL,
     Pattern<TReadIndex, TFilterSpec> & filterPatternR,
     TCounts & cnts,
@@ -604,7 +604,7 @@ void _mapMatePairReads(
     typedef typename Value<TAlignedReadStore>::Type         TAlignedRead;
     //typedef typename Value<TAlignQualityStore>::Type        TAlignQuality;
     typedef typename Fibre<TReadIndex, FibreText>::Type TReadSet;
-    //typedef typename Id<TAlignedRead>::Type                 TId;
+    //typedef typename ID<TAlignedRead>::Type                 TID;
 
     typedef typename TFragmentStore::TContigSeq             TGenome;
     typedef typename Size<TGenome>::Type                    TSize;
@@ -639,15 +639,15 @@ void _mapMatePairReads(
     // iterate all genomic sequences
     if (options._debugLevel >= 1)
     {
-        std::cerr << std::endl << "Process genome seq #" << contigId;
+        std::cerr << std::endl << "Process genome seq #" << contigID;
         if (orientation == 'F')
             std::cerr << "[fwd]";
         else
             std::cerr << "[rev]";
     }
 
-    lockContig(store, contigId);
-    TGenome & genome = store.contigStore[contigId].seq;
+    lockContig(store, contigID);
+    TGenome & genome = store.contigStore[contigID].seq;
     if (orientation == 'R')
         reverseComplement(genome);
 
@@ -658,8 +658,8 @@ void _mapMatePairReads(
 
     verifierL.oneMatchPerBucket = true;
     verifierR.oneMatchPerBucket = true;
-    verifierL.m.contigId = contigId;
-    verifierR.m.contigId = contigId;
+    verifierL.m.contigID = contigID;
+    verifierR.m.contigID = contigID;
 
     if (empty(readSetL))
         return;
@@ -702,7 +702,7 @@ void _mapMatePairReads(
         std::cerr << "\t" << scanShift + beginPosition(filterFinderR) << "\t" << scanShift + endPosition(filterFinderR) << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
 
-        unsigned matePairId = filterPatternR.curSeqNo;
+        unsigned matePairID = filterPatternR.curSeqNo;
         TGPos rEndPos = endPosition(filterFinderR) + scanShift;
         TGPos doubleParWidth = 2 * (*filterFinderR.curHit).bucketWidth;
 
@@ -710,10 +710,10 @@ void _mapMatePairReads(
         while (!empty(fifo) && (TSignedGPos)front(fifo).i2.endPos + maxDistance + (TSignedGPos)doubleParWidth < (TSignedGPos)rEndPos)
         {
 #ifdef RAZERS_DEBUG_MATEPAIRS
-            if (front(fifo).i2.readId > length(store.readNameStore))
+            if (front(fifo).i2.readID > length(store.readNameStore))
                 std::cerr << "\nPOP\tL\t" << "[bad read]" << "\t" << front(fifo).i2.beginPos << "\t" << front(fifo).i2.endPos << std::endl;
             else
-                std::cerr << "\nPOP\tL\t" << store.readNameStore[front(fifo).i2.readId & ~NOT_VERIFIED] << "\t" << front(fifo).i2.beginPos << "\t" << front(fifo).i2.endPos << std::endl;
+                std::cerr << "\nPOP\tL\t" << store.readNameStore[front(fifo).i2.readID & ~NOT_VERIFIED] << "\t" << front(fifo).i2.beginPos << "\t" << front(fifo).i2.endPos << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
 //            std::cerr << "  -Left [" << front(fifo).i2.endPos << "\t" << front(fifo).i2.beginPos << ')' << std::endl;
             popFront(fifo);
@@ -737,7 +737,7 @@ void _mapMatePairReads(
                     fL.i1 = lastPotMatchNo[filterPatternL.curSeqNo];
                     lastPotMatchNo[filterPatternL.curSeqNo] = lastNo++;
 
-                    fL.i2.readId = store.matePairStore[filterPatternL.curSeqNo].readId[0] | NOT_VERIFIED;
+                    fL.i2.readID = store.matePairStore[filterPatternL.curSeqNo].readID[0] | NOT_VERIFIED;
                     fL.i2.beginPos = beginPosition(filterFinderL);
                     fL.i2.endPos = gPair.i2;
 
@@ -757,22 +757,22 @@ void _mapMatePairReads(
 
         bool rightVerified = false;
         TDequeueIterator it;
-        unsigned leftReadId = store.matePairStore[matePairId].readId[0];
+        unsigned leftReadID = store.matePairStore[matePairID].readID[0];
         __int64 last = (__int64) - 1;
         __int64 lastValid = (__int64) - 1;
         __int64 i;
-        for (i = lastPotMatchNo[matePairId]; firstNo <= i; last = i, i = (*it).i1)
+        for (i = lastPotMatchNo[matePairID]; firstNo <= i; last = i, i = (*it).i1)
         {
 //            std::cout<< "\t[" << i << "]" << "\t" << fifo[3].i1 << std::endl;
             it = &value(fifo, i - firstNo);
 
             // search left mate
-//			if (((*it).i2.readId & ~NOT_VERIFIED) == leftReadId)
+//			if (((*it).i2.readID & ~NOT_VERIFIED) == leftReadID)
 //			        ^== we need not to test anymore, as only corr. left mates are traversed
-//						via the linked list beginning from lastPotMatchNo[matePairId]
+//						via the linked list beginning from lastPotMatchNo[matePairID]
             {
                 // verify left mate (equal seqNo), if not done already
-                if ((*it).i2.readId & NOT_VERIFIED)
+                if ((*it).i2.readID & NOT_VERIFIED)
                 {
                     if ((TSignedGPos)(*it).i2.endPos + minDistance < (TSignedGPos)(rEndPos + doubleParWidth))
                     {
@@ -780,7 +780,7 @@ void _mapMatePairReads(
                         verifierL.patternState.leftClip = ((*it).i2.beginPos >= 0) ? 0 : -(*it).i2.beginPos;  // left clip if match begins left of the genome
 #endif
 #ifdef RAZERS_DEBUG_MATEPAIRS
-                        std::cerr << "\nVERIFY\tL\t" << matePairId << "\t" << store.readNameStore[2 * matePairId] << "\t" << (TSignedGPos)(*it).i2.beginPos << "\t" << (*it).i2.endPos << std::endl;
+                        std::cerr << "\nVERIFY\tL\t" << matePairID << "\t" << store.readNameStore[2 * matePairID] << "\t" << (TSignedGPos)(*it).i2.beginPos << "\t" << (*it).i2.endPos << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
                         ++options.countVerification;
 //                        if (i==0)
@@ -791,18 +791,18 @@ void _mapMatePairReads(
                             verifierL.sinkPos = (TSignedGPos)endPosition(filterFinderR) - options.libraryLength;
 
                         if (matchVerify(verifierL, infix(genome, ((*it).i2.beginPos >= 0) ? (TSignedGPos)(*it).i2.beginPos : (TSignedGPos)0, (TSignedGPos)(*it).i2.endPos),
-                                        leftReadId, readSetL[matePairId], mode))
+                                        leftReadID, readSetL[matePairID], mode))
                         {
 #ifdef RAZERS_DEBUG_MATEPAIRS
                             std::cerr << "  YES: " << verifierL.m.beginPos << "\t" << verifierL.m.endPos << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
 //                            std::cerr << "  Left+ " << verifierL.m.endPos << std::endl;
-                            verifierL.m.readId = (*it).i2.readId & ~NOT_VERIFIED;       // has been verified positively
+                            verifierL.m.readID = (*it).i2.readID & ~NOT_VERIFIED;       // has been verified positively
                             (*it).i2 = verifierL.m;
                         }
                         else
                         {
-                            (*it).i2.readId = ~NOT_VERIFIED;                // has been verified negatively
+                            (*it).i2.readID = ~NOT_VERIFIED;                // has been verified negatively
 #ifdef RAZERS_DEBUG_MATEPAIRS
                             std::cerr << "  NO" << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
@@ -821,7 +821,7 @@ void _mapMatePairReads(
                 {
                     SEQAN_ASSERT_NEQ(lastValid, i);
                     if (lastValid == (__int64) - 1)
-                        lastPotMatchNo[matePairId] = i;
+                        lastPotMatchNo[matePairID] = i;
                     else
                         value(fifo, lastValid - firstNo).i1 = i;
                 }
@@ -830,10 +830,10 @@ void _mapMatePairReads(
                 if (!rightVerified)                                         // here a verfied left match is available
                 {
 #ifdef RAZERS_DEBUG_MATEPAIRS
-                    std::cerr << "\nVERIFY\tR\t" << matePairId << "\t" << store.readNameStore[2 * matePairId + 1] << "\t" << beginPosition(filterFinderR) << "\t" << endPosition(filterFinderR) << std::endl;
+                    std::cerr << "\nVERIFY\tR\t" << matePairID << "\t" << store.readNameStore[2 * matePairID + 1] << "\t" << beginPosition(filterFinderR) << "\t" << endPosition(filterFinderR) << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
                     ++options.countVerification;
-                    if (matchVerify(verifierR, infix(filterFinderR), 2 * matePairId + 1, readSetR[matePairId], mode))
+                    if (matchVerify(verifierR, infix(filterFinderR), 2 * matePairID + 1, readSetR[matePairID], mode))
                     {
 #ifdef RAZERS_DEBUG_MATEPAIRS
                         std::cerr << "  YES: " << verifierR.m.beginPos << "\t" << verifierR.m.endPos << std::endl;
@@ -856,14 +856,14 @@ void _mapMatePairReads(
                 }
 
                 /*
-                if ((*it).i2.readId == leftReadId)
+                if ((*it).i2.readID == leftReadID)
                 {
                     bestLeft = it;
                     bestLeftScore = (*it).i3.score;
                     break;
                 }
                 */
-                if ((*it).i2.readId == leftReadId)
+                if ((*it).i2.readID == leftReadID)
                 {
                     int score = (*it).i2.score;
                     if (bestLeftScore <= score)
@@ -910,7 +910,7 @@ void _mapMatePairReads(
         {
             SEQAN_ASSERT_NEQ(lastValid, i);
             if (lastValid == (__int64) - 1)
-                lastPotMatchNo[matePairId] = i;
+                lastPotMatchNo[matePairID] = i;
             else
                 value(fifo, lastValid - firstNo).i1 = i;
         }
@@ -921,9 +921,9 @@ void _mapMatePairReads(
             fL.i2 = (*bestLeft).i2;
 
             // transform mate readNo to global readNo
-            TMatePair & mp     = store.matePairStore[matePairId];
-            fL.i2.readId      = mp.readId[0];
-            mR.readId         = mp.readId[1];
+            TMatePair & mp     = store.matePairStore[matePairID];
+            fL.i2.readID      = mp.readID[0];
+            mR.readID         = mp.readID[1];
             mR.orientation    = (orientation == 'F') ? 'R' : 'F';
             fL.i2.orientation = orientation;
 
@@ -946,16 +946,16 @@ void _mapMatePairReads(
             }
 
             // set a unique pair id
-            fL.i2.pairMatchId = mR.pairMatchId = options.nextPairMatchId;
-            if (++options.nextPairMatchId == TAlignedRead::INVALID_ID)
-                options.nextPairMatchId = 0;
+            fL.i2.pairMatchID = mR.pairMatchID = options.nextPairMatchID;
+            if (++options.nextPairMatchID == TAlignedRead::INVALID_ID)
+                options.nextPairMatchID = 0;
 
             // score the whole match pair
             fL.i2.pairScore = mR.pairScore = fL.i2.score + mR.score;
             fL.i2.libDiff = mR.libDiff = bestLibSizeError;
 
             // both mates match with correct library size
-/*								std::cout << "found " << matePairId << " on " << orientation << contigId;
+/*								std::cout << "found " << matePairID << " on " << orientation << contigID;
                     std::cout << " dist:" << dist;
                     if (orientation=='F')
                         std::cout << " \t_" << fL.i2.beginPos+1 << "_" << mR.endPos;
@@ -971,8 +971,8 @@ void _mapMatePairReads(
                 appendValue(matches, mR, Generous());
 
 #ifdef RAZERS_DEBUG_MATEPAIRS
-                std::cerr << "\nHIT\tL\t" << fL.i2.readId << "\t" << store.readNameStore[fL.i2.readId] << "\t" << fL.i2.beginPos << "\t" << fL.i2.endPos << std::endl;
-                std::cerr << "\nHIT\tR\t" << mR.readId << "\t" << store.readNameStore[mR.readId] << "\t" << mR.beginPos << "\t" << mR.endPos << std::endl;
+                std::cerr << "\nHIT\tL\t" << fL.i2.readID << "\t" << store.readNameStore[fL.i2.readID] << "\t" << fL.i2.beginPos << "\t" << fL.i2.endPos << std::endl;
+                std::cerr << "\nHIT\tR\t" << mR.readID << "\t" << store.readNameStore[mR.readID] << "\t" << mR.beginPos << "\t" << mR.endPos << std::endl;
 #endif  // #ifdef RAZERS_DEBUG_MATEPAIRS
 
                 if ((__int64)length(store.alignedReadStore) > options.compactThresh)
@@ -999,7 +999,7 @@ void _mapMatePairReads(
         // XXX
     }
 
-    if (!unlockAndFreeContig(store, contigId))                      // if the contig is still used
+    if (!unlockAndFreeContig(store, contigID))                      // if the contig is still used
         if (orientation == 'R')
             reverseComplement(genome);
     // we have to restore original orientation
@@ -1058,8 +1058,8 @@ int _mapMatePairReads(
 
     for (unsigned i = 0; i < pairCount; ++i)
     {
-        assign(readSetL[i], store.readSeqStore[store.matePairStore[i].readId[0]]);
-        assign(readSetR[i], store.readSeqStore[store.matePairStore[i].readId[1]]);
+        assign(readSetL[i], store.readSeqStore[store.matePairStore[i].readID[0]]);
+        assign(readSetR[i], store.readSeqStore[store.matePairStore[i].readID[1]]);
     }
     reverseComplement(readSetR);
 
@@ -1103,21 +1103,21 @@ int _mapMatePairReads(
     // AlignedReadStoreElement from FragmentStore.
     String<TMatchRecord> matches;
 
-    for (int contigId = 0; contigId < (int)length(store.contigStore); ++contigId)
+    for (int contigID = 0; contigID < (int)length(store.contigStore); ++contigID)
     {
         // lock to prevent releasing and loading the same contig twice
         // (once per _mapSingleReadsToContig call)
-        lockContig(store, contigId);
+        lockContig(store, contigID);
 
-//		std::cout<<"contigLen: "<<length(store.contigStore[contigId].seq)<<std::endl;
+//		std::cout<<"contigLen: "<<length(store.contigStore[contigID].seq)<<std::endl;
 
         if (options.forward)
-            _mapMatePairReads(matches, store, contigId, filterPatternL, filterPatternR, cnts, 'F', options, mode);
+            _mapMatePairReads(matches, store, contigID, filterPatternL, filterPatternR, cnts, 'F', options, mode);
 
         if (options.reverse)
-            _mapMatePairReads(matches, store, contigId, filterPatternL, filterPatternR, cnts, 'R', options, mode);
+            _mapMatePairReads(matches, store, contigID, filterPatternL, filterPatternR, cnts, 'R', options, mode);
 
-        unlockAndFreeContig(store, contigId);
+        unlockAndFreeContig(store, contigID);
     }
 
     double beginCopyTime = sysTime();
@@ -1138,8 +1138,8 @@ int _mapMatePairReads(
         SEQAN_ASSERT(!(it->orientation == 'R') || (it->beginPos >= it->endPos));  // implication
         // if (it->orientation == 'R')
         //     std::swap(it->beginPos, it->endPos);
-        appendValue(store.alignedReadStore, TAlignedReadStoreElem(length(store.alignQualityStore), it->readId, it->contigId, it->beginPos, it->endPos));
-        back(store.alignedReadStore).pairMatchId = it->pairMatchId;
+        appendValue(store.alignedReadStore, TAlignedReadStoreElem(length(store.alignQualityStore), it->readID, it->contigID, it->beginPos, it->endPos));
+        back(store.alignedReadStore).pairMatchID = it->pairMatchID;
         appendValue(store.alignQualityStore, TAlignedQualStoreElem(it->pairScore, it->score, -it->score));
     }
     options.timeFsCopy = sysTime() - beginCopyTime;

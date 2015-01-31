@@ -384,9 +384,9 @@ length(BamTagsDict const & tags)
  * @return char A <tt>char</tt> that identifies the tag type.
  */
 
-template <typename TId>
+template <typename TID>
 inline char
-getTagType(BamTagsDict const & tags, TId id)
+getTagType(BamTagsDict const & tags, TID id)
 {
     return tags[id][2];
 }
@@ -407,9 +407,9 @@ getTagType(BamTagsDict const & tags, TId id)
  * @return TKey An infix of a @link CharString @endlink.  Will be a two-character char sequence.
  */
 
-template <typename TId>
+template <typename TID>
 inline Infix<Host<BamTagsDict const>::Type>::Type
-getTagKey(BamTagsDict const & tags, TId id)
+getTagKey(BamTagsDict const & tags, TID id)
 {
     return prefix(tags[id], 2);
 }
@@ -431,11 +431,11 @@ getTagKey(BamTagsDict const & tags, TId id)
  * @return bool <tt>true</tt> if the key could be found and <tt>false</tt> otherwise.
  */
 
-template <typename TId, typename TKey>
+template <typename TID, typename TKey>
 inline bool
-findTagKey(TId & id, BamTagsDict const & tags, TKey const & key)
+findTagKey(TID & id, BamTagsDict const & tags, TKey const & key)
 {
-    for (id = 0; id < (TId)length(tags); ++id)
+    for (id = 0; id < (TID)length(tags); ++id)
         if (getTagKey(tags, id) == key)
             return true;
     return false;
@@ -496,9 +496,9 @@ struct ExtractTagValueHelper_
     }
 };
 
-template <typename TResultValue, typename TId>
+template <typename TResultValue, typename TID>
 SEQAN_FUNC_ENABLE_IF(Is<IntegerConcept<TResultValue> >, bool)
-extractTagValue(TResultValue & val, BamTagsDict const & tags, TId id)
+extractTagValue(TResultValue & val, BamTagsDict const & tags, TID id)
 {
     typedef Infix<Host<BamTagsDict const>::Type>::Type TInfix;
     typedef Iterator<TInfix, Standard>::Type TIter;
@@ -514,9 +514,9 @@ extractTagValue(TResultValue & val, BamTagsDict const & tags, TId id)
     return tagApply(func, BamTagTypes());
 }
 
-template <typename TResultValue, typename TId>
+template <typename TResultValue, typename TID>
 SEQAN_FUNC_ENABLE_IF(IsSequence<TResultValue>, bool)
-extractTagValue(TResultValue & val, BamTagsDict const & tags, TId id)
+extractTagValue(TResultValue & val, BamTagsDict const & tags, TID id)
 {
     typedef Infix<Host<BamTagsDict const>::Type>::Type TInfix;
 
@@ -837,9 +837,9 @@ eraseTag(BamTagsDict & tags, TKey const & key)
     return true;
 }
 
-template <typename TId>
-inline SEQAN_FUNC_ENABLE_IF(Is<IntegerConcept<TId> >, bool)
-eraseTag(BamTagsDict & tags, TId const & id)
+template <typename TID>
+inline SEQAN_FUNC_ENABLE_IF(Is<IntegerConcept<TID> >, bool)
+eraseTag(BamTagsDict & tags, TID const & id)
 {
     typedef typename Iterator<String<typename BamTagsDict::TPos>, Standard>::Type TIter;
     if (!hasIndex(tags))

@@ -361,7 +361,7 @@ template <typename TValue = int, typename TCargo = unsigned int>
 class IntervalTree
 {
 public:
-    typedef Graph<Directed<void, WithoutEdgeId> > TGraph;
+    typedef Graph<Directed<void, WithoutEdgeID> > TGraph;
     typedef IntervalAndCargo<TValue, TCargo> TInterval;
     typedef IntervalTreeNode<TInterval> TNode;
     typedef String<TNode> TPropertyMap;
@@ -1751,12 +1751,12 @@ findIntervalsExcludeTouching(
  * @fn IntervalTree#removeInterval
  * @brief Removes an interval from the interval tree.
  *
- * @signature bool removeInterval(intervalTree, iBegin, iEnd, iId);
+ * @signature bool removeInterval(intervalTree, iBegin, iEnd, iID);
  *
  * @param[in,out] intervalTree An interval tree Types: IntervalTree
  * @param[in]     iBegin       The begin position of the interval to be removed.
  * @param[in]     iEnd         The end position of the interval to be removed.
- * @param[in]     iId          The ID of the interval to be removed.
+ * @param[in]     iID          The ID of the interval to be removed.
  *
  * @return bool <tt>true</tt> on success, <tt>false</tt> on failure.
  */

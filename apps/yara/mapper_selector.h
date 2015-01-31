@@ -121,15 +121,15 @@ template <typename TSpec, typename Traits, typename TIterator>
 inline void _selectPairImpl(PairsSelector<TSpec, Traits> & me, TIterator const & it)
 {
     typedef typename Traits::TReadSeqs                  TReadSeqs;
-    typedef typename Size<TReadSeqs>::Type              TReadId;
+    typedef typename Size<TReadSeqs>::Type              TReadID;
 
-    // Get pairId.
-    TReadId pairId = position(it);
+    // Get pairID.
+    TReadID pairID = position(it);
 
-    TReadId firstId = getFirstMateFwdSeqId(me.readSeqs, pairId);
-    TReadId secondId = getSecondMateFwdSeqId(me.readSeqs, pairId);
+    TReadID firstID = getFirstMateFwdSeqID(me.readSeqs, pairID);
+    TReadID secondID = getSecondMateFwdSeqID(me.readSeqs, pairID);
 
-    bucketMatches(me.firstMatchesSet[firstId], me.secondMatchesSet[secondId], me);
+    bucketMatches(me.firstMatchesSet[firstID], me.secondMatchesSet[secondID], me);
 }
 
 // ----------------------------------------------------------------------------
@@ -252,10 +252,10 @@ inline void _enumeratePairs(PairsSelector<TSpec, Traits> & me, TMatches const & 
 template <typename TSpec, typename Traits, typename TMatch>
 inline void _selectBestPair(PairsSelector<TSpec, Traits> & me, TMatch const & left, TMatch const & right)
 {
-    TMatch & bestLeft = me.pairs[getMember(left, ReadId())];
-    TMatch & bestRight = me.pairs[getMember(right, ReadId())];
+    TMatch & bestLeft = me.pairs[getMember(left, ReadID())];
+    TMatch & bestRight = me.pairs[getMember(right, ReadID())];
 
-    if (isPaired(me.ctx, getMember(left, ReadId())) && isPaired(me.ctx, getMember(right, ReadId()))) return;
+    if (isPaired(me.ctx, getMember(left, ReadID())) && isPaired(me.ctx, getMember(right, ReadID()))) return;
 
     if (getErrors(left, right) < getErrors(bestLeft, bestRight) ||
         (getErrors(left, right) == getErrors(bestLeft, bestRight) &&

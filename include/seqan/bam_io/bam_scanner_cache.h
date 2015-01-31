@@ -92,21 +92,21 @@ struct BamScannerCacheHash_ :
 class BamScannerCache
 {
 public:
-    // The Key is a pair of (genomic pos, name) where genomic pos is a pair of (rId, pos).
+    // The Key is a pair of (genomic pos, name) where genomic pos is a pair of (rID, pos).
     typedef String<BamAlignmentRecord> TRecords;
-    typedef Size<TRecords>::Type TRecordId;
+    typedef Size<TRecords>::Type TRecordID;
     typedef BamScannerCacheKey_ TKey;
 
     // A mapping from the key type to the BamAlignmentRecord at this position.
-    typedef unordered_multimap<TKey, TRecordId, BamScannerCacheHash_> TMap;
+    typedef unordered_multimap<TKey, TRecordID, BamScannerCacheHash_> TMap;
     typedef TMap::const_iterator TMapIter;
 
     TRecords            records;
-    String<TRecordId>   unusedIds;
+    String<TRecordID>   unusedIDs;
     TMap                map;
     BamAlignmentRecord  tmpRecord;
 
-    static const TRecordId INVALID_ID = (TRecordId)-1;
+    static const TRecordID INVALID_ID = (TRecordID)-1;
 };
 
 
@@ -152,15 +152,15 @@ inline void
 insertRecord(BamScannerCache &cache, seqan::BamAlignmentRecord const &record)
 {
     int _id;
-    if (empty(cache.unusedIds))
+    if (empty(cache.unusedIDs))
     {
         _id = length(cache.records);
         appendValue(cache.records, record);
     }
     else
     {
-        _id = back(cache.unusedIds);
-        eraseBack(cache.unusedIds);
+        _id = back(cache.unusedIDs);
+        eraseBack(cache.unusedIDs);
         cache.records[_id] = record;
     }
 
@@ -199,7 +199,7 @@ _recursivelyFindSegmentGraph(
     typedef BamScannerCache::TMapIter TMapIter;
     typedef BamScannerCacheSearchKey_::TFlag TFlag;
     
-    // search for segment using contigId, position
+    // search for segment using contigID, position
     std::pair<TMapIter, TMapIter> range = cache.map.equal_range(searchKey.cacheKey);
     for (TMapIter iter = range.first; iter != range.second;)
     {
@@ -211,12 +211,12 @@ _recursivelyFindSegmentGraph(
         if ((record.flag & searchKey.flagsMask) == searchKey.flags &&
             _qNamesEqual(record.qName, records[0].qName))
         {
-            if (record.rNextId == records[0].rID && record.pNext == records[0].beginPos)
+            if (record.rNextID == records[0].rID && record.pNext == records[0].beginPos)
             {
                 resize(records, segmentNo + 2);
                 records[segmentNo + 1] = records[0];
                 records[segmentNo] = record;
-                appendValue(cache.unusedIds, it->second);
+                appendValue(cache.unusedIDs, it->second);
                 cache.map.erase(it);
                 return true;
             }
@@ -232,14 +232,14 @@ _recursivelyFindSegmentGraph(
             _qNamesEqual(record.qName, records[0].qName))
         {
             BamScannerCacheSearchKey_ newSearchKey = {
-                { record.rNextId, record.pNext, searchKey.cacheKey.qnameHash },
+                { record.rNextID, record.pNext, searchKey.cacheKey.qnameHash },
                 static_cast<TFlag>((record.flag & BAM_FLAG_MULTIPLE) | ((record.flag & BAM_FLAG_NEXT_RC) >> 1)),
                 BAM_FLAG_MULTIPLE | BAM_FLAG_RC
             };
             if (_recursivelyFindSegmentGraph(records, newSearchKey, segmentNo + 1, cache))
             {
                 records[segmentNo] = record;
-                appendValue(cache.unusedIds, range.first->second);
+                appendValue(cache.unusedIDs, range.first->second);
                 cache.map.erase(range.first);
                 return true;
             }
@@ -268,14 +268,14 @@ readMultiRecords(String<BamAlignmentRecord> &records, BamFileIn &bamFile, BamSca
         if (!hasFlagMultiple(record) ||
             record.rID == BamAlignmentRecord::INVALID_REFID ||
             record.beginPos == BamAlignmentRecord::INVALID_POS ||
-            record.rNextId == BamAlignmentRecord::INVALID_REFID ||
+            record.rNextID == BamAlignmentRecord::INVALID_REFID ||
             record.pNext == BamAlignmentRecord::INVALID_POS)
         {
             resize(records, 1);
             return;
         }
 
-        if (record.rID < record.rNextId || (record.rID == record.rNextId && record.beginPos < record.pNext))
+        if (record.rID < record.rNextID || (record.rID == record.rNextID && record.beginPos < record.pNext))
         {
             // store record to retrieve it later
             insertRecord(cache, record);
@@ -284,7 +284,7 @@ readMultiRecords(String<BamAlignmentRecord> &records, BamFileIn &bamFile, BamSca
 
         // search mates in case of multiple templates
         BamScannerCacheSearchKey_ searchKey = {
-            { record.rNextId, record.pNext, _suffixHash(record.qName) },
+            { record.rNextID, record.pNext, _suffixHash(record.qName) },
             static_cast<TFlag>((record.flag & BAM_FLAG_MULTIPLE) | ((record.flag & BAM_FLAG_NEXT_RC) >> 1)),
             BAM_FLAG_MULTIPLE | BAM_FLAG_RC
         };

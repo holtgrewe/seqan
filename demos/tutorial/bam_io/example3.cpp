@@ -16,11 +16,11 @@ int main()
     BamHeader header;
     readHeader(header, bamFileIn);
 
-    // Build mapping from bamSeqIds to fastaSeqIds;
+    // Build mapping from bamSeqIDs to fastaSeqIDs;
     String<int> mapping;
     resize(mapping, length(contigNames(context(bamFileIn))), -1);
     for (unsigned i = 0; i < length(contigNames(context(bamFileIn))); ++i)
-        if (!getIdByName(mapping[i], faiIndex, contigNames(context(bamFileIn))[i]))
+        if (!getIDByName(mapping[i], faiIndex, contigNames(context(bamFileIn))[i]))
         {
             std::cerr << "ERROR: Sequence "
                       << contigNames(context(bamFileIn))[i]

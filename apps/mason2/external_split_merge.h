@@ -92,14 +92,14 @@ public:
     std::pair<int, int> pick();
 
     // Convert a position (contig, haplotype) to an integer.
-    int toId(std::pair<int, int> pos) const
+    int toID(std::pair<int, int> pos) const
     {
         return pos.first * numHaplotypes + pos.second;
     }
 };
 
 // ----------------------------------------------------------------------------
-// Class IdSplitter
+// Class IDSplitter
 // ----------------------------------------------------------------------------
 
 // Allows distributing ids from/to files.
@@ -115,7 +115,7 @@ public:
 
 // TODO(holtgrew): Name bogus, FileBundle would be better.
 
-class IdSplitter
+class IDSplitter
 {
 public:
     // The number of contigs to split to.
@@ -126,13 +126,13 @@ public:
     // The names of the temporary files (required on Windows).
     std::vector<std::string> fileNames;
 
-    IdSplitter() : numContigs(0)
+    IDSplitter() : numContigs(0)
     {}
 
-    IdSplitter(unsigned numContigs) : numContigs(numContigs)
+    IDSplitter(unsigned numContigs) : numContigs(numContigs)
     {}
 
-    ~IdSplitter()
+    ~IDSplitter()
     {
         close();
     }
@@ -151,9 +151,9 @@ public:
 // Class FastxJoiner
 // ----------------------------------------------------------------------------
 
-// Allows joining by id name from FASTA data stored in a IdSplitter.
+// Allows joining by id name from FASTA data stored in a IDSplitter.
 //
-// Construct with IdSplitter after reset() call.
+// Construct with IDSplitter after reset() call.
 
 // TODO(holtgrew): Could use a heap/tournament tree.
 
@@ -164,8 +164,8 @@ public:
     // The type of the input iterator to use.
     typedef typename seqan::DirectionIterator<std::fstream, seqan::Input>::Type TInputIterator;
 
-    // The IdSplitter to use.
-    IdSplitter * splitter;
+    // The IDSplitter to use.
+    IDSplitter * splitter;
     // Number of active files.
     unsigned numActive;
     // Buffer for id and sequence for each input file.
@@ -178,7 +178,7 @@ public:
     FastxJoiner() : splitter(), numActive(0)
     {}
 
-    FastxJoiner(IdSplitter & splitter) : splitter(&splitter), numActive(0)
+    FastxJoiner(IDSplitter & splitter) : splitter(&splitter), numActive(0)
     {
         _init();
     }
@@ -200,9 +200,9 @@ public:
 // Class SamJoiner
 // ----------------------------------------------------------------------------
 
-// Allows joining by id name from FASTA data stored in a IdSplitter.
+// Allows joining by id name from FASTA data stored in a IDSplitter.
 //
-// Construct with IdSplitter after reset() call.
+// Construct with IDSplitter after reset() call.
 
 // TODO(holtgrew): Could use a heap/tournament tree.
 
@@ -211,8 +211,8 @@ public:
 class SamJoiner
 {
 public:
-    // The IdSplitter to use.
-    IdSplitter * splitter;
+    // The IDSplitter to use.
+    IDSplitter * splitter;
     // Number of active files.
     unsigned numActive;
     // Buffer for id and sequence for each input file.
@@ -228,7 +228,7 @@ public:
     SamJoiner() : splitter(), numActive(0)
     {}
 
-    SamJoiner(IdSplitter & splitter, seqan::BamFileOut * outPtr) :
+    SamJoiner(IDSplitter & splitter, seqan::BamFileOut * outPtr) :
             splitter(&splitter), numActive(0)
     {
         init(outPtr);

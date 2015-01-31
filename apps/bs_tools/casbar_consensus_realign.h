@@ -196,7 +196,7 @@ reAlign(double &profileScore,
 
 		// Initialize the consensus of the band. -> part of the whole profile where current read mapped
 		clear(myRead);
-		resize(myRead, length(fragStore.readSeqStore[alignIt->readId]), TProfileChar());
+		resize(myRead, length(fragStore.readSeqStore[alignIt->readID]), TProfileChar());
 		resize(bandConsensus, 2 * bandwidth + (alignIt->endPos - alignIt->beginPos), Generous());
 		TConsIter bandConsIt = begin(bandConsensus);
 		TConsIter bandConsItEnd = end(bandConsensus);
@@ -221,8 +221,8 @@ reAlign(double &profileScore,
 
 		// Remove sequence from profile (and add to the consensus??)  // TODO(holtgrew): Add to consensus part right?
 		typedef typename Iterator<TReadSeq, Standard>::Type TReadIter;
-		TReadIter itRead = begin(fragStore.readSeqStore[alignIt->readId], Standard());
-		TReadIter itReadEnd = end(fragStore.readSeqStore[alignIt->readId], Standard());
+		TReadIter itRead = begin(fragStore.readSeqStore[alignIt->readID], Standard());
+		TReadIter itReadEnd = end(fragStore.readSeqStore[alignIt->readID], Standard());
 		typedef typename Iterator<String<TGapAnchor>, Standard>::Type TReadGapsIter;
 		TReadGapsIter itGaps = begin(alignIt->gaps, Standard());
 		TReadGapsIter itGapsEnd = end(alignIt->gaps, Standard());
@@ -242,7 +242,7 @@ reAlign(double &profileScore,
 		for (; itGaps != itGapsEnd && itCons != itConsEnd; ++itGaps) {
 			// limit should never be larger than read length
 			TReadPos limit = itGaps->seqPos;
-			SEQAN_ASSERT_LT(itGaps->seqPos, (TReadPos)length(fragStore.readSeqStore[alignIt->readId]));
+			SEQAN_ASSERT_LT(itGaps->seqPos, (TReadPos)length(fragStore.readSeqStore[alignIt->readID]));
 			int newDiff = (itGaps->gapPos - limit);
 			SEQAN_ASSERT_LT(itGaps->gapPos, (TReadPos)length(consensus));
 			if (diff > newDiff) {
@@ -388,25 +388,25 @@ reAlign(double &profileScore,
                 assignTargetFreqs(scoringScheme, bandConsensus, options);
                 profileScore += globalAlignment(matches, pairSet, scoringScheme, AlignConfig<false,false,false,false>(), _max(leftDiag - increaseBandLeft, -1 * (int) length(pairSet[1])), _min(rightDiag + increaseBandRight, (int) length(pairSet[0])), Gotoh());
             }
-            else if (top && (fragStore.readStore[alignIt->readId].matePairId == TAlignedRead::INVALID_ID || fragStore.readStore[alignIt->readId].matePairId  == 1)) // top, original
+            else if (top && (fragStore.readStore[alignIt->readID].matePairID == TAlignedRead::INVALID_ID || fragStore.readStore[alignIt->readID].matePairID  == 1)) // top, original
             {
                 Score<double, BsTagList<BsProfileScoreCT, TModel, InnerCell> > scoringScheme(options, seqErrorFreqs, insErrorFreqs, delErrorFreqs, scalingFactorDelErrors);
                 assignTargetFreqs(scoringScheme, bandConsensus, options, BsTop());
                 profileScore += globalAlignment(matches, pairSet, scoringScheme, AlignConfig<false,false,false,false>(), _max(leftDiag - increaseBandLeft, -1 * (int) length(pairSet[1])), _min(rightDiag + increaseBandRight, (int) length(pairSet[0])), Gotoh());
             }
-            else if (top && fragStore.readStore[alignIt->readId].matePairId  == 2)    // top, reverse mapped
+            else if (top && fragStore.readStore[alignIt->readID].matePairID  == 2)    // top, reverse mapped
             {
                 Score<double, BsTagList<BsProfileScoreCTRight, TModel, InnerCell> > scoringScheme(options, seqErrorFreqs, insErrorFreqs, delErrorFreqs, scalingFactorDelErrors);
                 assignTargetFreqs(scoringScheme, bandConsensus, options, BsTop());
                 profileScore += globalAlignment(matches, pairSet, scoringScheme, AlignConfig<false,false,false,false>(), _max(leftDiag - increaseBandLeft, -1 * (int) length(pairSet[1])), _min(rightDiag + increaseBandRight, (int) length(pairSet[0])), Gotoh());
             }
-            else if (!top && (fragStore.readStore[alignIt->readId].matePairId  == TAlignedRead::INVALID_ID || fragStore.readStore[alignIt->readId].matePairId  == 1))    // bottom, original
+            else if (!top && (fragStore.readStore[alignIt->readID].matePairID  == TAlignedRead::INVALID_ID || fragStore.readStore[alignIt->readID].matePairID  == 1))    // bottom, original
             {
                 Score<double, BsTagList<BsProfileScoreGA, TModel, InnerCell> > scoringScheme(options, seqErrorFreqs, insErrorFreqs, delErrorFreqs, scalingFactorDelErrors);
                 assignTargetFreqs(scoringScheme, bandConsensus, options, BsBottom());
                 profileScore += globalAlignment(matches, pairSet, scoringScheme, AlignConfig<false,false,false,false>(), _max(leftDiag - increaseBandLeft, -1 * (int) length(pairSet[1])), _min(rightDiag + increaseBandRight, (int) length(pairSet[0])), Gotoh());
             }
-            else if (!top && fragStore.readStore[alignIt->readId].matePairId  == 2)   // bottom, forward mapped
+            else if (!top && fragStore.readStore[alignIt->readID].matePairID  == 2)   // bottom, forward mapped
             {
                 Score<double, BsTagList<BsProfileScoreGARight, TModel, InnerCell> > scoringScheme(options, seqErrorFreqs, insErrorFreqs, delErrorFreqs, scalingFactorDelErrors);
                 assignTargetFreqs(scoringScheme, bandConsensus, options, BsBottom());
@@ -458,7 +458,7 @@ reAlign(double &profileScore,
 				// We are already at the next fragment begin position in the profile, but there read bases left
                 // While we haven't reached the next fragment begin position in the read with readPos (-> gaps in profile)
 				while (readPos < (TReadPos)fragIt->begin2) {
-					SEQAN_ASSERT_LT(readPos, (TReadPos)length(fragStore.readSeqStore[alignIt->readId]));
+					SEQAN_ASSERT_LT(readPos, (TReadPos)length(fragStore.readSeqStore[alignIt->readID]));
 					SEQAN_ASSERT_LT(newConsIt, end(newConsensus,Standard()));
                     // Append new gap anchor to read gaps presenting given length
                     if (gapLen) {
@@ -489,7 +489,7 @@ reAlign(double &profileScore,
                 // For each position in the current fragment
 				for (TSize i = 0; i<fragIt->len; ++i, ++bandIt, ++consPos, ++readPos, ++alignPos, ++newConsIt) {
 				    SEQAN_ASSERT_LT(bandIt, bandItEnd);
-					SEQAN_ASSERT_LT(readPos, (TReadPos)length(fragStore.readSeqStore[alignIt->readId]));
+					SEQAN_ASSERT_LT(readPos, (TReadPos)length(fragStore.readSeqStore[alignIt->readID]));
 					SEQAN_ASSERT_LT(newConsIt, end(newConsensus,Standard()));
 					if (firstMatch) {
 						firstMatch = false;
@@ -565,10 +565,10 @@ reAlign(double &profileScore,
 
 // TODO(holtgrew): realignmentMethod should not be optional or moved to the end of the list.
 // TODO(holtgrew): The method should be selected with an enum instead of an int.
-template<typename TSpec, typename TConfig, typename TId, typename TBandwidth, typename TOptions, typename TModel>
+template<typename TSpec, typename TConfig, typename TID, typename TBandwidth, typename TOptions, typename TModel>
 void
 reAlign(FragmentStore<TSpec, TConfig> & fragStore,
-		TId const contigId,
+		TID const contigID,
 		TBandwidth const bandwidth,
 		bool includeReference,
 		TOptions &options,
@@ -589,13 +589,13 @@ reAlign(FragmentStore<TSpec, TConfig> & fragStore,
 	typedef typename Value<TAlignedReadStore>::Type                 TAlignedElement;
 
 	typedef typename Iterator<TAlignedReadStore, Standard>::Type TAlignIter;
-	TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
-	TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
+	TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
+	TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
 
 	// Sort the reads according to their begin position.
 	sortAlignedReads(infix(fragStore.alignedReadStore, alignIt - begin(fragStore.alignedReadStore, Standard()), alignItEnd - begin(fragStore.alignedReadStore, Standard())), SortBeginPos());
-	alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
-	alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
+	alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
+	alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
 
 
     if(true)
@@ -620,7 +620,7 @@ reAlign(FragmentStore<TSpec, TConfig> & fragStore,
             string str = ss.str();
             append(name, str);
             append(name, ".svg");
-            SVGFile svg(toCString(name));
+            SvgFile svg(toCString(name));
             printAlignment(svg, layout, fragStore, 0, (TContigPos)0, (TContigPos)200, 0, 300);
         }
     }
@@ -631,7 +631,7 @@ reAlign(FragmentStore<TSpec, TConfig> & fragStore,
 	TReadPos minPos = MaxValue<TReadPos>::VALUE;
 	for (; alignIt != alignItEnd; ++alignIt) {
 		if (alignIt->beginPos > alignIt->endPos) {
-			reverseComplement(fragStore.readSeqStore[alignIt->readId]);
+			reverseComplement(fragStore.readSeqStore[alignIt->readID]);
 			TAlignedElement alignedEl = *alignIt;
 			alignedEl.id = position(alignIt, fragStore.alignedReadStore);   // to get original beginPos from fragStore later
 			TReadPos tmp = alignedEl.beginPos;
@@ -654,20 +654,20 @@ reAlign(FragmentStore<TSpec, TConfig> & fragStore,
 	}
     // Append reference sequence to aligned reads for contigs if requested to do so.
 	if (includeReference) {
-		TId dummyReadId = length(fragStore.readSeqStore);
-		TId dummyMatchId = length(fragStore.alignedReadStore);
-		appendRead(fragStore, fragStore.contigStore[contigId].seq);
-		appendValue(fragStore.readNameStore, fragStore.contigNameStore[contigId], Generous());
+		TID dummyReadID = length(fragStore.readSeqStore);
+		TID dummyMatchID = length(fragStore.alignedReadStore);
+		appendRead(fragStore, fragStore.contigStore[contigID].seq);
+		appendValue(fragStore.readNameStore, fragStore.contigNameStore[contigID], Generous());
 
 		TAlignedElement el;
-		el.id = dummyMatchId;
-		el.readId = dummyReadId;
-		el.contigId = contigId;
+		el.id = dummyMatchID;
+		el.readID = dummyReadID;
+		el.contigID = contigID;
 		minPos = el.beginPos = 0;
-		TContigGaps contigGaps(fragStore.contigStore[contigId].seq, fragStore.contigStore[contigId].gaps);
-		maxPos = el.endPos = _max(maxPos, (TReadPos)positionSeqToGap(contigGaps,length(fragStore.contigStore[contigId].seq)-1)+1);
-		maxPos = el.endPos = _max(maxPos, (TReadPos)length(fragStore.contigStore[contigId].seq));
-		el.gaps = fragStore.contigStore[contigId].gaps;
+		TContigGaps contigGaps(fragStore.contigStore[contigID].seq, fragStore.contigStore[contigID].gaps);
+		maxPos = el.endPos = _max(maxPos, (TReadPos)positionSeqToGap(contigGaps,length(fragStore.contigStore[contigID].seq)-1)+1);
+		maxPos = el.endPos = _max(maxPos, (TReadPos)length(fragStore.contigStore[contigID].seq));
+		el.gaps = fragStore.contigStore[contigID].gaps;
 		appendValue(contigReads, el, Generous());
 	}
 
@@ -703,8 +703,8 @@ reAlign(FragmentStore<TSpec, TConfig> & fragStore,
 		itCons += contigReadsIt->beginPos;  // Me: jump to first position of curr. read in consensus/profile
 
 		typedef typename Iterator<TReadSeq, Standard>::Type TReadIter;
-		TReadIter itRead = begin(fragStore.readSeqStore[contigReadsIt->readId], Standard() );
-		TReadIter itReadEnd = end(fragStore.readSeqStore[contigReadsIt->readId], Standard() );
+		TReadIter itRead = begin(fragStore.readSeqStore[contigReadsIt->readID], Standard() );
+		TReadIter itReadEnd = end(fragStore.readSeqStore[contigReadsIt->readID], Standard() );
 		typedef typename Iterator<String<typename TFragmentStore::TReadGapAnchor>, Standard>::Type TReadGapsIter;
 		TReadGapsIter itGaps = begin(contigReadsIt->gaps, Standard() );
 		TReadGapsIter itGapsEnd = end(contigReadsIt->gaps, Standard() );
@@ -818,7 +818,7 @@ reAlign(FragmentStore<TSpec, TConfig> & fragStore,
 	TAlignIter contigReadIt = begin(contigReads, Standard());
 	for (; alignIt != alignItEnd; ++alignIt) {
 		if (alignIt->beginPos > alignIt->endPos) {
-			reverseComplement(fragStore.readSeqStore[alignIt->readId]);
+			reverseComplement(fragStore.readSeqStore[alignIt->readID]);
 			alignIt->beginPos = contigReadIt->endPos;
 			alignIt->endPos = contigReadIt->beginPos;
 		} else {
@@ -899,7 +899,7 @@ reAlign(FragmentStore<TSpec, TConfig> & fragStore,
             string str = ss.str();
             append(name, str);
             append(name, ".svg");
-            SVGFile svg(toCString(name));
+            SvgFile svg(toCString(name));
             printAlignment(svg, layout, fragStore, 0, (TContigPos)0, (TContigPos)200, 0, 300);
         }
     }

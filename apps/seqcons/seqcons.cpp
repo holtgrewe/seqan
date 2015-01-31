@@ -271,7 +271,7 @@ int main(int argc, const char *argv[]) {
 
 				// Align the reads
 				typedef StringSet<TReadSeq, Dependent<> > TStringSet;
-				typedef Graph<Alignment<TStringSet, void, WithoutEdgeId> > TAlignGraph;
+				typedef Graph<Alignment<TStringSet, void, WithoutEdgeID> > TAlignGraph;
 				TAlignGraph gOut(readSet);
 				consensusAlignment(gOut, begEndPos, consOpt);
 			

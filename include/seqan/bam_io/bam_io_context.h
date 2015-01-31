@@ -169,7 +169,7 @@ public:
     TLengthStoreMember      _contigLengths;
     CharString              buffer;
     String<CharString>      buffers;
-    String<unsigned>        translateFile2GlobalRefId;
+    String<unsigned>        translateFile2GlobalRefID;
 
     BamIOContext() :
         _contigNames(TNameStoreMember()),

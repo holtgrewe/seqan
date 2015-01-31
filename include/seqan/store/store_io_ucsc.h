@@ -50,37 +50,37 @@ _storeAnnotationRecord(
     typedef FragmentStore<TSpec, TConfig>               TFragmentStore;
     typedef typename TFragmentStore::TAnnotationStore   TAnnotationStore;
     typedef typename Value<TAnnotationStore>::Type      TAnnotation;
-    typedef typename TAnnotation::TId                   TId;
+    typedef typename TAnnotation::TID                   TID;
 
     SEQAN_ASSERT_EQ(length(fragStore.annotationStore), length(fragStore.annotationNameStore));
 
     // add transcript and CDS
-    TId transId = TAnnotation::INVALID_ID;
-    _storeAppendAnnotationName(fragStore, transId, record.transName, (TId) TFragmentStore::ANNO_MRNA);
-    TId cdsId = length(fragStore.annotationStore);
+    TID transID = TAnnotation::INVALID_ID;
+    _storeAppendAnnotationName(fragStore, transID, record.transName, (TID) TFragmentStore::ANNO_MRNA);
+    TID cdsID = length(fragStore.annotationStore);
     appendName(fragStore.annotationNameStore, record.proteinName, fragStore.annotationNameStoreCache);
 
-    resize(fragStore.annotationStore, cdsId + 1 + length(record.exonBegin), Generous());
-    resize(fragStore.annotationNameStore, cdsId + 1 + length(record.exonBegin), Generous());
+    resize(fragStore.annotationStore, cdsID + 1 + length(record.exonBegin), Generous());
+    resize(fragStore.annotationNameStore, cdsID + 1 + length(record.exonBegin), Generous());
 
     // add contig name
-    TId contigId = TAnnotation::INVALID_ID;
-    _storeAppendContig(fragStore, contigId, record.contigName);
+    TID contigID = TAnnotation::INVALID_ID;
+    _storeAppendContig(fragStore, contigID, record.contigName);
 
     // update transcript data
-    TAnnotation & transcript = fragStore.annotationStore[transId];
-    TId geneId = transcript.parentId;
-    if (geneId == TAnnotation::INVALID_ID)
-        geneId = 0;
-    transcript.parentId = geneId;
-    transcript.contigId = contigId;
-    transcript.typeId = TFragmentStore::ANNO_MRNA;
+    TAnnotation & transcript = fragStore.annotationStore[transID];
+    TID geneID = transcript.parentID;
+    if (geneID == TAnnotation::INVALID_ID)
+        geneID = 0;
+    transcript.parentID = geneID;
+    transcript.contigID = contigID;
+    transcript.typeID = TFragmentStore::ANNO_MRNA;
 
     // add CDS entry
-    TAnnotation & cds = fragStore.annotationStore[cdsId];
-    cds.parentId = transId;
-    cds.contigId = contigId;
-    cds.typeId = TFragmentStore::ANNO_CDS;
+    TAnnotation & cds = fragStore.annotationStore[cdsID];
+    cds.parentID = transID;
+    cds.contigID = contigID;
+    cds.typeID = TFragmentStore::ANNO_CDS;
     cds.beginPos = record.cdsBegin;
     cds.endPos = record.cdsEnd;
     _adjustParent(transcript, cds);
@@ -88,16 +88,16 @@ _storeAnnotationRecord(
     // add exons
     for (unsigned i = 0; i < length(record.exonBegin); ++i)
     {
-        TAnnotation & exon = fragStore.annotationStore[cdsId + 1 + i];
-        exon.parentId = transId;
-        exon.contigId = contigId;
-        exon.typeId = TFragmentStore::ANNO_EXON;
+        TAnnotation & exon = fragStore.annotationStore[cdsID + 1 + i];
+        exon.parentID = transID;
+        exon.contigID = contigID;
+        exon.typeID = TFragmentStore::ANNO_EXON;
         exon.beginPos = record.exonBegin[i];
         exon.endPos = record.exonEnds[i];
         _adjustParent(transcript, exon);
     }
-    if (geneId != 0)
-        _adjustParent(fragStore.annotationStore[geneId], transcript);
+    if (geneID != 0)
+        _adjustParent(fragStore.annotationStore[geneID], transcript);
 }
 
 template <typename TSpec, typename TConfig>
@@ -110,26 +110,26 @@ _storeAnnotationRecord(
     typedef FragmentStore<TSpec, TConfig>               TFragmentStore;
     typedef typename TFragmentStore::TAnnotationStore   TAnnotationStore;
     typedef typename Value<TAnnotationStore>::Type      TAnnotation;
-    typedef typename TAnnotation::TId                   TId;
+    typedef typename TAnnotation::TID                   TID;
 
     SEQAN_ASSERT_EQ(length(fragStore.annotationStore), length(fragStore.annotationNameStore));
 
-    TId geneId = TAnnotation::INVALID_ID;
-    TId transId = TAnnotation::INVALID_ID;
+    TID geneID = TAnnotation::INVALID_ID;
+    TID transID = TAnnotation::INVALID_ID;
 
     // add transcript and CDS
-    _storeAppendAnnotationName(fragStore, geneId, record.transName, (TId) TFragmentStore::ANNO_GENE);
-    _storeAppendAnnotationName(fragStore, transId, record.contigName, (TId) TFragmentStore::ANNO_MRNA);
+    _storeAppendAnnotationName(fragStore, geneID, record.transName, (TID) TFragmentStore::ANNO_GENE);
+    _storeAppendAnnotationName(fragStore, transID, record.contigName, (TID) TFragmentStore::ANNO_MRNA);
 
     // set parent link locus->root
-    TAnnotation & locus = fragStore.annotationStore[geneId];
-    locus.parentId = 0;
-    locus.typeId = TFragmentStore::ANNO_GENE;
+    TAnnotation & locus = fragStore.annotationStore[geneID];
+    locus.parentID = 0;
+    locus.typeID = TFragmentStore::ANNO_GENE;
 
     // set parent link transcript->locus
-    TAnnotation & transcript = fragStore.annotationStore[transId];
-    transcript.parentId = geneId;
-    transcript.typeId = TFragmentStore::ANNO_MRNA;
+    TAnnotation & transcript = fragStore.annotationStore[transID];
+    transcript.parentID = geneID;
+    transcript.typeID = TFragmentStore::ANNO_MRNA;
 
     _adjustParent(locus, transcript);
 }
@@ -197,23 +197,23 @@ readRecords(FragmentStore<TFSSpec, TConfig> & fragStore,
 //////////////////////////////////////////////////////////////////////////////
 // extract FragmentStore annotation into a UCSC record
 
-template <typename TRecord, typename TSpec, typename TConfig, typename TAnnotation, typename TId>
+template <typename TRecord, typename TSpec, typename TConfig, typename TAnnotation, typename TID>
 inline bool
 _fillAnnotationRecord(
     TRecord & record,
     FragmentStore<TSpec, TConfig> & fragStore,
     TAnnotation & annotation,
-    TId id,
+    TID id,
     UcscKnownGene)
 {
     typedef FragmentStore<TSpec, TConfig> TFragmentStore;
 
-    if (annotation.typeId != TFragmentStore::ANNO_MRNA)
+    if (annotation.typeID != TFragmentStore::ANNO_MRNA)
         return false;
 
     record.transName = getAnnoUniqueName(fragStore, id);
-    if (annotation.contigId < length(fragStore.contigNameStore))
-        record.contigName = fragStore.contigNameStore[annotation.contigId];
+    if (annotation.contigID < length(fragStore.contigNameStore))
+        record.contigName = fragStore.contigNameStore[annotation.contigID];
     else
         clear(record.contigName);
 
@@ -224,47 +224,47 @@ _fillAnnotationRecord(
     record.annotationBeginPos = annotation.beginPos;
     record.annotationEndPos = annotation.endPos;
 
-    TId lastChildId = annotation.lastChildId;
-    TId i = lastChildId;
+    TID lastChildID = annotation.lastChildID;
+    TID i = lastChildID;
     do
     {
-        i = fragStore.annotationStore[i].nextSiblingId;
+        i = fragStore.annotationStore[i].nextSiblingID;
         TAnnotation & anno = fragStore.annotationStore[i];
-        if (anno.typeId == TFragmentStore::ANNO_CDS)
+        if (anno.typeID == TFragmentStore::ANNO_CDS)
         {
             if (i < length(fragStore.annotationNameStore))
                 record.proteinName = fragStore.annotationNameStore[i];
             record.cdsBegin = anno.beginPos;
             record.cdsEnd = anno.endPos;
         }
-        if (anno.typeId == TFragmentStore::ANNO_EXON)
+        if (anno.typeID == TFragmentStore::ANNO_EXON)
         {
             appendValue(record.exonBegin, anno.beginPos, Generous());
             appendValue(record.exonEnds, anno.endPos, Generous());
         }
     }
-    while (i != lastChildId);
+    while (i != lastChildID);
     return true;
 }
 
-template <typename TRecord, typename TSpec, typename TConfig, typename TAnnotation, typename TId>
+template <typename TRecord, typename TSpec, typename TConfig, typename TAnnotation, typename TID>
 inline bool
 _fillAnnotationRecord(
     TRecord & record,
     FragmentStore<TSpec, TConfig> & fragStore,
     TAnnotation & annotation,
-    TId id,
+    TID id,
     UcscKnownIsoforms)
 {
     typedef FragmentStore<TSpec, TConfig> TFragmentStore;
 
-    if (annotation.typeId != TFragmentStore::ANNO_MRNA)
+    if (annotation.typeID != TFragmentStore::ANNO_MRNA)
         return false;
 
-    if (annotation.parentId == TAnnotation::INVALID_ID || annotation.parentId == 0)
+    if (annotation.parentID == TAnnotation::INVALID_ID || annotation.parentID == 0)
         return false;
 
-    record.transName = getAnnoUniqueName(fragStore, annotation.parentId);
+    record.transName = getAnnoUniqueName(fragStore, annotation.parentID);
     record.contigName = getAnnoUniqueName(fragStore, id);
     return true;
 }
@@ -282,7 +282,7 @@ writeRecords(FormattedFile<Ucsc, Output, TSpec> & ucscFile,
     typedef typename TFragmentStore::TAnnotationStore               TAnnotationStore;
     typedef typename Value<TAnnotationStore>::Type                  TAnnotation;
     typedef typename Iterator<TAnnotationStore, Standard>::Type     TAnnoIter;
-    typedef typename Id<TAnnotation>::Type                          TId;
+    typedef typename ID<TAnnotation>::Type                          TID;
 
     typename DirectionIterator<FormattedFile<Ucsc, Output, TSpec>, Output>::Type iter = directionIterator(ucscFile, Output());
     UcscRecord record;
@@ -290,7 +290,7 @@ writeRecords(FormattedFile<Ucsc, Output, TSpec> & ucscFile,
     TAnnoIter it = begin(store.annotationStore, Standard());
     TAnnoIter itEnd = end(store.annotationStore, Standard());
 
-    for (TId id = 0; it != itEnd; ++it, ++id)
+    for (TID id = 0; it != itEnd; ++it, ++id)
         if (_fillAnnotationRecord(record, store, *it, id, format))
             writeRecord(iter, record, format);
 }

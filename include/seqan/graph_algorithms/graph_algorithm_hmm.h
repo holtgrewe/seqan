@@ -101,7 +101,7 @@ viterbiAlgorithm(TPath & path,
     String<TProbability> vMat;
     String<TSize> traceback;
     TSize numCols = length(seq) + 2;
-    TSize numRows = getIdUpperBound(_getVertexIdManager(hmm));
+    TSize numRows = getIDUpperBound(_getVertexIDManager(hmm));
     resize(vMat, numCols * numRows, 0.0);
     resize(traceback, numCols * numRows);
     value(vMat, getBeginState(hmm)) = 1.0;
@@ -263,7 +263,7 @@ _forwardAlgorithm(Graph<Hmm<TAlphabet, TProbability, TSpec> > const& hmm,
 
     // Initialization
     TSize numCols = length(seq) + 2;
-    TSize numRows = getIdUpperBound(_getVertexIdManager(hmm));
+    TSize numRows = getIDUpperBound(_getVertexIDManager(hmm));
     resize(fMat, numCols * numRows, 0.0);
     value(fMat, getBeginState(hmm)) = 1.0;
     TVertexDescriptor bState = getBeginState(hmm);
@@ -391,7 +391,7 @@ _backwardAlgorithm(Graph<Hmm<TAlphabet, TProbability, TSpec> > const& hmm,
 
     // Initialization
     TSize numCols = length(seq) + 2;
-    TSize numRows = getIdUpperBound(_getVertexIdManager(hmm));
+    TSize numRows = getIDUpperBound(_getVertexIDManager(hmm));
     resize(bMat, numCols * numRows, 0.0);
     TVertexDescriptor bState = getBeginState(hmm);
     TVertexDescriptor eState = getEndState(hmm);
@@ -705,9 +705,9 @@ estimationWithStates(Graph<Hmm<TAlphabet, TProbability, TSpec> >& hmm,
     TSize alphSize = ValueSize<TAlphabet>::VALUE;
     typedef String<TSize> TCountString;
     TCountString transitionCounter;
-    resize(transitionCounter, getIdUpperBound(_getEdgeIdManager(hmm)), 0);
+    resize(transitionCounter, getIDUpperBound(_getEdgeIDManager(hmm)), 0);
     StringSet<TCountString> emissionCounter;
-    TSize numRows = getIdUpperBound(_getVertexIdManager(hmm));
+    TSize numRows = getIDUpperBound(_getVertexIDManager(hmm));
     for(TSize i =0; i<numRows;++i) {
         TCountString emisCount;
         resize(emisCount,alphSize,0);
@@ -854,9 +854,9 @@ _baumWelchAlgorithm(Graph<Hmm<TAlphabet, TProbability, TSpec > >& hmm,
         std::cout << "Iteration: "<< iter << std::endl;
         std::cout << hmm << std::endl;
         TCountString transitionCounter;
-        resize(transitionCounter, getIdUpperBound(_getEdgeIdManager(hmm)), 0.0);
+        resize(transitionCounter, getIDUpperBound(_getEdgeIDManager(hmm)), 0.0);
         StringSet<TCountString> emissionCounter;
-        TSize numRows = getIdUpperBound(_getVertexIdManager(hmm));
+        TSize numRows = getIDUpperBound(_getVertexIDManager(hmm));
         for(TSize i =0; i<numRows;++i) {
             TCountString emisCount;
             resize(emisCount,alphSize, 0.0);
@@ -988,9 +988,9 @@ _profileHmmCounter(Graph<Hmm<TAlphabet, TProbability, TSpec> >& pHmm,
 
     typedef String<TProbability> TCountString;
     TCountString transitionCounter;
-    resize(transitionCounter, getIdUpperBound(_getEdgeIdManager(pHmm)), 0.0);
+    resize(transitionCounter, getIDUpperBound(_getEdgeIDManager(pHmm)), 0.0);
     StringSet<TCountString> emissionCounter;
-    TSize nR = getIdUpperBound(_getVertexIdManager(pHmm));
+    TSize nR = getIDUpperBound(_getVertexIDManager(pHmm));
     for(TSize i =0; i<nR;++i) {
         TCountString emisCount;
         resize(emisCount,alphSize, 0.0);

@@ -590,7 +590,7 @@ writeRecord(TTarget & target, GffRecord const & record, Tag<TFormat> const & tag
         return;
 
     // write column 1: seqid
-    //typename Iterator<TSeqId const, Rooted>::Type itRef = begin(record.ref);
+    //typename Iterator<TSeqID const, Rooted>::Type itRef = begin(record.ref);
     write(target, record.ref);
     writeValue(target, '\t');
 

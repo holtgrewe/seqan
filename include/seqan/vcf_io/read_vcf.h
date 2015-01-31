@@ -162,7 +162,7 @@ readRecord(VcfRecord & record,
     readUntil(buffer, iter, NextEntry());
     if (empty(buffer))
         SEQAN_THROW(EmptyFieldError("CHROM"));
-    record.rID = nameToId(contigNamesCache(context), buffer);
+    record.rID = nameToID(contigNamesCache(context), buffer);
     skipOne(iter);
 
     // POS

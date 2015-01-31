@@ -112,7 +112,7 @@ inline void ConsensusAligner_<TFragmentStore>::normalizeRCReads()
     for (unsigned i = 0; i < length(store.alignedReadStore); ++i)
         if (store.alignedReadStore[i].beginPos > store.alignedReadStore[i].endPos)
         {
-            unsigned readID = store.alignedReadStore[i].readId;
+            unsigned readID = store.alignedReadStore[i].readID;
             rcIDs.insert(readID);
             reverseComplement(store.readSeqStore[readID]);
             std::swap(store.alignedReadStore[i].beginPos, store.alignedReadStore[i].endPos);
@@ -124,7 +124,7 @@ inline void ConsensusAligner_<TFragmentStore>::restoreRCReads()
 {
     for (unsigned i = 0; i < length(store.alignedReadStore); ++i)
     {
-        unsigned readID = store.alignedReadStore[i].readId;
+        unsigned readID = store.alignedReadStore[i].readID;
         if (rcIDs.count(readID))
         {
             std::swap(store.alignedReadStore[i].beginPos, store.alignedReadStore[i].endPos);
@@ -138,10 +138,10 @@ inline void ConsensusAligner_<TFragmentStore>::checkAlignmentMultiplicity() cons
 {
     std::set<unsigned> seen;
     for (unsigned i = 0; i < length(store.alignedReadStore); ++i)
-        if (seen.count(store.alignedReadStore[i].readId))
+        if (seen.count(store.alignedReadStore[i].readID))
             throw ConsensusAlignerException("Read with id has more than one alignment.");
         else
-            seen.insert(store.alignedReadStore[i].readId);
+            seen.insert(store.alignedReadStore[i].readID);
 }
 
 template <typename TFragmentStore>

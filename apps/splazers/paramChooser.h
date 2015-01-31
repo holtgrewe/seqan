@@ -262,10 +262,10 @@ qualityDistributionFromFastQFile(TFile & file, TDistribution & avg, ParamChooser
     resize(count, pm_options.totalN, 0);
 
     SeqFileIn reader(file);
-    CharString fastaId, seq, qual;
+    CharString fastaID, seq, qual;
     while (!atEnd(reader))
     {
-        readRecord(fastaId, seq, qual, reader);
+        readRecord(fastaID, seq, qual, reader);
 
         for (unsigned i = 0; i != pm_options.totalN && i != length(qual); ++i)
         {

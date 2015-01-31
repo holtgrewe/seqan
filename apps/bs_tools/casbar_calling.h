@@ -1228,13 +1228,13 @@ writeMeth(TVcfStream &vcfStream,
             }
             else if (refContext.contextF == 1)
             {
-                ++methOptions.countCHG;
-                methOptions.statsCHGMethylated += meth.methLevel1;
+                ++methOptions.countChg;
+                methOptions.statsChgMethylated += meth.methLevel1;
             }
             else
             {
-                ++methOptions.countCHH;
-                methOptions.statsCHHMethylated += meth.methLevel1;
+                ++methOptions.countChh;
+                methOptions.statsChhMethylated += meth.methLevel1;
             }
             if (refContext.contextR == 0)
             {
@@ -1243,13 +1243,13 @@ writeMeth(TVcfStream &vcfStream,
             }
             else if (refContext.contextR == 1)
             {
-                ++methOptions.countCHG;
-                methOptions.statsCHGMethylated += meth.methLevel2;
+                ++methOptions.countChg;
+                methOptions.statsChgMethylated += meth.methLevel2;
             }
             else
             {
-                ++methOptions.countCHH;
-                methOptions.statsCHHMethylated += meth.methLevel2;
+                ++methOptions.countChh;
+                methOptions.statsChhMethylated += meth.methLevel2;
             }
         }
         else if ((Dna)(meth.genotype>>2)  == 'C')
@@ -1269,13 +1269,13 @@ writeMeth(TVcfStream &vcfStream,
             }
             else if (refContext.contextF == 1)
             {
-                ++methOptions.countCHG;
-                methOptions.statsCHGMethylated += meth.methLevel1;
+                ++methOptions.countChg;
+                methOptions.statsChgMethylated += meth.methLevel1;
             }
             else
             {
-                ++methOptions.countCHH;
-                methOptions.statsCHHMethylated += meth.methLevel1;
+                ++methOptions.countChh;
+                methOptions.statsChhMethylated += meth.methLevel1;
             }
         }
         else if ((Dna)(meth.genotype>>2)  == 'G')
@@ -1295,13 +1295,13 @@ writeMeth(TVcfStream &vcfStream,
             }
             else if (refContext.contextR == 1)
             {
-                ++methOptions.countCHG;
-                methOptions.statsCHGMethylated += meth.methLevel1;
+                ++methOptions.countChg;
+                methOptions.statsChgMethylated += meth.methLevel1;
             }
             else
             {
-                ++methOptions.countCHH;
-                methOptions.statsCHHMethylated += meth.methLevel1;
+                ++methOptions.countChh;
+                methOptions.statsChhMethylated += meth.methLevel1;
             }
         }
     }

@@ -14,7 +14,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ==========================================================================
-  $Id$
+  $ID$
  ==========================================================================*/
 
 #ifndef REPSEP_HEADER_RGRAPH_CONSTRUCTION_H
@@ -25,11 +25,11 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition, typename TSpec, typename TConfig, typename TId>
+template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition, typename TSpec, typename TConfig, typename TID>
 void construct(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition> & me,
           String< Pair< TPosition, String<TColumnAlphabet> > > const & column_set,
           FragmentStore<TSpec, TConfig> const& fragStore,
-          TId const contigId)
+          TID const contigID)
 {
     // fragmentstore typedefs
   	typedef FragmentStore<TSpec, TConfig> TFragmentStore;
@@ -37,8 +37,8 @@ void construct(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition> & m
     //typedef typename TFragmentStore::TReadPos TReadPos;
 
     typedef typename Iterator<typename TFragmentStore::TAlignedReadStore const>::Type TAlignIter;
-    TAlignIter alignItBegin = lowerBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
-    TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());    
+    TAlignIter alignItBegin = lowerBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
+    TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());    
 
     typedef typename Iterator<String< Pair< TPosition, String<TColumnAlphabet> > > const>::Type TColumnSetIterator;
     typedef typename Iterator<String<TColumnAlphabet> const>::Type TColumnIterator;
@@ -57,12 +57,12 @@ void construct(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition> & m
         TColumnIterator colIter = begin(value(colSetIter).i2);
         TColumnIterator colIterEnd = end(value(colSetIter).i2);
 
-        String< typename Id<TGraphCargo>::Type > readsInColumn;
+        String< typename ID<TGraphCargo>::Type > readsInColumn;
 
         for(;colIter != colIterEnd ; goNext(colIter))
         {
             // check if graph already has this read
-            if(!hasRead(me, _readId(value(colIter)))) {
+            if(!hasRead(me, _readID(value(colIter)))) {
                 // add this read to the graph
                 TAlignedReadStoreElement alignedRead;
                 bool found = false;
@@ -71,7 +71,7 @@ void construct(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition> & m
                 
                 for(; alignIt != alignItEnd ; goNext(alignIt)) 
                 {
-                    if(alignIt->readId == _readId(value(colIter))) {
+                    if(alignIt->readID == _readID(value(colIter))) {
                         alignedRead = value(alignIt);
                         found = true;
                         break;
@@ -79,28 +79,28 @@ void construct(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition> & m
                 }
                 
                 if(found) {
-                    TGraphCargo & new_cargo = registerRead(me, _readId(value(colIter)));
+                    TGraphCargo & new_cargo = registerRead(me, _readID(value(colIter)));
                     new_cargo.alignedRead = alignedRead;
                 } 
                 else
                 {
-                    cerr << "ERROR: could not find read in FragmentStore (readId = " << _readId(value(colIter)) << " )" << endl;
+                    cerr << "ERROR: could not find read in FragmentStore (readID = " << _readID(value(colIter)) << " )" << endl;
                     return;
                 }
             }
 
             // add this column to the vertex inside the graph
-            TGraphCargo & cargo = getCargo(me, _readId(value(colIter)));          
+            TGraphCargo & cargo = getCargo(me, _readID(value(colIter)));          
             addColumn(cargo, current_column, value(colIter));
 #ifdef RGRAPH_DEBUG_CONSTRUCTION
-            cout << "added column " << current_column << "(" << value(colIter) << ") to vertex " << getVertex(me, _readId(value(colIter))) << endl;
+            cout << "added column " << current_column << "(" << value(colIter) << ") to vertex " << getVertex(me, _readID(value(colIter))) << endl;
 #endif            
 
-            append(readsInColumn, _readId(value(colIter)));
+            append(readsInColumn, _readID(value(colIter)));
         }
 
         // associate all reads in this column with each other
-        typedef typename Iterator< String< typename Id<TGraphCargo>::Type > >::Type TVertexIterator;
+        typedef typename Iterator< String< typename ID<TGraphCargo>::Type > >::Type TVertexIterator;
         TVertexIterator v_iter = begin(readsInColumn);
         TVertexIterator v_iterEnd = end(readsInColumn);
 
@@ -121,15 +121,15 @@ void construct(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition> & m
 // add mate pairs
 // TODO: need to be implemented
 
-template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition, typename TSpec, typename TConfig, typename TId>
+template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition, typename TSpec, typename TConfig, typename TID>
 void add_mate_pairs(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition> & me,
           FragmentStore<TSpec, TConfig> const& fragStore,
-          const TId contigId)
+          const TID contigID)
 {
     // Get rid of unused variable warnings.
     (void)me;
     (void)fragStore;
-    (void)contigId;
+    (void)contigID;
     /*
     typedef FragmentStore<TSpec, TConfig> TFragmentStore;
     typedef typename Size<TFragmentStore>::Type TSize;
@@ -143,15 +143,15 @@ void add_mate_pairs(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition, typename TSpec, typename TConfig, typename TId>
+template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition, typename TSpec, typename TConfig, typename TID>
 void scoreGraph_(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition> & me,
           FragmentStore<TSpec, TConfig> const& fragStore,
-          TId const contigId,
+          TID const contigID,
           GraphScoring const& scoring)
 {
     // Get rid of unused variable warnings.
     (void)fragStore;
-    (void)contigId;
+    (void)contigID;
 
     //typedef FragmentStore<TSpec, TConfig> TFragmentStore;
     //typedef typename Size<TFragmentStore>::Type TSize;
@@ -192,7 +192,7 @@ void _computeScore(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition>
     TGraphCargo & cargo2 = me.vertexCargo[vd2];
 #ifdef RGRAPH_DEBUG_CONSTRUCTION_SCORING
     cout << "Compute score between " << vd1 << " and " << vd2 << endl;
-    cout << cargo1.alignedRead.readId << " " << cargo2.alignedRead.readId << endl;
+    cout << cargo1.alignedRead.readID << " " << cargo2.alignedRead.readID << endl;
 #endif    
     // reset score
     edge_score = GraphScoring::TScoreValue();

@@ -10,10 +10,10 @@ using namespace seqan;
 // define used types
 typedef FragmentStore<>                         TStore;
 typedef Value<TStore::TAnnotationStore>::Type   TAnnotation;
-typedef TAnnotation::TId                        TId;
+typedef TAnnotation::TID                        TID;
 typedef TAnnotation::TPos                       TPos;
-typedef IntervalAndCargo<TPos, TId>             TInterval;
-typedef IntervalTree<TPos, TId>                 TIntervalTree;
+typedef IntervalAndCargo<TPos, TID>             TInterval;
+typedef IntervalTree<TPos, TID>                 TIntervalTree;
 //![definitions]
 
 //![definitions_end]
@@ -82,11 +82,11 @@ bool loadFiles(TStore & store, Options const & options)
 }
 
 //
-// 3. Extract intervals from gene annotations (grouped by contigId)
+// 3. Extract intervals from gene annotations (grouped by contigID)
 //
 void extractGeneIntervals(String<String<TInterval> > & intervals, TStore const & store)
 {
-    // extract intervals from gene annotations (grouped by contigId)
+    // extract intervals from gene annotations (grouped by contigID)
     resize(intervals, length(store.contigStore));
 
     Iterator<TStore const, AnnotationTree<> >::Type it = begin(store, AnnotationTree<>());
@@ -100,13 +100,13 @@ void extractGeneIntervals(String<String<TInterval> > & intervals, TStore const &
 
         TPos beginPos = getAnnotation(it).beginPos;
         TPos endPos = getAnnotation(it).endPos;
-        TId contigId = getAnnotation(it).contigId;
+        TID contigID = getAnnotation(it).contigID;
 
         if (beginPos > endPos)
             std::swap(beginPos, endPos);
 
         // insert forward-strand interval of the gene and its annotation id
-        appendValue(intervals[contigId], TInterval(beginPos, endPos, value(it)));
+        appendValue(intervals[contigID], TInterval(beginPos, endPos, value(it)));
     }
     while (goRight(it));
 }

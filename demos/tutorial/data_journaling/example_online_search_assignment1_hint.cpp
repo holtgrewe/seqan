@@ -16,7 +16,7 @@ loadAndJoin(StringSet<TString, Owner<JournaledSet> > & /*journalSet*/,
     // [A] Ensure the Journal Set is not occupied by other sequences.
 
     // Construct the temporary buffers for the read id and sequence.
-    String<char> tempSeqId;
+    String<char> tempSeqID;
     THost tempSeq;
 
     // No sequences in the fasta file!
@@ -26,14 +26,14 @@ loadAndJoin(StringSet<TString, Owner<JournaledSet> > & /*journalSet*/,
         return -1;
     }
     // First read sequence for reference sequence.
-    readRecord(tempSeqId, tempSeq, databaseFile);
+    readRecord(tempSeqID, tempSeq, databaseFile);
 
     // [B] Set the reference sequence to the Journal Set
 
     // Read remaining sequences.
     while (!atEnd(databaseFile))
     {
-        readRecord(tempSeqId, tempSeq, databaseFile);
+        readRecord(tempSeqID, tempSeq, databaseFile);
         // [C] Append and join the current read sequence.
     }
     return 0;

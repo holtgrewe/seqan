@@ -332,8 +332,8 @@ TScoreValue globalAlignment(Graph<Alignment<TStringSet, TCargo, TGraphSpec> > & 
                                             value(stringSet(alignmentGraph), 1), scoringScheme, TAlignConfig2(),
                                             TGapModel());
 
-    _adaptTraceSegmentsTo(alignmentGraph, positionToId(stringSet(alignmentGraph), 0),
-                          positionToId(stringSet(alignmentGraph), 1), traceSegments);
+    _adaptTraceSegmentsTo(alignmentGraph, positionToID(stringSet(alignmentGraph), 0),
+                          positionToID(stringSet(alignmentGraph), 1), traceSegments);
     return res;
 }
 
@@ -402,7 +402,7 @@ TScoreValue globalAlignment(String<Fragment<TSize, TFragmentSpec>, TStringSpec> 
     TScoreValue res = _setUpAndRunAlignment(traceSegments, dpScoutState, value(strings, 0), value(strings, 1),
                                             scoringScheme, TAlignConfig2(), TGapModel());
 
-    _adaptTraceSegmentsTo(fragmentString, positionToId(strings, 0), positionToId(strings, 1), traceSegments);
+    _adaptTraceSegmentsTo(fragmentString, positionToID(strings, 0), positionToID(strings, 1), traceSegments);
     return res;
 }
 

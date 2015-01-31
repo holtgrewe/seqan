@@ -42,21 +42,21 @@ namespace seqan {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////	
 //Functions for Align<TSource,TSpec>
 //project onto other sequence 
-template<typename TSource,typename TSpec,typename TValue, typename TId1, typename TPos1, typename TId2, typename TPos2,typename TMap>
+template<typename TSource,typename TSpec,typename TValue, typename TID1, typename TPos1, typename TID2, typename TPos2,typename TMap>
 void
 _getOtherSequenceAndProject(Align<TSource,TSpec> & segment, 
 				TValue seg_num,
 							TMap & seq_map, 
-						   TId1 , 
+						   TID1 , 
 						   TPos1 node_i, 
-						   TId2 & seq_j_id, 
+						   TID2 & seq_j_id, 
 						   TPos2 & node_j)
 {
 SEQAN_CHECKPOINT
 
 	if(seg_num == 0)
 	{
-		seq_j_id = seq_map[getObjectId(source(row(segment, 1)))];
+		seq_j_id = seq_map[getObjectID(source(row(segment, 1)))];
         TPos1 view_clipped_end_pos = clippedEndPosition(row(segment,0)) - clippedBeginPosition(row(segment, 0));
 		if(node_i >= (TPos1)toSourcePosition(row(segment, 0), view_clipped_end_pos))
             node_j = static_cast<TPos2>(-1);
@@ -65,7 +65,7 @@ SEQAN_CHECKPOINT
 	}
 	else
 	{
-		seq_j_id  = seq_map[getObjectId(source(row(segment, 0)))];
+		seq_j_id  = seq_map[getObjectID(source(row(segment, 0)))];
         TPos1 view_clipped_end_pos = clippedEndPosition(row(segment, 1)) - clippedBeginPosition(row(segment, 1));
 		if(node_i >= (TPos1)toSourcePosition(row(segment, 1), view_clipped_end_pos))
             node_j = static_cast<TPos2>(-1);
@@ -78,27 +78,27 @@ SEQAN_CHECKPOINT
 //unspektakul�re funktion, die die int ID zur�ckgibt (braucht man damit es f�r alle alignment typen geht)
 //template<typename TSource,typename TSpec, typename TValue, typename TSeqMap>					
 //int 
-//_getSeqMapId(TSeqMap & seq_map,
+//_getSeqMapID(TSeqMap & seq_map,
 //			Align<TSource,TSpec> & segment,
 //			TValue seq_i)
 //{
 //SEQAN_CHECKPOINT
-//	return seq_map[getObjectId(source(row(segment,seq_i)))];
+//	return seq_map[getObjectID(source(row(segment,seq_i)))];
 //}
 //
-//given seq and segment, get the sequenceId (seq_i) and its begin and end
+//given seq and segment, get the sequenceID (seq_i) and its begin and end
 //if seq = 0 get first sequence (that takes part in the segment match)
 //if seq = 1 get second sequence
-template<typename TAliSource,typename TAliSpec, typename TId, typename TPosition, typename TId2>
+template<typename TAliSource,typename TAliSpec, typename TID, typename TPosition, typename TID2>
 void
 _getSeqBeginAndEnd(Align<TAliSource,TAliSpec> & segment,
 				  std::map<const void * ,int> & seq_map, 
-				  TId & seq_i_id, 
+				  TID & seq_i_id, 
 				  TPosition & begin_i, 
 				  TPosition & end_i,
-				  TId2 seq)
+				  TID2 seq)
 {
-	seq_i_id = seq_map[getObjectId(source(row(segment,seq)))];
+	seq_i_id = seq_map[getObjectID(source(row(segment,seq)))];
 	begin_i = clippedBeginPosition(row(segment, seq));
 	end_i = toSourcePosition(row(segment, seq), clippedEndPosition(row(segment, seq)) - begin_i);
 }

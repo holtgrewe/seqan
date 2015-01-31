@@ -489,8 +489,8 @@ inline void closeOutputFile(Mapper<TSpec, TConfig> & me)
 template <typename TSpec, typename TConfig, typename TReadSeqs>
 inline void initSeeds(Mapper<TSpec, TConfig> & me, TReadSeqs & readSeqs)
 {
-    for (unsigned bucketId = 0; bucketId < TConfig::BUCKETS; bucketId++)
-        setHost(me.seeds[bucketId], readSeqs);
+    for (unsigned bucketID = 0; bucketID < TConfig::BUCKETS; bucketID++)
+        setHost(me.seeds[bucketID], readSeqs);
 }
 
 // ----------------------------------------------------------------------------
@@ -500,12 +500,12 @@ inline void initSeeds(Mapper<TSpec, TConfig> & me, TReadSeqs & readSeqs)
 template <typename TSpec, typename TConfig>
 inline void clearSeeds(Mapper<TSpec, TConfig> & me)
 {
-    for (unsigned bucketId = 0; bucketId < TConfig::BUCKETS; bucketId++)
+    for (unsigned bucketID = 0; bucketID < TConfig::BUCKETS; bucketID++)
     {
-        clear(me.seeds[bucketId]);
-        clear(me.ranks[bucketId]);
-        shrinkToFit(me.seeds[bucketId]);
-        shrinkToFit(me.ranks[bucketId]);
+        clear(me.seeds[bucketID]);
+        clear(me.ranks[bucketID]);
+        shrinkToFit(me.seeds[bucketID]);
+        shrinkToFit(me.ranks[bucketID]);
     }
 }
 
@@ -551,20 +551,20 @@ inline void collectSeeds(Mapper<TSpec, TConfig> & me, TReadSeqs const & readSeqs
 // Function findSeeds()
 // ----------------------------------------------------------------------------
 
-template <unsigned ERRORS, typename TSpec, typename TConfig, typename TBucketId>
-inline void findSeeds(Mapper<TSpec, TConfig> & me, TBucketId bucketId)
+template <unsigned ERRORS, typename TSpec, typename TConfig, typename TBucketID>
+inline void findSeeds(Mapper<TSpec, TConfig> & me, TBucketID bucketID)
 {
     start(me.timer);
     if (ERRORS > 0)
     {
         // Estimate the number of hits.
-        reserve(me.hits[bucketId], lengthSum(me.seeds[bucketId]) * Power<ERRORS, 2>::VALUE, Exact());
-        _findSeedsImpl(me, me.hits[bucketId], me.seeds[bucketId], ERRORS, HammingDistance());
+        reserve(me.hits[bucketID], lengthSum(me.seeds[bucketID]) * Power<ERRORS, 2>::VALUE, Exact());
+        _findSeedsImpl(me, me.hits[bucketID], me.seeds[bucketID], ERRORS, HammingDistance());
     }
     else
     {
-        reserve(me.hits[bucketId], length(me.seeds[bucketId]), Exact());
-        _findSeedsImpl(me, me.hits[bucketId], me.seeds[bucketId], ERRORS, Exact());
+        reserve(me.hits[bucketID], length(me.seeds[bucketID]), Exact());
+        _findSeedsImpl(me, me.hits[bucketID], me.seeds[bucketID], ERRORS, Exact());
     }
     stop(me.timer);
     me.stats.findSeeds += getValue(me.timer);
@@ -573,7 +573,7 @@ inline void findSeeds(Mapper<TSpec, TConfig> & me, TBucketId bucketId)
     {
         std::cerr << "Filtering time:\t\t\t" << me.timer << std::endl;
         std::cerr << "Hits count:\t\t\t" <<
-               countHits<unsigned long>(me.hits[bucketId], typename TConfig::TThreading()) << std::endl;
+               countHits<unsigned long>(me.hits[bucketID], typename TConfig::TThreading()) << std::endl;
     }
 }
 
@@ -590,7 +590,7 @@ inline void _findSeedsImpl(Mapper<TSpec, TConfig> & me, THits & hits, TSeeds & s
     // Find hits.
     find(me.index, seeds, errors, delegate, Backtracking<TDistance>(), typename TConfig::TThreading());
 
-    // Sort the hits by seedId.
+    // Sort the hits by seedID.
     if (IsSameType<typename TConfig::TThreading, Parallel>::VALUE)
         sortHits(hits, typename TConfig::TThreading());
 }
@@ -633,8 +633,8 @@ inline void rankSeeds(Mapper<TSpec, TConfig> & me)
     typename TTraits::THitsCounts hitsCounts;
 
     start(me.timer);
-    for (unsigned bucketId = 0; bucketId < TConfig::BUCKETS; bucketId++)
-        TSeedsRanker ranker(hitsCounts, me.ranks[bucketId], me.seeds[bucketId], me.hits[bucketId], me.options);
+    for (unsigned bucketID = 0; bucketID < TConfig::BUCKETS; bucketID++)
+        TSeedsRanker ranker(hitsCounts, me.ranks[bucketID], me.seeds[bucketID], me.hits[bucketID], me.options);
     stop(me.timer);
     me.stats.rankSeeds += getValue(me.timer);
 
@@ -650,10 +650,10 @@ inline void rankSeeds(Mapper<TSpec, TConfig> & me)
 template <typename TSpec, typename TConfig>
 inline void clearHits(Mapper<TSpec, TConfig> & me)
 {
-    for (unsigned bucketId = 0; bucketId < TConfig::BUCKETS; bucketId++)
+    for (unsigned bucketID = 0; bucketID < TConfig::BUCKETS; bucketID++)
     {
-        clear(me.hits[bucketId]);
-        shrinkToFit(me.hits[bucketId]);
+        clear(me.hits[bucketID]);
+        shrinkToFit(me.hits[bucketID]);
     }
 }
 
@@ -667,8 +667,8 @@ inline unsigned long countHits(Mapper<TSpec, TConfig> const & me)
 {
     unsigned long hitsCount = 0;
 
-    for (unsigned bucketId = 0; bucketId < TConfig::BUCKETS; bucketId++)
-        hitsCount += countHits<unsigned long>(me.hits[bucketId], typename TConfig::TThreading());
+    for (unsigned bucketID = 0; bucketID < TConfig::BUCKETS; bucketID++)
+        hitsCount += countHits<unsigned long>(me.hits[bucketID], typename TConfig::TThreading());
 
     return hitsCount;
 }
@@ -678,8 +678,8 @@ inline unsigned long countHits(Mapper<TSpec, TConfig> const & me)
 // ----------------------------------------------------------------------------
 // Extends the hits in a bucket.
 
-template <unsigned ERRORS, typename TSpec, typename TConfig, typename TBucketId>
-inline void extendHits(Mapper<TSpec, TConfig> & me, TBucketId bucketId)
+template <unsigned ERRORS, typename TSpec, typename TConfig, typename TBucketID>
+inline void extendHits(Mapper<TSpec, TConfig> & me, TBucketID bucketID)
 {
     typedef MapperTraits<TSpec, TConfig>    TTraits;
     typedef HitsExtender<TSpec, TTraits>    THitsExtender;
@@ -688,7 +688,7 @@ inline void extendHits(Mapper<TSpec, TConfig> & me, TBucketId bucketId)
 
     start(me.timer);
     THitsExtender extender(me.ctx, appender, me.contigs.seqs,
-                           me.seeds[bucketId], me.hits[bucketId], me.ranks[bucketId], ERRORS,
+                           me.seeds[bucketID], me.hits[bucketID], me.ranks[bucketID], ERRORS,
                            indexSA(me.index), me.options);
     stop(me.timer);
     me.stats.extendHits += getValue(me.timer);
@@ -714,7 +714,7 @@ inline void reserveMatches(Mapper<TSpec, TConfig> & me)
 // ----------------------------------------------------------------------------
 // Function aggregateMatches()
 // ----------------------------------------------------------------------------
-// Aggregate matches by readId.
+// Aggregate matches by readID.
 
 template <typename TSpec, typename TConfig, typename TReadSeqs>
 inline void aggregateMatches(Mapper<TSpec, TConfig> & me, TReadSeqs & readSeqs)
@@ -722,11 +722,11 @@ inline void aggregateMatches(Mapper<TSpec, TConfig> & me, TReadSeqs & readSeqs)
     typedef MapperTraits<TSpec, TConfig>    TTraits;
     typedef typename TTraits::TMatch        TMatch;
 
-    // Bucket sort matches by readId.
+    // Bucket sort matches by readID.
     start(me.timer);
     setHost(me.matchesSet, me.matches);
-    sort(me.matches, MatchSorter<TMatch, ReadId>(), typename TConfig::TThreading());
-    bucket(me.matchesSet, Getter<TMatch, ReadId>(), getReadsCount(readSeqs), typename TConfig::TThreading());
+    sort(me.matches, MatchSorter<TMatch, ReadID>(), typename TConfig::TThreading());
+    bucket(me.matchesSet, Getter<TMatch, ReadID>(), getReadsCount(readSeqs), typename TConfig::TThreading());
     stop(me.timer);
     me.stats.sortMatches += getValue(me.timer);
 
@@ -811,7 +811,7 @@ inline void rankMatches(Mapper<TSpec, TConfig> & me, TReadSeqs const & readSeqs)
     typedef typename Value<TMatchesSet>::Type               TMatches;
     typedef typename TTraits::TMatch                        TMatch;
     typedef PairsSelector<TSpec, TTraits>                   TPairsSelector;
-    typedef typename Size<TReadSeqs>::Type                  TReadId;
+    typedef typename Size<TReadSeqs>::Type                  TReadID;
 
     // Sort matches by errors.
     start(me.timer);
@@ -832,9 +832,9 @@ inline void rankMatches(Mapper<TSpec, TConfig> & me, TReadSeqs const & readSeqs)
     {
         if (empty(matches)) return typename Size<TMatches>::Type(0);
 
-        TReadId readId = getMember(front(matches), ReadId());
+        TReadID readID = getMember(front(matches), ReadID());
 
-        return countMatchesInStrata(matches, getReadStrata<TMatch>(me.options, length(readSeqs[readId])));
+        return countMatchesInStrata(matches, getReadStrata<TMatch>(me.options, length(readSeqs[readID])));
     },
     typename TTraits::TThreading());
 
@@ -855,7 +855,7 @@ inline void rankMatches(Mapper<TSpec, TConfig> & me, TReadSeqs const & readSeqs)
         // Mark paired mates as properly paired.
         iterate(me.primaryMatches, [&](typename Iterator<TMatches, Standard>::Type & matchesIt)
         {
-            if (isValid(*matchesIt)) setPaired(me.ctx, getMember(*matchesIt, ReadId()));
+            if (isValid(*matchesIt)) setPaired(me.ctx, getMember(*matchesIt, ReadID()));
         },
         Standard(), typename TTraits::TThreading());
 

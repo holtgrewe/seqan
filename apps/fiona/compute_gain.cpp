@@ -273,7 +273,7 @@ int countTrueNegatives(std::vector<AlignmentError> const & errorsPre,
 
 // Allows the trimming of strings after the first whitespace.
 
-void trimSeqHeaderToId(seqan::CharString & header)
+void trimSeqHeaderToID(seqan::CharString & header)
 {
     unsigned i = 0;
     for (; i < length(header); ++i)
@@ -959,9 +959,9 @@ int main(int argc, char const ** argv)
     resize(idMap, length(contigNames(context(inPre))), maxValue<unsigned>());
     for (unsigned i = 0; i < length(ids); ++i)
     {
-        trimSeqHeaderToId(ids[i]);
+        trimSeqHeaderToID(ids[i]);
         unsigned idx = 0;
-        if (!getIdByName(idx, contigNamesCache(context(inPre)), ids[i]))
+        if (!getIDByName(idx, contigNamesCache(context(inPre)), ids[i]))
         {
             std::cerr << "Reference " << ids[i] << " not in SAM references!\n";
             return 1;
@@ -1021,7 +1021,7 @@ int main(int argc, char const ** argv)
             int const tid = omp_get_thread_num();
             unsigned myChunkSize = (unsigned)pickRandomNumber(rng, chunkSizeNoise);
             seqan::CharString prevName;
-            seqan::CharString postId;
+            seqan::CharString postID;
             clear(recordPre.qName);
             clear(recordPost.qName);
 
@@ -1072,7 +1072,7 @@ int main(int argc, char const ** argv)
                         else
                         {
                             readRecord(recordPost.qName, recordPost.seq, inPostFastq);
-                            trimSeqHeaderToId(recordPost.qName);
+                            trimSeqHeaderToID(recordPost.qName);
                             stop = atEnd(inPostFastq);
                         }
                     }

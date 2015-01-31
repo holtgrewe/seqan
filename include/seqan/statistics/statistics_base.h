@@ -65,7 +65,7 @@ TFloat _zscore(TStringSet W,  TStringSet& X, MarkovModel<TAlphabet, TFloat, TSpe
 	//compute occurrances
 	for(unsigned int i=0; i< length(X); i++)
 	{
-		String<TAlphabet> temp = getValueById(X, i);
+		String<TAlphabet> temp = getValueByID(X, i);
 		_numOccurrences(nW, temp, W, TAlgorithm());
 	}
 
@@ -127,7 +127,7 @@ TFloat _computeExpectation(MarkovModel<TAlphabet, TFloat, TSpec> &mm,
 {
 	TFloat E=0;
 	for (unsigned int i=0; i<length(W); i++){
-		String<TAlphabet> temp = getValueById(W, i);
+		String<TAlphabet> temp = getValueByID(W, i);
 		E += (n - length(temp) + 1)*mm.emittedProbability(temp);
 	}
 	return E;
@@ -178,7 +178,7 @@ TFloat _computeVariance( StringSet<String<TAlphabet> > W,  StringSet<String<TAlp
 	resize(orderShape, M.order);
 
 	for(unsigned int j=0; j<sizeW; j++){
-		String<TAlphabet> string =getValueById(W, j);
+		String<TAlphabet> string =getValueByID(W, j);
 
 		int row = hash(orderShape,begin(string));
 		TFloat p = 1;
@@ -197,11 +197,11 @@ TFloat _computeVariance( StringSet<String<TAlphabet> > W,  StringSet<String<TAlp
 
 	  for(unsigned int i=0; i<length(X); i++){
 
-	 	n = length(getValueById(X, i));
+	 	n = length(getValueByID(X, i));
 
 		 for(unsigned int j=0; j<sizeW; j++){
 
-			String<TAlphabet> Wj =getValueById(W, j);
+			String<TAlphabet> Wj =getValueByID(W, j);
 
 			TFloat q = (TFloat) (n-(2*length(Wj))+2);
 
@@ -215,7 +215,7 @@ TFloat _computeVariance( StringSet<String<TAlphabet> > W,  StringSet<String<TAlp
 
 				jlast = hash(orderShape,end(Wj)-M.order);
 
-				kfirst = hash(orderShape,begin(getValueById(W, k)));
+				kfirst = hash(orderShape,begin(getValueByID(W, k)));
 
 				eQPPPe = value(M._qppp, jlast,kfirst);
 
@@ -229,7 +229,7 @@ TFloat _computeVariance( StringSet<String<TAlphabet> > W,  StringSet<String<TAlp
 	  }
 
 	  // Compute D
-	  D+= _overlapExpectation(W,M,length(getValueById(X, z)));
+	  D+= _overlapExpectation(W,M,length(getValueByID(X, z)));
 	}
 
 
@@ -263,11 +263,11 @@ TFloat _overlapExpectation(StringSet<String<TAlphabet> > W, MarkovModel<TAlphabe
 	unsigned int sizeW = length(W);
 	for(unsigned int i=0; i<sizeW; i++)
 	{
-		String<TAlphabet> patt1 = getValueById(W, i);
+		String<TAlphabet> patt1 = getValueByID(W, i);
 		unsigned int size1 = length(patt1);
 		for(unsigned int j=0; j<sizeW; j++)
 		{
-			String<TAlphabet> patt2 = getValueById(W, j);
+			String<TAlphabet> patt2 = getValueByID(W, j);
 			unsigned int k=1;
 			unsigned int size2 = length(patt2);
 			if(size1>size2)
@@ -304,7 +304,7 @@ void _addReveseComplements(StringSet<String<TAlphabet> > &stringSet)
 	unsigned int num= length(stringSet);
 
 	for(unsigned int i=0; i< num; i++){
-  	     DnaStringReverseComplement mycom(getValueById(stringSet, i));
+  	     DnaStringReverseComplement mycom(getValueByID(stringSet, i));
 		 appendValue(stringSet, mycom);
 	}
 }
@@ -353,7 +353,7 @@ TFloat zscore(StringSet<TDnaSequence> W,  StringSet<TDnaSequence> &X, MarkovMode
    //compute occurrences
    for(unsigned int i=0; i < length(X); i++)
    {
-		 String<Dna> temp = getValueById(X, i);
+		 String<Dna> temp = getValueByID(X, i);
 		_numOccurrences(nW, temp, W, TAlgorithm());
 	}
 
@@ -371,11 +371,11 @@ TFloat zscore(StringSet<TDnaSequence> W,  StringSet<TDnaSequence> &X, MarkovMode
 
 	for(unsigned int j=0; j<length(X); j++){
 
-	 	n = length(getValueById(X, j));
+	 	n = length(getValueByID(X, j));
 
 		for(unsigned int i=0; i<sizeW; i++)
 		{
-			String<Dna> patt = getValueById(W, i);
+			String<Dna> patt = getValueByID(W, i);
 			DnaStringReverseComplement revpatt(patt);
 			String<Dna> revc= revpatt;
 			if (isEqual(patt,revc))
@@ -437,11 +437,11 @@ TFloat variance(StringSet<String<Dna> > W, StringSet<String<Dna> > &X, MarkovMod
 
    for(unsigned int j=0; j<length(X); j++){
 
-	 	n = length(getValueById(X, j));
+	 	n = length(getValueByID(X, j));
 
 		for(unsigned int i=0; i<sizeW; i++)
 		{
-			String<Dna> patt = getValueById(W, i);
+			String<Dna> patt = getValueByID(W, i);
 			DnaStringReverseComplement revpatt(patt);
 			String<Dna> revc= revpatt;
 			if (isEqual(patt,revc))
@@ -478,7 +478,7 @@ TFloat expectation(StringSet<String<TAlphabet> > & W, StringSet<String<TAlphabet
 	TFloat E = 0;
 
 	for(unsigned int i=0; i<length(X); i++){
-	 	n = length(getValueById(X, i));
+	 	n = length(getValueByID(X, i));
         E += _computeExpectation(M, W, n);
 	}
 

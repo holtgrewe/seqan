@@ -115,8 +115,8 @@ int findN(String<TAlpha>& seq, unsigned allowed)
 }
 
 //single-end data with substitutions
-template<typename TSeqs, typename TIds, typename TSub>
-void processN(TSeqs& seqs, TIds& ids, unsigned allowed, TSub substitute, GeneralStats& stats)
+template<typename TSeqs, typename TIDs, typename TSub>
+void processN(TSeqs& seqs, TIDs& ids, unsigned allowed, TSub substitute, GeneralStats& stats)
 {
     int limit = length(seqs);
     StringSet<int> res;
@@ -168,8 +168,8 @@ void processN(TSeqs& seqs, TIds& ids, unsigned allowed, TSub substitute, General
 }
 
 //Overload for single-end data and no substitutions
-template<typename TSeqs, typename TIds>
-void processN(TSeqs& seqs, TIds& ids, unsigned allowed, GeneralStats& stats)
+template<typename TSeqs, typename TIDs>
+void processN(TSeqs& seqs, TIDs& ids, unsigned allowed, GeneralStats& stats)
 {
     int limit = length(seqs);
     StringSet<int> res;
@@ -202,8 +202,8 @@ void processN(TSeqs& seqs, TIds& ids, unsigned allowed, GeneralStats& stats)
 }
 
 //paired-end data with substitutions
-template<typename TSeqs, typename TIds, typename TSub>
-void processN(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, unsigned allowed, TSub substitute, GeneralStats& stats)
+template<typename TSeqs, typename TIDs, typename TSub>
+void processN(TSeqs& seqs, TIDs& ids, TSeqs& seqsRev, TIDs& idsRev, unsigned allowed, TSub substitute, GeneralStats& stats)
 {
     int limit = length(seqs);
     StringSet<int> res;
@@ -247,8 +247,8 @@ void processN(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, unsigned all
 }
 
 //paired-end data without substitutions
-template<typename TSeqs, typename TIds>
-void processN(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, unsigned allowed, GeneralStats& stats)
+template<typename TSeqs, typename TIDs>
+void processN(TSeqs& seqs, TIDs& ids, TSeqs& seqsRev, TIDs& idsRev, unsigned allowed, GeneralStats& stats)
 {
     int limit = length(seqs);
     StringSet<int> res;
@@ -292,8 +292,8 @@ void processN(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, unsigned all
 }
 
 //Overload single-end data with substitutions and multiplex barcodes
-template<typename TSeqs, typename TIds, typename TMulti, typename TSub>
-void processN(TSeqs& seqs, TIds& ids, TMulti& multiplex, unsigned allowed, TSub substitute, GeneralStats& stats)
+template<typename TSeqs, typename TIDs, typename TMulti, typename TSub>
+void processN(TSeqs& seqs, TIDs& ids, TMulti& multiplex, unsigned allowed, TSub substitute, GeneralStats& stats)
 {
     int limit = length(seqs);
     StringSet<int> res;
@@ -335,8 +335,8 @@ void processN(TSeqs& seqs, TIds& ids, TMulti& multiplex, unsigned allowed, TSub 
 }
 
 //Overload for single-end data, no substitutions and multiplex barcodes
-template<typename TSeqs, typename TIds, typename TMulti>
-void processN(TSeqs& seqs, TIds& ids, TMulti& multiplex, unsigned allowed, GeneralStats& stats)
+template<typename TSeqs, typename TIDs, typename TMulti>
+void processN(TSeqs& seqs, TIDs& ids, TMulti& multiplex, unsigned allowed, GeneralStats& stats)
 {
     int limit = length(seqs);
     StringSet<int> res;
@@ -378,8 +378,8 @@ void processN(TSeqs& seqs, TIds& ids, TMulti& multiplex, unsigned allowed, Gener
 }
 
 //paired-end data with substitutions and multiplex barcodes
-template<typename TSeqs, typename TIds, typename TMulti, typename TSub>
-void processN(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, TMulti& multiplex, unsigned allowed,
+template<typename TSeqs, typename TIDs, typename TMulti, typename TSub>
+void processN(TSeqs& seqs, TIDs& ids, TSeqs& seqsRev, TIDs& idsRev, TMulti& multiplex, unsigned allowed,
     TSub substitute, GeneralStats& stats)
 {
     int limit = length(seqs);
@@ -431,8 +431,8 @@ void processN(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, TMulti& mult
 }
 
 //paired-end data without substitutions and multiplex barcodes
-template<typename TSeqs, typename TIds, typename TMulti >
-void processN(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, TMulti& multiplex, unsigned allowed, GeneralStats& stats)
+template<typename TSeqs, typename TIDs, typename TMulti >
+void processN(TSeqs& seqs, TIDs& ids, TSeqs& seqsRev, TIDs& idsRev, TMulti& multiplex, unsigned allowed, GeneralStats& stats)
 {
     int limit = length(seqs);
     StringSet<int> res;
@@ -483,8 +483,8 @@ void processN(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, TMulti& mult
 }
 
 
-template<typename TSeqs, typename TIds> //Version for single end data
-void preTrim(TSeqs& seqs, TIds& ids, unsigned head, unsigned tail, unsigned min, GeneralStats& stats)
+template<typename TSeqs, typename TIDs> //Version for single end data
+void preTrim(TSeqs& seqs, TIDs& ids, unsigned head, unsigned tail, unsigned min, GeneralStats& stats)
 {
     int i = 0;
     int limit = length(seqs);
@@ -595,8 +595,8 @@ void preTrim(TSeqs& seqs, TIds& ids, unsigned head, unsigned tail, unsigned min,
 }
 
 //Overload for single end data with multiplex barcodes
-template<typename TSeqs, typename TIds, typename TMulti>
-void preTrim(TSeqs& seqs, TIds& ids, TMulti& multiplex, unsigned head, unsigned tail, unsigned min, GeneralStats& stats)
+template<typename TSeqs, typename TIDs, typename TMulti>
+void preTrim(TSeqs& seqs, TIDs& ids, TMulti& multiplex, unsigned head, unsigned tail, unsigned min, GeneralStats& stats)
 {
     int i = 0;
     int limit = length(seqs);
@@ -709,8 +709,8 @@ void preTrim(TSeqs& seqs, TIds& ids, TMulti& multiplex, unsigned head, unsigned 
 }
 
 //Overload for paired end data
-template<typename TSeqs, typename TIds> 
-void preTrim(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, unsigned head, unsigned tail, unsigned min,
+template<typename TSeqs, typename TIDs> 
+void preTrim(TSeqs& seqs, TIDs& ids, TSeqs& seqsRev, TIDs& idsRev, unsigned head, unsigned tail, unsigned min,
     GeneralStats& stats)
 {
     int i = 0;
@@ -830,8 +830,8 @@ void preTrim(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, unsigned head
 }
 
 //Overload for paired end data with multiplex barcodes
-template<typename TSeqs, typename TIds,  typename TMulti> 
-void preTrim(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, TMulti& multiplex, unsigned head, unsigned tail, unsigned min,
+template<typename TSeqs, typename TIDs,  typename TMulti> 
+void preTrim(TSeqs& seqs, TIDs& ids, TSeqs& seqsRev, TIDs& idsRev, TMulti& multiplex, unsigned head, unsigned tail, unsigned min,
     GeneralStats& stats)
 {
     int i = 0;
@@ -952,8 +952,8 @@ void preTrim(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, TMulti& multi
 }
 
 //Trims sequences to specific length and deletes to short ones together with their IDs
-template<typename TSeqs,typename TIds>
-void trimTo(TSeqs& seqs, TIds& ids, const unsigned len, GeneralStats& stats)
+template<typename TSeqs,typename TIDs>
+void trimTo(TSeqs& seqs, TIDs& ids, const unsigned len, GeneralStats& stats)
 {
     StringSet<bool> rem;
     int limit = length(seqs);
@@ -993,8 +993,8 @@ void trimTo(TSeqs& seqs, TIds& ids, const unsigned len, GeneralStats& stats)
 }
 
 //Overload for paired end-data
-template<typename TSeqs,typename TIds>
-void trimTo(TSeqs& seqs, TIds& ids, TSeqs& seqsRev, TIds& idsRev, const unsigned len, GeneralStats& stats)
+template<typename TSeqs,typename TIDs>
+void trimTo(TSeqs& seqs, TIDs& ids, TSeqs& seqsRev, TIDs& idsRev, const unsigned len, GeneralStats& stats)
 {
     int i = 0;
     StringSet<bool> rem;

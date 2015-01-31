@@ -1424,14 +1424,14 @@ return iter(me, length(me), tag);
 // --------------------------------------------------------------------------
 
 // --------------------------------------------------------------------------
-// Function getValueById()
+// Function getValueByID()
 // --------------------------------------------------------------------------
 
 /*!
- * @mfn StringSet#Id
+ * @mfn StringSet#ID
  * @brief Return the id type for the string set.
  *
- * @signature Id<TStringSet>::Type
+ * @signature ID<TStringSet>::Type
  *
  * @tparam TStringSet The string set type to query for its id type.
  *
@@ -1439,10 +1439,10 @@ return iter(me, length(me), tag);
  */
 
 /*!
- * @fn StringSet#getValueById
+ * @fn StringSet#getValueByID
  * @brief Get the value from a string set by its id.
  *
- * @signature TString getValueById(s, id);
+ * @signature TString getValueByID(s, id);
  *
  * @param[in] s  The string set to get string from.
  * @param[in] id The id of the string to get.
@@ -1453,14 +1453,14 @@ return iter(me, length(me), tag);
 // TODO(holtgrew): Why is there no generic implementation for StringSets??
 
 // --------------------------------------------------------------------------
-// Function valueById()
+// Function valueByID()
 // --------------------------------------------------------------------------
 
 /*!
- * @fn StringSet#valueById
+ * @fn StringSet#valueByID
  * @brief Get the value from a string set by its id.
  *
- * @signature TString valueById(s, id);
+ * @signature TString valueByID(s, id);
  *
  * @param[in] s  The string set to get string from.
  * @param[in] id The id of the string to get.
@@ -1468,35 +1468,35 @@ return iter(me, length(me), tag);
  * @return TString Reference to the string with the given id.
  */
 
-template<typename TString, typename TSpec, typename TId>
+template<typename TString, typename TSpec, typename TID>
 inline typename Reference<StringSet<TString, TSpec> >::Type
-valueById(StringSet<TString, TSpec> & me,
-        TId const id)
+valueByID(StringSet<TString, TSpec> & me,
+        TID const id)
 {
     SEQAN_CHECKPOINT;
-    return getValueById(me, id);
+    return getValueByID(me, id);
 }
 
 // --------------------------------------------------------------------------
-// Function assignValueById()
+// Function assignValueByID()
 // --------------------------------------------------------------------------
 
 /*!
- * @fn StringSet#assignValueById
+ * @fn StringSet#assignValueByID
  * @brief Set the member of a string set by its id.
  *
- * @signature TId getValueById(set, s[, id]);
+ * @signature TID getValueByID(set, s[, id]);
  *
  * @param[in] set The string to assign value in.
  * @param[in] s   The string set to assign.
  * @param[in] id  The id of the string to set.  If omitted, <tt>s</tt> will be appended to <tt>set</tt>.
  *
- * @return TId The id of the new string in the string set.
+ * @return TID The id of the new string in the string set.
  */
 
 template<typename TString, typename TSpec, typename TString2>
-inline typename Id<StringSet<TString, TSpec> >::Type
-assignValueById(StringSet<TString, TSpec>& me,
+inline typename ID<StringSet<TString, TSpec> >::Type
+assignValueByID(StringSet<TString, TSpec>& me,
                 TString2& obj)
 {
     SEQAN_CHECKPOINT;
@@ -1505,25 +1505,25 @@ assignValueById(StringSet<TString, TSpec>& me,
     return length(me.strings) - 1;
 }
 
-template<typename TString, typename TSpec1, typename TSpec2, typename TId>
-inline typename Id<StringSet<TString, TSpec1> >::Type
-assignValueById(StringSet<TString, TSpec1>& dest,
+template<typename TString, typename TSpec1, typename TSpec2, typename TID>
+inline typename ID<StringSet<TString, TSpec1> >::Type
+assignValueByID(StringSet<TString, TSpec1>& dest,
                 StringSet<TString, TSpec2>& source,
-                TId id)
+                TID id)
 {
     SEQAN_CHECKPOINT;
-    return assignValueById(dest, getValueById(source, id), id);
+    return assignValueByID(dest, getValueByID(source, id), id);
 }
 
 // --------------------------------------------------------------------------
-// Function removeValueById()
+// Function removeValueByID()
 // --------------------------------------------------------------------------
 
 /*!
- * @fn StringSet#removeValueById
+ * @fn StringSet#removeValueByID
  * @brief Remove a value from a string set by its id.
  *
- * @signature void removeValueById(set, id);
+ * @signature void removeValueByID(set, id);
  *
  * @param[in,out] set The string to remove value in.
  * @param[in]     id  The id of the string to remove.
@@ -1532,19 +1532,19 @@ assignValueById(StringSet<TString, TSpec1>& dest,
 // TODO(holtgrew): Why is there no generic implementation for StringSets??
 
 // --------------------------------------------------------------------------
-// Function positionToId()
+// Function positionToID()
 // --------------------------------------------------------------------------
 
 /*!
- * @fn StringSet#positionToId
+ * @fn StringSet#positionToID
  * @brief Convert a position/index in the string set to a string id.
  *
- * @signature Id positionToId(set, pos);
+ * @signature ID positionToID(set, pos);
  *
  * @param[in] set The string to convert positions for.
  * @param[in] pos The position to convert.
  *
- * @return TId The resulting id.
+ * @return TID The resulting id.
  */
 
 // TODO(holtgrew): Why is there no generic implementation for StringSets??
@@ -1671,26 +1671,26 @@ inline void prefixSums(TPrefixSums & sums, TText const & text)
 
 // TODO(holtgrew): Should the following code be thrown away?
 
-//template <typename TString, typename TSpec, typename TDestSpec, typename TIds, typename TLength>
+//template <typename TString, typename TSpec, typename TDestSpec, typename TIDs, typename TLength>
 //inline void
 //subset(StringSet<TString, Owner<TSpec> >& source,
 //    StringSet<TString, TDestSpec>& dest,
-//    TIds ids,
+//    TIDs ids,
 //    TLength len)
 //{
 //SEQAN_CHECKPOINT
 //}
 
-//template <typename TString, typename TIds, typename TLength>
+//template <typename TString, typename TIDs, typename TLength>
 //inline void
 //subset(StringSet<TString, Dependent<Generous> >& source,
 //    StringSet<TString, Dependent<Generous> >& dest,
-//    TIds ids,
+//    TIDs ids,
 //    TLength len)
 //{
 //SEQAN_CHECKPOINT
 //    typedef StringSet<TString, Dependent<Generous> > TStringSet;
-//    typedef typename Id<TStringSet>::Type TId;
+//    typedef typename ID<TStringSet>::Type TID;
 //    typedef typename Size<TStringSet>::Type TSize;
 
 //    clear(dest);
@@ -1701,16 +1701,16 @@ inline void prefixSums(TPrefixSums & sums, TText const & text)
 //        dest.strings[ids[i]] = source.strings[ids[i]];
 //}
 
-//template <typename TString, typename TIds, typename TLength>
+//template <typename TString, typename TIDs, typename TLength>
 //inline void
 //subset(StringSet<TString, Dependent<Tight> >& source,
 //    StringSet<TString, Dependent<Tight> >& dest,
-//    TIds ids,
+//    TIDs ids,
 //    TLength len)
 //{
 //SEQAN_CHECKPOINT
 //    typedef StringSet<TString, Dependent<Tight> > TStringSet;
-//    typedef typename Id<TStringSet>::Type TId;
+//    typedef typename ID<TStringSet>::Type TID;
 //    typedef typename Size<TStringSet>::Type TSize;
 
 //    clear(dest);
@@ -1718,14 +1718,14 @@ inline void prefixSums(TPrefixSums & sums, TText const & text)
 //    dest.limitsValid = (len == 0);
 //    TLength upperBound = length(source.ids);
 //    for(TSize i=0;i<len;++i) {
-//        TId id = ids[i];
+//        TID id = ids[i];
 //        if ((upperBound > id) &&
 //            (source.ids[id] == id)) {
 //                appendValue(dest.strings, source.strings[id]);
 //                appendValue(dest.ids, id);
 //        } else {
-//            typedef String<TId> TIdString;
-//            typedef typename Iterator<TIdString, Rooted>::Type TIter;
+//            typedef String<TID> TIDString;
+//            typedef typename Iterator<TIDString, Rooted>::Type TIter;
 //            TIter it = begin(source.ids);
 //            for(;!atEnd(it);goNext(it)) {
 //                if (*it == id) {
@@ -1737,11 +1737,11 @@ inline void prefixSums(TPrefixSums & sums, TText const & text)
 //    }
 //}
 
-//template <typename TString, typename TSpec, typename TIds>
+//template <typename TString, typename TSpec, typename TIDs>
 //inline void
 //subset(StringSet<TString, TSpec>& source,
 //    StringSet<TString, TSpec>& dest,
-//    TIds ids)
+//    TIDs ids)
 //{
 //SEQAN_CHECKPOINT
 //    subset(source, dest, ids, length(ids));

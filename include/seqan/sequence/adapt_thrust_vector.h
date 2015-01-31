@@ -261,12 +261,12 @@ struct Device<std::string>
 // ===========================================================================
 
 // ----------------------------------------------------------------------------
-// Function getObjectId()
+// Function getObjectID()
 // ----------------------------------------------------------------------------
 
 template <typename TChar,  typename TAlloc>
 inline void const *
-getObjectId(thrust::device_vector<TChar, TAlloc> const & me)
+getObjectID(thrust::device_vector<TChar, TAlloc> const & me)
 {
     if (me.empty())
         return NULL;

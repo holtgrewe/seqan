@@ -204,9 +204,9 @@ inline void trimSeqNames(SeqStore<TSpec, TConfig> & me)
     TSeqNames names;
     reserve(names, length(me.names), Exact());
 
-    for (unsigned nameId = 0; nameId < length(me.names); ++nameId)
+    for (unsigned nameID = 0; nameID < length(me.names); ++nameID)
     {
-        TSeqNameIt nameIt = begin(me.names[nameId], Rooted());
+        TSeqNameIt nameIt = begin(me.names[nameID], Rooted());
         readUntil(name, nameIt, IsSpace());
         appendValue(names, name);
         clear(name);
@@ -248,8 +248,8 @@ inline void randomizeNs(SeqStore<TSpec, TConfig> & me)
 {
     Rng<MersenneTwister> rng(0xDEADBEEF);
 
-    for (unsigned seqId = 0; seqId < length(me.seqs); ++seqId)
-        randomizeNs(me.seqs[seqId], rng);
+    for (unsigned seqID = 0; seqID < length(me.seqs); ++seqID)
+        randomizeNs(me.seqs[seqID], rng);
 }
 
 // ----------------------------------------------------------------------------
@@ -259,8 +259,8 @@ inline void randomizeNs(SeqStore<TSpec, TConfig> & me)
 template <typename TSpec, typename TConfig>
 inline void reverse(SeqStore<TSpec, TConfig> & me)
 {
-    for (unsigned seqId = 0; seqId < length(me.seqs); ++seqId)
-        reverse(me.seqs[seqId]);
+    for (unsigned seqID = 0; seqID < length(me.seqs); ++seqID)
+        reverse(me.seqs[seqID]);
 }
 
 // ----------------------------------------------------------------------------
@@ -274,16 +274,16 @@ void appendReverseComplement(SeqStore<TSpec, TConfig> & me)
     typedef SeqStore<TSpec, TConfig>    TSeqStore;
     typedef typename TSeqStore::TSeqs   TSeqs;
     typedef typename Value<TSeqs>::Type TSeq;
-    typedef typename Size<TSeqs>::Type  TSeqId;
+    typedef typename Size<TSeqs>::Type  TSeqID;
 
-    TSeqId seqsCount = length(me.seqs);
+    TSeqID seqsCount = length(me.seqs);
 
     reserve(me.seqs, 2 * seqsCount, Exact());
     reserve(concat(me.seqs), 2 * lengthSum(me.seqs), Exact());
 
-    for (TSeqId seqId = 0; seqId < seqsCount; ++seqId)
+    for (TSeqID seqID = 0; seqID < seqsCount; ++seqID)
     {
-        TSeq const & seq = me.seqs[seqId];
+        TSeq const & seq = me.seqs[seqID];
         appendValue(me.seqs, seq);
         reverseComplement(back(me.seqs));
     }

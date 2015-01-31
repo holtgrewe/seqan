@@ -79,7 +79,7 @@ pathGrowingAlgorithm(TEdgeMap & edgeMap1,
     TGraph mutant(g);
 
     // Initialy not a single edge is selected
-    resize(edgeMap1, getIdUpperBound(_getEdgeIdManager(g)), false);
+    resize(edgeMap1, getIDUpperBound(_getEdgeIDManager(g)), false);
     TEdgeMap edgeMap2 = edgeMap1;
     TValue edgeMap1Sum = 0;
     TValue edgeMap2Sum = 0;

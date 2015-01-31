@@ -93,9 +93,9 @@ struct Writer
     }
 
     inline void
-    operator() (typename Size<TDb>::Type dbId, typename Size<TDbQuery>::Type queryId)
+    operator() (typename Size<TDb>::Type dbID, typename Size<TDbQuery>::Type queryID)
     {
-        _write(*this, dbId, queryId);
+        _write(*this, dbID, queryID);
     }
 };
 
@@ -143,11 +143,11 @@ _writeRecord(Writer<TDb, TDbQuery, TSpec> & writer, TString1 const & id1, TStrin
 
 template <typename TDb, typename TDbQuery, typename TSpec>
 inline void
-_write(Writer<TDb, TDbQuery, TSpec> & writer, typename Size<TDb>::Type dbId, typename Size<TDbQuery>::Type queryId)
+_write(Writer<TDb, TDbQuery, TSpec> & writer, typename Size<TDb>::Type dbID, typename Size<TDbQuery>::Type queryID)
 {
     atomicInc(writer.recordsCount);
 
-    _writeRecord(writer, writer.db.ids[dbId], writer.query.ids[queryId]);
+    _writeRecord(writer, writer.db.ids[dbID], writer.query.ids[queryID]);
 }
 
 template <typename TDb>
@@ -193,8 +193,8 @@ inline bool close(Writer<TDb, TDb, Join> & writer)
     TDbSSize dbSize = (TDbSSize)length(writer.db.text);
 
     // Add reflexive closures to the join results.
-    for (TDbSSize dbId = 0; dbId < dbSize; ++dbId)
-        _writeRecord(writer, writer.db.ids[dbId], writer.db.ids[dbId]);
+    for (TDbSSize dbID = 0; dbID < dbSize; ++dbID)
+        _writeRecord(writer, writer.db.ids[dbID], writer.db.ids[dbID]);
 
     atomicAdd(writer.recordsCount, dbSize);
 

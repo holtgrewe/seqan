@@ -213,7 +213,7 @@ public:
                 readRecord(record, gffFileIn);
                 // Translate ref to idx from VCF.
                 unsigned idx = 0;
-                if (!getIdByName(idx, vcfMat.faiIndex, record.ref))
+                if (!getIDByName(idx, vcfMat.faiIndex, record.ref))
                     throw MasonIOException("Reference name from GFF/GTF not in VCF!");
                 record.rID = idx;
             }
@@ -229,7 +229,7 @@ public:
             int rID = 0, hID = 0;  // reference and haplotype id
             // Get index of the gff record's reference in the VCF file.
             unsigned idx = 0;
-            if (!getIdByName(idx, vcfMat.faiIndex, refName))
+            if (!getIDByName(idx, vcfMat.faiIndex, refName))
             {
                 std::stringstream ss;
                 ss << "Reference from GFF file " << refName << " unknown in FASTA/FAI file.";
@@ -362,7 +362,7 @@ public:
         {
             if (empty(ss[i]))
                 continue;
-            if (!getIdByName(contigNames, ss[i], idx, cache))
+            if (!getIDByName(contigNames, ss[i], idx, cache))
             {
                 appendValue(tIDs, length(contigNames));
                 appendName(contigNames, ss[i], cache);
@@ -385,7 +385,7 @@ public:
 
             // Translate ref to idx from VCF.
             unsigned idx = 0;
-            if (!getIdByName(idx, vcfMat.faiIndex, record.ref))
+            if (!getIDByName(idx, vcfMat.faiIndex, record.ref))
                 throw MasonIOException("Reference name from GFF/GTF not in VCF!");
             record.rID = idx;
 

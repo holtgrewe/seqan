@@ -328,8 +328,8 @@ void compactSplicedMatchesPurgeAmbiguous(TMatches &matches, TCounts & /*cnts*/, 
 			// quality
 			if (a.pairScore > b.pairScore) return true;
 			if (a.pairScore < b.pairScore) return false;
-			if (a.pairId < b.pairId) return true;
-			if (a.pairId > b.pairId) return false;
+			if (a.pairID < b.pairID) return true;
+			if (a.pairID > b.pairID) return false;
 			return a.editDist < b.editDist;
 		}
 	};
@@ -1675,7 +1675,7 @@ int mapSplicedReads(
 		SEQAN_PROTIMESTART(find_time);
 
 		// iterate over genome sequences
-		for(; !_streamEOF(file); ++gseqNo)
+		for(; !_streamEof(file); ++gseqNo)
 		{
 			if (options.genomeNaming == 0)
 			{
@@ -2002,9 +2002,9 @@ void mapSplicedReads(
 						outerDistance = -outerDistance;
 					}
 					// set a unique pair id
-					mLtmp.pairId = mRtmp.pairId = options.nextMatePairId;
-					if (++options.nextMatePairId == 0)
-						options.nextMatePairId = 1;
+					mLtmp.pairID = mRtmp.pairID = options.nextMatePairID;
+					if (++options.nextMatePairID == 0)
+						options.nextMatePairID = 1;
 						
 					// score the whole match pair
 					mLtmp.pairScore = mRtmp.pairScore = 0 - mLtmp.editDist - mRtmp.editDist;

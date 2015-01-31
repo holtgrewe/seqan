@@ -889,7 +889,7 @@ namespace SEQAN_NAMESPACE_MAIN
 		createSuffixArray(SA, s, alg, K, maxdepth, 1);
 	}
 
-    // creates suffix array sorted by the first maxLCP chars of suffixes
+    // creates suffix array sorted by the first maxLcp chars of suffixes
     template < typename TSA,
                typename TText,
                typename TSize >
@@ -897,16 +897,16 @@ namespace SEQAN_NAMESPACE_MAIN
 		TSA &SA,
 		TText &s,
 		Skew7 const &_dummy,
-        TSize maxLCP,
+        TSize maxLcp,
         unsigned K)
     {
         unsigned depth = 0;
-        for(TSize i = 1; i < maxLCP; i*=7) ++depth;
+        for(TSize i = 1; i < maxLcp; i*=7) ++depth;
         createSuffixArray(SA, s, _dummy, K, depth);
     }
 
 
-    // creates suffix array sorted by the first maxLCP chars of suffixes
+    // creates suffix array sorted by the first maxLcp chars of suffixes
     template < typename TSA,
                typename TText,
                typename TSize >
@@ -914,10 +914,10 @@ namespace SEQAN_NAMESPACE_MAIN
 		TSA &SA,
 		TText &s,
 		Skew7 const &_dummy,
-        TSize maxLCP)
+        TSize maxLcp)
     {
     	SEQAN_CHECKPOINT;
-    	createSuffixArrayPart(SA, s, _dummy, maxLCP, ValueSize< typename Value<TText>::Type >::VALUE);
+    	createSuffixArrayPart(SA, s, _dummy, maxLcp, ValueSize< typename Value<TText>::Type >::VALUE);
     }
 //}
 

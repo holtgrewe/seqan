@@ -15,7 +15,7 @@
   Lesser General Public License for more details.
 
  ============================================================================
-  $Id$
+  $ID$
  ==========================================================================*/
 
 #ifndef SEQAN_HEADER_BASE_H
@@ -27,9 +27,9 @@ namespace SEQAN_NAMESPACE_MAIN
 //////////////////////////////////////////////////////////////////////////////
 // create possible tuples with length n:
 //////////////////////////////////////////////////////////////////////////////
-template<typename TStringSet, typename TSpec, typename TConfig, typename TId>
+template<typename TStringSet, typename TSpec, typename TConfig, typename TID>
 inline void
-create_nTuple(TStringSet &tupleSet, FragmentStore<TSpec, TConfig> &fragStore, const TStringSet &annoIds, const TId &parentId, const unsigned &n)	
+create_nTuple(TStringSet &tupleSet, FragmentStore<TSpec, TConfig> &fragStore, const TStringSet &annoIDs, const TID &parentID, const unsigned &n)	
 {
 	typedef typename Iterator<TStringSet>::Type 				TSetIter;
 	typedef typename Value<TStringSet>::Type 				TString;
@@ -37,35 +37,35 @@ create_nTuple(TStringSet &tupleSet, FragmentStore<TSpec, TConfig> &fragStore, co
 	typedef typename FragmentStore<TSpec, TConfig>::TAnnotationStore 	TAnnotationStore;
 	typedef typename Value<TAnnotationStore>::Type 				TAnnotationStoreElement;
 	
-	static const TId INVALID_ANNO_ID = TAnnotationStoreElement::INVALID_ID;
+	static const TID INVALID_ANNO_ID = TAnnotationStoreElement::INVALID_ID;
 	
 	clear(tupleSet);
 	TStringIter itStr;
 	TStringIter itStrEnd;
 	TSetIter itSet;
 	TSetIter itSetEnd;
-	TStringSet tempAnnoIds;
-	resize(tempAnnoIds, n);
+	TStringSet tempAnnoIDs;
+	resize(tempAnnoIDs, n);
 	TStringSet tempTupleSet;
 	
-	for (unsigned i = 0; i <= length(annoIds) - n; ++i)
+	for (unsigned i = 0; i <= length(annoIDs) - n; ++i)
 	{
 		for ( unsigned j = i; j < i + n; ++j)
 		{
-			clear(value(tempAnnoIds, j - i));
-			itStr = begin(annoIds[j]);
-			itStrEnd = end(annoIds[j]);
+			clear(value(tempAnnoIDs, j - i));
+			itStr = begin(annoIDs[j]);
+			itStrEnd = end(annoIDs[j]);
 			for ( ; itStr != itStrEnd; goNext(itStr))
 			{
-				if (getValue(itStr) != INVALID_ANNO_ID && getValue(fragStore.annotationStore, getValue(itStr)).parentId == parentId)
+				if (getValue(itStr) != INVALID_ANNO_ID && getValue(fragStore.annotationStore, getValue(itStr)).parentID == parentID)
 				{
-					appendValue(value(tempAnnoIds, j - i), getValue(itStr), Generous() );
+					appendValue(value(tempAnnoIDs, j - i), getValue(itStr), Generous() );
 				}
 			}
 		}
 		
 		clear(tempTupleSet);
-		createCombinations(tempTupleSet, tempAnnoIds);
+		createCombinations(tempTupleSet, tempAnnoIDs);
 		itSet = begin(tempTupleSet);
 		itSetEnd = end(tempTupleSet);
 		for ( ; itSet != itSetEnd; goNext(itSet))
@@ -79,9 +79,9 @@ create_nTuple(TStringSet &tupleSet, FragmentStore<TSpec, TConfig> &fragStore, co
 //////////////////////////////////////////////////////////////////////////////
 // create all possible tuples: for each n <= length
 //////////////////////////////////////////////////////////////////////////////
-template<typename TStringSet, typename TSpec, typename TConfig, typename TId>
+template<typename TStringSet, typename TSpec, typename TConfig, typename TID>
 inline void
-create_Tuple(TStringSet &tupleSet, FragmentStore<TSpec, TConfig> &fragStore, const TStringSet &annoIds, const TId &parentId, const unsigned &n)	
+create_Tuple(TStringSet &tupleSet, FragmentStore<TSpec, TConfig> &fragStore, const TStringSet &annoIDs, const TID &parentID, const unsigned &n)	
 {
 	typedef typename Iterator<TStringSet>::Type TIter;
 	
@@ -89,10 +89,10 @@ create_Tuple(TStringSet &tupleSet, FragmentStore<TSpec, TConfig> &fragStore, con
 	TIter it;
 	TIter itEnd;
 	TStringSet tempTupleSet;
-	for (unsigned i = 1; i <= n && i <= length(annoIds); ++i)
+	for (unsigned i = 1; i <= n && i <= length(annoIDs); ++i)
 	{
 		clear(tempTupleSet);
-		create_nTuple(tempTupleSet, fragStore, annoIds, parentId, i);
+		create_nTuple(tempTupleSet, fragStore, annoIDs, parentID, i);
 		
 		it = begin(tempTupleSet);
 		itEnd = end(tempTupleSet);
@@ -109,17 +109,17 @@ create_Tuple(TStringSet &tupleSet, FragmentStore<TSpec, TConfig> &fragStore, con
 //////////////////////////////////////////////////////////////////////////////
 template<typename TStringSet>
 inline void
-createCombinations(TStringSet &tupleSet, TStringSet &annoIds)
+createCombinations(TStringSet &tupleSet, TStringSet &annoIDs)
 {
 	//typedef typename Value<TStringSet>::Type 	TString;
-	//typedef typename Value<TString>::Type		TId;
+	//typedef typename Value<TString>::Type		TID;
 	typedef typename Iterator<TStringSet>::Type 	TStringSetIter;
 	//typedef typename Iterator<TString>::Type	TStringIter;
 	
-	if (!empty(annoIds))
+	if (!empty(annoIDs))
 	{
-		TStringSetIter itStrSet = begin(annoIds);
-		TStringSetIter itStrSetEnd = end(annoIds);
+		TStringSetIter itStrSet = begin(annoIDs);
+		TStringSetIter itStrSetEnd = end(annoIDs);
 	
 		unsigned n = 1;
 		for ( ; itStrSet != itStrSetEnd; goNext(itStrSet))
@@ -135,27 +135,27 @@ createCombinations(TStringSet &tupleSet, TStringSet &annoIds)
 	
 		for ( ; itT != itTEnd; goNext(itT))
 		{
-			resize(value(itT), length(annoIds));
+			resize(value(itT), length(annoIDs));
 		}
 		*/
 	
-		// TId id;
+		// TID id;
 		unsigned pos;
 		unsigned help = n;
-		for (unsigned i = 0; i < length(annoIds); ++i)
+		for (unsigned i = 0; i < length(annoIDs); ++i)
 		{
-			unsigned m = length(getValue(annoIds, i));
+			unsigned m = length(getValue(annoIDs, i));
 			help = help / m;
-			for (unsigned j = 0; j< length(getValue(annoIds, i)); ++j)
+			for (unsigned j = 0; j< length(getValue(annoIDs, i)); ++j)
 			{
-				// id = getValue(getValue(annoIds, i), j);
+				// id = getValue(getValue(annoIDs, i), j);
 				for (unsigned k = 0; k < unsigned (n/ (help*m)) ; ++k)
 				{
 					for (unsigned l = 0; l < help; ++l)
 					{
 						pos = j*help + k*m*help + l;
-						// assignValue(value(tupleSet, pos), i, getValue(getValue(annoIds, i), j) );
-						appendValue(value(tupleSet, pos), getValue(getValue(annoIds, i), j), Generous() );
+						// assignValue(value(tupleSet, pos), i, getValue(getValue(annoIDs, i), j) );
+						appendValue(value(tupleSet, pos), getValue(getValue(annoIDs, i), j), Generous() );
 					}
 				}
 			}

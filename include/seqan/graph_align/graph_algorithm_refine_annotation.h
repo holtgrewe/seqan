@@ -50,11 +50,11 @@ template<typename TSequence,typename TValue>
 class Annotation<TSequence,TValue,Simple>{
 
 public:
-	typedef typename Id<TSequence>::Type TId_;
+	typedef typename ID<TSequence>::Type TID_;
 	typedef typename Position<TSequence>::Type TPos_;
 	typedef typename Size<TSequence>::Type TSize_;
 
-	TId_ data_seq_id;
+	TID_ data_seq_id;
 	TPos_ data_begin;
 	TSize_ data_length;
 	//String<char> data_label;
@@ -65,8 +65,8 @@ public:
 	}
 
 	
-	Annotation(TId_ seqId, TPos_ begin, TSize_ len, TValue label) :
-			data_seq_id(seqId),
+	Annotation(TID_ seqID, TPos_ begin, TSize_ len, TValue label) :
+			data_seq_id(seqID),
 			data_begin(begin), 
 			data_length(len),
 			data_label(label)
@@ -82,8 +82,8 @@ public:
 
 
 template<typename TSequence,typename TValue,typename TSpec>	
-typename Id<TSequence>::Type&
-sequenceId(Annotation<TSequence,TValue,TSpec> & me)
+typename ID<TSequence>::Type&
+sequenceID(Annotation<TSequence,TValue,TSpec> & me)
 {
 SEQAN_CHECKPOINT
 	return me.data_seq_id;
@@ -166,7 +166,7 @@ SEQAN_CHECKPOINT
 	while(anno_it != anno_end)
 	{
 		
-		TValue seq_i_id = sequenceId(*anno_it);
+		TValue seq_i_id = sequenceID(*anno_it);
 		TValue begin_i = fragmentBegin(*anno_it);
 		TValue end_i = begin_i + fragmentLength(*anno_it);
 		TValue seq_i_pos = idToPosition(seq,seq_i_id);
@@ -206,7 +206,7 @@ SEQAN_CHECKPOINT
 	resizeVertexMap(pm, ali_g);
 
 	typedef typename Value<TAnnoString>::Type TAnnotation;
-	typedef typename Id<TAnnotation>::Type TId;
+	typedef typename ID<TAnnotation>::Type TID;
 	typedef typename Position<TAnnotation>::Type TPos;
 	typedef typename Value<TAnnotation>::Type TLabel;
 	typedef typename VertexDescriptor<TAliGraph>::Type TVertexDescriptor;
@@ -219,7 +219,7 @@ SEQAN_CHECKPOINT
 	while(anno_it != anno_end)
 	{
 		TLabel label_ = label(*anno_it);
-		TId seq_id = sequenceId(*anno_it);
+		TID seq_id = sequenceID(*anno_it);
 		TPos act_pos = fragmentBegin(*anno_it);
 		TPos end_pos = act_pos + fragmentLength(*anno_it);
 

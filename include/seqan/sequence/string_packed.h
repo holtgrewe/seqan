@@ -661,14 +661,14 @@ void assign(String<TValue, Packed<THostspec> > & target,
 }
 
 // --------------------------------------------------------------------------
-// Function getObjectId()
+// Function getObjectID()
 // --------------------------------------------------------------------------
 
 template <typename TValue, typename THostspec>
 inline void const * 
-getObjectId(String<TValue, Packed<THostspec> > const & me)
+getObjectID(String<TValue, Packed<THostspec> > const & me)
 {
-    return getObjectId(host(me));
+    return getObjectID(host(me));
 }
 
 // --------------------------------------------------------------------------

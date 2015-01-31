@@ -53,8 +53,8 @@ namespace SEQAN_NAMESPACE_MAIN
     {
         unsigned genomeBegin;
         unsigned genomeEnd;
-        unsigned genomeId;
-        unsigned readId;
+        unsigned genomeID;
+        unsigned readID;
         unsigned leftClip;
     };
 
@@ -101,7 +101,7 @@ namespace SEQAN_NAMESPACE_MAIN
 	// mate-pair parameters
 		int			libraryLength;		// offset between two mates
 		int			libraryError;		// offset tolerance
-		unsigned	nextMatePairId;		// use this id for the next mate-pair
+		unsigned	nextMatePairID;		// use this id for the next mate-pair
 
 	// verification parameters
 		bool		matchN;				// false..N is always a mismatch, true..N matches with all
@@ -133,7 +133,7 @@ namespace SEQAN_NAMESPACE_MAIN
 #endif			
 
 		bool		lowMemory;		// set maximum shape weight to 13 to limit size of q-gram index
-		bool		fastaIdQual;		// hidden option for special fasta+quality format we use
+		bool		fastaIDQual;		// hidden option for special fasta+quality format we use
 		int			minClippedLen;
 
 	// misc
@@ -191,7 +191,7 @@ namespace SEQAN_NAMESPACE_MAIN
 
 			libraryLength = 220;
 			libraryError = 50;
-			nextMatePairId = 1;
+			nextMatePairID = 1;
 			
 			for (unsigned i = 0; i < 4; ++i)
 				compMask[i] = 1 << i;
@@ -220,7 +220,7 @@ namespace SEQAN_NAMESPACE_MAIN
 #endif
 
 			lowMemory = false;		// set maximum shape weight to 13 to limit size of q-gram index
-			fastaIdQual = false;
+			fastaIDQual = false;
 			minClippedLen = 0;
 
             if (TSpec::DUMP_VERIFICATION_TASKS)
@@ -258,7 +258,7 @@ struct MicroRNA{};
 		TGPos			gBegin;			// begin position of the match in the genome
 		TGPos			gEnd;			// end position of the match in the genome
 #ifdef RAZERS_MATEPAIRS
-		unsigned		pairId;			// unique id for the two mate-pair matches (0 if unpaired)
+		unsigned		pairID;			// unique id for the two mate-pair matches (0 if unpaired)
 		int				mateDelta:24;	// outer coordinate delta to the other mate 
 		int				pairScore:8;	// combined score of both mates
 #endif
@@ -399,11 +399,11 @@ struct MicroRNA{};
 #endif
 
 
-template<typename TIdString, typename TSeqString, typename TQString, typename TOptions>
+template<typename TIDString, typename TSeqString, typename TQString, typename TOptions>
 bool
-_clipReads(TIdString & fastaID, TSeqString & seq, TQString & qual, TOptions & options)
+_clipReads(TIDString & fastaID, TSeqString & seq, TQString & qual, TOptions & options)
 {
-	typedef typename Value<TIdString>::Type TChar;
+	typedef typename Value<TIDString>::Type TChar;
         
 	int tagStart = length(fastaID);
 	int clipFront = -1;
@@ -455,7 +455,7 @@ _clipReads(TIdString & fastaID, TSeqString & seq, TQString & qual, TOptions & op
 	if(length(qual) == 0) // meaning that quality is in fasta header
 	{
 		// first adapt the fasta header
-		TIdString tmp = fastaID;
+		TIDString tmp = fastaID;
 		fastaID = infix(tmp,0,length(tmp)-length(seq)); 
 		append(fastaID,infix(tmp,length(tmp)-length(seq)+clipFront,length(tmp)-clipBack)); 
 	}
@@ -484,7 +484,7 @@ bool loadReads(
 	if(options.microRNA) countN = false;
 #endif
 
-	CharString fastaId;
+	CharString fastaID;
 	String<Dna5Q> seq;
 	CharString qual;
 	
@@ -492,13 +492,13 @@ bool loadReads(
 	unsigned maxReadLength = 0;
 	while (!atEnd(seqFile))
 	{
-        readRecord(fastaId, seq, qual, seqFile);
+        readRecord(fastaID, seq, qual, seqFile);
 		if (options.readNaming == 0
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
-			|| options.fastaIdQual
+			|| options.fastaIDQual
 #endif
 			)
-			appendValue(fastaIDs, fastaId); // append Fasta id
+			appendValue(fastaIDs, fastaID); // append Fasta id
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
 		//check if sequence has a clip tag
 		if(options.minClippedLen > 0)
@@ -510,7 +510,7 @@ bool loadReads(
 				++kickoutcount;
 			}
 		}
-		if(options.fastaIdQual && !empty(seq))
+		if(options.fastaIDQual && !empty(seq))
 		{
 			if(options.minClippedLen == 0)_clipReads(back(fastaIDs),seq,qual,options); // if the header wasnt clipped before, then clip now!! necessary for quality in header
 			qual = suffix(back(fastaIDs),length(back(fastaIDs))-length(seq));
@@ -595,8 +595,8 @@ inline int estimateReadLength(SeqFileIn &seqFile)
 
     // parse record from buffer
     DirectionIterator<TBuffer, Input>::Type iter = directionIterator(buffer, Input());
-    CharString fastaId, seq;
-    readRecord(fastaId, seq, iter, seqFile.format);
+    CharString fastaID, seq;
+    readRecord(fastaID, seq, iter, seqFile.format);
     return length(seq);
 }
 
@@ -650,8 +650,8 @@ bool loadGenomes(TGenomeSet &genomes, StringSet<CharString> &fileNameList)
 
 #ifdef RAZERS_MATEPAIRS
 			// pair match id
-			if (a.pairId < b.pairId) return true;
-			if (a.pairId > b.pairId) return false;
+			if (a.pairID < b.pairID) return true;
+			if (a.pairID > b.pairID) return false;
 #endif
 
 			// genome position and orientation
@@ -679,8 +679,8 @@ bool loadGenomes(TGenomeSet &genomes, StringSet<CharString> &fileNameList)
 
 #ifdef RAZERS_MATEPAIRS
 			// pair match id
-			if (a.pairId < b.pairId) return true;
-			if (a.pairId > b.pairId) return false;
+			if (a.pairID < b.pairID) return true;
+			if (a.pairID > b.pairID) return false;
 #endif
 
 			if(a.editDist < b.editDist) return true;
@@ -702,8 +702,8 @@ bool loadGenomes(TGenomeSet &genomes, StringSet<CharString> &fileNameList)
 			if (a.rseqNo > b.rseqNo) return false;
 
 			// pair match id
-			if (a.pairId < b.pairId) return true;
-			if (a.pairId > b.pairId) return false;
+			if (a.pairID < b.pairID) return true;
+			if (a.pairID > b.pairID) return false;
 
 			// genome position and orientation
 			if (a.gseqNo < b.gseqNo) return true;
@@ -735,8 +735,8 @@ bool loadGenomes(TGenomeSet &genomes, StringSet<CharString> &fileNameList)
 
 #ifdef RAZERS_MATEPAIRS
 			// pair match id
-			if (a.pairId < b.pairId) return true;
-			if (a.pairId > b.pairId) return false;
+			if (a.pairID < b.pairID) return true;
+			if (a.pairID > b.pairID) return false;
 #endif
 
 			// genome position and orientation
@@ -767,8 +767,8 @@ bool loadGenomes(TGenomeSet &genomes, StringSet<CharString> &fileNameList)
 
 #ifdef RAZERS_MATEPAIRS
 			// pair match id
-			if (a.pairId < b.pairId) return true;
-			if (a.pairId > b.pairId) return false;
+			if (a.pairID < b.pairID) return true;
+			if (a.pairID > b.pairID) return false;
 #endif
 
 			// quality
@@ -793,13 +793,13 @@ struct LessSplicedErrors : public ::std::binary_function < TReadMatch, TReadMatc
 		//if ((a.rseqNo >> 1) > (b.rseqNo >> 1)) return false;
 
 			// pair match id
-			if (a.pairId < b.pairId) return true;
-			if (a.pairId > b.pairId) return false;
+			if (a.pairID < b.pairID) return true;
+			if (a.pairID > b.pairID) return false;
 
 		// quality
 		if (a.pairScore > b.pairScore) return true;
 		if (a.pairScore < b.pairScore) return false;
-		return a.pairId < b.pairId;
+		return a.pairID < b.pairID;
 	}
 };
 #endif	
@@ -819,8 +819,8 @@ struct LessSplicedErrors : public ::std::binary_function < TReadMatch, TReadMatc
 			if (a.rseqNo > b.rseqNo) return false;
 			
 			// pair match id
-			if (a.pairId < b.pairId) return true;
-			if (a.pairId > b.pairId) return false;
+			if (a.pairID < b.pairID) return true;
+			if (a.pairID > b.pairID) return false;
 
 			// quality
 			if (a.mScore < b.mScore) return true; // sum of quality values of mismatches (the smaller the better)
@@ -871,7 +871,7 @@ void maskDuplicates(TMatches &matches, TOptions & options)
 	for (; it != itEnd; ++it) 
 	{
 #ifdef RAZERS_MATEPAIRS
-		if ((*it).pairId != 0) continue;
+		if ((*it).pairID != 0) continue;
 #endif
 		if (gEnd == (*it).gEnd && orientation == (*it).orientation &&
 			gseqNo == (*it).gseqNo && readNo == (*it).rseqNo) 
@@ -903,7 +903,7 @@ void maskDuplicates(TMatches &matches, TOptions & options)
 	{
 		if ((*it).orientation == '-'
 #ifdef RAZERS_MATEPAIRS
-			|| ((*it).pairId != 0)
+			|| ((*it).pairID != 0)
 #endif
 			) continue;
 		if (gBegin == (*it).gBegin && readNo == (*it).rseqNo &&
@@ -1046,7 +1046,7 @@ void compactMatches(TMatches &matches, TCounts &
 		if ((*it).orientation == '-') continue;
 		if (readNo == (*it).rseqNo
 #ifdef RAZERS_MATEPAIRS
-			&& (*it).pairId == 0
+			&& (*it).pairID == 0
 #endif
 			)
 		{ 
@@ -1707,9 +1707,9 @@ void mapSingleReads(
             VerificationTask_ vt;
             vt.genomeBegin = beginPosition(infix(swiftFinder));
             vt.genomeEnd = beginPosition(infix(swiftFinder));
-            vt.readId = rseqNo;
-            vt.genomeId = gseqNo*2;
-            if (orientation == 'R') ++vt.genomeId;
+            vt.readID = rseqNo;
+            vt.genomeID = gseqNo*2;
+            if (orientation == 'R') ++vt.genomeID;
 			vt.leftClip = (beginPosition(swiftFinder) >= 0)? 0: -beginPosition(swiftFinder);	// left clip if match begins left of the genome
             appendValue(options.verifications, vt);
         }
@@ -1727,7 +1727,7 @@ void mapSingleReads(
 			m.rseqNo = rseqNo;
 			m.orientation = orientation;
 #ifdef RAZERS_MATEPAIRS
-			m.pairId = 0;
+			m.pairID = 0;
 			m.pairScore = 0 - m.editDist;
 #endif
 

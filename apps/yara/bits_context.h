@@ -92,81 +92,81 @@ inline void resize(ReadsContext<TSpec, TConfig> & ctx, TReadSeqs const & readSeq
 // Function getSeedErrors()
 // ----------------------------------------------------------------------------
 
-template <typename TReadsContext, typename TReadSeqId>
-inline unsigned char getSeedErrors(TReadsContext const & ctx, TReadSeqId readSeqId)
+template <typename TReadsContext, typename TReadSeqID>
+inline unsigned char getSeedErrors(TReadsContext const & ctx, TReadSeqID readSeqID)
 {
-    return ctx.seedErrors[readSeqId];
+    return ctx.seedErrors[readSeqID];
 }
 
 // ----------------------------------------------------------------------------
 // Function setSeedErrors()
 // ----------------------------------------------------------------------------
 
-template <typename TReadsContext, typename TReadSeqId, typename TErrors>
-inline void setSeedErrors(TReadsContext & ctx, TReadSeqId readSeqId, TErrors errors)
+template <typename TReadsContext, typename TReadSeqID, typename TErrors>
+inline void setSeedErrors(TReadsContext & ctx, TReadSeqID readSeqID, TErrors errors)
 {
-    assignValue(ctx.seedErrors, readSeqId, errors);
+    assignValue(ctx.seedErrors, readSeqID, errors);
 }
 
 // ----------------------------------------------------------------------------
 // Function getMinErrors()
 // ----------------------------------------------------------------------------
 
-template <typename TReadsContext, typename TReadId>
-inline unsigned char getMinErrors(TReadsContext const & ctx, TReadId readId)
+template <typename TReadsContext, typename TReadID>
+inline unsigned char getMinErrors(TReadsContext const & ctx, TReadID readID)
 {
-    return ctx.minErrors[readId];
+    return ctx.minErrors[readID];
 }
 
 // ----------------------------------------------------------------------------
 // Function setMinErrors()
 // ----------------------------------------------------------------------------
 
-template <typename TReadsContext, typename TReadId, typename TErrors>
-inline void setMinErrors(TReadsContext & ctx, TReadId readId, TErrors errors)
+template <typename TReadsContext, typename TReadID, typename TErrors>
+inline void setMinErrors(TReadsContext & ctx, TReadID readID, TErrors errors)
 {
-    if (errors < getMinErrors(ctx,readId))
-        assignValue(ctx.minErrors, readId, errors);
+    if (errors < getMinErrors(ctx,readID))
+        assignValue(ctx.minErrors, readID, errors);
 }
 
 // ----------------------------------------------------------------------------
 // Function setMapped()
 // ----------------------------------------------------------------------------
 
-template <typename TReadsContext, typename TReadId>
-inline void setMapped(TReadsContext & ctx, TReadId readId)
+template <typename TReadsContext, typename TReadID>
+inline void setMapped(TReadsContext & ctx, TReadID readID)
 {
-    assignValue(ctx.mapped, readId, true);
+    assignValue(ctx.mapped, readID, true);
 }
 
 // ----------------------------------------------------------------------------
 // Function isMapped()
 // ----------------------------------------------------------------------------
 
-template <typename TReadsContext, typename TReadId>
-inline bool isMapped(TReadsContext const & ctx, TReadId readId)
+template <typename TReadsContext, typename TReadID>
+inline bool isMapped(TReadsContext const & ctx, TReadID readID)
 {
-    return ctx.mapped[readId];
+    return ctx.mapped[readID];
 }
 
 // ----------------------------------------------------------------------------
 // Function setPaired()
 // ----------------------------------------------------------------------------
 
-template <typename TReadsContext, typename TReadId>
-inline void setPaired(TReadsContext & ctx, TReadId readId)
+template <typename TReadsContext, typename TReadID>
+inline void setPaired(TReadsContext & ctx, TReadID readID)
 {
-    assignValue(ctx.paired, readId, true);
+    assignValue(ctx.paired, readID, true);
 }
 
 // ----------------------------------------------------------------------------
 // Function isPaired()
 // ----------------------------------------------------------------------------
 
-template <typename TReadsContext, typename TReadId>
-inline bool isPaired(TReadsContext const & ctx, TReadId readId)
+template <typename TReadsContext, typename TReadID>
+inline bool isPaired(TReadsContext const & ctx, TReadID readID)
 {
-    return ctx.paired[readId];
+    return ctx.paired[readID];
 }
 
 #endif  // #ifndef APP_YARA_BITS_CONTEXT_H_

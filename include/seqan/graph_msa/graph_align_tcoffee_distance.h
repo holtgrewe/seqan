@@ -85,7 +85,7 @@ getDistanceMatrix(Graph<Alignment<TStringSet, TCargo, TSpec> >& g,
 {
 	typedef Graph<Alignment<TStringSet, TCargo, TSpec> > TGraph;
 	typedef typename Size<TGraph>::Type TSize;
-	//typedef typename Id<TGraph>::Type TId;
+	//typedef typename ID<TGraph>::Type TID;
 	typedef typename VertexDescriptor<TGraph>::Type TVertexDescriptor;
 	//typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
 	//typedef typename Iterator<TGraph, EdgeIterator>::Type TEdgeIterator;

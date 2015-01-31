@@ -128,7 +128,7 @@ _weightedBipartiteMatching(Graph<TSpec>& g,
         setT.clear();
         setNeighborS.clear();
         clear(free);
-        resize(free, getIdUpperBound(_getVertexIdManager(g)), true);
+        resize(free, getIDUpperBound(_getVertexIDManager(g)), true);
         clear(reverseMatchMap);
         resizeVertexMap(reverseMatchMap, g);
 

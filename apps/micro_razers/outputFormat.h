@@ -411,8 +411,8 @@ void dumpMatches(
 			for(; it != itEnd; ++it) 
 			{
 				unsigned	readLen = length(reads[(*it).rseqNo]);
-				double		percId = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
-				percId = 100.0 * (1.0 - (double)(*it).editDist / (double) ((*it).mScore));
+				double		percID = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
+				percID = 100.0 * (1.0 - (double)(*it).editDist / (double) ((*it).mScore));
 				switch (options.readNaming)
 				{
 					// 0..filename is the read's Fasta id
@@ -477,7 +477,7 @@ void dumpMatches(
 					}
 				}
 
-				file << _sep_ << ((*it).gBegin + options.positionFormat) << _sep_ << (*it).gEnd << _sep_ << ::std::setprecision(5) << percId;
+				file << _sep_ << ((*it).gBegin + options.positionFormat) << _sep_ << (*it).gEnd << _sep_ << ::std::setprecision(5) << percID;
 				if(options.microRNA) file << _sep_ << (*it).mScore;
 
 				file << ::std::endl;
@@ -491,7 +491,7 @@ void dumpMatches(
 			for(; it != itEnd; ++it) 
 			{
 				int     	readLen = (int) length(reads[(*it).rseqNo]);
-				double		percId = 100.0 * (1.0 - (double)(*it).editDist / (double) ((*it).mScore));
+				double		percID = 100.0 * (1.0 - (double)(*it).editDist / (double) ((*it).mScore));
 				switch (options.readNaming)
 				{
 					// 0..filename is the read's Fasta id
@@ -549,7 +549,7 @@ void dumpMatches(
                 if((*it).orientation == 'R')
                     reverseComplement(reads[(*it).rseqNo]);
 				
-                file << '\t' << "AS:i:" << (int)percId << std::endl;
+                file << '\t' << "AS:i:" << (int)percID << std::endl;
 	
             }
 			break;

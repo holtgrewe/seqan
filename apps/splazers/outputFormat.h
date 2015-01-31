@@ -627,7 +627,7 @@ dumpUnmappedReads(TMatches				&matches,
 	}
 
 	char headerChar = '>';
-	if(options.readsWithQualities || options.fastaIdQual) 
+	if(options.readsWithQualities || options.fastaIDQual) 
 		headerChar = '@';
 
 	// sort according to read number
@@ -644,7 +644,7 @@ dumpUnmappedReads(TMatches				&matches,
 		{
 //			std::cout << "readNo=" << readNo << " + ";
 			file << headerChar << readIDs[readNo] << std::endl << reads[readNo] << std::endl;
-			if(options.readsWithQualities || options.fastaIdQual) 
+			if(options.readsWithQualities || options.fastaIDQual) 
 			{
 				file << '+' << std::endl;
 				for(unsigned j=0;j<length(reads[readNo]);++j)
@@ -665,7 +665,7 @@ dumpUnmappedReads(TMatches				&matches,
 	{
 //		std::cout << "readNo=" << readNo << " + ";
 		file << headerChar << readIDs[readNo] << std::endl << reads[readNo] << std::endl;
-		if(options.readsWithQualities || options.fastaIdQual) 
+		if(options.readsWithQualities || options.fastaIDQual) 
 		{
 			file << '+' << std::endl;
 			for(unsigned j=0;j<length(reads[readNo]);++j)
@@ -878,9 +878,9 @@ void dumpMatches(
 			for(; it != itEnd; ++it) 
 			{
 				unsigned	readLen = length(reads[(*it).rseqNo]);
-				double		percId = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
+				double		percID = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
 #ifdef RAZERS_MICRO_RNA
-				percId = 100.0 * (1.0 - (double)(*it).editDist / (double) ((*it).mScore));
+				percID = 100.0 * (1.0 - (double)(*it).editDist / (double) ((*it).mScore));
 #endif
 				switch (options.readNaming)
 				{
@@ -926,7 +926,7 @@ void dumpMatches(
 					assignSource(row(align, 0), reads[(*it).rseqNo]);
 					assignSource(row(align, 1), infix(genomes[(*it).gseqNo], (*it).gBegin, (*it).gEnd));
 #ifdef RAZERS_MATEPAIRS
-					if ((*it).pairId != 0 && ((*it).rseqNo & 1))
+					if ((*it).pairID != 0 && ((*it).rseqNo & 1))
 						reverseComplement(source(row(align, 0)));
 #endif
 					if ((*it).orientation == 'R')
@@ -952,14 +952,14 @@ void dumpMatches(
 					}
 				}
 
-				file << _sep_ << ((*it).gBegin + options.positionFormat) << _sep_ << (*it).gEnd << _sep_ << ::std::setprecision(5) << percId;
+				file << _sep_ << ((*it).gBegin + options.positionFormat) << _sep_ << (*it).gEnd << _sep_ << ::std::setprecision(5) << percID;
 #ifdef RAZERS_MICRO_RNA
 				if(options.microRNA) file << _sep_ << (*it).mScore;
 #endif
 
 #ifdef RAZERS_MATEPAIRS
-				if ((*it).pairId != 0)
-					file << _sep_ << (*it).pairId << _sep_ << (*it).pairScore << _sep_ << (*it).mateDelta;
+				if ((*it).pairID != 0)
+					file << _sep_ << (*it).pairID << _sep_ << (*it).pairScore << _sep_ << (*it).mateDelta;
 #endif
 				file << ::std::endl;
 
@@ -974,7 +974,7 @@ void dumpMatches(
 			for(unsigned matchReadNo = -1, matchReadCount = 0; it != itEnd; ++it) 
 			{
 				unsigned	readLen = length(reads[(*it).rseqNo]);
-				double		percId = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
+				double		percID = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
 
 				if (matchReadNo != (*it).rseqNo)
 				{
@@ -987,8 +987,8 @@ void dumpMatches(
 				assign(fastaID, readIDs[(*it).rseqNo]);
 
 				::std::string id = fastaID;
-				int fragId = (*it).rseqNo;
-				bool appendMatchId = options.maxHits > 1;
+				int fragID = (*it).rseqNo;
+				bool appendMatchID = options.maxHits > 1;
 
 				size_t left = fastaID.find_first_of('[');
 				size_t right = fastaID.find_last_of(']');
@@ -1001,12 +1001,12 @@ void dumpMatches(
 					if (pos != fastaID.npos) {
 						::std::istringstream iss(fastaID.substr(pos + 3));
 						iss >> id;
-//						appendMatchId = false;
+//						appendMatchID = false;
 					}
-					pos = fastaID.find("fragId=");
+					pos = fastaID.find("fragID=");
 					if (pos != fastaID.npos) {
 						::std::istringstream iss(fastaID.substr(pos + 7));
-						iss >> fragId;
+						iss >> fragID;
 					}
 				}
 
@@ -1022,10 +1022,10 @@ void dumpMatches(
 					ambig += stats[i][(*it).rseqNo];
 				
 				file << "[id=" << id;
-				if (appendMatchId) file << "_" << matchReadCount;
-				file << ",fragId=" << fragId;
-				file << ",contigId=" << genomeIDs[(*it).gseqNo];
-				file << ",errors=" << (*it).editDist << ",percId=" << ::std::setprecision(5) << percId;
+				if (appendMatchID) file << "_" << matchReadCount;
+				file << ",fragID=" << fragID;
+				file << ",contigID=" << genomeIDs[(*it).gseqNo];
+				file << ",errors=" << (*it).editDist << ",percID=" << ::std::setprecision(5) << percID;
 				file << ",ambiguity=" << ambig << ']' << ::std::endl;
 
 				file << reads[(*it).rseqNo] << ::std::endl;
@@ -1122,13 +1122,13 @@ void dumpMatches(
 					break;
 				}
 
-                CharString currId;
+                CharString currID;
 				Dna5String currGenome;
 				
 				// iterate over genome sequences
 				for(; !atEnd(gFile); ++currSeqNo)
 				{
-					readRecord(currId, currGenome, gFile);			// read Fasta sequence
+					readRecord(currID, currGenome, gFile);			// read Fasta sequence
 					while(it != itEnd && (*it).gseqNo == currSeqNo)
 					{
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
@@ -1248,13 +1248,13 @@ void dumpMatches(
 						//file <<  options.runID << "_razers\tread";
 						file << "razers\tread";
 						file << '\t' << ((*it).gBegin + options.positionFormat) << '\t' << (*it).gEnd << '\t';
-						double percId = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
+						double percID = 100.0 * (1.0 - (double)(*it).editDist / (double)readLen);
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
 						if(options.maqMapping)
 							file << (*it).mScore << "\t";
 						else
 #endif
-							file << percId << "\t";
+							file << percID << "\t";
 
 						if ((*it).orientation == 'F')
 							file << '+' << '\t' << '.' <<'\t';
@@ -1322,7 +1322,7 @@ void dumpMatches(
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
 						options.maqMapping || 
 #endif
-						options.fastaIdQual || options.readsWithQualities)
+						options.fastaIDQual || options.readsWithQualities)
 						{
 		//					file << ";read=";
 		//					for(unsigned j=0;j<length(reads[currReadNo]);++j)
@@ -1442,13 +1442,13 @@ void dumpMatches(
 				
 				file << (mL.gBegin + 1) << '\t' ;
 
-				//double percId = 100.0 * (1.0 - (double)(mL.editDist + mR.editDist) /(double)(mL.mScore+mR.mScore));
+				//double percID = 100.0 * (1.0 - (double)(mL.editDist + mR.editDist) /(double)(mL.mScore+mR.mScore));
 
 				if(ambiStates[jj] == 0) file << 255 << '\t'; //unique
 				if(ambiStates[jj] > 0) file << 0 << '\t'; //multi or suboptimal
 				++jj;
 					
-				SEQAN_ASSERT(mL.pairId == mR.pairId); 
+				SEQAN_ASSERT(mL.pairID == mR.pairID); 
 		
 				int indelLen = mR.mScore + mL.mScore - readLen;
 				if(mL.gEnd != mR.gBegin) indelLen = mR.gBegin - mL.gEnd;
@@ -1586,7 +1586,7 @@ void dumpMatches(
                 else
 				    file << reverseComplementString(reads[currReadNo]) << "\t*\t";
 				// quality
-				if(options.fastaIdQual)
+				if(options.fastaIDQual)
 				{
 					for(unsigned j=0;j<length(reads[currReadNo]);++j)
 					{
@@ -1657,9 +1657,9 @@ void dumpMatches(
 				//file <<  options.runID << "_razers\tread";
 				file << "razers\tread";
 				file << '\t' << (mL.gBegin + options.positionFormat) << '\t' << mR.gEnd << '\t';
-//?//			double percId = 100.0 * (1.0 + (double)(mL.pairScore-mL.mScore-mR.mScore) / (double)readLen);
-				double percId = 100.0 * (1.0 - (double)(mL.editDist + mR.editDist) /(double)(mL.mScore+mR.mScore));
-				file << percId << "\t";
+//?//			double percID = 100.0 * (1.0 + (double)(mL.pairScore-mL.mScore-mR.mScore) / (double)readLen);
+				double percID = 100.0 * (1.0 - (double)(mL.editDist + mR.editDist) /(double)(mL.mScore+mR.mScore));
+				file << percID << "\t";
 //				if(!empty(readRegions) && options.anchored)
 //				{
 //					if(readRegions[currReadNo].i2 < 0) 
@@ -1692,7 +1692,7 @@ void dumpMatches(
 				if(ambiStates[jj] == 2) file << ";suboptimal";
 				++jj;
 					
-				SEQAN_ASSERT(mL.pairId == mR.pairId); 
+				SEQAN_ASSERT(mL.pairID == mR.pairID); 
 		
 				int indelLen = mR.mScore + mL.mScore - readLen;
 				if(mL.gEnd != mR.gBegin) indelLen = mR.gBegin - mL.gEnd;
@@ -1817,7 +1817,7 @@ void dumpMatches(
 						file << "," << mutationsStr[i].i2 << mutationsStr[i].i1;
 				}
 						
-				if(options.fastaIdQual)
+				if(options.fastaIDQual)
 				{
 					file << ";quality=";
 					for(unsigned j=0;j<length(reads[currReadNo]);++j)

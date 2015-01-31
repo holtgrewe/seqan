@@ -33,13 +33,13 @@ int main()
     {
         TAlignedRead & ar = store.alignedReadStore[i];
 
-        readSeq = store.readSeqStore[ar.readId];
+        readSeq = store.readSeqStore[ar.readID];
         if (ar.endPos < ar.beginPos)
             reverseComplement(readSeq);
 
         TContigGaps contigGaps(
-            store.contigStore[ar.contigId].seq,
-            store.contigStore[ar.contigId].gaps);
+            store.contigStore[ar.contigID].seq,
+            store.contigStore[ar.contigID].gaps);
 
         TReadGaps readGaps(
             readSeq,
@@ -49,9 +49,9 @@ int main()
         setEndPosition(contigGaps, std::max(ar.beginPos, ar.endPos));
 
         std::cout << "ALIGNMENT " << i << std::endl;
-        std::cout << "\tcontig " << ar.contigId << ":\t" << contigGaps;
+        std::cout << "\tcontig " << ar.contigID << ":\t" << contigGaps;
         std::cout << "     \t[" << beginPosition(contigGaps) << ".." << endPosition(contigGaps) << "[" << std::endl;
-        std::cout << "\tread "   << ar.readId   << ":\t" << readGaps << std::endl;
+        std::cout << "\tread "   << ar.readID   << ":\t" << readGaps << std::endl;
         std::cout << std::endl;
     }
 //![output]

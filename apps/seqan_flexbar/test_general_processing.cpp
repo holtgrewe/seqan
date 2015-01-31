@@ -202,11 +202,11 @@ SEQAN_DEFINE_TEST(processN_paired_test)
     appendValue(ids, "Drei");
     appendValue(ids, "Vier");
     appendValue(ids, "Null2");
-    StringSet<String<char> > exspectedIds;
-    appendValue(exspectedIds, "Null");
-    appendValue(exspectedIds, "Null2"); //Due to swap action!
-    appendValue(exspectedIds, "Zwei");
-    appendValue(exspectedIds, "Drei");
+    StringSet<String<char> > exspectedIDs;
+    appendValue(exspectedIDs, "Null");
+    appendValue(exspectedIDs, "Null2"); //Due to swap action!
+    appendValue(exspectedIDs, "Zwei");
+    appendValue(exspectedIDs, "Drei");
    
     StringSet<String<char> > ids2 = ids;
     StringSet<String<char> > idsRev2 = ids;
@@ -222,9 +222,9 @@ SEQAN_DEFINE_TEST(processN_paired_test)
     SEQAN_ASSERT_EQ(stats.uncalledBases, 10u);
     for (unsigned i = 0; i < length(exspectedNoSub); ++i)
     {
-        SEQAN_ASSERT_EQ(ids2[i], exspectedIds[i]);
+        SEQAN_ASSERT_EQ(ids2[i], exspectedIDs[i]);
         SEQAN_ASSERT_EQ(exspectedNoSub[i], seqs2[i]);
-        SEQAN_ASSERT_EQ(idsRev2[i], exspectedIds[i]);
+        SEQAN_ASSERT_EQ(idsRev2[i], exspectedIDs[i]);
     }
 
     stats.removedSeqs = 0;
@@ -369,11 +369,11 @@ SEQAN_DEFINE_TEST(processN_paired_multiplex_test)
     appendValue(ids, "Drei");
     appendValue(ids, "Vier");
     appendValue(ids, "Null2");
-    StringSet<String<char> > exspectedIds;
-    appendValue(exspectedIds, "Null");
-    appendValue(exspectedIds, "Null2"); //Due to swap action!
-    appendValue(exspectedIds, "Zwei");
-    appendValue(exspectedIds, "Drei");
+    StringSet<String<char> > exspectedIDs;
+    appendValue(exspectedIDs, "Null");
+    appendValue(exspectedIDs, "Null2"); //Due to swap action!
+    appendValue(exspectedIDs, "Zwei");
+    appendValue(exspectedIDs, "Drei");
     StringSet<String<char> > ids2 = ids;
     StringSet<String<char> > idsRev2 = ids;
     unsigned allowed = 3;
@@ -389,8 +389,8 @@ SEQAN_DEFINE_TEST(processN_paired_multiplex_test)
     for (unsigned i = 0; i < length(exspectedNoSub); ++i)
     {
         SEQAN_ASSERT_EQ(exspectedNoSub[i], seqs2[i]);
-        SEQAN_ASSERT_EQ(ids2[i], exspectedIds[i]);
-        SEQAN_ASSERT_EQ(idsRev2[i], exspectedIds[i]);
+        SEQAN_ASSERT_EQ(ids2[i], exspectedIDs[i]);
+        SEQAN_ASSERT_EQ(idsRev2[i], exspectedIDs[i]);
         SEQAN_ASSERT_EQ(multiplex2[i], exspectedMultiplex[i]);
     }
 

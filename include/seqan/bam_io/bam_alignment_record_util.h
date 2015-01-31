@@ -224,7 +224,7 @@ inline unsigned countPaddings(String<CigarElement<> > const & cigarString)
  * // Read references and record.
  * Align<Dna5String> align;
  * if (record.rID != BamAlignmentRecord::INVALID_REFID)
- *     bamRecordToAlignment(align, references[record.refId], record);
+ *     bamRecordToAlignment(align, references[record.refID], record);
  * @endcode
  */
 

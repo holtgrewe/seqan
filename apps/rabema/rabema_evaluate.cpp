@@ -179,17 +179,17 @@ public:
 // Helper Class CmpGsiRecordLowering.
 // ----------------------------------------------------------------------------
 
-// Comparison functor for lexicographically sorting by (readId, contigId, first pos).
+// Comparison functor for lexicographically sorting by (readID, contigID, first pos).
 
 struct CmpGsiRecordLowering
 {
     bool operator()(GsiRecord const & lhs, GsiRecord const & rhs) const
     {
-        return (lhs.readId < rhs.readId) || (lhs.readId == rhs.readId && lhs.contigId < rhs.contigId) ||
-               (lhs.readId == rhs.readId && lhs.contigId == rhs.contigId && lhs.firstPos < rhs.firstPos) ||
-               (lhs.readId == rhs.readId && lhs.contigId == rhs.contigId && lhs.firstPos == rhs.firstPos &&
+        return (lhs.readID < rhs.readID) || (lhs.readID == rhs.readID && lhs.contigID < rhs.contigID) ||
+               (lhs.readID == rhs.readID && lhs.contigID == rhs.contigID && lhs.firstPos < rhs.firstPos) ||
+               (lhs.readID == rhs.readID && lhs.contigID == rhs.contigID && lhs.firstPos == rhs.firstPos &&
                 lhs.lastPos > rhs.lastPos) ||
-               (lhs.readId == rhs.readId && lhs.contigId == rhs.contigId && lhs.firstPos == rhs.firstPos &&
+               (lhs.readID == rhs.readID && lhs.contigID == rhs.contigID && lhs.firstPos == rhs.firstPos &&
                 lhs.lastPos == rhs.lastPos && lhs.distance > rhs.distance);
     }
 
@@ -275,7 +275,7 @@ void performIntervalLowering(String<GsiRecord> & gsiRecords, int maxError)
             unsigned idx = length(openIntervals) - 1 - j;
             GsiRecord const thisIntervalRecord = gsiRecords[cargo(openIntervals[idx])];
             SEQAN_ASSERT_EQ(thisIntervalRecord.readName, it->readName);
-            if (thisIntervalRecord.contigId != it->contigId || thisIntervalRecord.lastPos < it->firstPos)
+            if (thisIntervalRecord.contigID != it->contigID || thisIntervalRecord.lastPos < it->firstPos)
                 count += 1;
         }
         resize(openIntervals, length(openIntervals) - count);
@@ -311,7 +311,7 @@ void performIntervalLowering(String<GsiRecord> & gsiRecords, int maxError)
             unsigned idx = length(openIntervals) - 1 - j;
             GsiRecord const & thisIntervalRecord = gsiRecords[cargo(openIntervals[idx])];
             SEQAN_ASSERT_EQ(thisIntervalRecord.readName, it->readName);
-            if (thisIntervalRecord.contigId != it->contigId || thisIntervalRecord.lastPos < it->firstPos)
+            if (thisIntervalRecord.contigID != it->contigID || thisIntervalRecord.lastPos < it->firstPos)
             {
                 count += 1;
                 unsigned startDistance = gsiRecords[cargo(openIntervals[idx])].distance;
@@ -319,7 +319,7 @@ void performIntervalLowering(String<GsiRecord> & gsiRecords, int maxError)
                 {
                     if (back(filteredGsiRecords).lastPos >= leftBoundary(openIntervals[idx]))
                     {
-                        if (back(filteredGsiRecords).contigId == gsiRecords[cargo(openIntervals[idx])].contigId)
+                        if (back(filteredGsiRecords).contigID == gsiRecords[cargo(openIntervals[idx])].contigID)
                         {
                             // Assert current containing already written out.
                             SEQAN_ASSERT_GEQ(back(filteredGsiRecords).firstPos, leftBoundary(openIntervals[idx]));
@@ -359,7 +359,7 @@ int benchmarkReadResult(RabemaStats & result,
                         String<GsiRecord> const & gsiRecords,
                         FaiIndex const & faiIndex,
                         StringSet<Dna5String> const & refSeqs,
-                        RefIdMapping const & refIdMapping,
+                        RefIDMapping const & refIDMapping,
                         RabemaEvaluationOptions const & options,
                         TPatternSpec const & /*tagPattern*/,
                         bool pairedEnd = false,
@@ -442,7 +442,7 @@ int benchmarkReadResult(RabemaStats & result,
 #endif  // DEBUG_RABEMA
 
         // Get index of the sequence from GSI record contig name.
-        if (!getIdByName(back(pickedGsiRecords).contigId, faiIndex, back(pickedGsiRecords).contigName))
+        if (!getIDByName(back(pickedGsiRecords).contigID, faiIndex, back(pickedGsiRecords).contigName))
         {
             std::cerr << "ERROR: Could not find reference sequence for name "
                       << back(pickedGsiRecords).contigName << '\n';
@@ -495,7 +495,7 @@ int benchmarkReadResult(RabemaStats & result,
 #endif  // #if DEBUG_RABEMA
         int distance = filteredGsiRecords[i].distance;
 
-        appendValue(intervals[filteredGsiRecords[i].contigId],
+        appendValue(intervals[filteredGsiRecords[i].contigID],
                     TInterval(filteredGsiRecords[i].firstPos, filteredGsiRecords[i].lastPos + 1,
                               length(intervalDistances)));
         appendValue(intervalDistances, distance);
@@ -560,7 +560,7 @@ int benchmarkReadResult(RabemaStats & result,
     for (unsigned i = 0; i < length(samRecords); ++i)
     {
         BamAlignmentRecord const & samRecord = samRecords[i];
-        int seqId = refIdMapping.map[samRecord.rID];
+        int seqID = refIDMapping.map[samRecord.rID];
 
         // Compute actual alignment score to rule out invalidly reported alignments.
         //
@@ -613,10 +613,10 @@ int benchmarkReadResult(RabemaStats & result,
                     intervalBegin -= bandwidth;
 
                 unsigned intervalEnd = endPos;
-                if (intervalEnd < length(refSeqs[seqId]) - 2 * bandwidth)
+                if (intervalEnd < length(refSeqs[seqID]) - 2 * bandwidth)
                     intervalEnd += 2 * bandwidth;
 
-                contigSeq = infix(refSeqs[seqId], intervalBegin, intervalEnd);
+                contigSeq = infix(refSeqs[seqID], intervalBegin, intervalEnd);
                 if (hasFlagRC(samRecord))
                     reverseComplement(contigSeq);
                 Finder<Dna5String> finder(contigSeq);
@@ -633,15 +633,15 @@ int benchmarkReadResult(RabemaStats & result,
 
         // Get sequence id and last position of alignment.  We try to hit the interval with the last position (not
         // C-style end) of the read.
-        unsigned lastPos = hasFlagRC(samRecord) ? length(refSeqs[seqId]) - samRecord.beginPos - 1 : endPos - 1;
+        unsigned lastPos = hasFlagRC(samRecord) ? length(refSeqs[seqID]) - samRecord.beginPos - 1 : endPos - 1;
 
         if (options.showTryHitIntervals)
-            std::cerr << "TRY HIT\tchr=" << sequenceName(faiIndex, seqId) << "\tlastPos=" << lastPos << "\tqName="
+            std::cerr << "TRY HIT\tchr=" << sequenceName(faiIndex, seqID) << "\tlastPos=" << lastPos << "\tqName="
                       << samRecord.qName << "\n";
 
         // Try to hit any interval.
         clear(queryResult);
-        findIntervals(queryResult, intervalTrees[seqId], lastPos);
+        findIntervals(queryResult, intervalTrees[seqID], lastPos);
         mappedAny = mappedAny || !empty(queryResult);
 #if DEBUG_RABEMA
         if (mappedAny)
@@ -859,8 +859,8 @@ compareAlignedReadsToReference(RabemaStats & result,
                                TPatternSpec const & tagPattern)
 {
     // Mapping between ref IDs from SAM/BAM file and reference sequence (from SAM/BAM file to reference sequences).
-    RefIdMapping refIdMapping;
-    rebuildMapping(refIdMapping, faiIndex.seqNameStore, faiIndex.seqNameStoreCache,
+    RefIDMapping refIDMapping;
+    rebuildMapping(refIDMapping, faiIndex.seqNameStore, faiIndex.seqNameStoreCache,
                    contigNames(context(bamFileIn)));
 
     // Read in initial SAM/GSI records.
@@ -959,8 +959,8 @@ compareAlignedReadsToReference(RabemaStats & result,
                 return 1;
             }
             // Rebuild ref ID mapping if we discovered a new reference sequence.
-            if (length(contigNames(context(bamFileIn))) != length(refIdMapping))
-                rebuildMapping(refIdMapping, faiIndex.seqNameStore, faiIndex.seqNameStoreCache,
+            if (length(contigNames(context(bamFileIn))) != length(refIDMapping))
+                rebuildMapping(refIDMapping, faiIndex.seqNameStore, faiIndex.seqNameStoreCache,
                                contigNames(context(bamFileIn)));
         }
 
@@ -1001,7 +1001,7 @@ compareAlignedReadsToReference(RabemaStats & result,
         if (seenSingleEnd)
         {
             int res = benchmarkReadResult(result, currentSamRecords, bamFileIn, currentGsiRecords,
-                                          faiIndex, refSeqs, refIdMapping, options, tagPattern,
+                                          faiIndex, refSeqs, refIDMapping, options, tagPattern,
                                           /*pairedEnd=*/ false);
             if (res != 0)
                 return 1;
@@ -1009,13 +1009,13 @@ compareAlignedReadsToReference(RabemaStats & result,
         if (seenPairedEnd)
         {
             int res = benchmarkReadResult(result, currentSamRecords, bamFileIn, currentGsiRecords,
-                                          faiIndex, refSeqs, refIdMapping, options, tagPattern,
+                                          faiIndex, refSeqs, refIDMapping, options, tagPattern,
                                           /*pairedEnd=*/ true, /*second=*/ false);
             if (res != 0)
                 return 1;
 
             res = benchmarkReadResult(result, currentSamRecords, bamFileIn, currentGsiRecords,
-                                      faiIndex, refSeqs, refIdMapping, options, tagPattern,
+                                      faiIndex, refSeqs, refIDMapping, options, tagPattern,
                                       /*pairedEnd=*/ true, /*second=*/ true);
             if (res != 0)
                 return 1;

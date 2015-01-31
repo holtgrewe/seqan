@@ -97,7 +97,7 @@ SEQAN_DEFINE_TEST(test_bam_io_sam_write_alignment)
     record.beginPos = 30;
     record.mapQ = 8;
     appendValue(record.cigar, CigarElement<>('M', 10));
-    record.rNextId = BamAlignmentRecord::INVALID_REFID;
+    record.rNextID = BamAlignmentRecord::INVALID_REFID;
     record.pNext = BamAlignmentRecord::INVALID_POS;
     record.tLen = BamAlignmentRecord::INVALID_LEN;
     record.seq = "CGATCGATAA";

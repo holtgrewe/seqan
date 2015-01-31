@@ -396,14 +396,14 @@ _applyTraceOperations(String<TValue, Journaled<THostSpec, TJournalSpec, TBuffSpe
 // ----------------------------------------------------------------------------
 
 template <typename TValue, typename THostSpec, typename TJournalSpec, typename TBuffSpec, typename TSequenceH,
-    typename TSequenceV, typename TId, typename TPos, typename TTraceValue>
+    typename TSequenceV, typename TID, typename TPos, typename TTraceValue>
 inline void
 _alignTracePrint(JournalTraceBuffer<String<TValue, Journaled<THostSpec, TJournalSpec, TBuffSpec> > > & me,
          TSequenceH const & /*seqH*/,
          TSequenceV const & seqV,
-         TId,
+         TID,
          TPos const pos1,
-         TId,
+         TID,
          TPos const pos2,
          TPos const segLen,
          TTraceValue const tv)

@@ -472,7 +472,7 @@ extractOptions(
     getOptionValue(options.repeatLength, parser, "repeat-length");
 
 #ifdef RAZERS_DIRECT_MAQ_MAPPING
-	getOptionValue(options.fastaIdQual, parser, "quality-in-header");
+	getOptionValue(options.fastaIDQual, parser, "quality-in-header");
 	getOptionValue(options.maqMapping, parser, "mapping-quality");
 	getOptionValue(options.noBelowIdentity, parser, "no-below-id");
 	getOptionValue(options.artSeedLength, parser, "mq-seed-length");
@@ -489,7 +489,7 @@ extractOptions(
 	getOptionValue(options.maxDistance, parser, "max-distance");
 #endif
 	getOptionValue(options.minClippedLen, parser, "min-clipped-len");
-	getOptionValue(options.fastaIdQual, parser, "quality-in-header");
+	getOptionValue(options.fastaIDQual, parser, "quality-in-header");
     if (isSet(parser, "verbose"))
         options._debugLevel = max(options._debugLevel, 1);
     if (isSet(parser, "vverbose"))

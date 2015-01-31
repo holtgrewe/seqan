@@ -26,10 +26,10 @@ int main()
         while (!atEnd(bedIn))
         {
             readRecord(record, bedIn);
-            unsigned rID = nameToId(cache, record.ref);
+            unsigned rID = nameToID(cache, record.ref);
 
             // Resize counters if necessary and increment counter.
-            assignValueById(counters, rID, getValueById(counters, rID) + 1);
+            assignValueByID(counters, rID, getValueByID(counters, rID) + 1);
         }
     }
     catch (Exception const & e)

@@ -51,23 +51,23 @@ _buildLeafString(Graph<Alignment<TStringSet, TCargo, TSpec> > const& g,
 	SEQAN_CHECKPOINT
 	typedef Graph<Alignment<TStringSet, TCargo, TSpec> > TGraph;
 	typedef typename Size<TGraph>::Type TSize;
-	typedef typename Id<TGraph>::Type TId;
+	typedef typename ID<TGraph>::Type TID;
 	typedef typename VertexDescriptor<TGraph>::Type TVertexDescriptor;
 	typedef typename Value<TSequence>::Type TVertexString;
 
 	//TVertexDescriptor nilVertex = getNil<TVertexDescriptor>();
 	TStringSet& str = stringSet(g);
-	TId seqId = positionToId(str, pos);
+	TID seqID = positionToID(str, pos);
 	TSize lenRoot = length(str[pos]);
 	TSize i = 0;
 	while(i<lenRoot) {
-		TVertexDescriptor nextVertex = findVertex(const_cast<TGraph&>(g), seqId, i);
+		TVertexDescriptor nextVertex = findVertex(const_cast<TGraph&>(g), seqID, i);
 		//SEQAN_ASSERT(nextVertex != nilVertex);
 		//if (nextVertex == nilVertex) {
 		//	std::cout << "Warning: Nil Vertex" << std::endl;
 		//	TSize j = i + 1;
-		//	while ((j < lenRoot) && (findVertex(const_cast<TGraph&>(g), seqId, j) == nilVertex)) ++j;
-		//	nextVertex = addVertex(const_cast<TGraph&>(g), seqId, i, j-i);
+		//	while ((j < lenRoot) && (findVertex(const_cast<TGraph&>(g), seqID, j) == nilVertex)) ++j;
+		//	nextVertex = addVertex(const_cast<TGraph&>(g), seqID, i, j-i);
 		//}
 		TVertexString vs;
 		appendValue(vs, nextVertex);
@@ -97,10 +97,10 @@ _createAlignmentGraph(Graph<Alignment<TStringSet, TCargo, TSpec> > const& g,
 		TSize len_i = length(alignSeq_i);
 		for(TSize j=0; j<len_i; ++j) {
 			TVertexDescriptor v = alignSeq_i[j];
-			SEQAN_ASSERT(fragmentBegin(g,v) < length(getValueById(stringSet(g), sequenceId(g,v))));
+			SEQAN_ASSERT(fragmentBegin(g,v) < length(getValueByID(stringSet(g), sequenceID(g,v))));
 			SEQAN_ASSERT(fragmentLength(g,v) > 0);
-			SEQAN_ASSERT(fragmentBegin(g,v) + fragmentLength(g,v) <= length(getValueById(stringSet(g), sequenceId(g,v))));
-			TVertexDescriptor l = addVertex(gOut, sequenceId(g, v), fragmentBegin(g,v), fragmentLength(g,v));
+			SEQAN_ASSERT(fragmentBegin(g,v) + fragmentLength(g,v) <= length(getValueByID(stringSet(g), sequenceID(g,v))));
+			TVertexDescriptor l = addVertex(gOut, sequenceID(g, v), fragmentBegin(g,v), fragmentLength(g,v));
 			//std::cout << l << label(gOut, l) << ',';
 			TSize count = 1;
 			for(TSize k = j; k>0; --k) {
@@ -220,10 +220,10 @@ _createMatchingGraph(Graph<Alignment<TStringSet, TCargo, TSpec> > const& g,
 				TVertexDescriptor v2 = getValue(alignSeq_i, k);
 				if ((v1 == nilVertex) || (v2 == nilVertex)) continue;
 				
-				TVertexDescriptor v1New = findVertex(gOut, sequenceId(g, v1), fragmentBegin(g,v1));
-				if (v1New == nilVertex) v1New = addVertex(gOut, sequenceId(g, v1), fragmentBegin(g,v1), fragmentLength(g,v1));
-				TVertexDescriptor v2New = findVertex(gOut, sequenceId(g, v2), fragmentBegin(g,v2));
-				if (v2New == nilVertex) v2New = addVertex(gOut, sequenceId(g, v2), fragmentBegin(g,v2), fragmentLength(g,v2));
+				TVertexDescriptor v1New = findVertex(gOut, sequenceID(g, v1), fragmentBegin(g,v1));
+				if (v1New == nilVertex) v1New = addVertex(gOut, sequenceID(g, v1), fragmentBegin(g,v1), fragmentLength(g,v1));
+				TVertexDescriptor v2New = findVertex(gOut, sequenceID(g, v2), fragmentBegin(g,v2));
+				if (v2New == nilVertex) v2New = addVertex(gOut, sequenceID(g, v2), fragmentBegin(g,v2), fragmentLength(g,v2));
 			
 				TEdgeDescriptor e = findEdge(g, v1, v2);
 				addEdge(gOut, v1New, v2New, cargo(e));
@@ -428,7 +428,7 @@ _recursiveProgressiveMatching(Graph<Alignment<TStringSet, TCargo, TSpec> >& g,
 {
 	//typedef Graph<Alignment<TStringSet, TCargo, TSpec> > TGraph;
 	//typedef typename Size<TGraph>::Type TSize;
-	//typedef typename Id<TGraph>::Type TId;
+	//typedef typename ID<TGraph>::Type TID;
 	typedef typename Iterator<TGuideTree, AdjacencyIterator>::Type TAdjacencyIterator;
 	//typedef typename Iterator<TGuideTree, DfsPreorder>::Type TDfsPreorderIterator;
 

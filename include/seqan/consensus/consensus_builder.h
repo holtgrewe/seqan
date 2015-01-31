@@ -227,7 +227,7 @@ bool alignmentGraphToFragmentStore(TFragmentStore & store,
         for (unsigned i = 1; i < length(componentVertices[c]); ++i)
             SEQAN_ASSERT_EQ(fragmentLength(g, front(componentVertices[c][0])),
                             fragmentLength(g, front(componentVertices[c][i])));
-        unsigned cl = seqToCluster[idToPosition(stringSet(g), sequenceId(g, front(componentVertices[c])))];  // Current cluster/contig.
+        unsigned cl = seqToCluster[idToPosition(stringSet(g), sequenceID(g, front(componentVertices[c])))];  // Current cluster/contig.
 
         // Update contig lengths.
         unsigned from = contigLengths[cl];
@@ -243,7 +243,7 @@ bool alignmentGraphToFragmentStore(TFragmentStore & store,
         typedef typename Iterator<String<unsigned>, Rooted>::Type TDescIt;
         for (TDescIt itV = begin(componentVertices[c], Rooted()); !atEnd(itV); goNext(itV))
         {
-            unsigned idx = idToPosition(stringSet(g), sequenceId(g, *itV));
+            unsigned idx = idToPosition(stringSet(g), sequenceID(g, *itV));
             seen.insert(idx);
             unsigned fBeg = fragmentBegin(g, *itV);
             if (DEBUG_INCONSISTENT_LEN)
@@ -254,11 +254,11 @@ bool alignmentGraphToFragmentStore(TFragmentStore & store,
             {
                 activeReads[cl].insert(idx);
                 store.alignedReadStore[idx].id = idx;
-                store.alignedReadStore[idx].readId = idx;
-                store.alignedReadStore[idx].contigId = cl;
+                store.alignedReadStore[idx].readID = idx;
+                store.alignedReadStore[idx].contigID = cl;
                 store.alignedReadStore[idx].beginPos = from;
                 store.alignedReadStore[idx].endPos = from;
-                // store.alignedReadStore[idx].pairMatchId = idx / 2;  // TODO(holtgrew): Set from read pair info.
+                // store.alignedReadStore[idx].pairMatchID = idx / 2;  // TODO(holtgrew): Set from read pair info.
                 if (DEBUG_INCONSISTENT_LEN)
                 {
                     std::cerr << "store.alignedReadStore[" << idx << "].beginPos == " << from << " | *itV == " << *itV << "\n";
@@ -316,11 +316,11 @@ bool alignmentGraphToFragmentStore(TFragmentStore & store,
         for (TAlignedReadIter it2 = begin(store.alignedReadStore, Standard()); it2 != itEnd; ++it2)
         {
             typedef Gaps<TReadSeq, AnchorGaps<String<typename TFragmentStore::TReadGapAnchor> > > TReadGaps;
-            TReadGaps readGaps(store.readSeqStore[it2->readId], it2->gaps);
-            SEQAN_ASSERT_EQ(length(readGaps) - length(store.readSeqStore[it2->readId]), gapCount[it2->readId]);
+            TReadGaps readGaps(store.readSeqStore[it2->readID], it2->gaps);
+            SEQAN_ASSERT_EQ(length(readGaps) - length(store.readSeqStore[it2->readID]), gapCount[it2->readID]);
             if (DEBUG_INCONSISTENT_LEN)
                 std::cerr << "READ GAPS\t" << (it2 - begin(store.alignedReadStore, Standard())) << "\t>>>" << readGaps << "<<< (" << length(readGaps) << ")\n"
-                          << "  beginPos == " << it2->beginPos << ", endPos == " << it2->endPos << ", gapCount == " << gapCount[it2->readId] << "\n";
+                          << "  beginPos == " << it2->beginPos << ", endPos == " << it2->endPos << ", gapCount == " << gapCount[it2->readID] << "\n";
             if ((unsigned)std::abs(it2->endPos - it2->beginPos) != length(readGaps))
             {
                 SEQAN_FAIL("Inconsistent begin/endPos");
@@ -431,10 +431,10 @@ void ConsensusBuilder_<TFragmentStore>::run(TFragmentStore & store,
         std::cerr << "CONSENSUS RESULT\n";
         typedef typename Iterator<typename TFragmentStore::TAlignedReadStore, Standard>::Type TAlignedReadIter;
         for (TAlignedReadIter it = begin(store.alignedReadStore, Standard()); it != end(store.alignedReadStore, Standard()); ++it)
-            std::cerr << "contigID=" << it->contigId
+            std::cerr << "contigID=" << it->contigID
                       << ", beginPos=" << std::min(it->beginPos, it->endPos)
-                      << ", readID=" << it->readId
-                      << ", seq=" << store.readSeqStore[it->readId]
+                      << ", readID=" << it->readID
+                      << ", seq=" << store.readSeqStore[it->readID]
                       << "\n";
         std::cerr << "\n";
 
@@ -450,7 +450,7 @@ void ConsensusBuilder_<TFragmentStore>::run(TFragmentStore & store,
         {
             int endPos = 0;
             for (unsigned i = 0; i < length(store.alignedReadStore); ++i)
-                if (store.alignedReadStore[i].contigId == contigID)
+                if (store.alignedReadStore[i].contigID == contigID)
                     endPos = std::max(endPos, (int)store.alignedReadStore[i].endPos);
             std::cerr << ">contig_" << contigID << "\n";
             printAlignment(std::cerr, layout, store, /*contigID=*/contigID, /*beginPos=*/0, /*endPos=*/endPos, 0, 30);
@@ -472,7 +472,7 @@ void ConsensusBuilder_<TFragmentStore>::run(TFragmentStore & store,
         {
             int endPos = 0;
             for (unsigned i = 0; i < length(store.alignedReadStore); ++i)
-                if (store.alignedReadStore[i].contigId == contigID)
+                if (store.alignedReadStore[i].contigID == contigID)
                     endPos = std::max(endPos, (int)store.alignedReadStore[i].endPos);
             std::cerr << ">contig_" << contigID << "\n";
             printAlignment(std::cerr, layout, store, /*contigID=*/contigID, /*beginPos=*/0, /*endPos=*/endPos, 0, 30);

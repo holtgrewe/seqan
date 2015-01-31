@@ -287,19 +287,19 @@ public:
         }
     }
 
-    void simulateContig(Variants & variants, unsigned rId, int haploCount)
+    void simulateContig(Variants & variants, unsigned rID, int haploCount)
     {
         seqan::CharString seq;
-        readSequence(seq, faiIndex, rId);
+        readSequence(seq, faiIndex, rID);
 
         if (!empty(options.inputSVSizeFile))
-            _simulateFromSizes(variants, rId, haploCount, seq);
+            _simulateFromSizes(variants, rID, haploCount, seq);
         else
-            _simulateFromRates(variants, rId, haploCount, seq);
+            _simulateFromRates(variants, rID, haploCount, seq);
     }
 
     // Simulate the variants given variation types and kinds.
-    void _simulateFromSizes(Variants & variants, unsigned rId, int haploCount, seqan::CharString const & seq)
+    void _simulateFromSizes(Variants & variants, unsigned rID, int haploCount, seqan::CharString const & seq)
     {
         // Picking SVs in a non-overlapping manner without any biases is too complicated to implement for a simulator.
         // Instead, we simulate the position uniformly at random and rerun picking the positions if we overlap with one
@@ -315,7 +315,7 @@ public:
         for (unsigned i = 0; i < length(variationSizeRecords); ++i)
         {
             VariationSizeRecord const & record = variationSizeRecords[i];
-            if (variationToContig[i] != (int)rId)
+            if (variationToContig[i] != (int)rID)
                 continue;  // This variation does not belong here.
             int const MAX_TRIES = 1000;
             int tries = 0;
@@ -328,25 +328,25 @@ public:
                     case VariationSizeRecord::INDEL:
                         if (empty(record.seq))
                         {
-                            if (!simulateSVIndel(variants, haploCount, rId, pos, record.size, seq))
+                            if (!simulateSVIndel(variants, haploCount, rID, pos, record.size, seq))
                                 continue;
                         }
                         else
                         {
-                            if (!simulateSVIndel(variants, haploCount, rId, pos, record.size, seq, record.seq))
+                            if (!simulateSVIndel(variants, haploCount, rID, pos, record.size, seq, record.seq))
                                 continue;
                         }
                         break;
                     case VariationSizeRecord::INVERSION:
-                        if (!simulateInversion(variants, haploCount, rId, pos, record.size, seq))
+                        if (!simulateInversion(variants, haploCount, rID, pos, record.size, seq))
                             continue;
                         break;
                     case VariationSizeRecord::TRANSLOCATION:
-                        if (!simulateTranslocation(variants, haploCount, rId, pos, record.size, seq))
+                        if (!simulateTranslocation(variants, haploCount, rID, pos, record.size, seq))
                             continue;
                         break;
                     case VariationSizeRecord::DUPLICATION:
-                        if (!simulateDuplication(variants, haploCount, rId, pos, record.size, seq))
+                        if (!simulateDuplication(variants, haploCount, rID, pos, record.size, seq))
                             continue;
                         break;
                     default:
@@ -373,7 +373,7 @@ public:
             }
             if (tries == MAX_TRIES)
             {
-                std::cerr << "WARNING: Could not place variant " << i << " for contig " << rId << " giving up for this contig.\n";
+                std::cerr << "WARNING: Could not place variant " << i << " for contig " << rID << " giving up for this contig.\n";
                 // Remove any records and identifiers added for this contig.
                 resize(variants.svRecords, oldSize);
                 resize(variants.svIDs, oldSize);
@@ -403,7 +403,7 @@ public:
     }
 
     // Simulate the variants given per-position error rates.
-    void _simulateFromRates(Variants & variants, unsigned rId, int haploCount, seqan::CharString const & seq)
+    void _simulateFromRates(Variants & variants, unsigned rID, int haploCount, seqan::CharString const & seq)
     {
         // For each base, compute the whether to simulate a SNP and/or small indel.
         for (unsigned pos = 0; pos < length(seq); ++pos)
@@ -431,26 +431,26 @@ public:
             {
                 if (pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, 1)))
                     size = -size;
-                if (!simulateSVIndel(variants, haploCount, rId, pos, size, seq))
+                if (!simulateSVIndel(variants, haploCount, rID, pos, size, seq))
                     continue;
                 if (back(variants.svRecords).size < 0)
                     pos += -back(variants.svRecords).size + 1;
             }
             else if (isInversion)
             {
-                if (!simulateInversion(variants, haploCount, rId, pos, size, seq))
+                if (!simulateInversion(variants, haploCount, rID, pos, size, seq))
                     continue;
                 pos += back(variants.svRecords).size + 1;
             }
             else if (isTranslocation)
             {
-                if (!simulateTranslocation(variants, haploCount, rId, pos, size, seq))
+                if (!simulateTranslocation(variants, haploCount, rID, pos, size, seq))
                     continue;
                 pos = back(variants.svRecords).targetPos + 1;
             }
             else if (isDuplication)
             {
-                if (!simulateDuplication(variants, haploCount, rId, pos, size, seq))
+                if (!simulateDuplication(variants, haploCount, rID, pos, size, seq))
                     continue;
                 pos = back(variants.svRecords).targetPos + 1;
             }
@@ -464,7 +464,7 @@ public:
         }
     }
 
-    bool simulateSVIndel(Variants & variants, int haploCount, int rId, unsigned pos, int size,
+    bool simulateSVIndel(Variants & variants, int haploCount, int rID, unsigned pos, int size,
                          seqan::CharString const & seq, seqan::CharString const & indelSeq)
     {
         if (options.verbosity >= 2)
@@ -472,9 +472,9 @@ public:
         if (isNearN(seq, pos))
             return false;  // do not allow insertion into gap
 
-        int hId = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, haploCount - 1));
+        int hID = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, haploCount - 1));
         appendValue(variants.svRecords, StructuralVariantRecord(
-                StructuralVariantRecord::INDEL, hId, rId, pos, size));
+                StructuralVariantRecord::INDEL, hID, rID, pos, size));
         back(variants.svRecords).seq = indelSeq;
         if (options.genVarIDs)
         {
@@ -487,7 +487,7 @@ public:
         return true;
     }
 
-    bool simulateSVIndel(Variants & variants, int haploCount, int rId, unsigned pos, int size,
+    bool simulateSVIndel(Variants & variants, int haploCount, int rID, unsigned pos, int size,
                          seqan::CharString const & seq)
     {
         // Indels are simulated for one haplotype only.
@@ -496,7 +496,7 @@ public:
         seqan::CharString indelSeq;
         reserve(indelSeq, options.maxSVSize);
         bool deletion = (size < 0);
-        if (deletion && (pos - size) > sequenceLength(faiIndex, rId))
+        if (deletion && (pos - size) > sequenceLength(faiIndex, rID))
             return false;  // not enough space at the end
         else if (deletion && overlapsWithN(seq, pos, pos - size))
             return false;  // do not allow deletion to overlap with gap
@@ -506,19 +506,19 @@ public:
         for (int i = 0; i < size; ++i)  // not executed in case of deleted sequence
             appendValue(indelSeq, seqan::Dna5(pickRandomNumber(rng, pdf)));
 
-        return simulateSVIndel(variants, haploCount, rId, pos, size, seq, indelSeq);
+        return simulateSVIndel(variants, haploCount, rID, pos, size, seq, indelSeq);
     }
 
-    bool simulateInversion(Variants & variants, int haploCount, int rId, unsigned pos, int size,
+    bool simulateInversion(Variants & variants, int haploCount, int rID, unsigned pos, int size,
                            seqan::CharString const & seq)
     {
-        if (pos + size >= sequenceLength(faiIndex, rId))
+        if (pos + size >= sequenceLength(faiIndex, rID))
             return false;
         if (overlapsWithN(seq, pos, pos + size))
             return false;  // do not allow segment to overlap with stretch
-        int hId = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, haploCount - 1));
+        int hID = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, haploCount - 1));
         appendValue(variants.svRecords, StructuralVariantRecord(
-                StructuralVariantRecord::INVERSION, hId, rId, pos, size));
+                StructuralVariantRecord::INVERSION, hID, rID, pos, size));
         if (options.genVarIDs)
         {
             // Add name.
@@ -530,18 +530,18 @@ public:
         return true;
     }
 
-    bool simulateTranslocation(Variants & variants, int haploCount, int rId, unsigned pos, int size,
+    bool simulateTranslocation(Variants & variants, int haploCount, int rID, unsigned pos, int size,
                                seqan::CharString const & seq)
     {
-        int hId = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, haploCount - 1));
+        int hID = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, haploCount - 1));
         int tPos = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(pos + size + options.minSVSize,
                                                                           pos + size + options.maxSVSize));
-        if (tPos >= (int)sequenceLength(faiIndex, rId))
+        if (tPos >= (int)sequenceLength(faiIndex, rID))
             return false;
         if (overlapsWithN(seq, pos, pos + size) || isNearN(seq, tPos))
             return false;  // do not allow segment to overlap with strecht of Ns and target to be next to an N
         appendValue(variants.svRecords, StructuralVariantRecord(
-                StructuralVariantRecord::TRANSLOCATION, hId, rId, pos, size, rId, tPos));
+                StructuralVariantRecord::TRANSLOCATION, hID, rID, pos, size, rID, tPos));
         if (options.genVarIDs)
         {
             // Add name.
@@ -553,10 +553,10 @@ public:
         return true;
     }
 
-    bool simulateDuplication(Variants & variants, int haploCount, int rId, unsigned pos, int size,
+    bool simulateDuplication(Variants & variants, int haploCount, int rID, unsigned pos, int size,
                              seqan::CharString const & seq)
     {
-        if (!simulateTranslocation(variants, haploCount, rId, pos, size, seq))
+        if (!simulateTranslocation(variants, haploCount, rID, pos, size, seq))
             return false;
         back(variants.svRecords).kind = StructuralVariantRecord::DUPLICATION;
         if (options.genVarIDs)
@@ -603,10 +603,10 @@ public:
     // within 1 base to each side of the SV breakends.
     //
     // The variants in variants.svRecords must be non-overlapping.
-    void simulateContig(Variants & variants, unsigned rId, int haploCount)
+    void simulateContig(Variants & variants, unsigned rID, int haploCount)
     {
         seqan::CharString seq;
-        readSequence(seq, faiIndex, rId);
+        readSequence(seq, faiIndex, rID);
 
         // Index into variants.svRecords.
         unsigned svIdx = 0;
@@ -666,8 +666,8 @@ public:
             if (isSnp)
             {
                 if (options.verbosity >= 3)
-                    std::cerr << "Simulating SNP at (" << rId << ", " << pos << ")\n";
-                if (!simulateSnp(variants, seq, haploCount, rId, pos))
+                    std::cerr << "Simulating SNP at (" << rID << ", " << pos << ")\n";
+                if (!simulateSnp(variants, seq, haploCount, rID, pos))
                     continue;
                 if (options.genVarIDs)
                 {
@@ -681,7 +681,7 @@ public:
             }
             else if (isIndel)
             {
-                if (!simulateSmallIndel(variants, seq, haploCount, rId, pos))
+                if (!simulateSmallIndel(variants, seq, haploCount, rID, pos))
                     continue;
                 if (back(variants.smallIndels).size < 0)
                     pos += -back(variants.smallIndels).size + 1;
@@ -698,7 +698,7 @@ public:
     }
 
     // Return true if SNP could be simulated.
-    bool simulateSnp(Variants & variants, seqan::CharString & seq, int haploCount, int rId, unsigned pos)
+    bool simulateSnp(Variants & variants, seqan::CharString & seq, int haploCount, int rID, unsigned pos)
     {
         if (isNearN(seq, pos))
             return false;  // No SNP next to an N.
@@ -706,31 +706,31 @@ public:
         // We simulate an alternative base for each haplotype.
 
         seqan::Dna5 from = seq[pos];
-        for (int hId = 0; hId < haploCount; ++hId)
+        for (int hID = 0; hID < haploCount; ++hID)
         {
             int toInt = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, 2));
             if (ordValue(from) <= toInt)
                 toInt += 1;
-            // std::cerr << hId << "\t" << rId << "\t" << pos << "\t" << from << "\t" << seqan::Dna5(toInt) << "\n";
+            // std::cerr << hID << "\t" << rID << "\t" << pos << "\t" << from << "\t" << seqan::Dna5(toInt) << "\n";
             SEQAN_ASSERT_NEQ((int)ordValue(from), toInt);
             seqan::Dna5 to(toInt);
-            appendValue(variants.snps, SnpRecord(hId, rId, pos, to));
+            appendValue(variants.snps, SnpRecord(hID, rID, pos, to));
         }
 
         return true;
     }
 
     // Return true if SNP could be simulated.
-    bool simulateSmallIndel(Variants & variants, seqan::CharString & seq, int haploCount, int rId, unsigned pos)
+    bool simulateSmallIndel(Variants & variants, seqan::CharString & seq, int haploCount, int rID, unsigned pos)
     {
         // Indels are simulated for one haplotype only.
-        int hId = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, haploCount - 1));
+        int hID = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, haploCount - 1));
         seqan::CharString indelSeq;
         reserve(indelSeq, options.maxSmallIndelSize);
         int indelSize = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(options.minSmallIndelSize,
                                                                                options.maxSmallIndelSize));
         bool deletion = pickRandomNumber(rng, seqan::Pdf<seqan::Uniform<int> >(0, 1));
-        if (deletion && (pos + indelSize) > sequenceLength(faiIndex, rId))
+        if (deletion && (pos + indelSize) > sequenceLength(faiIndex, rID))
             return false;  // not enough space at the end
         if (deletion && overlapsWithN(seq, pos, pos + indelSize))
             return false;  // no deletion in gap
@@ -740,7 +740,7 @@ public:
         seqan::Pdf<seqan::Uniform<int> > pdf(0, 3);
         for (int i = 0; i < indelSize; ++i)  // not executed in case of deleted sequence
             appendValue(indelSeq, seqan::Dna5(pickRandomNumber(rng, pdf)));
-        appendValue(variants.smallIndels, SmallIndelRecord(hId, rId, pos, indelSize, indelSeq));
+        appendValue(variants.smallIndels, SmallIndelRecord(hID, rID, pos, indelSize, indelSeq));
         return true;
     }
 };
@@ -895,7 +895,7 @@ public:
             std::cerr << "\nSimulation...\n";
         StructuralVariantSimulator svSim(rng, faiIndex, variationSizeRecords, options);
         SmallVariantSimulator smallSim(rng, faiIndex, options);
-        for (int rId = 0; rId < (int)numSeqs(faiIndex); ++rId)  // ref seqs
+        for (int rID = 0; rID < (int)numSeqs(faiIndex); ++rID)  // ref seqs
         {
             // Simulate methylation levels if configured to do so and write out for reference.  We always pass the
             // levels down into _simulateContigs() but it can be empty and ignored if methylation levels are not of
@@ -906,17 +906,17 @@ public:
                 if (!empty(options.methFastaInFile))
                 {
                     std::stringstream ssTop, ssBottom;
-                    ssTop << sequenceName(faiIndex, rId) << "/TOP";
+                    ssTop << sequenceName(faiIndex, rID) << "/TOP";
                     unsigned idx = 0;
-                    if (!getIdByName(idx, methFaiIndex, ssTop.str().c_str()))
+                    if (!getIDByName(idx, methFaiIndex, ssTop.str().c_str()))
                     {
                         std::cerr << "\nERROR: Could not find " << ssTop.str()
                                   << " in methylation input file.\n";
                         return 1;
                     }
                     readSequence(methLevels.forward, methFaiIndex, idx);
-                    ssBottom << sequenceName(faiIndex, rId) << "/BOT";
-                    if (!getIdByName(idx, methFaiIndex, ssBottom.str().c_str()))
+                    ssBottom << sequenceName(faiIndex, rID) << "/BOT";
+                    if (!getIDByName(idx, methFaiIndex, ssBottom.str().c_str()))
                     {
                         std::cerr << "\nERROR: Could not find " << ssBottom.str()
                                   << " in methylation input file.\n";
@@ -926,11 +926,11 @@ public:
                 }
                 else
                 {
-                    _simulateMethLevels(methLevels, rId);
+                    _simulateMethLevels(methLevels, rID);
                 }
             }
             // Simulate contigs.
-            _simulateContig(svSim, smallSim, methLevels, options, rId);
+            _simulateContig(svSim, smallSim, methLevels, options, rID);
         }
         if (options.verbosity >= 1)
             std::cerr << "OK.\n\n";
@@ -939,11 +939,11 @@ public:
     }
 
     // Simulate methylation levels.
-    int _simulateMethLevels(MethylationLevels & levels, int rId)
+    int _simulateMethLevels(MethylationLevels & levels, int rID)
     {
         MethylationLevelSimulator methSim(methRng, options.methSimOptions);
         seqan::Dna5String contig;
-        readSequence(contig, faiIndex, rId);
+        readSequence(contig, faiIndex, rID);
         methSim.run(levels, contig);
 
         return 0;
@@ -952,21 +952,21 @@ public:
     // Write out methylation levels to output file.
     //
     // levels -- levels
-    // hId -- haplotype id, -1 for original
-    // rId -- reference id
-    int _writeMethylationLevels(MethylationLevels const & levels, int hId, int rId)
+    // hID -- haplotype id, -1 for original
+    // rID -- reference id
+    int _writeMethylationLevels(MethylationLevels const & levels, int hID, int rID)
     {
         std::stringstream idTop;
-        idTop << sequenceName(faiIndex, rId);
-        if (hId != -1)
-            idTop << options.haplotypeSep << (hId + 1);
+        idTop << sequenceName(faiIndex, rID);
+        if (hID != -1)
+            idTop << options.haplotypeSep << (hID + 1);
         idTop << options.haplotypeSep << "TOP";
         writeRecord(outMethLevelStream, idTop.str(), levels.forward);
 
         std::stringstream idBottom;
-        idBottom << sequenceName(faiIndex, rId);
-        if (hId != -1)
-            idBottom << options.haplotypeSep << (hId + 1);
+        idBottom << sequenceName(faiIndex, rID);
+        if (hID != -1)
+            idBottom << options.haplotypeSep << (hID + 1);
         idBottom << options.haplotypeSep << "BOT";
         writeRecord(outMethLevelStream, idBottom.str(), levels.reverse);
 
@@ -1022,22 +1022,22 @@ public:
     // smallSim -- simulator for small variants
     // methLevels -- methylation level information for reference
     // options -- configuration
-    // rId -- ID of reference sequence that we are using now
+    // rID -- ID of reference sequence that we are using now
     int _simulateContig(StructuralVariantSimulator & svSim,
                         SmallVariantSimulator & smallSim,
                         MethylationLevels const & methLevels,
                         MasonVariatorOptions const & options,
-                        int rId)
+                        int rID)
     {
         if (options.verbosity >= 1)
-            std::cerr << "  " << sequenceName(faiIndex, rId) << "\n";
+            std::cerr << "  " << sequenceName(faiIndex, rID) << "\n";
 
         // Simulate variants.
         Variants variants;
-        svSim.simulateContig(variants, rId, options.numHaplotypes);
+        svSim.simulateContig(variants, rID, options.numHaplotypes);
         std::sort(begin(variants.svRecords, seqan::Standard()),
                   end(variants.svRecords, seqan::Standard()));
-        smallSim.simulateContig(variants, rId, options.numHaplotypes);
+        smallSim.simulateContig(variants, rID, options.numHaplotypes);
         // TODO(holtgrew): This list is wrong.
         if (options.verbosity >= 1)
             std::cerr << "  snps:                " << length(variants.snps) << "\n"
@@ -1047,10 +1047,10 @@ public:
         // Load contig seq.
         // TODO(holtgrew): Pass from outside, could reuse sequence from methylation levels.
         seqan::Dna5String contig;
-        readSequence(contig, faiIndex, rId);
+        readSequence(contig, faiIndex, rID);
 
         // Write out variants for contig to VCF file.
-        if (_writeVcf(contig, variants, rId) != 0)
+        if (_writeVcf(contig, variants, rID) != 0)
             return 1;
 
         // Apply variants to contigs and write out.
@@ -1059,12 +1059,12 @@ public:
             // Write out methylation levels for reference except when they were already in the input.
             if (options.methSimOptions.simulateMethylationLevels && !empty(options.methFastaOutFile) &&
                 empty(options.methFastaInFile))
-                if (_writeMethylationLevels(methLevels, -1, rId) != 0)
+                if (_writeMethylationLevels(methLevels, -1, rID) != 0)
                     return 1;
             // Apply variations to contigs and write out.
-            for (int hId = 0; hId < options.numHaplotypes; ++hId)
+            for (int hID = 0; hID < options.numHaplotypes; ++hID)
             {
-                if (_writeContigs(contig, variants, methLevels, rId, hId) != 0)
+                if (_writeContigs(contig, variants, methLevels, rID, hID) != 0)
                     return 1;
             }
         }
@@ -1072,7 +1072,7 @@ public:
         return 0;
     }
 
-    int _writeContigs(seqan::Dna5String const & contig, Variants const & variants, MethylationLevels const & levels, int rId, int hId)
+    int _writeContigs(seqan::Dna5String const & contig, Variants const & variants, MethylationLevels const & levels, int rID, int hID)
     {
         // Create contig with the small and large variants.
         VariantMaterializer varMat(methRng, variants, options.methSimOptions);
@@ -1083,24 +1083,24 @@ public:
             MethylationLevels levelsVariants;
             PositionMap posMap;  // unused, though
             std::vector<SmallVarInfo> varInfos;  // small variants for counting in read alignments
-            varMat.run(seqVariants, posMap, levelsVariants, varInfos, breakpoints, contig, levels, hId);
+            varMat.run(seqVariants, posMap, levelsVariants, varInfos, breakpoints, contig, levels, hID);
             // Write out methylation levels if necessary.
             if (!empty(options.methFastaOutFile))
-                if (_writeMethylationLevels(levelsVariants, hId, rId) != 0)
+                if (_writeMethylationLevels(levelsVariants, hID, rID) != 0)
                     return 1;
         }
         else
         {
             PositionMap posMap;  // unused, though
             std::vector<SmallVarInfo> varInfos;  // small variants for counting in read alignments
-            varMat.run(seqVariants, posMap, varInfos, breakpoints, contig, hId);
+            varMat.run(seqVariants, posMap, varInfos, breakpoints, contig, hID);
         }
 
         // Build sequence id.
-        seqan::CharString id = sequenceName(faiIndex, rId);
+        seqan::CharString id = sequenceName(faiIndex, rID);
         append(id, options.haplotypeSep);
         char buffer[20];
-        snprintf(buffer, 19, "%d", hId + 1);
+        snprintf(buffer, 19, "%d", hID + 1);
         append(id, buffer);
 
         // Write out breakpoints.
@@ -1114,7 +1114,7 @@ public:
     }
 
     // Write out variants for the given contig to the VCF file.
-    int _writeVcf(seqan::Dna5String const & contig, Variants const & variants, int /*rId*/)
+    int _writeVcf(seqan::Dna5String const & contig, Variants const & variants, int /*rID*/)
     {
         // Reset the id of the next variant.
         nextVarNo = 0;
@@ -1124,30 +1124,30 @@ public:
         unsigned svIdx = 0;
         // Current SNP record, default to sentinel.
         SnpRecord snpRecord;
-        snpRecord.rId = seqan::maxValue<int>();
+        snpRecord.rID = seqan::maxValue<int>();
         if (snpsIdx < length(variants.snps))
             snpRecord = variants.snps[snpsIdx++];
         // Current small indel record, default to sentinel.
         SmallIndelRecord smallIndelRecord;
-        smallIndelRecord.rId = seqan::maxValue<int>();
+        smallIndelRecord.rID = seqan::maxValue<int>();
         if (smallIndelIdx < length(variants.smallIndels))
             smallIndelRecord = variants.smallIndels[smallIndelIdx++];
         // Current SV record, default to sentinel.
         StructuralVariantRecord svRecord;
-        svRecord.rId = seqan::maxValue<int>();
+        svRecord.rID = seqan::maxValue<int>();
         if (svIdx < length(variants.svRecords))
             svRecord = variants.svRecords[svIdx++];
-        while (snpRecord.rId != seqan::maxValue<int>() ||
-               smallIndelRecord.rId != seqan::maxValue<int>() ||
-               svRecord.rId != seqan::maxValue<int>())
+        while (snpRecord.rID != seqan::maxValue<int>() ||
+               smallIndelRecord.rID != seqan::maxValue<int>() ||
+               svRecord.rID != seqan::maxValue<int>())
         {
-            if (snpRecord.rId != seqan::maxValue<int>() && smallIndelRecord.rId != seqan::maxValue<int>())
+            if (snpRecord.rID != seqan::maxValue<int>() && smallIndelRecord.rID != seqan::maxValue<int>())
                 SEQAN_ASSERT(snpRecord.getPos() != smallIndelRecord.getPos());  // are generated indendently
-            if (snpRecord.rId != seqan::maxValue<int>() && svRecord.rId != seqan::maxValue<int>())
+            if (snpRecord.rID != seqan::maxValue<int>() && svRecord.rID != seqan::maxValue<int>())
                 SEQAN_ASSERT_MSG(snpRecord.getPos() != svRecord.getPos(),
                                  "Should be generated non-overlapping (snp pos = %d, sv pos = %d).",
                                  snpRecord.pos, svRecord.pos);
-            if (smallIndelRecord.rId != seqan::maxValue<int>() && svRecord.rId != seqan::maxValue<int>())
+            if (smallIndelRecord.rID != seqan::maxValue<int>() && svRecord.rID != seqan::maxValue<int>())
                 SEQAN_ASSERT(smallIndelRecord.getPos() != svRecord.getPos());  // are generated indendently
             SEQAN_ASSERT_NEQ(snpRecord.pos, 0);   // Not simulated, VCF complexer.
             SEQAN_ASSERT_NEQ(svRecord.pos, 0);   // Not simulated, VCF complexer.
@@ -1194,7 +1194,7 @@ public:
                 }
 
                 if (svIdx >= length(variants.svRecords))
-                    svRecord.rId = seqan::maxValue<int>();
+                    svRecord.rID = seqan::maxValue<int>();
                 else
                     svRecord = variants.svRecords[svIdx++];
             }
@@ -1210,7 +1210,7 @@ public:
     {
         if (options.verbosity >= 2)
             std::cerr << "  snpRecord record.\n";
-        int rId = snpRecord.rId;
+        int rID = snpRecord.rID;
 
         // Store information used below.
         // std::cerr << "from = " << contig[snpRecord.pos] << "\n";
@@ -1230,17 +1230,17 @@ public:
             inTos[ordValue(seqan::Dna5(snpRecord.to))] = true;
 
             if (snpsIdx >= length(variants.snps))
-                snpRecord.rId = seqan::maxValue<int>();
+                snpRecord.rID = seqan::maxValue<int>();
             else
                 snpRecord = variants.snps[snpsIdx++];
         }
-        while (snpRecord.rId != seqan::maxValue<int>() &&
+        while (snpRecord.rID != seqan::maxValue<int>() &&
                snpsIdx < length(variants.snps) &&
                snpRecord.getPos() == pos);
 
         // Create VCF vcfRecord.
         seqan::VcfRecord vcfRecord;
-        vcfRecord.rID = rId;
+        vcfRecord.rID = rID;
         vcfRecord.beginPos = pos.second;
         vcfRecord.id = variants.getVariantName(variants.posToIdx(Variants::SNP, idx));
         appendValue(vcfRecord.ref, from);
@@ -1256,11 +1256,11 @@ public:
         vcfRecord.info = ".";
         // Build genotype infos.
         appendValue(vcfRecord.genotypeInfos, "");
-        for (int hId = 0; hId < options.numHaplotypes; ++hId)
+        for (int hID = 0; hID < options.numHaplotypes; ++hID)
         {
             if (!empty(vcfRecord.genotypeInfos[0]))
                 appendValue(vcfRecord.genotypeInfos[0], '|');
-            if (tos[hId] == vcfRecord.ref[0])
+            if (tos[hID] == vcfRecord.ref[0])
             {
                 appendValue(vcfRecord.genotypeInfos[0], '0');
             }
@@ -1268,7 +1268,7 @@ public:
             {
                 char buffer[20];
                 for (unsigned i = 0; i < length(vcfRecord.alt); i += 2)
-                    if (tos[hId] == vcfRecord.alt[i])
+                    if (tos[hID] == vcfRecord.alt[i])
                     {
                         snprintf(buffer, 19, "%d", 1 + i / 2);
                         append(vcfRecord.genotypeInfos[0], buffer);
@@ -1294,25 +1294,25 @@ public:
             if (options.verbosity >= 3)
                 std::cerr << "INDEL\t"
                           << smallIndelRecord.haplotype << "\t"
-                          << smallIndelRecord.rId << "\t"
+                          << smallIndelRecord.rID << "\t"
                           << smallIndelRecord.pos << "\t"
                           << smallIndelRecord.size << "\t"
                           << smallIndelRecord.seq << "\n";
             appendValue(records, smallIndelRecord);
 
             if (smallIndelIdx >= length(variants.smallIndels))
-                smallIndelRecord.rId = seqan::maxValue<int>();
+                smallIndelRecord.rID = seqan::maxValue<int>();
             else
                 smallIndelRecord = variants.smallIndels[smallIndelIdx++];
         }
-        while (smallIndelRecord.rId != seqan::maxValue<int>() &&
+        while (smallIndelRecord.rID != seqan::maxValue<int>() &&
                smallIndelIdx < length(variants.smallIndels) &&
                smallIndelRecord.getPos() == variants.smallIndels[smallIndelIdx].getPos());
         SEQAN_ASSERT_NOT(empty(records));
 
         // Create VCF record.
         seqan::VcfRecord vcfRecord;
-        vcfRecord.rID = front(records).rId;
+        vcfRecord.rID = front(records).rID;
         vcfRecord.beginPos = front(records).pos - 1;
         vcfRecord.id = variants.getVariantName(variants.posToIdx(Variants::SMALL_INDEL, idx));
         vcfRecord.filter = "PASS";
@@ -1333,13 +1333,13 @@ public:
         append(vcfRecord.ref, infix(contig, vcfRecord.beginPos, vcfRecord.beginPos + numRef));
 
         // Compute ALT columns and a map to the ALT.
-        seqan::String<int> toIds;
-        resize(toIds, options.numHaplotypes, 0);
+        seqan::String<int> toIDs;
+        resize(toIDs, options.numHaplotypes, 0);
         for (unsigned i = 0; i < length(records); ++i)
         {
             if (i > 0)
                 appendValue(vcfRecord.alt, ',');
-            toIds[records[i].haplotype] = i + 1;
+            toIDs[records[i].haplotype] = i + 1;
             if (records[i].size > 0)  // insertion
             {
                 appendValue(vcfRecord.alt, vcfRecord.ref[0]);
@@ -1360,7 +1360,7 @@ public:
             if (i > 0)
                 appendValue(vcfRecord.genotypeInfos[0], '|');
             char buffer[20];
-            snprintf(buffer, 19, "%d", toIds[i]);
+            snprintf(buffer, 19, "%d", toIDs[i]);
             append(vcfRecord.genotypeInfos[0], buffer);
         }
 
@@ -1380,7 +1380,7 @@ public:
 
         // Create VCF record.
         seqan::VcfRecord vcfRecord;
-        vcfRecord.rID = svRecord.rId;
+        vcfRecord.rID = svRecord.rID;
         vcfRecord.beginPos = svRecord.pos - 1;
         vcfRecord.id = variants.getVariantName(variants.posToIdx(Variants::SV, svIdx));
         vcfRecord.filter = "PASS";
@@ -1444,12 +1444,12 @@ public:
         leftOfPaste.id = variants.getVariantName(variants.posToIdx(Variants::SV, svIdx));
         rightOfPaste.id = variants.getVariantName(variants.posToIdx(Variants::SV, svIdx));
         // CHROM ID
-        leftOfCutL.rID = svRecord.rId;
-        rightOfCutL.rID = svRecord.rId;
-        leftOfCutR.rID = svRecord.rId;
-        rightOfCutR.rID = svRecord.rId;
-        leftOfPaste.rID = svRecord.rId;
-        rightOfPaste.rID = svRecord.rId;
+        leftOfCutL.rID = svRecord.rID;
+        rightOfCutL.rID = svRecord.rID;
+        leftOfCutR.rID = svRecord.rID;
+        rightOfCutR.rID = svRecord.rID;
+        leftOfPaste.rID = svRecord.rID;
+        rightOfPaste.rID = svRecord.rID;
         // POS
         leftOfCutL.beginPos = svRecord.pos - 1;
         rightOfCutL.beginPos = svRecord.pos;
@@ -1470,7 +1470,7 @@ public:
         // ALT
         std::stringstream ssLeftOfCutL, ssRightOfCutL, ssLeftOfCutR, ssRightOfCutR,
                 ssLeftOfPaste, ssRightOfPaste;
-        seqan::CharString refName = contigNames(context(vcfFileOut))[svRecord.rId];
+        seqan::CharString refName = contigNames(context(vcfFileOut))[svRecord.rID];
         ssLeftOfCutL << leftOfCutL.ref << "[" << refName << ":" << (rightOfCutR.beginPos + 1) << "[";
         leftOfCutL.alt = ssLeftOfCutL.str();
 
@@ -1561,7 +1561,7 @@ public:
             std::cerr << "inversion\t" << svRecord << "\n";
         seqan::VcfRecord vcfRecord;
 
-        vcfRecord.rID = svRecord.rId;
+        vcfRecord.rID = svRecord.rID;
         vcfRecord.beginPos = svRecord.pos - 1;
         vcfRecord.id = variants.getVariantName(variants.posToIdx(Variants::SV, svIdx)); 
         appendValue(vcfRecord.ref, contig[vcfRecord.beginPos]);
@@ -1599,13 +1599,13 @@ public:
 
         // Create VCF record.
         seqan::VcfRecord vcfRecord;
-        vcfRecord.rID = svRecord.rId;
+        vcfRecord.rID = svRecord.rID;
         vcfRecord.beginPos = svRecord.pos - 1;
         vcfRecord.id = variants.getVariantName(variants.posToIdx(Variants::SV, svIdx)); 
         vcfRecord.filter = "PASS";
         std::stringstream ss;
         ss << "SVTYPE=DUP;SVLEN=" << svRecord.size << ";END=" << svRecord.pos + svRecord.size
-           << ";TARGETPOS=" << contigNames(context(vcfFileOut))[svRecord.targetRId] << ":" << svRecord.targetPos + 1;
+           << ";TARGETPOS=" << contigNames(context(vcfFileOut))[svRecord.targetRID] << ":" << svRecord.targetPos + 1;
         vcfRecord.info = ss.str();
         appendValue(vcfRecord.ref, contig[vcfRecord.beginPos]);
         vcfRecord.alt = "<DUP>";

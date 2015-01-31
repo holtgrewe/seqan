@@ -62,8 +62,8 @@ SEQAN_DEFINE_TEST(test_graph_types_types_directed)
     TEdgeDescriptor e1 = addEdge(g, v0, v0);
     SEQAN_ASSERT(findEdge(g, v0, v0) == e1);
     SEQAN_ASSERT(_getVertexString(g)[0] == e1);
-    SEQAN_ASSERT(getIdUpperBound(_getVertexIdManager(g)) == 1);
-    SEQAN_ASSERT(getIdUpperBound(_getEdgeIdManager(g)) == 1);
+    SEQAN_ASSERT(getIDUpperBound(_getVertexIDManager(g)) == 1);
+    SEQAN_ASSERT(getIDUpperBound(_getEdgeIDManager(g)) == 1);
     SEQAN_ASSERT(targetVertex(g, e1) == 0);
     SEQAN_ASSERT(sourceVertex(g, e1) == 0);  //Expensive in standard graph!
     SEQAN_ASSERT(numEdges(g) == 1);
@@ -111,11 +111,11 @@ SEQAN_DEFINE_TEST(test_graph_types_types_directed)
         "3 -> 0,1,4,\n"
         "4 -> \n"
         "Edge list:\n"
-        "Source: 0,Target: 1 (Id: 1)\n"
-        "Source: 0,Target: 0 (Id: 0)\n"
-        "Source: 3,Target: 0 (Id: 4)\n"
-        "Source: 3,Target: 1 (Id: 3)\n"
-        "Source: 3,Target: 4 (Id: 2)\n";
+        "Source: 0,Target: 1 (ID: 1)\n"
+        "Source: 0,Target: 0 (ID: 0)\n"
+        "Source: 3,Target: 0 (ID: 4)\n"
+        "Source: 3,Target: 1 (ID: 3)\n"
+        "Source: 3,Target: 4 (ID: 2)\n";
     SEQAN_ASSERT(EXPECTED == sstream.str());
 
     // Remove edges
@@ -267,7 +267,7 @@ SEQAN_DEFINE_TEST(test_graph_types_types_directed)
 
 //____________________________________________________________________________
 //Graph without edge cargo and without edge ids
-    typedef Directed<void, WithoutEdgeId> TEdges3;
+    typedef Directed<void, WithoutEdgeID> TEdges3;
     typedef EdgeDescriptor<Graph<TEdges3> >::Type TEdgeDescriptor3;
 
     Graph<TEdges3> g3;
@@ -277,7 +277,7 @@ SEQAN_DEFINE_TEST(test_graph_types_types_directed)
     SEQAN_ASSERT(numVertices(g3) == 5);
     SEQAN_ASSERT(numEdges(g3) == 1);
     TEdgeDescriptor3 edge3 = addEdge(g3, 0, 4);
-    //SEQAN_ASSERT(_getId(edge3) == 0);
+    //SEQAN_ASSERT(_getID(edge3) == 0);
     SEQAN_ASSERT(getCargo(edge3) == (void *) 0);
     addEdge(g3, 0, 2);
     addEdge(g3, 0, 0);
@@ -326,8 +326,8 @@ SEQAN_DEFINE_TEST(test_graph_types_types_undirected)
     TEdgeDescriptor e = addEdge(g, 0, 1);
     SEQAN_ASSERT(findEdge(g, 0, 1) == e);
     SEQAN_ASSERT(_getVertexString(g)[0] == e);
-    SEQAN_ASSERT(getIdUpperBound(_getVertexIdManager(g)) == 2);
-    SEQAN_ASSERT(getIdUpperBound(_getEdgeIdManager(g)) == 1);
+    SEQAN_ASSERT(getIDUpperBound(_getVertexIDManager(g)) == 2);
+    SEQAN_ASSERT(getIDUpperBound(_getEdgeIDManager(g)) == 1);
     SEQAN_ASSERT(v1 == 1);
     SEQAN_ASSERT(numVertices(g) == 2);
     SEQAN_ASSERT(targetVertex(g, e) == 1);
@@ -365,10 +365,10 @@ SEQAN_DEFINE_TEST(test_graph_types_types_undirected)
         "3 -> 0,1,4,\n"
         "4 -> 3,\n"
         "Edge list:\n"
-        "Source: 0,Target: 3 (Id: 3)\n"
-        "Source: 0,Target: 1 (Id: 0)\n"
-        "Source: 1,Target: 3 (Id: 2)\n"
-        "Source: 3,Target: 4 (Id: 1)\n";
+        "Source: 0,Target: 3 (ID: 3)\n"
+        "Source: 0,Target: 1 (ID: 0)\n"
+        "Source: 1,Target: 3 (ID: 2)\n"
+        "Source: 3,Target: 4 (ID: 1)\n";
     SEQAN_ASSERT(EXPECTED == sstream.str());
 
     // Remove edges
@@ -509,7 +509,7 @@ SEQAN_DEFINE_TEST(test_graph_types_types_undirected)
 
 //____________________________________________________________________________
 //Graph without edge cargo and without edge ids
-    typedef Undirected<void, WithoutEdgeId> TEdges3;
+    typedef Undirected<void, WithoutEdgeID> TEdges3;
     typedef EdgeDescriptor<Graph<TEdges3> >::Type TEdgeDescriptor3;
 
     Graph<TEdges3> g3;
@@ -519,7 +519,7 @@ SEQAN_DEFINE_TEST(test_graph_types_types_undirected)
     SEQAN_ASSERT(numVertices(g3) == 5);
     SEQAN_ASSERT(numEdges(g3) == 1);
     TEdgeDescriptor3 edge3 = addEdge(g3, 0, 4);
-    SEQAN_ASSERT(_getId(edge3) == 0);
+    SEQAN_ASSERT(_getID(edge3) == 0);
     SEQAN_ASSERT(getCargo(edge3) == (void *) 0);
     addEdge(g3, 0, 2);
     addEdge(g3, 0, 1);
@@ -675,10 +675,10 @@ SEQAN_DEFINE_TEST(test_graph_types_types_automaton)
     TEdgeDescriptor e1 = addEdge(g, v0, v0, 'a');
     SEQAN_ASSERT(findEdge(g, 0, 'a') == e1);
     SEQAN_ASSERT(&_getVertexString(g)[0].data_edge[0] == e1);
-    SEQAN_ASSERT(getIdUpperBound(_getVertexIdManager(g)) == 1);
-    SEQAN_ASSERT(getIdUpperBound(_getEdgeIdManager(g)) == 1);
-    SEQAN_ASSERT(_getId(e1) == 0);
-    SEQAN_ASSERT(_getId(e1) == 0);
+    SEQAN_ASSERT(getIDUpperBound(_getVertexIDManager(g)) == 1);
+    SEQAN_ASSERT(getIDUpperBound(_getEdgeIDManager(g)) == 1);
+    SEQAN_ASSERT(_getID(e1) == 0);
+    SEQAN_ASSERT(_getID(e1) == 0);
     SEQAN_ASSERT(targetVertex(g, e1) == 0);
     SEQAN_ASSERT(sourceVertex(g, e1) == 0);
     SEQAN_ASSERT(numEdges(g) == 1);
@@ -689,7 +689,7 @@ SEQAN_DEFINE_TEST(test_graph_types_types_automaton)
     // Add further edges and vertices
     TVertexDescriptor v1 = addVertex(g);
     TEdgeDescriptor e2 = addEdge(g, 0, 1, 'g');
-    SEQAN_ASSERT(_getId(e2) == 1);
+    SEQAN_ASSERT(_getID(e2) == 1);
     SEQAN_ASSERT(v1 == 1);
     SEQAN_ASSERT(numVertices(g) == 2);
     SEQAN_ASSERT(targetVertex(g, e2) == 1);
@@ -706,7 +706,7 @@ SEQAN_DEFINE_TEST(test_graph_types_types_automaton)
     addVertex(g);  //4
     addEdge(g, 3, 4, 'g');
     TEdgeDescriptor my_edge = addEdge(g, 3, 1, 'c');
-    SEQAN_ASSERT(_getId(my_edge) == 3);
+    SEQAN_ASSERT(_getID(my_edge) == 3);
     addEdge(g, 3, 0, 't');
     SEQAN_ASSERT(v3 == 3);
     SEQAN_ASSERT(numVertices(g) == 5);
@@ -1080,7 +1080,7 @@ SEQAN_DEFINE_TEST(test_graph_types_types_word_graph)
     // Add edge
     TEdgeDescriptor e1 = addEdge(g, v0, v3, "ag");
     SEQAN_ASSERT(findEdge(g, v0, 'a') == e1);
-    SEQAN_ASSERT(_getId(e1) == 0);
+    SEQAN_ASSERT(_getID(e1) == 0);
     // First letter -> edge label, all other letters into the cargo
     SEQAN_ASSERT(getCargo(e1) == "g");
     SEQAN_ASSERT(targetVertex(g, e1) == 3);
@@ -1094,7 +1094,7 @@ SEQAN_DEFINE_TEST(test_graph_types_types_word_graph)
     addVertex(g);
     TVertexDescriptor v5 = addVertex(g);
     TEdgeDescriptor e2 = addEdge(g, 0, 5, "g");
-    SEQAN_ASSERT(_getId(e2) == 1);
+    SEQAN_ASSERT(_getID(e2) == 1);
     SEQAN_ASSERT(v5 == 5);
     SEQAN_ASSERT(numVertices(g) == 6);
     SEQAN_ASSERT(targetVertex(g, e2) == 5);
@@ -1183,8 +1183,8 @@ SEQAN_DEFINE_TEST(test_graph_types_types_word_tree)
     collectLeaves(g, rootV, leaves);
     TEdgeDescriptor childC1e = findEdge(g, rootV, childC1);
     SEQAN_ASSERT(_getVertexString(g)[0] == childC1e);
-    SEQAN_ASSERT(getIdUpperBound(_getVertexIdManager(g)) == 2);
-    SEQAN_ASSERT(getIdUpperBound(_getEdgeIdManager(g)) == 2);
+    SEQAN_ASSERT(getIDUpperBound(_getVertexIDManager(g)) == 2);
+    SEQAN_ASSERT(getIDUpperBound(_getEdgeIDManager(g)) == 2);
     SEQAN_ASSERT(targetVertex(g, childC1e) == childC1); // Target in a tree = child
     SEQAN_ASSERT(sourceVertex(g, childC1e) == rootV);  // Source in a tree = parent
     SEQAN_ASSERT(childVertex(g, childC1e) == childC1);  // Shortcuts
@@ -1232,14 +1232,14 @@ SEQAN_DEFINE_TEST(test_graph_types_types_word_tree)
         "7 -> \n"
         "8 -> \n"
         "Edge list:\n"
-        "Source: 0,Target: 8 (Id: 8)\n"
-        "Source: 0,Target: 3 (Id: 3)\n"
-        "Source: 0,Target: 2 (Id: 2)\n"
-        "Source: 0,Target: 1 (Id: 1)\n"
-        "Source: 2,Target: 4 (Id: 4)\n"
-        "Source: 4,Target: 5 (Id: 5)\n"
-        "Source: 5,Target: 7 (Id: 7)\n"
-        "Source: 5,Target: 6 (Id: 6)\n";
+        "Source: 0,Target: 8 (ID: 8)\n"
+        "Source: 0,Target: 3 (ID: 3)\n"
+        "Source: 0,Target: 2 (ID: 2)\n"
+        "Source: 0,Target: 1 (ID: 1)\n"
+        "Source: 2,Target: 4 (ID: 4)\n"
+        "Source: 4,Target: 5 (ID: 5)\n"
+        "Source: 5,Target: 7 (ID: 7)\n"
+        "Source: 5,Target: 6 (ID: 6)\n";
     SEQAN_ASSERT(EXPECTED == sstream.str());
 
     SEQAN_ASSERT(g.data_parent[0] == getNil<TVertexDescriptor>());
@@ -1602,7 +1602,7 @@ SEQAN_DEFINE_TEST(test_graph_types_types_hmm)
     SEQAN_ASSERT(numVertices(hmm_copy) == 4);
     SEQAN_ASSERT(getBeginState(hmm_copy) == begState);
     SEQAN_ASSERT(getEndState(hmm_copy) == eState);
-    SEQAN_ASSERT(idCount(_getEdgeIdManager(hmm_copy)) == 7);
+    SEQAN_ASSERT(idCount(_getEdgeIDManager(hmm_copy)) == 7);
 
     // Test silent states
     TVertexDescriptor testState1 = addVertex(hmm, emis, true);

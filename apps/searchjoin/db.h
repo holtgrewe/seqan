@@ -255,13 +255,13 @@ struct DbParser<TDb, Query>
 template <typename TText, typename TSpec = void>
 struct Db
 {
-    typedef Owner<ConcatDirect<> >                  TIdsSpec;
-    typedef StringSet<CharString, TIdsSpec>         TIds;
+    typedef Owner<ConcatDirect<> >                  TIDsSpec;
+    typedef StringSet<CharString, TIDsSpec>         TIDs;
     typedef typename Size<TText>::Type              TTextSize;
     typedef TTextSize                               TErrors;
 
     TText       text;
-    TIds        ids;
+    TIDs        ids;
 
     TTextSize   minLength;
     TTextSize   maxLength;
@@ -280,13 +280,13 @@ struct Db
 template <typename TText>
 struct Db<TText, Query>
 {
-    typedef Owner<ConcatDirect<> >                  TIdsSpec;
-    typedef StringSet<CharString, TIdsSpec>         TIds;
+    typedef Owner<ConcatDirect<> >                  TIDsSpec;
+    typedef StringSet<CharString, TIDsSpec>         TIDs;
     typedef typename Size<TText>::Type              TTextSize;
     typedef TTextSize                               TErrors;
 
     TText       text;
-    TIds        ids;
+    TIDs        ids;
 
     TTextSize   minLength;
     TTextSize   maxLength;
@@ -387,7 +387,7 @@ inline void
 parseLine(DbParser<TDb, TSpec> & parser, TInputIt & inputIt)
 {
     _clearBuffers(parser);
-    _parseId(parser, inputIt);
+    _parseID(parser, inputIt);
     _parseText(parser, inputIt);
 }
 
@@ -396,7 +396,7 @@ inline void
 parseLine(DbParser<TDb, Query> & parser, TInputIt & inputIt)
 {
     _clearBuffers(parser);
-    _parseId(parser, inputIt);
+    _parseID(parser, inputIt);
     _parseText(parser, inputIt);
     _parseErrors(parser, inputIt);
 }
@@ -423,12 +423,12 @@ _clearBuffers(DbParser<TDb, Query> & parser)
 }
 
 // ----------------------------------------------------------------------------
-// Function _parseId()                                               [DbParser]
+// Function _parseID()                                               [DbParser]
 // ----------------------------------------------------------------------------
 
 template <typename TDb, typename TSpec, typename TInputIt>
 inline void
-_parseId(DbParser<TDb, TSpec> & parser, TInputIt & inputIt)
+_parseID(DbParser<TDb, TSpec> & parser, TInputIt & inputIt)
 {
     // Read id.
     readUntil(parser._id, inputIt, parser.delim);
@@ -578,9 +578,9 @@ void split(Db<TText, Query> & dbShort, Db<TText, Query> & dbLong, Db<TText, Quer
     dbLong.minLength = MaxValue<TTextSize>::VALUE;
     dbLong.maxLength = MinValue<TTextSize>::VALUE;
 
-    for (TDbSize dbId = 0; dbId < dbSize; ++dbId)
+    for (TDbSize dbID = 0; dbID < dbSize; ++dbID)
     {
-        TTextReference text = db.text[dbId];
+        TTextReference text = db.text[dbID];
         TTextSize textLength = length(text);
 
         TDb *dbOut = (textLength < seedLength) ? &dbShort : &dbLong;
@@ -589,8 +589,8 @@ void split(Db<TText, Query> & dbShort, Db<TText, Query> & dbLong, Db<TText, Quer
         (*dbOut).maxLength = _max((*dbOut).maxLength, textLength);
 
         appendValue((*dbOut).text, text);
-        appendValue((*dbOut).ids, db.ids[dbId]);
-        appendValue((*dbOut).errors, getErrors(db, dbId));
+        appendValue((*dbOut).ids, db.ids[dbID]);
+        appendValue((*dbOut).errors, getErrors(db, dbID));
     }
 
     // Compute average text length.
@@ -626,16 +626,16 @@ void split(Db<TText, Query> & dbShort, Db<TText, Query> & dbLong, Db<TText, Quer
 
 template <typename TText, typename TSpec>
 inline typename Size<TText>::Type
-getErrors(Db<TText, TSpec> const & db, typename Size<Db<TText, TSpec> >::Type /* dbId */)
+getErrors(Db<TText, TSpec> const & db, typename Size<Db<TText, TSpec> >::Type /* dbID */)
 {
     return db.errors;
 }
 
 template <typename TText>
 inline typename Size<TText>::Type
-getErrors(Db<TText, Query> const & db, typename Size<Db<TText, Query> >::Type dbId)
+getErrors(Db<TText, Query> const & db, typename Size<Db<TText, Query> >::Type dbID)
 {
-    return db.errors[dbId];
+    return db.errors[dbID];
 }
 
 // ----------------------------------------------------------------------------
@@ -715,12 +715,12 @@ TSeedLength countSeeds(TCounts & seedCounts,
     TSeedLength maxSeedErrors = 0;
     resize(seedCounts, getMaxErrors(db) + 1, 0, Exact());
 
-    for (TDbSize dbId = 0; dbId < dbSize; ++dbId)
+    for (TDbSize dbID = 0; dbID < dbSize; ++dbID)
     {
-        TTextReference text = db.text[dbId];
+        TTextReference text = db.text[dbID];
         TTextSize textLength = length(text);
 
-        TErrors errors = getErrors(db, dbId);
+        TErrors errors = getErrors(db, dbID);
 
         TTextSize seedCount = _max(textLength / seedLength, 1u);
         TErrors seedErrors = errors / seedCount;
@@ -818,13 +818,13 @@ void build(DbIndex<Index<TText, TIndexSpec>, TDbIndexSpec> & dbIndex,
 //    resize(sa, lengthSum(db.text));
 //
 //    TDbSize dbSize = length(db.text);
-//    for (TDbSize dbId = 0; dbId < dbSize; ++dbId)
+//    for (TDbSize dbID = 0; dbID < dbSize; ++dbID)
 //    {
-//        TTextReference text = db.text[dbId];
+//        TTextReference text = db.text[dbID];
 //        TTextSize textLength = length(text);
 //
 //        TIndexSAPos saPos;
-//        assignValueI1(saPos, dbId);
+//        assignValueI1(saPos, dbID);
 //        for (TTextSize pos = 0; pos < textLength; ++pos)
 //        {
 //            assignValueI2(saPos, pos);
@@ -915,19 +915,19 @@ void _buildSA(TIndexSAFibre & sa,
 
     TDbSize dbSize = length(db.text);
 
-    for (TDbSize dbId = 0; dbId < dbSize; ++dbId)
+    for (TDbSize dbID = 0; dbID < dbSize; ++dbID)
     {
-        TTextReference text = db.text[dbId];
+        TTextReference text = db.text[dbID];
         TTextSize textLength = length(text);
 
-        TErrors errors = getErrors(db, dbId);
+        TErrors errors = getErrors(db, dbID);
         
         TTextSize seedCount = _max(textLength / seedLength, 1u);
         TSeedErrors seedErrors_ = errors / seedCount;
         TTextSize seedCountHigh = (errors % seedCount) + 1;
 
         TIndexSAPos seed;
-        assignValueI1(seed, dbId);
+        assignValueI1(seed, dbID);
 
         if (seedErrors_ == seedErrors)
         {
@@ -996,9 +996,9 @@ void _buildSA(TIndexSAFibre & sa,
 //    _qgramClearDir(dir, bucketMap);
 //
 //    // Count qgrams.
-//    for (TDbSize dbId = 0; dbId < dbSize; ++dbId)
+//    for (TDbSize dbID = 0; dbID < dbSize; ++dbID)
 //    {
-//        TText & text = dbIndex.db.text[dbId];
+//        TText & text = dbIndex.db.text[dbID];
 //        TTextIterator textIt = begin(text, Standard());
 //        ++dir[requestBucket(bucketMap, hash(shape, textIt))];
 //    }
@@ -1007,13 +1007,13 @@ void _buildSA(TIndexSAFibre & sa,
 //    _qgramCummulativeSum(dir, False());
 //
 //    // Fill suffix array.
-//    for (TDbSize dbId = 0; dbId < dbSize; ++dbId)
+//    for (TDbSize dbID = 0; dbID < dbSize; ++dbID)
 //    {
-//        TText & text = dbIndex.db.text[dbId];
+//        TText & text = dbIndex.db.text[dbID];
 //        TTextIterator textIt = begin(text, Standard());
 //
 //        TSAPos saPos;
-//        assignValueI1(saPos, dbId);
+//        assignValueI1(saPos, dbID);
 //        assignValueI2(saPos, 0);
 //        sa[dir[getBucket(bucketMap, hash(shape, textIt)) + 1]++] = saPos;
 //    }

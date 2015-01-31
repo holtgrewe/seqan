@@ -227,14 +227,14 @@ inline void _writeMatchesImpl(MatchesWriter<TSpec, Traits> & me, TMatchIt const 
 // ----------------------------------------------------------------------------
 // Writes one unmapped read.
 
-template <typename TSpec, typename Traits, typename TReadId>
-inline void _writeUnmappedRead(MatchesWriter<TSpec, Traits> & me, TReadId readId)
+template <typename TSpec, typename Traits, typename TReadID>
+inline void _writeUnmappedRead(MatchesWriter<TSpec, Traits> & me, TReadID readID)
 {
     clear(me.record);
-    _fillReadName(me, readId);
-    _fillReadSeqQual(me, readId);
+    _fillReadName(me, readID);
+    _fillReadSeqQual(me, readID);
     _fillMapq(me, 0u);
-    _fillMateInfo(me, readId);
+    _fillMateInfo(me, readID);
     appendReadGroup(me.record, me.options.readGroup);
     me.record.flag |= BAM_FLAG_UNMAPPED;
     _writeRecord(me);
@@ -245,27 +245,27 @@ inline void _writeUnmappedRead(MatchesWriter<TSpec, Traits> & me, TReadId readId
 // ----------------------------------------------------------------------------
 // Writes one block of matches.
 
-template <typename TSpec, typename Traits, typename TReadId, typename TMatch>
-inline void _writeMappedRead(MatchesWriter<TSpec, Traits> & me, TReadId readId, TMatch const & primary)
+template <typename TSpec, typename Traits, typename TReadID, typename TMatch>
+inline void _writeMappedRead(MatchesWriter<TSpec, Traits> & me, TReadID readID, TMatch const & primary)
 {
-    _writeMappedReadImpl(me, readId, primary, typename Traits::TSequencing());
+    _writeMappedReadImpl(me, readID, primary, typename Traits::TSequencing());
 }
 
-template <typename TSpec, typename Traits, typename TReadId, typename TMatch>
-inline void _writeMappedReadImpl(MatchesWriter<TSpec, Traits> & me, TReadId readId, TMatch const & primary, SingleEnd)
+template <typename TSpec, typename Traits, typename TReadID, typename TMatch>
+inline void _writeMappedReadImpl(MatchesWriter<TSpec, Traits> & me, TReadID readID, TMatch const & primary, SingleEnd)
 {
     typedef typename Traits::TMatches           TMatches;
     typedef typename Size<TMatches>::Type       TSize;
     typedef typename Iterator<TMatches const, Standard>::Type   TIter;
 
     clear(me.record);
-    _fillReadName(me, getReadSeqId(primary, me.reads.seqs));
-    _fillReadSeqQual(me, getReadSeqId(primary, me.reads.seqs));
+    _fillReadName(me, getReadSeqID(primary, me.reads.seqs));
+    _fillReadSeqQual(me, getReadSeqID(primary, me.reads.seqs));
     _fillReadPosition(me, primary);
     _fillReadAlignment(me, primary);
-    _fillMateInfo(me, readId);
+    _fillMateInfo(me, readID);
 
-    TMatches const & matches = me.matchesSet[readId];
+    TMatches const & matches = me.matchesSet[readID];
     TSize bestCount = countMatchesInBestStratum(matches);
     _fillReadInfo(me, matches, bestCount);
 
@@ -282,28 +282,28 @@ inline void _writeMappedReadImpl(MatchesWriter<TSpec, Traits> & me, TReadId read
         _writeSecondary(me, matches, bestCount, primaryPos);
 }
 
-template <typename TSpec, typename Traits, typename TReadId, typename TMatch>
-inline void _writeMappedReadImpl(MatchesWriter<TSpec, Traits> & me, TReadId readId, TMatch const & primary, PairedEnd)
+template <typename TSpec, typename Traits, typename TReadID, typename TMatch>
+inline void _writeMappedReadImpl(MatchesWriter<TSpec, Traits> & me, TReadID readID, TMatch const & primary, PairedEnd)
 {
     typedef typename Traits::TMatches                           TMatches;
     typedef typename Size<TMatches>::Type                       TSize;
     typedef typename Iterator<TMatches const, Standard>::Type   TIter;
 
     clear(me.record);
-    _fillReadName(me, getReadSeqId(primary, me.reads.seqs));
-    _fillReadSeqQual(me, getReadSeqId(primary, me.reads.seqs));
+    _fillReadName(me, getReadSeqID(primary, me.reads.seqs));
+    _fillReadSeqQual(me, getReadSeqID(primary, me.reads.seqs));
     _fillReadPosition(me, primary);
     _fillReadAlignment(me, primary);
-    _fillMateInfo(me, readId);
+    _fillMateInfo(me, readID);
 
-    if (isPaired(me.ctx, readId))
+    if (isPaired(me.ctx, readID))
     {
-        TReadId mateId = getMateId(me.reads.seqs, readId);
-        TMatch const & mate = me.primaryMatches[mateId];
+        TReadID mateID = getMateID(me.reads.seqs, readID);
+        TMatch const & mate = me.primaryMatches[mateID];
         _fillMatePosition(me, primary, mate);
     }
 
-    TMatches const & matches = me.matchesSet[readId];
+    TMatches const & matches = me.matchesSet[readID];
     TSize bestCount = countMatchesInBestStratum(matches);
     _fillReadInfo(me, matches, bestCount);
 
@@ -354,7 +354,7 @@ inline void _writeSecondary(MatchesWriter<TSpec, Traits> & me, TMatches const & 
     forEach(matches, [&](typename Value<TMatches const>::Type const & match)
     {
         clear(me.record);
-        _fillReadName(me, getReadSeqId(match, me.reads.seqs));
+        _fillReadName(me, getReadSeqID(match, me.reads.seqs));
         _fillReadPosition(me, match);
         appendExtraPosition(me.record, getMember(match, ContigEnd()));
         me.record.flag |= BAM_FLAG_SECONDARY;
@@ -366,8 +366,8 @@ inline void _writeSecondary(MatchesWriter<TSpec, Traits> & me, TMatches const & 
 // Function _fillReadName()
 // ----------------------------------------------------------------------------
 
-template <typename TSpec, typename Traits, typename TReadSeqId>
-inline void _fillReadName(MatchesWriter<TSpec, Traits> & me, TReadSeqId readSeqId)
+template <typename TSpec, typename Traits, typename TReadSeqID>
+inline void _fillReadName(MatchesWriter<TSpec, Traits> & me, TReadSeqID readSeqID)
 {
     typedef MatchesWriter<TSpec, Traits>                        TMatchesWriter;
     typedef typename TMatchesWriter::TReads                     TReads;
@@ -375,7 +375,7 @@ inline void _fillReadName(MatchesWriter<TSpec, Traits> & me, TReadSeqId readSeqI
     typedef typename Value<TSeqNames>::Type                     TSeqName;
     typedef typename DirectionIterator<TSeqName, Input>::Type   TSeqNameIt;
 
-    TSeqName const & seqName = me.reads.names[getReadId(me.reads.seqs, readSeqId)];
+    TSeqName const & seqName = me.reads.names[getReadID(me.reads.seqs, readSeqID)];
 
     TSeqNameIt seqNameIt = begin(seqName);
     readUntil(me.record.qName, seqNameIt, OrFunctor<IsSpace, IsSlash>());
@@ -385,11 +385,11 @@ inline void _fillReadName(MatchesWriter<TSpec, Traits> & me, TReadSeqId readSeqI
 // Function _fillReadSeqQual()
 // ----------------------------------------------------------------------------
 
-template <typename TSpec, typename Traits, typename TReadSeqId>
-inline void _fillReadSeqQual(MatchesWriter<TSpec, Traits> & me, TReadSeqId readSeqId)
+template <typename TSpec, typename Traits, typename TReadSeqID>
+inline void _fillReadSeqQual(MatchesWriter<TSpec, Traits> & me, TReadSeqID readSeqID)
 {
-    me.record.seq = me.reads.seqs[readSeqId];
-    setQual(me.record, me.reads.seqs[readSeqId]);
+    me.record.seq = me.reads.seqs[readSeqID];
+    setQual(me.record, me.reads.seqs[readSeqID]);
 }
 
 // ----------------------------------------------------------------------------
@@ -402,7 +402,7 @@ inline void _fillReadPosition(MatchesWriter<TSpec, Traits> & me, TMatch const & 
     if (onReverseStrand(match))
         me.record.flag |= BAM_FLAG_RC;
 
-    me.record.rID = getMember(match, ContigId());
+    me.record.rID = getMember(match, ContigID());
     me.record.beginPos = getMember(match, ContigBegin());
     appendErrors(me.record, getMember(match, Errors()));
 }
@@ -414,31 +414,31 @@ inline void _fillReadPosition(MatchesWriter<TSpec, Traits> & me, TMatch const & 
 template <typename TSpec, typename Traits, typename TMatch>
 inline void _fillReadAlignment(MatchesWriter<TSpec, Traits> & me, TMatch const & match)
 {
-    me.record.cigar = me.cigarSet[getMember(match, ReadId())];
+    me.record.cigar = me.cigarSet[getMember(match, ReadID())];
 }
 
 // --------------------------------------------------------------------------
 // Function _fillMateInfo()
 // --------------------------------------------------------------------------
 
-template <typename TSpec, typename Traits, typename TReadId>
-inline void _fillMateInfo(MatchesWriter<TSpec, Traits> & me, TReadId readId)
+template <typename TSpec, typename Traits, typename TReadID>
+inline void _fillMateInfo(MatchesWriter<TSpec, Traits> & me, TReadID readID)
 {
-    _fillMateInfoImpl(me, readId, typename Traits::TSequencing());
+    _fillMateInfoImpl(me, readID, typename Traits::TSequencing());
 }
 
-template <typename TSpec, typename Traits, typename TReadId>
-inline void _fillMateInfoImpl(MatchesWriter<TSpec, Traits> & /* me */, TReadId /* readId */, SingleEnd) {}
+template <typename TSpec, typename Traits, typename TReadID>
+inline void _fillMateInfoImpl(MatchesWriter<TSpec, Traits> & /* me */, TReadID /* readID */, SingleEnd) {}
 
-template <typename TSpec, typename Traits, typename TReadId>
-inline void _fillMateInfoImpl(MatchesWriter<TSpec, Traits> & me, TReadId readId, PairedEnd)
+template <typename TSpec, typename Traits, typename TReadID>
+inline void _fillMateInfoImpl(MatchesWriter<TSpec, Traits> & me, TReadID readID, PairedEnd)
 {
     me.record.flag |= BAM_FLAG_MULTIPLE;
 
-    if (!isMapped(me.ctx, getMateId(me.reads.seqs, readId)))
+    if (!isMapped(me.ctx, getMateID(me.reads.seqs, readID)))
         me.record.flag |= BAM_FLAG_NEXT_UNMAPPED;
 
-    if (isFirstMate(me.reads.seqs, readId))
+    if (isFirstMate(me.reads.seqs, readID))
         me.record.flag |= BAM_FLAG_FIRST;
     else
         me.record.flag |= BAM_FLAG_LAST;
@@ -456,10 +456,10 @@ inline void _fillMatePosition(MatchesWriter<TSpec, Traits> & me, TMatch const & 
     if (onReverseStrand(mate))
         me.record.flag |= BAM_FLAG_NEXT_RC;
 
-    me.record.rNextId = getMember(mate, ContigId());
+    me.record.rNextID = getMember(mate, ContigID());
     me.record.pNext = getMember(mate, ContigBegin());
 
-    if (getMember(match, ContigId()) == getMember(mate, ContigId()))
+    if (getMember(match, ContigID()) == getMember(mate, ContigID()))
     {
         if (getMember(match, ContigBegin()) < getMember(mate, ContigBegin()))
             me.record.tLen = getMember(mate, ContigEnd()) - getMember(match, ContigBegin());
@@ -518,7 +518,7 @@ inline void _fillXa(MatchesWriter<TSpec, Traits> & me, TMatches const & matches)
 {
     forEach(matches, [&](typename Value<TMatches const>::Type const & match)
     {
-        append(me.xa, contigNames(context(me.outputFile))[getMember(match, ContigId())]);
+        append(me.xa, contigNames(context(me.outputFile))[getMember(match, ContigID())]);
         appendValue(me.xa, ',');
         appendNumber(me.xa, getMember(match, ContigBegin()) + 1);
         appendValue(me.xa, ',');

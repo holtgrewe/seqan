@@ -40,7 +40,7 @@ namespace SEQAN_NAMESPACE_MAIN
 // SVG File Context
 //////////////////////////////////////////////////////////////////////////////
 
-struct SVGFile
+struct SvgFile
 {
 //IOREV _nodoc_ no documentation whatsoever; uses custom IO, fully independent (maybe postpone adaption)
 	std::fstream file;
@@ -61,20 +61,20 @@ struct SVGFile
 	int rulerTextTicks;
 	int rulerTextLabel;
 
-	friend inline void svgWriteHeader(SVGFile &svg);
-	friend inline void svgWriteFooter(SVGFile &svg);
+	friend inline void svgWriteHeader(SvgFile &svg);
+	friend inline void svgWriteFooter(SvgFile &svg);
 	
-	friend inline bool open(SVGFile &svg, char const * fileName);
-	friend inline bool close(SVGFile &svg);
+	friend inline bool open(SvgFile &svg, char const * fileName);
+	friend inline bool close(SvgFile &svg);
 	
-	SVGFile():
+	SvgFile():
 		cursor(0,0),
         size(0,0)
 	{
 		resetStyles();
 	}
 
-	SVGFile(char const *fileName):
+	SvgFile(char const *fileName):
 		cursor(0,0),
         size(0,0)
 	{
@@ -82,7 +82,7 @@ struct SVGFile
 		open(*this, fileName);
 	}
 
-	~SVGFile()
+	~SvgFile()
 	{
 		close(*this);
 	}
@@ -120,18 +120,18 @@ private:
 };
 
 template <>
-struct DirectionIterator<SVGFile, Output>
+struct DirectionIterator<SvgFile, Output>
 {
-    typedef SVGFile* Type;
+    typedef SvgFile* Type;
 };
 
-inline void svgResize(SVGFile &svg, int width, int height)
+inline void svgResize(SvgFile &svg, int width, int height)
 {
     svg.size.i1 = width;
     svg.size.i2 = height;
 }
 
-inline void svgWriteHeader(SVGFile &svg)
+inline void svgWriteHeader(SvgFile &svg)
 {
 	svg.file << "<?xml version=\"1.0\"?>" << std::endl;
 	svg.file << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"" << std::endl;
@@ -171,14 +171,14 @@ inline void svgWriteHeader(SVGFile &svg)
 	svg.file << std::endl;
 }
 
-inline void svgWriteFooter(SVGFile &svg)
+inline void svgWriteFooter(SvgFile &svg)
 {
 	svg.file << std::endl;
 	svg.file << "</svg>" << std::endl;
 }
 
 
-inline bool open(SVGFile &svg, char const * fileName)
+inline bool open(SvgFile &svg, char const * fileName)
 {
 	svg.file.open(fileName, std::ios_base::out);
 	if (!svg.file.is_open()) return false;
@@ -186,7 +186,7 @@ inline bool open(SVGFile &svg, char const * fileName)
 	return true;
 }
 
-inline bool close(SVGFile &svg)
+inline bool close(SvgFile &svg)
 {
 	if (svg.file.is_open())
 	{
@@ -196,8 +196,8 @@ inline bool close(SVGFile &svg)
 	return true;
 }
 
-SVGFile *
-directionIterator(SVGFile & svg, Output)
+SvgFile *
+directionIterator(SvgFile & svg, Output)
 {
     return &svg;
 }
@@ -205,7 +205,7 @@ directionIterator(SVGFile & svg, Output)
 
 template <typename TCharacter>
 inline void
-writeValue(SVGFile *svg, TCharacter character)
+writeValue(SvgFile *svg, TCharacter character)
 {
     char x = static_cast<char>(character);
 	if (x == '\n')
@@ -232,7 +232,7 @@ writeValue(SVGFile *svg, TCharacter character)
 
 template <typename TContigGaps, typename TContigName>
 inline void _printContig(
-	SVGFile &svg, 
+	SvgFile &svg, 
 	AlignedReadLayout &,
 	TContigGaps &contigGaps,
 	TContigName const &contigName)
@@ -282,7 +282,7 @@ inline void _printContig(
 
 template <typename TContigGaps, typename TReadGaps, typename TAlignedRead, typename TLine>
 inline void _printRead(
-	SVGFile &svg, 
+	SvgFile &svg, 
 	AlignedReadLayout &layout, 
 	TContigGaps &contigGaps,
 	TReadGaps &readGaps,
@@ -324,14 +324,14 @@ inline void _printRead(
 	}
 	line = svg.cursor.i2 * 20 + 10;
 	
-	if (length(layout.mateCoords) <= alignedRead.pairMatchId)
-		resize(layout.mateCoords, alignedRead.pairMatchId + 1, Pair<int>(-1,-1));
+	if (length(layout.mateCoords) <= alignedRead.pairMatchID)
+		resize(layout.mateCoords, alignedRead.pairMatchID + 1, Pair<int>(-1,-1));
 	else
 	{
-		if (layout.mateCoords[alignedRead.pairMatchId].i2 != -1)
+		if (layout.mateCoords[alignedRead.pairMatchID].i2 != -1)
 		{
 			Pair<__int64> a((alignedRead.beginPos - ofs) * 20, line);
-			Pair<__int64> b(layout.mateCoords[alignedRead.pairMatchId]);
+			Pair<__int64> b(layout.mateCoords[alignedRead.pairMatchID]);
 			if (a.i1 < b.i1)
 			{
 				Pair<__int64> tmp = a;
@@ -348,7 +348,7 @@ inline void _printRead(
 			svg.file << "\" stroke-width=\"2\" stroke=\"black\" stroke-opacity=\"0.2\" fill=\"none\"/>";
 		}
 		else
-			layout.mateCoords[alignedRead.pairMatchId] = Pair<int>((alignedRead.beginPos - ofs) * 20, line);
+			layout.mateCoords[alignedRead.pairMatchID] = Pair<int>((alignedRead.beginPos - ofs) * 20, line);
 	}
 	
 
@@ -406,8 +406,8 @@ inline void _printRead(
 //////////////////////////////////////////////////////////////////////////////
 /*
 template <typename TSource>
-inline SVGFile &
-operator << (SVGFile & target, 
+inline SvgFile &
+operator << (SvgFile & target, 
 			 TSource  source)
 {
     typename DirectionIterator<TStream, Output>::Type it = directionIterator(target, Output());
@@ -416,18 +416,18 @@ operator << (SVGFile & target,
 }
 */
 
-//inline SVGFile &
-//operator << (SVGFile & target, char source)
+//inline SvgFile &
+//operator << (SvgFile & target, char source)
 //{
-//  typename DirectionIterator<SVGFile, Output>::Type it = directionIterator(target, Output());
+//  typename DirectionIterator<SvgFile, Output>::Type it = directionIterator(target, Output());
 //  write(it, source);
 //	return target;
 //}
 //
-//inline SVGFile &
-//operator << (SVGFile & target, char const *source)
+//inline SvgFile &
+//operator << (SvgFile & target, char const *source)
 //{
-//  typename DirectionIterator<SVGFile, Output>::Type it = directionIterator(target, Output());
+//  typename DirectionIterator<SvgFile, Output>::Type it = directionIterator(target, Output());
 //  write(it, source);
 //	return target;
 //}
@@ -435,7 +435,7 @@ operator << (SVGFile & target,
 
 template <typename TStringSet, typename TTrace, typename TIndexPair>
 void
-_alignNeedlemanWunschMatrix(SVGFile& svg,
+_alignNeedlemanWunschMatrix(SvgFile& svg,
 							  TStringSet const& str,
 							  TTrace const& trace,
 							  TIndexPair const&)
@@ -478,13 +478,13 @@ SEQAN_CHECKPOINT
 		svg.file << "<g transform=\"translate(0," << pos1*20+25 << ")\"><text y=\"0.3em\" " << svg.style[svg.dpSequence] << '>' << str[1][pos1] << "</text></g>" << std::endl;
 }
 
-template <typename TStringSet, typename TId, typename TPos, typename TTraceValue>
+template <typename TStringSet, typename TID, typename TPos, typename TTraceValue>
 inline void
-_alignTracePrint(SVGFile& svg,
+_alignTracePrint(SvgFile& svg,
 				   TStringSet const&,
-				   TId const,
+				   TID const,
 				   TPos pos1,
-				   TId const,
+				   TID const,
 				   TPos pos2,
 				   TPos const segLen,
 				   TTraceValue const tv)

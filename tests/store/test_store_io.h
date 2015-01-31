@@ -59,7 +59,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, maxValue(getAnnotation(it).beginPos));
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, maxValue(getAnnotation(it).endPos));
     SEQAN_ASSERT_EQ(value(it), 0u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, maxValue(getAnnotation(it).parentId));
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, maxValue(getAnnotation(it).parentID));
     SEQAN_ASSERT_EQ(getParentName(it), "<root>");
     goNext(it);
 
@@ -67,7 +67,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33031813);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33026870);
     SEQAN_ASSERT_EQ(value(it), 1u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 0u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 0u);
     SEQAN_ASSERT_EQ(getParentName(it), "<root>");
     goNext(it);
 
@@ -75,7 +75,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33026870);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33026870);
     SEQAN_ASSERT_EQ(value(it), 2u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 1u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 1u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002yoz.1");
     goNext(it);
 
@@ -83,7 +83,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33027740);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33026870);
     SEQAN_ASSERT_EQ(value(it), 3u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 1u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 1u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002yoz.1");
     goNext(it);
 
@@ -91,7 +91,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33030540);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33030246);
     SEQAN_ASSERT_EQ(value(it), 4u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 1u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 1u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002yoz.1");
     goNext(it);
 
@@ -99,7 +99,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33031813);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33031709);
     SEQAN_ASSERT_EQ(value(it), 5u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 1u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 1u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002yoz.1");
     goNext(it);
 
@@ -107,7 +107,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33031934);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33041243);
     SEQAN_ASSERT_EQ(value(it), 6u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 0u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 0u);
     SEQAN_ASSERT_EQ(getParentName(it), "<root>");
     goNext(it);
 
@@ -115,7 +115,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33032082);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33040891);
     SEQAN_ASSERT_EQ(value(it), 7u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 6u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 6u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002ypa.3");
     goNext(it);
 
@@ -123,7 +123,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33031934);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33032154);
     SEQAN_ASSERT_EQ(value(it), 8u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 6u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 6u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002ypa.3");
     goNext(it);
 
@@ -131,7 +131,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33036102);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33036199);
     SEQAN_ASSERT_EQ(value(it), 9u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 6u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 6u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002ypa.3");
     goNext(it);
 
@@ -139,7 +139,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33038761);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33038831);
     SEQAN_ASSERT_EQ(value(it), 10u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 6u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 6u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002ypa.3");
     goNext(it);
 
@@ -147,7 +147,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33039570);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33039688);
     SEQAN_ASSERT_EQ(value(it), 11u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 6u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 6u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002ypa.3");
     goNext(it);
 
@@ -155,7 +155,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_ucsc_known_genes)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 33040783);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 33041243);
     SEQAN_ASSERT_EQ(value(it), 12u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 6u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 6u);
     SEQAN_ASSERT_EQ(getParentName(it), "uc002ypa.3");
     goNext(it);
 
@@ -189,7 +189,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gff)
     append(gffPath, "/tests/store/example.gff");
 
     GffFileIn f(toCString(gffPath));
-    typedef typename seqan::FragmentStore<>::TAnnotationStoreElement::TId TId;
+    typedef typename seqan::FragmentStore<>::TAnnotationStoreElement::TID TID;
 
     seqan::FragmentStore<> store;
 
@@ -202,7 +202,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gff)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, maxValue(getAnnotation(it).beginPos));
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, maxValue(getAnnotation(it).endPos));
     SEQAN_ASSERT_EQ(value(it), 0u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, maxValue<TId>());
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, maxValue<TID>());
     SEQAN_ASSERT_EQ(getParentName(it), "<root>");
     goNext(it);
 
@@ -210,7 +210,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gff)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 1299);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 9000);
     SEQAN_ASSERT_EQ(value(it), 1u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 0u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 0u);
     SEQAN_ASSERT_EQ(getParentName(it), "<root>");
     goNext(it);
 
@@ -218,7 +218,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gff)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 1299);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 1500);
     SEQAN_ASSERT_EQ(value(it), 2u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 1u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 1u);
     SEQAN_ASSERT_EQ(getParentName(it), "mrna0001");
     goNext(it);
 
@@ -226,7 +226,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gff)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 1049);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 1500	);
     SEQAN_ASSERT_EQ(value(it), 3u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 1u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 1u);
     SEQAN_ASSERT_EQ(getParentName(it), "mrna0001");
 }
 
@@ -250,7 +250,7 @@ SEQAN_DEFINE_TEST(test_store_io_write_gff)
 
 SEQAN_DEFINE_TEST(test_store_io_read_gtf)
 {
-    typedef typename seqan::FragmentStore<>::TAnnotationStoreElement::TId TId;
+    typedef typename seqan::FragmentStore<>::TAnnotationStoreElement::TID TID;
 
     seqan::CharString gtfPath = SEQAN_PATH_TO_ROOT();
     append(gtfPath, "/tests/store/example.gtf");
@@ -266,7 +266,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, maxValue(getAnnotation(it).beginPos));
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, maxValue(getAnnotation(it).endPos));
     SEQAN_ASSERT_EQ(value(it), 0u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, maxValue<TId>());
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, maxValue<TID>());
     SEQAN_ASSERT_EQ(getParentName(it), "<root>");
     goNext(it);
 
@@ -274,7 +274,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 13182);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 5140);
     SEQAN_ASSERT_EQ(value(it), 1u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 0u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 0u);
     SEQAN_ASSERT_EQ(getParentName(it), "<root>");
     goNext(it);
 
@@ -282,7 +282,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 13182);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 5140);
     SEQAN_ASSERT_EQ(value(it), 2u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 1u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 1u);
     SEQAN_ASSERT_EQ(getParentName(it), "gene1");
     goNext(it);
 
@@ -290,7 +290,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 8522);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 5140);
     SEQAN_ASSERT_EQ(value(it), 3u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 2u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 2u);
     SEQAN_ASSERT_EQ(getParentName(it), "trans2");
     goNext(it);
 
@@ -298,7 +298,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 9711);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 8522);
     SEQAN_ASSERT_EQ(value(it), 4u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 2u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 2u);
     SEQAN_ASSERT_EQ(getParentName(it), "trans2");
     goNext(it);
 
@@ -306,7 +306,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 13182);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 9711);
     SEQAN_ASSERT_EQ(value(it), 5u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 2u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 2u);
     SEQAN_ASSERT_EQ(getParentName(it), "trans2");
     goNext(it);
 
@@ -314,7 +314,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 70151);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 65148);
     SEQAN_ASSERT_EQ(value(it), 6u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 0u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 0u);
     SEQAN_ASSERT_EQ(getParentName(it), "<root>");
     goNext(it);
 
@@ -322,7 +322,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 70151);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 65148);
     SEQAN_ASSERT_EQ(value(it), 7u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 6u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 6u);
     SEQAN_ASSERT_EQ(getParentName(it), "140.000");
     goNext(it);
 
@@ -330,7 +330,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 65487);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 65148);
     SEQAN_ASSERT_EQ(value(it), 8u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 7u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 7u);
     SEQAN_ASSERT_EQ(getParentName(it), "140.000.1");
     goNext(it);
 
@@ -338,7 +338,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 66992);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 66822);
     SEQAN_ASSERT_EQ(value(it), 9u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 7u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 7u);
     SEQAN_ASSERT_EQ(getParentName(it), "140.000.1");
     goNext(it);
 
@@ -346,7 +346,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 66995);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 66992);
     SEQAN_ASSERT_EQ(value(it), 10u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 7u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 7u);
     SEQAN_ASSERT_EQ(getParentName(it), "140.000.1");
     goNext(it);
 
@@ -354,7 +354,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 66999);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 66995);
     SEQAN_ASSERT_EQ(value(it), 11u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 7u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 7u);
     SEQAN_ASSERT_EQ(getParentName(it), "140.000.1");
     goNext(it);
 
@@ -362,7 +362,7 @@ SEQAN_DEFINE_TEST(test_store_io_read_gtf)
     SEQAN_ASSERT_EQ(getAnnotation(it).beginPos, 70151);
     SEQAN_ASSERT_EQ(getAnnotation(it).endPos, 70102);
     SEQAN_ASSERT_EQ(value(it), 12u);
-    SEQAN_ASSERT_EQ(getAnnotation(it).parentId, 7u);
+    SEQAN_ASSERT_EQ(getAnnotation(it).parentID, 7u);
     SEQAN_ASSERT_EQ(getParentName(it), "140.000.1");
 }
 

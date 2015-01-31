@@ -71,8 +71,8 @@ struct GsiRecord
     // Flags, 0x01 - paired, 0x40 - first read in pair, 0x80 - second read in pair.
     int flags;
 
-    // Id of the read, possibly not set.
-    size_t readId;
+    // ID of the read, possibly not set.
+    size_t readID;
 
     // Original distance of the interval before lowering.
     int originalDistance;
@@ -83,8 +83,8 @@ struct GsiRecord
     // Name of the contig the interval is defined on.
     CharString contigName;
 
-    // Id of the contig, possibly not set.
-    size_t contigId;
+    // ID of the contig, possibly not set.
+    size_t contigID;
 
     // true iff the interval is on the forward strand.
     bool isForward;
@@ -97,7 +97,7 @@ struct GsiRecord
 
     // Default constructor.
     GsiRecord() :
-        flags(0), readId(0), originalDistance(0), distance(0), contigId(0), isForward(0), firstPos(0), lastPos(0)
+        flags(0), readID(0), originalDistance(0), distance(0), contigID(0), isForward(0), firstPos(0), lastPos(0)
     {}
 
     // Complete constructor for all properties.
@@ -108,29 +108,29 @@ struct GsiRecord
               bool const & _isForward,
               size_t const & _firstPos,
               size_t const & _lastPos) :
-        readName(_readName), flags(_flags), readId(0), originalDistance(_distance), distance(_distance),
-        contigName(_contigName), contigId(0), isForward(_isForward), firstPos(_firstPos), lastPos(_lastPos)
+        readName(_readName), flags(_flags), readID(0), originalDistance(_distance), distance(_distance),
+        contigName(_contigName), contigID(0), isForward(_isForward), firstPos(_firstPos), lastPos(_lastPos)
     {}
 
     // Lexicographic comparison.
     bool operator<(GsiRecord const & other) const
     {
-        if (readId < other.readId)
+        if (readID < other.readID)
             return true;
 
-        if (readId == other.readId && distance < other.distance)
+        if (readID == other.readID && distance < other.distance)
             return true;
 
-        if (readId == other.readId && distance == other.distance &&
-            contigId < other.contigId)
+        if (readID == other.readID && distance == other.distance &&
+            contigID < other.contigID)
             return true;
 
-        if (readId == other.readId && distance == other.distance &&
-            contigId == other.contigId && firstPos < other.firstPos)
+        if (readID == other.readID && distance == other.distance &&
+            contigID == other.contigID && firstPos < other.firstPos)
             return true;
 
-        if (readId == other.readId && distance == other.distance &&
-            contigId == other.contigId && firstPos == other.firstPos &&
+        if (readID == other.readID && distance == other.distance &&
+            contigID == other.contigID && firstPos == other.firstPos &&
             lastPos < other.lastPos)
             return true;
 
@@ -155,11 +155,11 @@ void clear(GsiRecord & record)
 {
     clear(record.readName);
     record.flags = 0;
-    record.readId = 0;
+    record.readID = 0;
     record.originalDistance = 0;
     record.distance = 0;
     clear(record.contigName);
-    record.contigId = 0;
+    record.contigID = 0;
     record.isForward = true;
     record.firstPos = 0;
     record.lastPos = 0;

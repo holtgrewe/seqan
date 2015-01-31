@@ -50,7 +50,7 @@ createIntervalTreeStore(FragmentStore<TSpec, TConfig> & me, const bool &unknownO
 {
 	typedef typename FragmentStore<TSpec, TConfig>::TAnnotationStore 	TAnnotationStore;
 	typedef typename Value<TAnnotationStore>::Type 				TAnnotationStoreElement;
-	typedef typename TAnnotationStoreElement::TId 				TId;
+	typedef typename TAnnotationStoreElement::TID 				TID;
 	typedef typename Iterator<TAnnotationStore>::Type 			TAnnotationIterator;
 	
 	typedef	typename FragmentStore<TSpec, TConfig>::TIntervalTreeStore 	TIntervalTreeStore;
@@ -59,7 +59,7 @@ createIntervalTreeStore(FragmentStore<TSpec, TConfig> & me, const bool &unknownO
 	typedef 	 String<TInterval>					TIntervals;
 	typedef typename Iterator<String<TIntervals> >::Type			TCIter;
 	
-	static const TId INVALID_ID = TAnnotationStoreElement::INVALID_ID;
+	static const TID INVALID_ID = TAnnotationStoreElement::INVALID_ID;
 	
 	// get intervals for each contig (R- and F-strand):
 	if (!empty(me.annotationStore) && !unknownO)
@@ -74,12 +74,12 @@ createIntervalTreeStore(FragmentStore<TSpec, TConfig> & me, const bool &unknownO
 		
 		TAnnotationIterator itAnno = begin(me.annotationStore);
 		TAnnotationIterator itAnnoEnd = end(me.annotationStore);
-		TId beginPos;
-		TId endPos;
+		TID beginPos;
+		TID endPos;
 		TInterval interval;
 		for ( ; itAnno != itAnnoEnd; goNext(itAnno))
 		{
-			if (getValue(itAnno).contigId != INVALID_ID)
+			if (getValue(itAnno).contigID != INVALID_ID)
 			{
 				beginPos = getValue(itAnno).beginPos;
 				endPos = getValue(itAnno).endPos;
@@ -88,14 +88,14 @@ createIntervalTreeStore(FragmentStore<TSpec, TConfig> & me, const bool &unknownO
 					interval.i1 = beginPos;
 					interval.i2 = endPos;
 					interval.cargo = position(itAnno, me.annotationStore);
-					appendValue(value(contigIntervals_F,  getValue(itAnno).contigId), interval, Generous());		
+					appendValue(value(contigIntervals_F,  getValue(itAnno).contigID), interval, Generous());		
 				}
 				else if (beginPos != INVALID_ID  && beginPos > endPos)
 				{
 					interval.i1 = endPos;					
 					interval.i2 = beginPos;
 					interval.cargo = position(itAnno, me.annotationStore);
-					appendValue(value(contigIntervals_R, getValue(itAnno).contigId), interval, Generous() );
+					appendValue(value(contigIntervals_R, getValue(itAnno).contigID), interval, Generous() );
 				}
 			}
 		}
@@ -125,12 +125,12 @@ createIntervalTreeStore(FragmentStore<TSpec, TConfig> & me, const bool &unknownO
 		resize(contigIntervals, length(me.contigStore));
 		TAnnotationIterator itAnno = begin(me.annotationStore);
 		TAnnotationIterator itAnnoEnd = end(me.annotationStore);
-		TId beginPos;
-		TId endPos;
+		TID beginPos;
+		TID endPos;
 		TInterval interval;
 		for ( ; itAnno != itAnnoEnd; goNext(itAnno))
 		{
-			if (getValue(itAnno).contigId != INVALID_ID)
+			if (getValue(itAnno).contigID != INVALID_ID)
 			{
 				beginPos = getValue(itAnno).beginPos;
 				endPos = getValue(itAnno).endPos;
@@ -147,7 +147,7 @@ createIntervalTreeStore(FragmentStore<TSpec, TConfig> & me, const bool &unknownO
 						interval.i2 = beginPos;
 					}
 					interval.cargo = position(itAnno, me.annotationStore);
-					appendValue(value(contigIntervals,  getValue(itAnno).contigId), interval, Generous());		
+					appendValue(value(contigIntervals,  getValue(itAnno).contigID), interval, Generous());		
 				}
 			}
 		}

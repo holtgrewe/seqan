@@ -184,9 +184,9 @@ readRecord(TSeqString & seq, TFwdIterator & iter, EmblSequence)
 
 // readRecord() for EMBL id/seq pairs.
 
-template <typename TIdString, typename TSeqString, typename TFwdIterator>
+template <typename TIDString, typename TSeqString, typename TFwdIterator>
 inline void
-readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, Embl)
+readRecord(TIDString & meta, TSeqString & seq, TFwdIterator & iter, Embl)
 {
     IsBlank isBlank;
     IsWhitespace isWhite;
@@ -210,9 +210,9 @@ readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, Embl)
     readRecord(seq, iter, EmblSequence());
 }
 
-template <typename TIdString, typename TSeqString, typename TQualString, typename TFwdIterator>
+template <typename TIDString, typename TSeqString, typename TQualString, typename TFwdIterator>
 inline void
-readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, Embl)
+readRecord(TIDString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, Embl)
 {
     clear(qual);
     readRecord(meta, seq, iter, Embl());

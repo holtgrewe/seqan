@@ -477,7 +477,7 @@ _alignBandedNeedlemanWunschTrace(TAlign & align,
 								 TDiagonal const diagU)
 {
 	//typedef typename Value<TStringSet>::Type TString;
-	typedef typename Id<TStringSet>::Type TId;
+	typedef typename ID<TStringSet>::Type TID;
 	typedef typename Size<TTrace>::Type TSize;
 	typedef typename Value<TTrace>::Type TTraceValue;
 
@@ -485,8 +485,8 @@ _alignBandedNeedlemanWunschTrace(TAlign & align,
 	TTraceValue Diagonal = 0; TTraceValue Horizontal = 1; TTraceValue Vertical = 2;
 
 	// Initialization
-	TId id1 = positionToId(const_cast<TStringSet&>(str), 0);
-	TId id2 = positionToId(const_cast<TStringSet&>(str), 1);
+	TID id1 = positionToID(const_cast<TStringSet&>(str), 0);
+	TID id2 = positionToID(const_cast<TStringSet&>(str), 1);
 	TSize lo_row = (diagU <= 0) ? -1 * diagU : 0;
 	TSize diagonalWidth = (TSize) (diagU - diagL + 1);
 
@@ -559,8 +559,8 @@ _alignBandedNeedlemanWunschTrace(TAlign & align,
 	}
 
 	// Handle the remaining sequence
-	if (actualCol != 0) _alignTracePrint(align, str[0], str[1], (TId) id1, (TSize) 0, (TId) 0, (TSize) 0, (TSize) actualCol,  Horizontal);
-	else if (actualRow != 0) _alignTracePrint(align, str[0], str[1], (TId) 0, (TSize) 0, (TId) id2, (TSize) 0, (TSize) actualRow,  Vertical);
+	if (actualCol != 0) _alignTracePrint(align, str[0], str[1], (TID) id1, (TSize) 0, (TID) 0, (TSize) 0, (TSize) actualCol,  Horizontal);
+	else if (actualRow != 0) _alignTracePrint(align, str[0], str[1], (TID) 0, (TSize) 0, (TID) id2, (TSize) 0, (TSize) actualRow,  Vertical);
 
 }
 

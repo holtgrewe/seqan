@@ -240,42 +240,42 @@ erase(StringSet<TString, Owner<Default> > & me, TPos pos, TPosEnd posEnd)
 }
 
 // --------------------------------------------------------------------------
-// Function getValueById()
+// Function getValueByID()
 // --------------------------------------------------------------------------
 
-template <typename TString, typename TSpec, typename TId>
+template <typename TString, typename TSpec, typename TID>
 inline typename Reference<StringSet<TString, Owner<TSpec> > >::Type
-getValueById(StringSet<TString, Owner<TSpec> >& me,
-            TId const id)
+getValueByID(StringSet<TString, Owner<TSpec> >& me,
+            TID const id)
 {
     SEQAN_CHECKPOINT;
-    if (id < (TId) length(me)) return value(me, id);
+    if (id < (TID) length(me)) return value(me, id);
     static TString tmp = TString();
     return tmp;
 }
 
-template <typename TString, typename TSpec, typename TId>
+template <typename TString, typename TSpec, typename TID>
 inline typename Reference<StringSet<TString, Owner<TSpec> > const>::Type
-getValueById(StringSet<TString, Owner<TSpec> > const & me,
-            TId const id)
+getValueByID(StringSet<TString, Owner<TSpec> > const & me,
+            TID const id)
 {
-    if (id < (TId) length(me)) return value(me, id);
+    if (id < (TID) length(me)) return value(me, id);
     static TString tmp = TString();
     return tmp;
 }
 
 // --------------------------------------------------------------------------
-// Function assignValueById()
+// Function assignValueByID()
 // --------------------------------------------------------------------------
 
-template <typename TString, typename TSpec, typename TId>
-inline typename Id<StringSet<TString, Owner<TSpec> > >::Type
-assignValueById(StringSet<TString, Owner<TSpec> > & me,
+template <typename TString, typename TSpec, typename TID>
+inline typename ID<StringSet<TString, Owner<TSpec> > >::Type
+assignValueByID(StringSet<TString, Owner<TSpec> > & me,
                 TString& obj,
-                TId id)
+                TID id)
 {
     SEQAN_CHECKPOINT;
-    if (id >= (TId) length(me.strings))
+    if (id >= (TID) length(me.strings))
     {
         resize(me.strings, id+1, TString());
         resize(me.limits, length(me.limits) + 1, Generous());
@@ -286,12 +286,12 @@ assignValueById(StringSet<TString, Owner<TSpec> > & me,
 }
 
 // --------------------------------------------------------------------------
-// Function removeValueById()
+// Function removeValueByID()
 // --------------------------------------------------------------------------
 
-template<typename TString, typename TSpec, typename TId>
+template<typename TString, typename TSpec, typename TID>
 inline void
-removeValueById(StringSet<TString, Owner<TSpec> > & me, TId const id)
+removeValueByID(StringSet<TString, Owner<TSpec> > & me, TID const id)
 {
     SEQAN_CHECKPOINT;
     erase(me.strings, id);
@@ -300,12 +300,12 @@ removeValueById(StringSet<TString, Owner<TSpec> > & me, TId const id)
 }
 
 // --------------------------------------------------------------------------
-// Function positionToId()
+// Function positionToID()
 // --------------------------------------------------------------------------
 
 template <typename TString, typename TSpec, typename TPos>
-inline typename Id<StringSet<TString, Owner<TSpec> > >::Type
-positionToId(StringSet<TString, Owner<TSpec> > &,
+inline typename ID<StringSet<TString, Owner<TSpec> > >::Type
+positionToID(StringSet<TString, Owner<TSpec> > &,
             TPos const pos)
 {
     SEQAN_CHECKPOINT;
@@ -313,12 +313,12 @@ positionToId(StringSet<TString, Owner<TSpec> > &,
 }
 
 // --------------------------------------------------------------------------
-// Function positionToId()
+// Function positionToID()
 // --------------------------------------------------------------------------
 
 template <typename TString, typename TSpec, typename TPos>
-inline typename Id<StringSet<TString, Owner<TSpec> > >::Type
-positionToId(StringSet<TString, Owner<TSpec> > const &,
+inline typename ID<StringSet<TString, Owner<TSpec> > >::Type
+positionToID(StringSet<TString, Owner<TSpec> > const &,
             TPos const pos)
 {
     SEQAN_CHECKPOINT;
@@ -329,10 +329,10 @@ positionToId(StringSet<TString, Owner<TSpec> > const &,
 // Function idToPosition()
 // --------------------------------------------------------------------------
 
-template <typename TString, typename TSpec, typename TId>
-inline typename Id<StringSet<TString, Owner<TSpec> > >::Type
+template <typename TString, typename TSpec, typename TID>
+inline typename ID<StringSet<TString, Owner<TSpec> > >::Type
 idToPosition(StringSet<TString, Owner<TSpec> > const&,
-            TId const id)
+            TID const id)
 {
     SEQAN_CHECKPOINT;
     return id;

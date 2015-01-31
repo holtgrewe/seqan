@@ -36,15 +36,15 @@ void simulateReads(TReads & reads, TErrorDist const & errorDist, TStore const & 
 #ifdef _OPENMP
         id = omp_get_thread_num();
 #endif
-        unsigned contigId = pickRandomNumber(rng[id], pdfContig);
+        unsigned contigID = pickRandomNumber(rng[id], pdfContig);
         unsigned pos;
         bool ok;
 
         do
         {
-            Pdf<Uniform<unsigned> > pdfPos(0, length(store.contigStore[contigId].seq) - readLen);
+            Pdf<Uniform<unsigned> > pdfPos(0, length(store.contigStore[contigID].seq) - readLen);
             pos = pickRandomNumber(rng[id], pdfPos);
-            reads[i] = infix(store.contigStore[contigId].seq, pos, pos + readLen);
+            reads[i] = infix(store.contigStore[contigID].seq, pos, pos + readLen);
 
             ok = true;
             for (unsigned j = 0; j < readLen; ++j)

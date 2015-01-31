@@ -45,15 +45,15 @@
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// Class RefIdMapping
+// Class RefIDMapping
 // ----------------------------------------------------------------------------
 
-class RefIdMapping
+class RefIDMapping
 {
 public:
     String<unsigned> map;
 
-    RefIdMapping() {}
+    RefIDMapping() {}
 };
 
 // ============================================================================
@@ -68,7 +68,7 @@ public:
 // Function length()
 // ----------------------------------------------------------------------------
 
-inline unsigned length(RefIdMapping const & mapping)
+inline unsigned length(RefIDMapping const & mapping)
 {
     return length(mapping.map);
 }
@@ -78,7 +78,7 @@ inline unsigned length(RefIdMapping const & mapping)
 // ----------------------------------------------------------------------------
 
 template <typename TTargetNameStore, typename TTargetNameStoreCache, typename TSourceNameStore>
-void rebuildMapping(RefIdMapping & mapping,
+void rebuildMapping(RefIDMapping & mapping,
                     TTargetNameStore const & targetNameStore,
                     TTargetNameStoreCache const & targetNameStoreCache,
                     TSourceNameStore const & sourceNameStore)
@@ -89,7 +89,7 @@ void rebuildMapping(RefIdMapping & mapping,
     for (unsigned i = 0; i < length(sourceNameStore); ++i)
     {
         unsigned idx = 0;
-        if (getIdByName(targetNameStore, sourceNameStore[i], idx, targetNameStoreCache))
+        if (getIDByName(targetNameStore, sourceNameStore[i], idx, targetNameStoreCache))
             mapping.map[i] = idx;
     }
 }

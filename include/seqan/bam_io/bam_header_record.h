@@ -270,11 +270,11 @@ findTagKey(unsigned & idx, TKeyName const & key, BamHeaderRecord const & record)
  * @endcode
  */
 
-template <typename TId>
+template <typename TID>
 SEQAN_FUNC_ENABLE_IF(
-    IsInteger<TId>,
+    IsInteger<TID>,
     bool)
-inline getTagValue(CharString & value, TId idx, BamHeaderRecord const & record)
+inline getTagValue(CharString & value, TID idx, BamHeaderRecord const & record)
 {
     if ((unsigned)idx >= length(record.tags))
         return false;
@@ -308,11 +308,11 @@ inline getTagValue(CharString & value, TKeyName const & key, BamHeaderRecord con
 
 // TODO(holtgrew): Parameter order!
 
-template <typename TId>
+template <typename TID>
 SEQAN_FUNC_ENABLE_IF(
-    IsInteger<TId>,
+    IsInteger<TID>,
     void)
-inline setTagValue(TId idx, CharString const & value, BamHeaderRecord & record)
+inline setTagValue(TID idx, CharString const & value, BamHeaderRecord & record)
 {
     if (idx >= length(record.tags))
         return;

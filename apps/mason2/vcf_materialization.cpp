@@ -227,11 +227,11 @@ void VcfMaterializer::_loadLevels(int rID)
     std::stringstream ssTop, ssBottom;
     ssTop << sequenceName(faiIndex, rID) << "/TOP";
     unsigned idx = 0;
-    if (!getIdByName(idx, methFaiIndex, ssTop.str().c_str()))
+    if (!getIDByName(idx, methFaiIndex, ssTop.str().c_str()))
         throw MasonIOException("Could not find top levels in methylation FASTA.");
     readSequence(currentLevels.forward, methFaiIndex, idx);
     ssBottom << sequenceName(faiIndex, rID) << "/BOT";
-    if (!getIdByName(idx, methFaiIndex, ssBottom.str().c_str()))
+    if (!getIDByName(idx, methFaiIndex, ssBottom.str().c_str()))
         throw MasonIOException("Could not find bottom levels in methylation FASTA.");
     readSequence(currentLevels.reverse, methFaiIndex, idx);
 }
@@ -396,7 +396,7 @@ void VcfMaterializer::_appendToVariants(Variants & variants, seqan::VcfRecord co
     if (contains(vcfRecord.info, "SVTYPE"))  // Structural Variant
     {
         StructuralVariantRecord svRecord;
-        svRecord.rId = vcfRecord.rID;
+        svRecord.rID = vcfRecord.rID;
         svRecord.pos = vcfRecord.beginPos + 1;  // given with shift of -1
         svRecord.haplotype = 0;
 
@@ -424,9 +424,9 @@ void VcfMaterializer::_appendToVariants(Variants & variants, seqan::VcfRecord co
             svRecord.size = getSVLen(vcfRecord.info);
             std::pair<seqan::CharString, int> pos = getTargetPos(vcfRecord.info);
             unsigned idx = 0;
-            if (!getIdByName(idx, contigNamesCache(context(vcfFileIn)), pos.first))
+            if (!getIDByName(idx, contigNamesCache(context(vcfFileIn)), pos.first))
                 SEQAN_FAIL("Unknown sequence %s", toCString(pos.first));
-            svRecord.targetRId = idx;
+            svRecord.targetRID = idx;
             svRecord.targetPos = pos.second - 1;
         }
         else if (contains(vcfRecord.info, "SVTYPE=BND"))  // Breakend (Must be Translocation)
@@ -470,7 +470,7 @@ void VcfMaterializer::_appendToVariants(Variants & variants, seqan::VcfRecord co
     else if (length(vcfRecord.ref) == 1u && altLength == 1u)  // SNP
     {
         SnpRecord snpRecord;
-        snpRecord.rId = vcfRecord.rID;
+        snpRecord.rID = vcfRecord.rID;
         snpRecord.pos = vcfRecord.beginPos;
 
         // Split the alternatives.
@@ -519,7 +519,7 @@ void VcfMaterializer::_appendToVariants(Variants & variants, seqan::VcfRecord co
     else  // Small Indel
     {
         SmallIndelRecord smallIndel;
-        smallIndel.rId = vcfRecord.rID;
+        smallIndel.rID = vcfRecord.rID;
         smallIndel.pos = vcfRecord.beginPos + 1;
 
         SEQAN_ASSERT_NOT(contains(vcfRecord.alt, ","));  // only one alternative
@@ -584,9 +584,9 @@ void VcfMaterializer::_appendToVariantsBnd(Variants & variants, std::vector<seqa
     // Add translocation.
     StructuralVariantRecord svRecord;
     svRecord.kind = StructuralVariantRecord::TRANSLOCATION;
-    svRecord.rId = vcfRecords[0].rID;
+    svRecord.rID = vcfRecords[0].rID;
     svRecord.pos = vcfRecords[1].beginPos;
-    svRecord.targetRId = svRecord.rId;
+    svRecord.targetRID = svRecord.rID;
     svRecord.targetPos = vcfRecords[5].beginPos;
     svRecord.size = vcfRecords[3].beginPos - vcfRecords[1].beginPos;
     svRecord.haplotype = 0;

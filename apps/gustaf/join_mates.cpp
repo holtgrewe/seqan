@@ -159,17 +159,17 @@ parseCommandLine(JoinMatesOptions & options, int argc, char const ** argv)
 }
 
 // ----------------------------------------------------------------------------
-// Function _getShortId()
+// Function _getShortID()
 // ----------------------------------------------------------------------------
 
-// Creates a short Id out of a long one (i.e. it takes the prefix til the first white space)
-template <typename TId>
-void _getShortId(TId & shortId, TId const & longId)
+// Creates a short ID out of a long one (i.e. it takes the prefix til the first white space)
+template <typename TID>
+void _getShortID(TID & shortID, TID const & longID)
 {
-    clear(shortId);
-    for (typename seqan::Position<TId>::Type i = 0; i < length(longId) && isgraph(value(longId, i)); ++i)
+    clear(shortID);
+    for (typename seqan::Position<TID>::Type i = 0; i < length(longID) && isgraph(value(longID, i)); ++i)
     {
-        appendValue(shortId, value(longId, i));
+        appendValue(shortID, value(longID, i));
     }
 }
 
@@ -180,14 +180,14 @@ void _getShortId(TId & shortId, TId const & longId)
 // Imports mate pairs from two files, joins them, stores the joining position in
 // String readJoinPositions, and stores the sequences in the StringSet seqs and
 // their identifiers in the StringSet ids
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 inline bool
 _importSequences(seqan::CharString const & fileNameL,
                  seqan::CharString const & fileNameR,
                  bool revCompl,
                  seqan::StringSet<TSequence> & seqs,
-                 seqan::StringSet<TId> & ids,
-                 seqan::StringSet<TId> & sIds,
+                 seqan::StringSet<TID> & ids,
+                 seqan::StringSet<TID> & sIDs,
                  seqan::StringSet<seqan::CharString> & quals,
                  seqan::String<unsigned> & readJoinPositions)
 {
@@ -199,8 +199,8 @@ _importSequences(seqan::CharString const & fileNameL,
         TSequence seq;
         TSequence seqL;
         TSequence seqR;
-        TId id;
-        TId sId;
+        TID id;
+        TID sID;
         seqan::CharString qual;
         seqan::CharString qualL;
         seqan::CharString qualR;
@@ -223,8 +223,8 @@ _importSequences(seqan::CharString const & fileNameL,
             appendValue(quals, qual, seqan::Generous());
             appendValue(ids, id, seqan::Generous());
 
-            _getShortId(sId, id);
-            appendValue(sIds, sId);
+            _getShortID(sID, id);
+            appendValue(sIDs, sID);
             clear(seq);
             clear(qual);
         }
@@ -246,13 +246,13 @@ _importSequences(seqan::CharString const & fileNameL,
 // Imports mate pairs from one file, separates them, and stores the sequences in the StringSets seqs and and mateSeqs
 // and their identifiers in the StringSet ids
 // Note: Assumes equally long mates, i.e. splits in the middle of the read
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 inline bool
 _importSequences(seqan::CharString const & fileName,
                  seqan::StringSet<TSequence> & seqs,
                  seqan::StringSet<TSequence> & mateSeqs,
-                 seqan::StringSet<TId> & ids,
-                 seqan::StringSet<TId> & sIds,
+                 seqan::StringSet<TID> & ids,
+                 seqan::StringSet<TID> & sIDs,
                  seqan::StringSet<seqan::CharString> & quals,
                  seqan::StringSet<seqan::CharString> & mateQuals)
 {
@@ -267,8 +267,8 @@ _importSequences(seqan::CharString const & fileName,
     TSequence seq;
     TSequence seqL;
     TSequence seqR;
-    TId id;
-    TId sId;
+    TID id;
+    TID sID;
     seqan::CharString qual;
     seqan::CharString qualL;
     seqan::CharString qualR;
@@ -304,8 +304,8 @@ _importSequences(seqan::CharString const & fileName,
         appendValue(mateQuals, qualR, seqan::Generous());
         appendValue(ids, id, seqan::Generous());
 
-        _getShortId(sId, id);
-        appendValue(sIds, sId);
+        _getShortID(sID, id);
+        appendValue(sIDs, sID);
         clear(seqL);
         clear(seqR);
         clear(qualL);
@@ -322,13 +322,13 @@ _importSequences(seqan::CharString const & fileName,
 template <typename TSequence>
 int _writeSequences(seqan::CharString & outPath,
                 seqan::StringSet<TSequence> const & seqs,
-                seqan::StringSet<seqan::CharString> const & sIds,
+                seqan::StringSet<seqan::CharString> const & sIDs,
                 seqan::StringSet<seqan::CharString> const & quals)
 {
     try
     {
         seqan::SeqFileOut seqFile(toCString(outPath));
-        writeRecords(seqFile, sIds, seqs, quals);
+        writeRecords(seqFile, sIDs, seqs, quals);
     }
     catch (seqan::FileOpenError const & openErr)
     {
@@ -350,7 +350,7 @@ int _writeSequences(seqan::CharString & outPath1,
                 bool revCompl,
                 seqan::StringSet<TSequence> const & seqs,
                 seqan::StringSet<TSequence> const & mateSeqs,
-                seqan::StringSet<seqan::CharString> const & sIds,
+                seqan::StringSet<seqan::CharString> const & sIDs,
                 seqan::StringSet<seqan::CharString> const & quals,
                 seqan::StringSet<seqan::CharString> const & mateQuals
                 )
@@ -368,8 +368,8 @@ int _writeSequences(seqan::CharString & outPath1,
                 reverseComplement(mateSeq);
                 reverse(mateQual);
             }
-            writeRecord(f1, sIds[i], seqs[i], quals[i]);
-            writeRecord(f2, sIds[i], mateSeq, mateQual);
+            writeRecord(f1, sIDs[i], seqs[i], quals[i]);
+            writeRecord(f2, sIDs[i], mateSeq, mateQual);
         }
     }
     catch (seqan::FileOpenError const & openErr)
@@ -427,22 +427,22 @@ int main(int argc, char const ** argv)
     seqan::StringSet<TSequence> seqs;
     seqan::StringSet<TSequence> mateSeqs;
     seqan::StringSet<seqan::CharString> ids;
-    seqan::StringSet<seqan::CharString> sIds;
+    seqan::StringSet<seqan::CharString> sIDs;
     seqan::StringSet<seqan::CharString> quals;
     seqan::StringSet<seqan::CharString> mateQuals;
     seqan::String<unsigned> joinPos;
     if (length(options.inPaths) > 1)
     {
         // Read in paired-end reads
-        _importSequences(options.inPaths[0], options.inPaths[1], options.revCompl, seqs, ids, sIds, quals, joinPos);
+        _importSequences(options.inPaths[0], options.inPaths[1], options.revCompl, seqs, ids, sIDs, quals, joinPos);
         // Write out one file with joined sequences in FASTA format
-        _writeSequences(options.outPaths[0], seqs, sIds, quals);
+        _writeSequences(options.outPaths[0], seqs, sIDs, quals);
     } else
     {
         // Read in joined reads and output two FASTA files
-        _importSequences(options.inPaths[0], seqs, mateSeqs, ids, sIds, quals, mateQuals);
+        _importSequences(options.inPaths[0], seqs, mateSeqs, ids, sIDs, quals, mateQuals);
         // Write out one file with joined sequences in FASTA format
-        _writeSequences(options.outPaths[0], options.outPaths[1], options.revCompl, seqs, mateSeqs, sIds, quals, mateQuals);
+        _writeSequences(options.outPaths[0], options.outPaths[1], options.revCompl, seqs, mateSeqs, sIDs, quals, mateQuals);
     }
 
     return 0;

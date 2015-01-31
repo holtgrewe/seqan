@@ -185,7 +185,7 @@ struct IsSequence<std::vector<TChar, TAlloc> > : True {};
 
 template <typename TChar,  typename TAlloc>
 inline void const *
-getObjectId(std::vector<TChar, TAlloc> const & me)
+getObjectID(std::vector<TChar, TAlloc> const & me)
 {
     SEQAN_CHECKPOINT;
     if (me.empty())

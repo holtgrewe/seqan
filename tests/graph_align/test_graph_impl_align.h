@@ -53,7 +53,7 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphNoEdgeWeights)
 	typedef Graph<Alignment<TStringSet, void> > TGraph;
 	typedef VertexDescriptor<TGraph>::Type TVertexDescriptor;
 	typedef EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
-	typedef	Id<TStringSet>::Type TId;
+	typedef	ID<TStringSet>::Type TID;
 	TVertexDescriptor nilVertex = getNil<TVertexDescriptor>();
 
 	// Difference between Owner and Dependent
@@ -61,13 +61,13 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphNoEdgeWeights)
 	TStringSet str;
 	TOwnerStringSet ownStr;
 	TString str0("acaagtaacataaaaaaaaaaaaaaaacccccccccttttttttaaaaa");
-	TId id0 = assignValueById(str, str0);
+	TID id0 = assignValueByID(str, str0);
 	appendValue(ownStr, str0);
 	TString str1("cccaaagggtttttccccccccccccttttttttttaaaaaaagggggggg");
-	TId id1 = assignValueById(str, str1);
+	TID id1 = assignValueByID(str, str1);
 	appendValue(ownStr, str1);
 	TString str2("cacatgtaatcatgggggggggccccccttttaaaaaaaaaaatttt");
-	TId id2 = assignValueById(str, str2);
+	TID id2 = assignValueByID(str, str2);
 	appendValue(ownStr, str2);
 
 	// Check that the graph makes a dependent StringSet
@@ -100,7 +100,7 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphNoEdgeWeights)
 	SEQAN_ASSERT_EQ(degree(g, 0), 0u);
 	SEQAN_ASSERT_EQ(numVertices(g), 1u);
 	SEQAN_ASSERT(!empty(g));
-	SEQAN_ASSERT_EQ(sequenceId(g, v0), id1);
+	SEQAN_ASSERT_EQ(sequenceID(g, v0), id1);
 	SEQAN_ASSERT_EQ(label(g, v0), "cc");
 	SEQAN_ASSERT_EQ(fragmentBegin(g, v0), 0u);
 	SEQAN_ASSERT_EQ(fragmentLength(g, v0), 2u);
@@ -111,8 +111,8 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphNoEdgeWeights)
 	TVertexDescriptor v1 = addVertex(g, id2, 0, 5);
 	TEdgeDescriptor e = addEdge(g,0,1);
 	SEQAN_ASSERT_EQ(_getVertexString(g)[0], e);
-	SEQAN_ASSERT_EQ(getIdUpperBound(_getVertexIdManager(g)), 2u);
-	SEQAN_ASSERT_EQ(getIdUpperBound(_getEdgeIdManager(g)), 1u);
+	SEQAN_ASSERT_EQ(getIDUpperBound(_getVertexIDManager(g)), 2u);
+	SEQAN_ASSERT_EQ(getIDUpperBound(_getEdgeIDManager(g)), 1u);
 	SEQAN_ASSERT_EQ(v1, 1u);
 	SEQAN_ASSERT_EQ(numVertices(g), 2u);
 	SEQAN_ASSERT_EQ(targetVertex(g, e), 1u);
@@ -239,7 +239,7 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphEdgeWeights)
 {
 	typedef String<Dna> TString;
 	typedef StringSet<TString, Dependent<> > TStringSet;
-	typedef	Id<TStringSet>::Type TId;
+	typedef	ID<TStringSet>::Type TID;
 
 	typedef Graph<Alignment<TStringSet> > TGraph;
 	typedef VertexDescriptor<TGraph>::Type TVertexDescriptor;
@@ -249,9 +249,9 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphEdgeWeights)
 	TString str0("acaagtaacataaaaaaaaaaaaaaaacccccccccttttttttaaaaa");
 	appendValue(str, str0);
 	TString str1("cccaaagggtttttccccccccccccttttttttttaaaaaaagggggggg");
-	TId id1 = assignValueById(str, str1);
+	TID id1 = assignValueByID(str, str1);
 	TString str2("cacatgtaatcatgggggggggccccccttttaaaaaaaaaaatttt");
-	TId id2 = assignValueById(str, str2);
+	TID id2 = assignValueByID(str, str2);
 
 	TGraph g(str);
 	SEQAN_ASSERT_EQ(numEdges(g), 0u);
@@ -285,7 +285,7 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphIterators)
 {
 	typedef String<Dna> TString;
 	typedef StringSet<TString, Dependent<> > TStringSet;
-	typedef	Id<TStringSet>::Type TId;
+	typedef	ID<TStringSet>::Type TID;
 
 	typedef Graph<Alignment<TStringSet, void> > TGraph;
 	typedef VertexDescriptor<TGraph>::Type TVertexDescriptor;
@@ -294,7 +294,7 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphIterators)
 	TString str0("acaagtaacataaaaaaaaaaaaaaaacccccccccttttttttaaaaa");
 	appendValue(str, str0);
 	TString str1("cccaaagggtttttccccccccccccttttttttttaaaaaaagggggggg");
-	TId id1 = assignValueById(str, str1);
+	TID id1 = assignValueByID(str, str1);
 	TString str2("cacatgtaatcatgggggggggccccccttttaaaaaaaaaaatttt");
 	appendValue(str, str2);
 
@@ -440,7 +440,7 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphOutput)
 	// Alignments
 	typedef String<char> TString;
 	typedef StringSet<TString, Dependent<> > TStringSet;
-	typedef	Id<TStringSet>::Type TId;
+	typedef	ID<TStringSet>::Type TID;
 
 	typedef Graph<Alignment<TStringSet, void> > TAlignmentGraph;
 	typedef VertexDescriptor<TAlignmentGraph>::Type TVD;
@@ -448,13 +448,13 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphOutput)
 	
 	TStringSet str;
 	TString str0("Garfieldthelastfatcat");
-	TId i0 = assignValueById(str, str0);
+	TID i0 = assignValueByID(str, str0);
 	TString str1("Garfieldthefastcat");
-	TId i1 = assignValueById(str, str1);
+	TID i1 = assignValueByID(str, str1);
 	TString str2("Garfieldtheveryfastcat");
-	TId i2 = assignValueById(str, str2);
+	TID i2 = assignValueByID(str, str2);
 	TString str3("thefatcat");
-	TId i3 = assignValueById(str, str3);
+	TID i3 = assignValueByID(str, str3);
 
 	TAlignmentGraph g(str);
 	TVD vH = addVertex(g, i1, 8, 3);
@@ -564,50 +564,50 @@ SEQAN_DEFINE_TEST(Test_Refinement_AlignmentGraphOutput)
 	         << "}\n"
 	         << "{DATA 0-vs-1\n"
 	         << "\t[__GLOBAL__]\n"
-	         << "\tsource=0 target=13 edgeId=4 cargo=0 label=the labelOpp=the:\t8 8 11 11\n"
-	         << "\tsource=4 target=10 edgeId=0 cargo=0 label=Garfield labelOpp=Garfield:\t0 0 8 8\n"
-	         << "\tsource=8 target=11 edgeId=10 cargo=0 label=fa labelOpp=fa:\t15 11 17 13\n"
-	         << "\tsource=9 target=16 edgeId=23 cargo=0 label=cat labelOpp=cat:\t18 15 21 18\n"
-	         << "\tsource=14 target=15 edgeId=17 cargo=0 label=t labelOpp=t:\t14 17 15 18\n"
+	         << "\tsource=0 target=13 edgeID=4 cargo=0 label=the labelOpp=the:\t8 8 11 11\n"
+	         << "\tsource=4 target=10 edgeID=0 cargo=0 label=Garfield labelOpp=Garfield:\t0 0 8 8\n"
+	         << "\tsource=8 target=11 edgeID=10 cargo=0 label=fa labelOpp=fa:\t15 11 17 13\n"
+	         << "\tsource=9 target=16 edgeID=23 cargo=0 label=cat labelOpp=cat:\t18 15 21 18\n"
+	         << "\tsource=14 target=15 edgeID=17 cargo=0 label=t labelOpp=t:\t14 17 15 18\n"
 	         << "}\n"
 	         << "{DATA 0-vs-2\n"
 	         << "\t[__GLOBAL__]\n"
-	         << "\tsource=3 target=15 edgeId=18 cargo=0 label=t labelOpp=t:\t18 17 19 18\n"
-	         << "\tsource=4 target=6 edgeId=2 cargo=0 label=Garfield labelOpp=Garfield:\t0 0 8 8\n"
-	         << "\tsource=5 target=7 edgeId=9 cargo=0 label=very labelOpp=last:\t11 11 15 15\n"
-	         << "\tsource=8 target=18 edgeId=12 cargo=0 label=fa labelOpp=fa:\t15 15 17 17\n"
-	         << "\tsource=9 target=20 edgeId=24 cargo=0 label=cat labelOpp=cat:\t18 19 21 22\n"
-	         << "\tsource=13 target=17 edgeId=5 cargo=0 label=the labelOpp=the:\t8 8 11 11\n"
+	         << "\tsource=3 target=15 edgeID=18 cargo=0 label=t labelOpp=t:\t18 17 19 18\n"
+	         << "\tsource=4 target=6 edgeID=2 cargo=0 label=Garfield labelOpp=Garfield:\t0 0 8 8\n"
+	         << "\tsource=5 target=7 edgeID=9 cargo=0 label=very labelOpp=last:\t11 11 15 15\n"
+	         << "\tsource=8 target=18 edgeID=12 cargo=0 label=fa labelOpp=fa:\t15 15 17 17\n"
+	         << "\tsource=9 target=20 edgeID=24 cargo=0 label=cat labelOpp=cat:\t18 19 21 22\n"
+	         << "\tsource=13 target=17 edgeID=5 cargo=0 label=the labelOpp=the:\t8 8 11 11\n"
 	         << "}\n"
 	         << "{DATA 0-vs-3\n"
 	         << "\t[__GLOBAL__]\n"
-	         << "\tsource=2 target=9 edgeId=25 cargo=0 label=cat labelOpp=cat:\t6 18 9 21\n"
-	         << "\tsource=8 target=12 edgeId=11 cargo=0 label=fa labelOpp=fa:\t15 3 17 5\n"
-	         << "\tsource=13 target=21 edgeId=6 cargo=0 label=the labelOpp=the:\t8 0 11 3\n"
-	         << "\tsource=15 target=22 edgeId=19 cargo=0 label=t labelOpp=t:\t17 5 18 6\n"
+	         << "\tsource=2 target=9 edgeID=25 cargo=0 label=cat labelOpp=cat:\t6 18 9 21\n"
+	         << "\tsource=8 target=12 edgeID=11 cargo=0 label=fa labelOpp=fa:\t15 3 17 5\n"
+	         << "\tsource=13 target=21 edgeID=6 cargo=0 label=the labelOpp=the:\t8 0 11 3\n"
+	         << "\tsource=15 target=22 edgeID=19 cargo=0 label=t labelOpp=t:\t17 5 18 6\n"
 	         << "}\n"
 	         << "{DATA 1-vs-2\n"
 	         << "\t[__GLOBAL__]\n"
-	         << "\tsource=0 target=17 edgeId=1 cargo=0 label=the labelOpp=the:\t8 8 11 11\n"
-	         << "\tsource=1 target=19 edgeId=16 cargo=0 label=s labelOpp=s:\t13 17 14 18\n"
-	         << "\tsource=3 target=14 edgeId=20 cargo=0 label=t labelOpp=t:\t18 14 19 15\n"
-	         << "\tsource=6 target=10 edgeId=3 cargo=0 label=Garfield labelOpp=Garfield:\t0 0 8 8\n"
-	         << "\tsource=11 target=18 edgeId=14 cargo=0 label=fa labelOpp=fa:\t11 15 13 17\n"
-	         << "\tsource=16 target=20 edgeId=26 cargo=0 label=cat labelOpp=cat:\t15 19 18 22\n"
+	         << "\tsource=0 target=17 edgeID=1 cargo=0 label=the labelOpp=the:\t8 8 11 11\n"
+	         << "\tsource=1 target=19 edgeID=16 cargo=0 label=s labelOpp=s:\t13 17 14 18\n"
+	         << "\tsource=3 target=14 edgeID=20 cargo=0 label=t labelOpp=t:\t18 14 19 15\n"
+	         << "\tsource=6 target=10 edgeID=3 cargo=0 label=Garfield labelOpp=Garfield:\t0 0 8 8\n"
+	         << "\tsource=11 target=18 edgeID=14 cargo=0 label=fa labelOpp=fa:\t11 15 13 17\n"
+	         << "\tsource=16 target=20 edgeID=26 cargo=0 label=cat labelOpp=cat:\t15 19 18 22\n"
 	         << "}\n"
 	         << "{DATA 1-vs-3\n"
 	         << "\t[__GLOBAL__]\n"
-	         << "\tsource=0 target=21 edgeId=7 cargo=0 label=the labelOpp=the:\t8 0 11 3\n"
-	         << "\tsource=2 target=16 edgeId=27 cargo=0 label=cat labelOpp=cat:\t6 15 9 18\n"
-	         << "\tsource=11 target=12 edgeId=13 cargo=0 label=fa labelOpp=fa:\t11 3 13 5\n"
-	         << "\tsource=14 target=22 edgeId=21 cargo=0 label=t labelOpp=t:\t14 5 15 6\n"
+	         << "\tsource=0 target=21 edgeID=7 cargo=0 label=the labelOpp=the:\t8 0 11 3\n"
+	         << "\tsource=2 target=16 edgeID=27 cargo=0 label=cat labelOpp=cat:\t6 15 9 18\n"
+	         << "\tsource=11 target=12 edgeID=13 cargo=0 label=fa labelOpp=fa:\t11 3 13 5\n"
+	         << "\tsource=14 target=22 edgeID=21 cargo=0 label=t labelOpp=t:\t14 5 15 6\n"
 	         << "}\n"
 	         << "{DATA 2-vs-3\n"
 	         << "\t[__GLOBAL__]\n"
-	         << "\tsource=2 target=20 edgeId=28 cargo=0 label=cat labelOpp=cat:\t6 19 9 22\n"
-	         << "\tsource=3 target=22 edgeId=22 cargo=0 label=t labelOpp=t:\t18 5 19 6\n"
-	         << "\tsource=12 target=18 edgeId=15 cargo=0 label=fa labelOpp=fa:\t3 15 5 17\n"
-	         << "\tsource=17 target=21 edgeId=8 cargo=0 label=the labelOpp=the:\t8 0 11 3\n"
+	         << "\tsource=2 target=20 edgeID=28 cargo=0 label=cat labelOpp=cat:\t6 19 9 22\n"
+	         << "\tsource=3 target=22 edgeID=22 cargo=0 label=t labelOpp=t:\t18 5 19 6\n"
+	         << "\tsource=12 target=18 edgeID=15 cargo=0 label=fa labelOpp=fa:\t3 15 5 17\n"
+	         << "\tsource=17 target=21 edgeID=8 cargo=0 label=the labelOpp=the:\t8 0 11 3\n"
 			 << "}\n";
 	SEQAN_ASSERT_EQ(sstream.str(), expected.str());
 
@@ -720,8 +720,8 @@ SEQAN_DEFINE_TEST(Test_Refinement_HeaviestCommonSubsequence)
 	TString s1 = "aaa";
 	TString s2 = "aa";
 	TStringSet strSet;
-	assignValueById(strSet, s1);
-	assignValueById(strSet, s2);
+	assignValueByID(strSet, s1);
+	assignValueByID(strSet, s2);
 	TGraph g(strSet);
 	TVertexDescriptor v0 = addVertex(g, 0, 0, 1);
 	TVertexDescriptor v1 = addVertex(g, 0, 1, 1);
@@ -746,8 +746,8 @@ SEQAN_DEFINE_TEST(Test_Refinement_HeaviestCommonSubsequence)
 	s1 = "aaaaa";
 	s2 = "aaa";
 	clear(strSet);
-	assignValueById(strSet, s1);
-	assignValueById(strSet, s2);
+	assignValueByID(strSet, s1);
+	assignValueByID(strSet, s2);
 	assignStringSet(g, strSet);
 	v0 = addVertex(g, 0, 0, 2);
 	v1 = addVertex(g, 0, 2, 1);

@@ -999,8 +999,8 @@ SEQAN_CONCEPT_IMPL((Index<TText, IndexEsa<TSpec> > const), (StringTreeConcept));
 	}
 */
 	template < typename TSize >
-	inline typename Id< VertexEsa<TSize> const >::Type
-	_getId(VertexEsa<TSize> const &desc) 
+	inline typename ID< VertexEsa<TSize> const >::Type
+	_getID(VertexEsa<TSize> const &desc) 
 	{
 		TSize i2 = getValueI2(desc.range);
 		if (_isSizeInval(i2) || i2 == desc.parentRight)
@@ -1013,10 +1013,10 @@ SEQAN_CONCEPT_IMPL((Index<TText, IndexEsa<TSpec> > const), (StringTreeConcept));
 	}
 
 	template < typename TSize >
-	inline typename Id< VertexEsa<TSize> >::Type
-	_getId(VertexEsa<TSize> &desc) 
+	inline typename ID< VertexEsa<TSize> >::Type
+	_getID(VertexEsa<TSize> &desc) 
 	{
-		return _getId(const_cast<VertexEsa<TSize> const &>(desc));
+		return _getID(const_cast<VertexEsa<TSize> const &>(desc));
 	}
 
 

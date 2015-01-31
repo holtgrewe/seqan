@@ -57,42 +57,42 @@ namespace SEQAN_NAMESPACE_MAIN
  * @signature ReadStoreElement::ReadStoreElement();
  * @brief Constructor.
  *
- * Sets ReadStoreElement::matePairId to ReadStoreElement::INVALID_ID.
+ * Sets ReadStoreElement::matePairID to ReadStoreElement::INVALID_ID.
  */
 
 /*!
- * @var TId ReadStoreElement::matePairId;
+ * @var TID ReadStoreElement::matePairID;
  * @brief Refers to a mate pair in the @link FragmentStore::matePairStore @endlink or is INVALID_ID if the read is
  *        not paired.
  *
- * @var TId ReadStoreElement::INVALID_ID;
+ * @var TID ReadStoreElement::INVALID_ID;
  * @brief Constant to represetn an invalid id.
  */
 
 template <typename TSpec = void>
 struct ReadStoreElement
 {
-	typedef typename Id<ReadStoreElement>::Type TId;
+	typedef typename ID<ReadStoreElement>::Type TID;
 	
-	static const TId INVALID_ID;
+	static const TID INVALID_ID;
 
-	TId matePairId;				// refers to the mate-pair, INVALID_ID if not part of a mate-pair
+	TID matePairID;				// refers to the mate-pair, INVALID_ID if not part of a mate-pair
 
-	ReadStoreElement() : matePairId(INVALID_ID) {}
+	ReadStoreElement() : matePairID(INVALID_ID) {}
 
     inline
     bool
     operator==(ReadStoreElement const & other)
     {
-        return matePairId == other.matePairId;
+        return matePairID == other.matePairID;
     }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 template <typename TSpec>
-const typename Id<ReadStoreElement<TSpec> >::Type
-ReadStoreElement<TSpec>::INVALID_ID = MaxValue<typename Id<ReadStoreElement<TSpec> >::Type>::VALUE;
+const typename ID<ReadStoreElement<TSpec> >::Type
+ReadStoreElement<TSpec>::INVALID_ID = MaxValue<typename ID<ReadStoreElement<TSpec> >::Type>::VALUE;
 
 //////////////////////////////////////////////////////////////////////////////
 

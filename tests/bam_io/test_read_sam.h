@@ -150,7 +150,7 @@ SEQAN_DEFINE_TEST(test_bam_io_sam_read_alignment)
     SEQAN_ASSERT_EQ(alignments[0].cigar[1].operation, 'I');
     SEQAN_ASSERT_EQ(alignments[0].cigar[2].count, 4u);
     SEQAN_ASSERT_EQ(alignments[0].cigar[2].operation, 'M');
-    SEQAN_ASSERT_EQ(alignments[0].rNextId, 0);
+    SEQAN_ASSERT_EQ(alignments[0].rNextID, 0);
     SEQAN_ASSERT_EQ(alignments[0].pNext, 30);
     SEQAN_ASSERT_EQ(alignments[0].tLen, 40);
     SEQAN_ASSERT_EQ(alignments[0].seq, "AAAAAAAAAA");

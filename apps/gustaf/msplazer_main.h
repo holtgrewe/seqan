@@ -57,11 +57,11 @@ int msplazer(StellarOptions & stellarOptions, MSplazerOptions & msplazerOptions)
 
     // Database and query ID
 
-    typedef CharString TId;
+    typedef CharString TID;
 
     // import query sequences using _importSequences from Stellar
     StringSet<TSequence> queries;
-    StringSet<TId> queryIDs;
+    StringSet<TID> queryIDs;
     String<unsigned> readJoinPositions;
     // TODO (ktrappe) distinguish between paired and single and, call appropriate
     // importSeq function (and preprocess query files)
@@ -76,7 +76,7 @@ int msplazer(StellarOptions & stellarOptions, MSplazerOptions & msplazerOptions)
         if (!_importSequences(stellarOptions.queryFile, "query", queries, queryIDs))
             return 1;
     }
-    StringSet<TId> shortQueryIDs = queryIDs;
+    StringSet<TID> shortQueryIDs = queryIDs;
 
     /*
     unsigned readLength = 0;
@@ -88,12 +88,12 @@ int msplazer(StellarOptions & stellarOptions, MSplazerOptions & msplazerOptions)
 
     // import database sequence using _importSequences from Stellar
     StringSet<TSequence> databases;
-    StringSet<TId> databaseIDs;
+    StringSet<TID> databaseIDs;
     std::cout << "Loading reference sequences... ";
     if (!_importSequences(stellarOptions.databaseFile, "database", databases, databaseIDs))
         return 1;
 
-    StringSet<TId> shortDatabaseIDs = databaseIDs;
+    StringSet<TID> shortDatabaseIDs = databaseIDs;
 
     for (unsigned i = 0; i < length(databases); ++i)
     {
@@ -111,7 +111,7 @@ int msplazer(StellarOptions & stellarOptions, MSplazerOptions & msplazerOptions)
     // strand (and not the reverse strand) get distance scores for all matches
 
     // Stellar Match Space Allocator
-    typedef StringSet<QueryMatches<StellarMatch<TSequence, TId> > > TMatches;
+    typedef StringSet<QueryMatches<StellarMatch<TSequence, TID> > > TMatches;
     // FragmentStore
     /*
        TMatches matches;
@@ -123,7 +123,7 @@ int msplazer(StellarOptions & stellarOptions, MSplazerOptions & msplazerOptions)
     resize(stellarMatches, length(queries));
 
     // Score space allocator
-    typedef StellarMatch<TSequence, TId> TMatch;
+    typedef StellarMatch<TSequence, TID> TMatch;
     typedef String<int> TScoreAlloc;
 
     String<TScoreAlloc> distanceScores;
@@ -216,7 +216,7 @@ int msplazer(StellarOptions & stellarOptions, MSplazerOptions & msplazerOptions)
     typedef VertexDescriptor<TGraph>::Type TVertexDescriptor;
 
     // Breakpoint property map
-    typedef SparsePropertyMap<Breakpoint<TSequence, TId>, unsigned> TSparsePropertyMap;
+    typedef SparsePropertyMap<Breakpoint<TSequence, TID>, unsigned> TSparsePropertyMap;
     typedef String<TMatch> TMatchAlloc;
 
     // Container for graph/chain, scores and start and end vertices
@@ -241,7 +241,7 @@ int msplazer(StellarOptions & stellarOptions, MSplazerOptions & msplazerOptions)
     // ///////////////////////////////////////////////////////////////////////
     // Breakpoints
 
-    typedef Breakpoint<TSequence, TId> TBreakpoint;
+    typedef Breakpoint<TSequence, TID> TBreakpoint;
     String<TBreakpoint> globalBreakpoints;
     // String<TBreakpoint> globalStellarIndels;
     double startBP = sysTime();

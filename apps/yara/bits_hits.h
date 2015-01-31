@@ -60,7 +60,7 @@ template <typename TSize>
 struct Hit<TSize, HammingDistance>
 {
     typename Position<Hit>::Type    range;
-    typename Id<Hit>::Type          seedId;
+    typename ID<Hit>::Type          seedID;
     unsigned char                   errors;
 };
 
@@ -88,11 +88,11 @@ struct Position<Hit<TSize, TSpec> >
 };
 
 // ----------------------------------------------------------------------------
-// Metafunction Id<Hit>
+// Metafunction ID<Hit>
 // ----------------------------------------------------------------------------
 
 template <typename TSize, typename TSpec>
-struct Id<Hit<TSize, TSpec> >
+struct ID<Hit<TSize, TSpec> >
 {
     typedef unsigned int Type;
 };
@@ -148,7 +148,7 @@ struct HitsSorterByCount
 template <typename TSize, typename TSpec>
 inline bool operator< (Hit<TSize, TSpec> const & a, Hit<TSize, TSpec> const & b)
 {
-    return a.seedId < b.seedId;
+    return a.seedID < b.seedID;
 }
 
 // ----------------------------------------------------------------------------
@@ -196,93 +196,93 @@ getErrors(Hit<TSize, HammingDistance> const & hit)
 // Function getErrors()
 // ----------------------------------------------------------------------------
 
-template <typename THits, typename THitId>
+template <typename THits, typename THitID>
 inline unsigned char
-getErrors(THits const & hits, THitId hitId)
+getErrors(THits const & hits, THitID hitID)
 {
-    return getErrors(hits[hitId]);
+    return getErrors(hits[hitID]);
 }
 
 // ----------------------------------------------------------------------------
 // Function getRange()
 // ----------------------------------------------------------------------------
 
-template <typename THits, typename THitId>
+template <typename THits, typename THitID>
 inline typename Position<typename Value<THits>::Type>::Type
-getRange(THits const & hits, THitId hitId)
+getRange(THits const & hits, THitID hitID)
 {
-    return hits[hitId].range;
+    return hits[hitID].range;
 }
 
 // ----------------------------------------------------------------------------
-// Function getSeedId()
+// Function getSeedID()
 // ----------------------------------------------------------------------------
 
-template <typename THits, typename THitId>
-inline typename Id<typename Value<THits>::Type>::Type
-getSeedId(THits const & hits, THitId hitId)
+template <typename THits, typename THitID>
+inline typename ID<typename Value<THits>::Type>::Type
+getSeedID(THits const & hits, THitID hitID)
 {
     typedef typename Value<THits>::Type THit;
     typedef typename Spec<THit>::Type   THitSpec;
 
-    return _getSeedId(hits, hitId, THitSpec());
+    return _getSeedID(hits, hitID, THitSpec());
 }
 
-template <typename THits, typename THitId>
-inline typename Id<typename Value<THits>::Type>::Type
-_getSeedId(THits const & /* hits */, THitId hitId, Exact)
+template <typename THits, typename THitID>
+inline typename ID<typename Value<THits>::Type>::Type
+_getSeedID(THits const & /* hits */, THitID hitID, Exact)
 {
-    return hitId;
+    return hitID;
 }
 
-template <typename THits, typename THitId>
-inline typename Id<typename Value<THits>::Type>::Type
-_getSeedId(THits const & hits, THitId hitId, HammingDistance)
+template <typename THits, typename THitID>
+inline typename ID<typename Value<THits>::Type>::Type
+_getSeedID(THits const & hits, THitID hitID, HammingDistance)
 {
-    return hits[hitId].seedId;
+    return hits[hitID].seedID;
 }
 
 // ----------------------------------------------------------------------------
-// Function getHitIds()
+// Function getHitIDs()
 // ----------------------------------------------------------------------------
 
-template <typename THits, typename TSeedId>
-inline Pair<typename Id<typename Value<THits>::Type>::Type>
-getHitIds(THits const & hits, TSeedId seedId)
+template <typename THits, typename TSeedID>
+inline Pair<typename ID<typename Value<THits>::Type>::Type>
+getHitIDs(THits const & hits, TSeedID seedID)
 {
-    return getHitIds(hits, Pair<TSeedId>(seedId, seedId + 1));
+    return getHitIDs(hits, Pair<TSeedID>(seedID, seedID + 1));
 }
 
-template <typename THits, typename TSeedId>
-inline Pair<typename Id<typename Value<THits>::Type>::Type>
-getHitIds(THits const & hits, Pair<TSeedId> seedIds)
+template <typename THits, typename TSeedID>
+inline Pair<typename ID<typename Value<THits>::Type>::Type>
+getHitIDs(THits const & hits, Pair<TSeedID> seedIDs)
 {
     typedef typename Value<THits>::Type THit;
     typedef typename Spec<THit>::Type   THitSpec;
 
-    return _getHitIds(hits, seedIds, THitSpec());
+    return _getHitIDs(hits, seedIDs, THitSpec());
 }
 
-template <typename THits, typename TSeedId>
-inline Pair<typename Id<typename Value<THits>::Type>::Type>
-_getHitIds(THits const & /* hits */, Pair<TSeedId> seedIds, Exact)
+template <typename THits, typename TSeedID>
+inline Pair<typename ID<typename Value<THits>::Type>::Type>
+_getHitIDs(THits const & /* hits */, Pair<TSeedID> seedIDs, Exact)
 {
-    return seedIds;
+    return seedIDs;
 }
 
-template <typename THits, typename TSeedId>
-inline Pair<typename Id<typename Value<THits>::Type>::Type>
-_getHitIds(THits const & hits, Pair<TSeedId> seedIds, HammingDistance)
+template <typename THits, typename TSeedID>
+inline Pair<typename ID<typename Value<THits>::Type>::Type>
+_getHitIDs(THits const & hits, Pair<TSeedID> seedIDs, HammingDistance)
 {
     typedef typename Value<THits>::Type                     THit;
-    typedef typename Id<THit>::Type                         THitId;
-    typedef Pair<THitId>                                    THitIds;
+    typedef typename ID<THit>::Type                         THitID;
+    typedef Pair<THitID>                                    THitIDs;
     typedef typename Iterator<THits const, Standard>::Type  THitsIterator;
 
     THit firstSeedHit;
     THit lastSeedHit;
-    firstSeedHit.seedId = getValueI1(seedIds);
-    lastSeedHit.seedId = getValueI2(seedIds) - 1;
+    firstSeedHit.seedID = getValueI1(seedIDs);
+    lastSeedHit.seedID = getValueI2(seedIDs) - 1;
 
     THitsIterator hitsBegin = begin(hits, Standard());
     THitsIterator hitsEnd = end(hits, Standard());
@@ -290,7 +290,7 @@ _getHitIds(THits const & hits, Pair<TSeedId> seedIds, HammingDistance)
     THitsIterator firstHit = std::lower_bound(hitsBegin, hitsEnd, firstSeedHit);
     THitsIterator lastHit = std::upper_bound(hitsBegin, hitsEnd, lastSeedHit);
 
-    return THitIds(position(firstHit, hits), position(lastHit, hits));
+    return THitIDs(position(firstHit, hits), position(lastHit, hits));
 }
 
 // ----------------------------------------------------------------------------
@@ -329,10 +329,10 @@ inline TSize countHits(THits const & hits, TThreading const & threading)
 // Function countHits()
 // ----------------------------------------------------------------------------
 
-template <typename TSize, typename THits, typename THitId>
-inline TSize countHits(THits const & hits, Pair<THitId> hitIds)
+template <typename TSize, typename THits, typename THitID>
+inline TSize countHits(THits const & hits, Pair<THitID> hitIDs)
 {
-    return forEach(infix(hits, getValueI1(hitIds), getValueI2(hitIds)),
+    return forEach(infix(hits, getValueI1(hitIDs), getValueI2(hitIDs)),
                    HitsCounter<TSize, Serial>(), Serial()).count;
 }
 
@@ -340,14 +340,14 @@ inline TSize countHits(THits const & hits, Pair<THitId> hitIds)
 // Function clearHits()
 // ----------------------------------------------------------------------------
 
-template <typename THits, typename THitId>
-inline void clearHits(THits & hits, Pair<THitId> hitIds)
+template <typename THits, typename THitID>
+inline void clearHits(THits & hits, Pair<THitID> hitIDs)
 {
     typedef typename Value<THits>::Type THit;
 
-    std::transform(begin(hits, Standard()) + getValueI1(hitIds),
-                   begin(hits, Standard()) + getValueI2(hitIds),
-                   begin(hits, Standard()) + getValueI1(hitIds),
+    std::transform(begin(hits, Standard()) + getValueI1(hitIDs),
+                   begin(hits, Standard()) + getValueI2(hitIDs),
+                   begin(hits, Standard()) + getValueI1(hitIDs),
                    clearRange<THit>);
 }
 

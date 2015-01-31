@@ -104,7 +104,7 @@ void dijkstra(TPredecessorMap & predecessor,
 
     // S is initially empty
     String<bool> setS;
-    resize(setS, getIdUpperBound(_getVertexIdManager(g)), false);
+    resize(setS, getIDUpperBound(_getVertexIDManager(g)), false);
 
     // Set-up the priority queue
     typedef Pair<TVertexDescriptor, TDistVal> TKeyValue;

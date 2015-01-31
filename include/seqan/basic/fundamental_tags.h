@@ -260,7 +260,7 @@ struct TagList
  */
 
 /*!
- * @var T TagSelector::tagId
+ * @var T TagSelector::tagID
  * @headerfile <seqan/basic.h>
  * @brief Stores the index of a Tag in the tag list.
  */
@@ -268,15 +268,15 @@ struct TagList
 template <typename TTagList = void>
 struct TagSelector
 {
-    int tagId;
+    int tagID;
 
     TagSelector() :
-        tagId(-1) {}    // -1 is an important initialization to signal a not yet selected tag (used for file format auto-detection)
+        tagID(-1) {}    // -1 is an important initialization to signal a not yet selected tag (used for file format auto-detection)
 
     inline bool
     operator==(TagSelector const & other) const
     {
-        return other.tagId == tagId;
+        return other.tagID == tagID;
     }
 };
 
@@ -299,14 +299,14 @@ template <typename TTagList>
 inline typename Reference<TagSelector<TTagList> >::Type
 value(TagSelector<TTagList> &selector)
 {
-    return selector.tagId;
+    return selector.tagID;
 }
 
 template <typename TTagList>
 inline typename Reference<TagSelector<TTagList> const>::Type
 value(TagSelector<TTagList> const &selector)
 {
-    return selector.tagId;
+    return selector.tagID;
 }
 
 // ----------------------------------------------------------------------------
@@ -464,14 +464,14 @@ struct TagListValue<TagList<TTag, TSubList>, I>:
  * 
  * @code{.cpp}
  * AutoSeqFormat format;
- * if (format.tagId == Find<AutoSeqFormat, Fasta>::VALUE)
+ * if (format.tagID == Find<AutoSeqFormat, Fasta>::VALUE)
  * {
  *     // do something specific to Fasta format
  * }
  *  
  * // or even shorter:
  *  
- * if (isEqual(format.tagId, Fasta()))
+ * if (isEqual(format.tagID, Fasta()))
  * {
  *     // do something specific to Fasta format
  * }
@@ -523,7 +523,7 @@ inline int find(TagSelector<TTagList> const &, TSearchTag const &)
 template <typename TTagList, typename TTag>
 inline bool isEqual(TagSelector<TTagList> const &selector, TTag const &)
 {
-    return selector.tagId == Find<TTagList, TTag>::VALUE;
+    return selector.tagID == Find<TTagList, TTag>::VALUE;
 }
 
 // assign()
@@ -531,26 +531,26 @@ template <typename TTagList, typename TTag>
 inline void assign(TagSelector<TTagList> &selector, TTag &)
 {
     SEQAN_ASSERT_NEQ(int(Find<TTagList, TTag>::VALUE), -1);
-    selector.tagId = Find<TTagList, TTag>::VALUE;
+    selector.tagID = Find<TTagList, TTag>::VALUE;
 }
 
 template <typename TTagList, typename TTag>
 inline void assign(TagSelector<TTagList> &selector, TTag const &)
 {
     SEQAN_ASSERT_NEQ(int(Find<TTagList, TTag>::VALUE), -1);
-    selector.tagId = Find<TTagList, TTag>::VALUE;
+    selector.tagID = Find<TTagList, TTag>::VALUE;
 }
 
 template <typename TTagList>
 inline void assign(TagSelector<TTagList> &selector, TagSelector<TTagList> &other)
 {
-    selector.tagId = other.tagId;
+    selector.tagID = other.tagID;
 }
 
 template <typename TTagList>
 inline void assign(TagSelector<TTagList> &selector, TagSelector<TTagList> const &other)
 {
-    selector.tagId = other.tagId;
+    selector.tagID = other.tagID;
 }
 
 // tagApply()

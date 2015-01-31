@@ -297,10 +297,10 @@ selectPairsAssembly(StringSet<TString, TSpec> const & str,
 
 			// Append this pair of reads
 			if (index1 < index2) {
-				appendValue(prePList, TPair(positionToId(str, index1), positionToId(str, index2)), Generous());
+				appendValue(prePList, TPair(positionToID(str, index1), positionToID(str, index2)), Generous());
 				appendValue(preDList, TDiagPair(diagLow, diagHigh), Generous());
 			} else {
-				appendValue(prePList, TPair(positionToId(str, index2), positionToId(str, index1)), Generous());
+				appendValue(prePList, TPair(positionToID(str, index2), positionToID(str, index1)), Generous());
 				appendValue(preDList, TDiagPair(-1 * diagHigh, -1 * diagLow), Generous());
 			}
 			// Estimate the overlap quality
@@ -356,7 +356,7 @@ selectPairsAllAgainstAll(StringSet<TString, TSpec> const & str,
 			TPos diagLow = (beIt2->i2 < beIt2->i1) ? beIt2->i2 - beIt2->i1 : beIt2->i1 - beIt2->i2;
 			TPos diff = (beg1 > beg2) ? beg1 - beg2 : beg2 - beg1;
 			if (diff < (TPos) lookAround) {
-				appendValue(pList, TPair(positionToId(str, index1), positionToId(str, index2)), Generous());
+				appendValue(pList, TPair(positionToID(str, index1), positionToID(str, index2)), Generous());
 				appendValue(dList, TDiagPair(diagLow, diagHigh), Generous());
 			}
 		}
@@ -366,10 +366,10 @@ selectPairsAllAgainstAll(StringSet<TString, TSpec> const & str,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TString, typename TSpec, typename TId, typename TDiagList, typename TBegEndPos, typename TScore, typename TSize, typename TSegmentMatches, typename TScoreValues, typename TDistance>
+template<typename TString, typename TSpec, typename TID, typename TDiagList, typename TBegEndPos, typename TScore, typename TSize, typename TSegmentMatches, typename TScoreValues, typename TDistance>
 inline void 
 appendSegmentMatches(StringSet<TString, TSpec> const & str,
-					 String<Pair<TId, TId> > const & pList,
+					 String<Pair<TID, TID> > const & pList,
 					 TDiagList const & dList,
 					 TBegEndPos const & begEndPos,
 					 TScore const & score_type,
@@ -382,7 +382,7 @@ appendSegmentMatches(StringSet<TString, TSpec> const & str,
 					 OverlapLibrary)
 {
 	typedef StringSet<TString, Dependent<> > TStringSet;
-	typedef String<Pair<TId, TId> > const TPairList;
+	typedef String<Pair<TID, TID> > const TPairList;
 	typedef typename Value<TScoreValues>::Type TScoreValue;
 	typedef typename Iterator<TPairList, Standard>::Type TPairIter;
 	typedef typename Iterator<TDiagList const, Standard>::Type TDiagIter;
@@ -407,8 +407,8 @@ appendSegmentMatches(StringSet<TString, TSpec> const & str,
 	TPairIter itPairEnd = end(pList, Standard());
 	TSize dropCount = 0;
 	for(;itPair != itPairEnd; ++itPair, ++itDiag, ++itAligned) {
-		TId id1 = itPair->i1;
-		TId id2 = itPair->i2;
+		TID id1 = itPair->i1;
+		TID id2 = itPair->i2;
 		TSize seq1 = idToPosition(str, id1);
 		TSize seq2 = idToPosition(str, id2);
 		if ((frontOvl[seq1] > maxOvl) && (backOvl[seq1] > maxOvl) &&
@@ -420,8 +420,8 @@ appendSegmentMatches(StringSet<TString, TSpec> const & str,
 
 		// Make a pairwise string-set
 		TStringSet pairSet;
-		assignValueById(pairSet, const_cast<StringSet<TString, TSpec>&>(str), id1);
-		assignValueById(pairSet, const_cast<StringSet<TString, TSpec>&>(str), id2);
+		assignValueByID(pairSet, const_cast<StringSet<TString, TSpec>&>(str), id1);
+		assignValueByID(pairSet, const_cast<StringSet<TString, TSpec>&>(str), id2);
 		
 
 		// Overlap alignment
@@ -521,8 +521,8 @@ appendSegmentMatches(StringSet<TString, TSpec> const & str,
 		itAligned = begin(aligned, Standard());
 		for(;itPair != itPairEnd; ++itPair, ++itDiag, ++itAligned) {
 			if (*itAligned == true) continue;
-			TId id1 = itPair->i1;
-			TId id2 = itPair->i2;
+			TID id1 = itPair->i1;
+			TID id2 = itPair->i2;
 			TSize seq1 = idToPosition(str, id1);
 			TSize seq2 = idToPosition(str, id2);
 			if ((!std::binary_search(begin(unalignedReads, Standard()), end(unalignedReads, Standard()), seq1)) &&
@@ -534,8 +534,8 @@ appendSegmentMatches(StringSet<TString, TSpec> const & str,
 
 			// Make a pairwise string-set
 			TStringSet pairSet;
-			assignValueById(pairSet, const_cast<StringSet<TString, TSpec>&>(str), id1);
-			assignValueById(pairSet, const_cast<StringSet<TString, TSpec>&>(str), id2);
+			assignValueByID(pairSet, const_cast<StringSet<TString, TSpec>&>(str), id1);
+			assignValueByID(pairSet, const_cast<StringSet<TString, TSpec>&>(str), id2);
 		
 			// Overlap alignment
 			TSize from = length(matches);

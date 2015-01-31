@@ -161,14 +161,14 @@ struct FinderContext_<TText, TPattern, Multiple<TSpec>, TDelegate>
     FinderContext_(TFinder & finder, TDelegate & delegate) :
         finder(finder),
         delegate(delegate),
-        baseFinder(getObject(finder._factory, getThreadId()))
+        baseFinder(getObject(finder._factory, getThreadID()))
     {}
 
     // NOTE(esiragusa): This is called on firstprivate.
     FinderContext_(FinderContext_ & ctx) :
         finder(ctx.finder),
         delegate(ctx.delegate),
-        baseFinder(getObject(finder._factory, getThreadId()))
+        baseFinder(getObject(finder._factory, getThreadID()))
     {}
 
     template <typename TOther>
@@ -325,18 +325,18 @@ _preprocessKernel(Pattern<TNeedles, Multiple<TSpec> > pattern)
     typedef Pattern<TNeedles, Multiple<TSpec> >     TPattern;
     typedef typename PatternShape_<TPattern>::Type  TShape;
 
-    unsigned threadId = getThreadId();
+    unsigned threadID = getThreadID();
 
     // Return silently if there is no job left.
-    if (threadId >= length(pattern.data_host)) return;
+    if (threadID >= length(pattern.data_host)) return;
 
     // Compute the hash of a needle.
     TShape shape;
-    SEQAN_ASSERT_LEQ(weight(shape), length(pattern.data_host[threadId]));
-    pattern._hashes[threadId] = hash(shape, begin(pattern.data_host[threadId], Standard()));
+    SEQAN_ASSERT_LEQ(weight(shape), length(pattern.data_host[threadID]));
+    pattern._hashes[threadID] = hash(shape, begin(pattern.data_host[threadID], Standard()));
 
     // Fill with the identity permutation.
-    pattern._permutation[threadId] = threadId;
+    pattern._permutation[threadID] = threadID;
 }
 #endif
 
@@ -351,16 +351,16 @@ _findKernel(Finder_<TText, TPattern, Multiple<TSpec> > finder, TPattern pattern,
 {
     typedef FinderContext_<TText, TPattern, Multiple<TSpec>, TDelegate> TFinderContext;
 
-    unsigned threadId = getThreadId();
+    unsigned threadID = getThreadID();
 
     // Return if there is no job left.
-    if (threadId >= length(pattern.data_host)) return;
+    if (threadID >= length(pattern.data_host)) return;
 
     // Instantiate a thread context.
     TFinderContext ctx(finder, delegate);
 
     // Get the sorted needle id.
-    ctx._patternIt = pattern._permutation[threadId];
+    ctx._patternIt = pattern._permutation[threadID];
 
     // Find a single needle.
     clear(ctx.baseFinder);
@@ -486,11 +486,11 @@ _find(Finder_<TText, TPattern, Multiple<TSpec> > & finder,
 
     // Find all needles in parallel.
     SEQAN_OMP_PRAGMA(parallel for schedule(dynamic) firstprivate(ctx))
-    for (TSize needleId = 0; needleId < needlesCount; ++needleId)
+    for (TSize needleID = 0; needleID < needlesCount; ++needleID)
     {
         clear(ctx.baseFinder);
         _setScoreThreshold(ctx.baseFinder, _getScoreThreshold(finder));
-        ctx._patternIt = needleId;
+        ctx._patternIt = needleID;
         _find(ctx.baseFinder, needlesView[ctx._patternIt], ctx);
     }
 }

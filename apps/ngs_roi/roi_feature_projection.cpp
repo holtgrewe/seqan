@@ -131,7 +131,7 @@ public:
 // Class IntersectDriver
 // --------------------------------------------------------------------------
 
-// Helper function: Make the given record (must have int rId and int beginPos members) a sentinel (> all others).
+// Helper function: Make the given record (must have int rID and int beginPos members) a sentinel (> all others).
 
 template <typename TRecord>
 void makeSentinel(TRecord & record)

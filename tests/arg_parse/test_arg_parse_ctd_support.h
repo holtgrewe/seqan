@@ -88,7 +88,7 @@ SEQAN_DEFINE_TEST(test_arg_parse_ctd_support)
     append(outPath, ".ctd");
 
     std::ofstream ofstream(toCString(outPath), std::ofstream::out | std::ofstream::binary);
-    writeCTD(parser, ofstream);
+    writeCtd(parser, ofstream);
     ofstream.close();
 
     // compare ctd to expected

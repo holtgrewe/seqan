@@ -135,13 +135,13 @@ _alignSmithWatermanTrace(TAlign& align,
 	SEQAN_CHECKPOINT
 	typedef typename Size<TTrace>::Type TSize;
 	typedef typename Value<TTrace>::Type TTraceValue;
-	typedef typename Id<TStringSet>::Type TId;
+	typedef typename ID<TStringSet>::Type TID;
 
 	// TraceBack values for Gotoh
 	TTraceValue Diagonal = 0; TTraceValue Horizontal = 1; TTraceValue Vertical = 2; TTraceValue Stop = 3;
 
-	TId id1 = positionToId(const_cast<TStringSet&>(str), 0);
-	TId id2 = positionToId(const_cast<TStringSet&>(str), 1);	 
+	TID id1 = positionToID(const_cast<TStringSet&>(str), 0);
+	TID id2 = positionToID(const_cast<TStringSet&>(str), 1);	 
 	TSize len1 = indexPair[1];
 	TSize len2 = indexPair[0];
 	if ((indexPair[0] == 0) || (indexPair[1] == 0)) return;
@@ -224,8 +224,8 @@ _alignSmithWatermanTrace(TAlign& align,
 	if (segLen) _alignTracePrint(align, str[0], str[1], id1, len1, id2, len2, segLen, tvOld);
 
 	// Handle the remaining sequence
-	if (len1 != 0) _alignTracePrint(align, str[0], str[1], (TId) id1, (TSize) 0, (TId) 0, (TSize) 0, (TSize) len1, Horizontal);
-	if (len2 != 0) _alignTracePrint(align, str[0], str[1], (TId) 0, (TSize) 0, (TId) id2, (TSize) 0, (TSize) len2, Vertical);
+	if (len1 != 0) _alignTracePrint(align, str[0], str[1], (TID) id1, (TSize) 0, (TID) 0, (TSize) 0, (TSize) len1, Horizontal);
+	if (len2 != 0) _alignTracePrint(align, str[0], str[1], (TID) 0, (TSize) 0, (TID) id2, (TSize) 0, (TSize) len2, Vertical);
 }
 
 template <typename TTrace, typename TStringSet, typename TScore, typename TIndexPair, typename TForbidden>
@@ -510,7 +510,7 @@ getAlignmentStatistics(String<TFragment, TSpec1> const& matches,
 {
 	typedef String<TFragment, TSpec1> const TFragmentMatches;
 	typedef typename Size<TFragmentMatches>::Type TSize;
-	typedef typename Id<TFragmentMatches>::Type TId;
+	typedef typename ID<TFragmentMatches>::Type TID;
 	typedef typename Iterator<TFragmentMatches, Standard>::Type TFragIter;
 	typedef typename Value<TStringSet>::Type TString;
 	typedef typename Value<TString>::Type TAlphabet; 
@@ -519,18 +519,18 @@ getAlignmentStatistics(String<TFragment, TSpec1> const& matches,
 	TSize len2 = length(str[1]);
 
 	
-	TSize minId1 = len1 + len2;
-	TSize minId2 = len1 + len2;
-	TSize maxId1 = 0;
-	TSize maxId2 = 0;
+	TSize minID1 = len1 + len2;
+	TSize minID2 = len1 + len2;
+	TSize maxID1 = 0;
+	TSize maxID2 = 0;
 	TSize matchMismatch_length = 0;
 
 	TFragIter itFrag = begin(matches, Standard());
 	TFragIter itFragEnd = itFrag;
 	itFrag += from;
 	itFragEnd += to;
-	TId id1 = sequenceId(*itFrag, 0);
-	TId id2 = sequenceId(*itFrag, 1);
+	TID id1 = sequenceID(*itFrag, 0);
+	TID id2 = sequenceID(*itFrag, 1);
 	TSize fragLen = 0;
 	TSize beginI = 0;
 	TSize beginJ = 0;
@@ -538,10 +538,10 @@ getAlignmentStatistics(String<TFragment, TSpec1> const& matches,
 		fragLen = fragmentLength(*itFrag, id1);
 		beginI = fragmentBegin(*itFrag, id1);
 		beginJ = fragmentBegin(*itFrag, id2);
-		if (beginI < minId1) minId1 = beginI;
-		if (beginJ < minId2) minId2 = beginJ;
-		if (beginI + fragLen > maxId1) maxId1 = beginI + fragLen;
-		if (beginJ + fragLen > maxId2) maxId2 = beginJ + fragLen;
+		if (beginI < minID1) minID1 = beginI;
+		if (beginJ < minID2) minID2 = beginJ;
+		if (beginI + fragLen > maxID1) maxID1 = beginI + fragLen;
+		if (beginJ + fragLen > maxID2) maxID2 = beginJ + fragLen;
 		typedef typename Infix<TString>::Type TInfix;
 		typedef typename Iterator<TInfix, Standard>::Type TInfixIter;
 		TInfix inf1 = label(*itFrag, str, id1);
@@ -554,7 +554,7 @@ getAlignmentStatistics(String<TFragment, TSpec1> const& matches,
 			if ( (TAlphabet) *sIt1  == (TAlphabet) *sIt2) ++matchLength;
 	}
 	alignLength = static_cast<TSize1>(matchMismatch_length + (len1 - matchMismatch_length) + (len2 - matchMismatch_length));
-	overlapLength = alignLength -  minId1 - minId2 - (len1 + len2 - maxId1 - maxId2);
+	overlapLength = alignLength -  minID1 - minID2 - (len1 + len2 - maxID1 - maxID2);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -575,7 +575,7 @@ appendSegmentMatches(StringSet<TString, Dependent<TSpec> > const& str,
 	typedef StringSet<TString, Dependent<TSpec> > TStringSet;
 	typedef String<TSize2, TSpec2> TPairList;
 	typedef typename Size<TStringSet>::Type TSize;
-	typedef typename Id<TStringSet>::Type TId;
+	typedef typename ID<TStringSet>::Type TID;
 	//typedef typename Value<TSegmentMatches>::Type TFragment;
 	//typedef typename Value<TScores>::Type TScoreValue;
 	typedef typename Iterator<TPairList const, Standard>::Type TPairIter;
@@ -585,10 +585,10 @@ appendSegmentMatches(StringSet<TString, Dependent<TSpec> > const& str,
 	TPairIter itPairEnd = end(pList, Standard());
 	for(;itPair != itPairEnd; ++itPair) {
 		TStringSet pairSet;
-		TId id1 = positionToId(str, *itPair); ++itPair;
-		TId id2 = positionToId(str, *itPair);
-		assignValueById(pairSet, const_cast<TStringSet&>(str), id1);
-		assignValueById(pairSet, const_cast<TStringSet&>(str), id2);
+		TID id1 = positionToID(str, *itPair); ++itPair;
+		TID id2 = positionToID(str, *itPair);
+		assignValueByID(pairSet, const_cast<TStringSet&>(str), id1);
+		assignValueByID(pairSet, const_cast<TStringSet&>(str), id2);
 
 		// Lcs between first and second string
 		TSize from = length(matches);
@@ -623,7 +623,7 @@ appendSegmentMatches(StringSet<TString, Dependent<TSpec> > const& str,
 	//typedef StringSet<TString, Dependent<TSpec> > TStringSet;
 	typedef typename Value<TScores>::Type TScoreValue;
 	typedef typename Value<TSegmentMatches>::Type TFragment;
-	//typedef typename Id<TStringSet>::Type TId;
+	//typedef typename ID<TStringSet>::Type TID;
 	typedef String<TSize> TTupelString;
 	typedef String<TTupelString> TTupelStringSet;
 
@@ -658,7 +658,7 @@ appendSegmentMatches(StringSet<TString, Dependent<TSpec> > const& str,
 			++pos2;
 			while (pos2 != posEnd) {
 				if (pos->second != pos2->second) {
-					appendValue(matches, TFragment(positionToId(str, pos->second), pos->first, positionToId(str, pos2->second), pos2->first, ktup));
+					appendValue(matches, TFragment(positionToID(str, pos->second), pos->first, positionToID(str, pos2->second), pos2->first, ktup));
 					appendValue(scores, (TScoreValue) ktup);
 				}
 				++pos2;
@@ -710,7 +710,7 @@ appendSegmentMatches(StringSet<TString, Dependent<TSpec> > const& str,
 	typedef StringSet<TString, Dependent<TSpec> > TStringSet;
 	typedef String<TSize2, TSpec2> TPairList;
 	//typedef typename Size<TStringSet>::Type TSize;
-	typedef typename Id<TStringSet>::Type TId;
+	typedef typename ID<TStringSet>::Type TID;
 	typedef typename Iterator<TPairList const, Standard>::Type TPairIter;
 
 	// Pairwise alignments
@@ -719,10 +719,10 @@ appendSegmentMatches(StringSet<TString, Dependent<TSpec> > const& str,
 	for(;itPair != itPairEnd; ++itPair) {
 		// Make a pairwise string-set
 		TStringSet pairSet;
-		TId id1 = positionToId(str, *itPair); ++itPair;
-		TId id2 = positionToId(str, *itPair);
-		assignValueById(pairSet, const_cast<TStringSet&>(str), id1);
-		assignValueById(pairSet, const_cast<TStringSet&>(str), id2);
+		TID id1 = positionToID(str, *itPair); ++itPair;
+		TID id2 = positionToID(str, *itPair);
+		assignValueByID(pairSet, const_cast<TStringSet&>(str), id1);
+		assignValueByID(pairSet, const_cast<TStringSet&>(str), id2);
 
 		_multiLocalAlignment(pairSet, matches, scores, score_type, 4, SmithWatermanClump());
 	}
@@ -846,7 +846,7 @@ appendSegmentMatches(StringSet<TString, Dependent<TSpec> > const& str,
 {
 	SEQAN_CHECKPOINT
 	typedef StringSet<TString, Dependent<TSpec> > TStringSet;
-	typedef typename Id<TStringSet>::Type TId;
+	typedef typename ID<TStringSet>::Type TID;
 	typedef typename Size<TStringSet>::Type TSize;
 	typedef typename Value<TScoreValues>::Type TScoreValue;
 	typedef typename Iterator<String<TSize2, TSpec2> const, Standard>::Type TPairIter;
@@ -861,10 +861,10 @@ appendSegmentMatches(StringSet<TString, Dependent<TSpec> > const& str,
 	for(;itPair != itPairEnd; ++itPair) {
 		// Make a pairwise string-set
 		TStringSet pairSet;
-		TId id1 = positionToId(str, *itPair); ++itPair;
-		TId id2 = positionToId(str, *itPair);
-		assignValueById(pairSet, const_cast<TStringSet&>(str), id1);
-		assignValueById(pairSet, const_cast<TStringSet&>(str), id2);
+		TID id1 = positionToID(str, *itPair); ++itPair;
+		TID id2 = positionToID(str, *itPair);
+		assignValueByID(pairSet, const_cast<TStringSet&>(str), id1);
+		assignValueByID(pairSet, const_cast<TStringSet&>(str), id2);
 				
 		// Alignment
 		TSize from = length(matches);

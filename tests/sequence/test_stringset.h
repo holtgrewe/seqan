@@ -140,80 +140,80 @@ void Test_StringSet_Concat()
 //////////////////////////////////////////////////////////////////////////////
 
 template <typename TStringSet>
-void Test_StringSetIdHolder() {
-	typedef	typename Id<TStringSet>::Type TId;
+void Test_StringSetIDHolder() {
+	typedef	typename ID<TStringSet>::Type TID;
 	//typedef StringSet<String<char>, Dependent<Tight> > TSetTight;
 	//typedef StringSet<String<char>, Dependent<Generous> > TSetGenerous;
 
 	TStringSet str;
 	String<char> bla("a");
-	TId id0 = assignValueById(str, bla);
+	TID id0 = assignValueByID(str, bla);
 	SEQAN_ASSERT_EQ(id0, 0u);
 	SEQAN_ASSERT_EQ(idToPosition(str, id0), 0u);
-	SEQAN_ASSERT_EQ(positionToId(str, 0), id0);
+	SEQAN_ASSERT_EQ(positionToID(str, 0), id0);
 	SEQAN_ASSERT_EQ(length(str), 1u);
 	SEQAN_ASSERT_EQ(str[0], "a");
-	SEQAN_ASSERT_EQ(getValueById(str, id0), "a");
+	SEQAN_ASSERT_EQ(getValueByID(str, id0), "a");
 	String<char> bla1("b");
-	TId id1 = assignValueById(str, bla1);
+	TID id1 = assignValueByID(str, bla1);
 	SEQAN_ASSERT_EQ(id1, 1u);
 	SEQAN_ASSERT_EQ(idToPosition(str, id1), 1u);
-	SEQAN_ASSERT_EQ(positionToId(str, 1), id1);
+	SEQAN_ASSERT_EQ(positionToID(str, 1), id1);
 	SEQAN_ASSERT_EQ(str[1], "b");
 	SEQAN_ASSERT_EQ(length(str), 2u);
-	SEQAN_ASSERT_EQ(getValueById(str, id1), "b");
+	SEQAN_ASSERT_EQ(getValueByID(str, id1), "b");
 	String<char> bla2("c");
-	TId id2 = assignValueById(str, bla2);
+	TID id2 = assignValueByID(str, bla2);
 	SEQAN_ASSERT_EQ(id2, 2U);
 	SEQAN_ASSERT_EQ(str[2], "c");
 	SEQAN_ASSERT_EQ(length(str), 3u);
-	SEQAN_ASSERT_EQ(getValueById(str, id2), "c");
+	SEQAN_ASSERT_EQ(getValueByID(str, id2), "c");
 	String<char> bla3("d");
-	TId id3 = assignValueById(str, bla3);
+	TID id3 = assignValueByID(str, bla3);
 	SEQAN_ASSERT_EQ(id3, 3u);
 	SEQAN_ASSERT_EQ(str[3], "d");
 	SEQAN_ASSERT_EQ(length(str), 4u);
-	SEQAN_ASSERT_EQ(getValueById(str, id3), "d");
-	removeValueById(str,id1);
-	SEQAN_ASSERT_EQ(getValueById(str, id0), "a");
-	SEQAN_ASSERT_EQ(getValueById(str, id2), "c");
-	SEQAN_ASSERT_EQ(getValueById(str, id3), "d");
+	SEQAN_ASSERT_EQ(getValueByID(str, id3), "d");
+	removeValueByID(str,id1);
+	SEQAN_ASSERT_EQ(getValueByID(str, id0), "a");
+	SEQAN_ASSERT_EQ(getValueByID(str, id2), "c");
+	SEQAN_ASSERT_EQ(getValueByID(str, id3), "d");
     SEQAN_ASSERT_EQ(length(str), 3u);
-	removeValueById(str,id2);
-	SEQAN_ASSERT_EQ(getValueById(str, id0), "a");
-	SEQAN_ASSERT_EQ(getValueById(str, id3), "d");
+	removeValueByID(str,id2);
+	SEQAN_ASSERT_EQ(getValueByID(str, id0), "a");
+	SEQAN_ASSERT_EQ(getValueByID(str, id3), "d");
     SEQAN_ASSERT_EQ(length(str), 2u);
 
 	String<char> bla4("e");
-	TId id4 = assignValueById(str, bla4, 100);
+	TID id4 = assignValueByID(str, bla4, 100);
 	SEQAN_ASSERT_EQ(id4, 100u);
-	SEQAN_ASSERT_EQ(getValueById(str, id4), "e");
-	SEQAN_ASSERT_EQ(getValueById(str, id0), "a");
-	SEQAN_ASSERT_EQ(getValueById(str, id3), "d");
-	removeValueById(str,id3);
-	SEQAN_ASSERT_EQ(getValueById(str, id0), "a");
-	SEQAN_ASSERT_EQ(getValueById(str, id4), "e");
+	SEQAN_ASSERT_EQ(getValueByID(str, id4), "e");
+	SEQAN_ASSERT_EQ(getValueByID(str, id0), "a");
+	SEQAN_ASSERT_EQ(getValueByID(str, id3), "d");
+	removeValueByID(str,id3);
+	SEQAN_ASSERT_EQ(getValueByID(str, id0), "a");
+	SEQAN_ASSERT_EQ(getValueByID(str, id4), "e");
     SEQAN_ASSERT_EQ(length(str), 2u);
 	String<char> bla5("f");
-	TId id5 = assignValueById(str, bla5); 
-	SEQAN_ASSERT_EQ(getValueById(str, id0), "a");
-	SEQAN_ASSERT_EQ(getValueById(str, id4), "e");
-	SEQAN_ASSERT_EQ(getValueById(str, id5), "f");
-	assignValueById(str, bla5, id4); 
-	SEQAN_ASSERT_EQ(getValueById(str, id0), "a");
-	SEQAN_ASSERT_EQ(getValueById(str, id4), "f");
-	SEQAN_ASSERT_EQ(getValueById(str, id5), "f");
-	removeValueById(str,id4);
-	SEQAN_ASSERT_EQ(getValueById(str, id0), "a");
-	SEQAN_ASSERT_EQ(getValueById(str, id5), "f");
+	TID id5 = assignValueByID(str, bla5); 
+	SEQAN_ASSERT_EQ(getValueByID(str, id0), "a");
+	SEQAN_ASSERT_EQ(getValueByID(str, id4), "e");
+	SEQAN_ASSERT_EQ(getValueByID(str, id5), "f");
+	assignValueByID(str, bla5, id4); 
+	SEQAN_ASSERT_EQ(getValueByID(str, id0), "a");
+	SEQAN_ASSERT_EQ(getValueByID(str, id4), "f");
+	SEQAN_ASSERT_EQ(getValueByID(str, id5), "f");
+	removeValueByID(str,id4);
+	SEQAN_ASSERT_EQ(getValueByID(str, id0), "a");
+	SEQAN_ASSERT_EQ(getValueByID(str, id5), "f");
     SEQAN_ASSERT_EQ(length(str), 2u);
 	clear(str);
-	id1 = assignValueById(str, bla1);
-	id2 = assignValueById(str, bla2);
-	id3 = assignValueById(str, bla3);	
-	SEQAN_ASSERT_EQ(getValueById(str, id1), "b");
-	SEQAN_ASSERT_EQ(getValueById(str, id2), "c");
-	SEQAN_ASSERT_EQ(getValueById(str, id3), "d");
+	id1 = assignValueByID(str, bla1);
+	id2 = assignValueByID(str, bla2);
+	id3 = assignValueByID(str, bla3);	
+	SEQAN_ASSERT_EQ(getValueByID(str, id1), "b");
+	SEQAN_ASSERT_EQ(getValueByID(str, id2), "c");
+	SEQAN_ASSERT_EQ(getValueByID(str, id3), "d");
     SEQAN_ASSERT_EQ(length(str), 3u);
 }
 
@@ -221,7 +221,7 @@ void Test_StringSetIdHolder() {
 
 
 template <typename TSpec>
-void Test_StringSet_Id()
+void Test_StringSet_ID()
 {	
 	StringSet<CharString, Owner<Default> > origin;
 	StringSet<CharString, TSpec> set;
@@ -272,24 +272,24 @@ SEQAN_DEFINE_TEST(StringSet_Concat_Owner_ConcatDirect) {
 	Test_StringSet_Concat< Owner<ConcatDirect<> > >();
 }
 
-SEQAN_DEFINE_TEST(StringSet_Id_Dependent_Tight) {
+SEQAN_DEFINE_TEST(StringSet_ID_Dependent_Tight) {
     SEQAN_CHECKPOINT;
-	Test_StringSet_Id< Dependent<Tight> >();
+	Test_StringSet_ID< Dependent<Tight> >();
 }
 
-SEQAN_DEFINE_TEST(StringSet_Id_Dependent_Generous) {
+SEQAN_DEFINE_TEST(StringSet_ID_Dependent_Generous) {
     SEQAN_CHECKPOINT;
-	Test_StringSet_Id< Dependent<Generous> >();
+	Test_StringSet_ID< Dependent<Generous> >();
 }
 
-SEQAN_DEFINE_TEST(StringSetIdHolder_Char_Dependent_Tight) {
+SEQAN_DEFINE_TEST(StringSetIDHolder_Char_Dependent_Tight) {
     SEQAN_CHECKPOINT;
-	Test_StringSetIdHolder<StringSet<String<char>, Dependent<Tight> > >();
+	Test_StringSetIDHolder<StringSet<String<char>, Dependent<Tight> > >();
 }
 
-SEQAN_DEFINE_TEST(StringSetIdHolder_Char_Dependent_Generous) {
+SEQAN_DEFINE_TEST(StringSetIDHolder_Char_Dependent_Generous) {
     SEQAN_CHECKPOINT;
-	Test_StringSetIdHolder<StringSet<String<char>, Dependent<Generous> > >();
+	Test_StringSetIDHolder<StringSet<String<char>, Dependent<Generous> > >();
 }
 
 struct TestContainer

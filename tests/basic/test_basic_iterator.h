@@ -43,7 +43,7 @@
 
 struct CDStruct
 {
-    static int nextId;
+    static int nextID;
     static int defaultConstructions;
     static int copyConstructions;
     static int moveConstructions;
@@ -65,14 +65,14 @@ struct CDStruct
     
     CDStruct() : copiedFrom(-1), movedFrom(-1), assignedFrom(-1), setFrom(-1)
     {
-        id = nextId++;
+        id = nextID++;
         defaultConstructions += 1;
     }
 
     CDStruct(CDStruct const & other)
             : copiedFrom(other.id), movedFrom(-1), assignedFrom(-1), setFrom(-1)
     {
-        id = nextId++;
+        id = nextID++;
         lastOther = &other;
         copyConstructions += 1;
     }
@@ -133,7 +133,7 @@ void set(CDStruct & target, CDStruct & source)
     set(target, const_cast<CDStruct const &>(source));
 }
 
-int CDStruct::nextId = 0;
+int CDStruct::nextID = 0;
 int CDStruct::defaultConstructions = 0;
 int CDStruct::copyConstructions = 0;
 int CDStruct::moveConstructions = 0;

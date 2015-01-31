@@ -135,9 +135,9 @@ struct LessGPosRNo :
     inline bool operator()(TAlignedRead const & a, TAlignedRead const & b) const
     {
         // contig
-        if (a.contigId < b.contigId) return true;
+        if (a.contigID < b.contigID) return true;
 
-        if (a.contigId > b.contigId) return false;
+        if (a.contigID > b.contigID) return false;
 
         // beginning position
         typename TAlignedRead::TPos ba = _min(a.beginPos, a.endPos);
@@ -152,9 +152,9 @@ struct LessGPosRNo :
         if (oa != ob) return oa;
 
         // read number
-        if (a.readId < b.readId) return true;
+        if (a.readID < b.readID) return true;
 
-        if (a.readId > b.readId) return false;
+        if (a.readID > b.readID) return false;
 
         // qualities
         return lessScore(a, b);
@@ -187,15 +187,15 @@ getErrorDistribution(
         if ((*it).id == TAlignedRead::INVALID_ID)
             continue;
 
-        Dna5String const & read = store.readSeqStore[(*it).readId];
+        Dna5String const & read = store.readSeqStore[(*it).readID];
         left = (*it).beginPos;
         right = (*it).endPos;
 
         if (left < right)
-            genome = infix(store.contigStore[(*it).contigId].seq, left, right);
+            genome = infix(store.contigStore[(*it).contigID].seq, left, right);
         else
         {
-            genome = infix(store.contigStore[(*it).contigId].seq, right, left);
+            genome = infix(store.contigStore[(*it).contigID].seq, right, left);
             reverseComplement(genome);
         }
         for (unsigned i = 0; i < length(posError) && i < length(read); ++i)
@@ -241,15 +241,15 @@ getErrorDistribution(
         if ((*it).id == TAlignedRead::INVALID_ID)
             continue;
 
-        assignSource(row(align, 0), store.readSeqStore[(*it).readId]);
+        assignSource(row(align, 0), store.readSeqStore[(*it).readID]);
         TContigPos left = (*it).beginPos;
         TContigPos right = (*it).endPos;
 
         if (left < right)
-            assignSource(row(align, 1), infix(store.contigStore[(*it).contigId].seq, left, right));
+            assignSource(row(align, 1), infix(store.contigStore[(*it).contigID].seq, left, right));
         else
         {
-            assignSource(row(align, 1), infix(store.contigStore[(*it).contigId].seq, right, left));
+            assignSource(row(align, 1), infix(store.contigStore[(*it).contigID].seq, right, left));
             reverseComplement(source(row(align, 1)));
         }
         globalAlignment(align, scoreType);
@@ -307,14 +307,14 @@ writeMismatchFile(
         TContigPos right = (*it).endPos;
 
         if (left < right)
-            contigInf = infix(store.contigStore[(*it).contigId].seq, left, right);
+            contigInf = infix(store.contigStore[(*it).contigID].seq, left, right);
         else
         {
-            contigInf = infix(store.contigStore[(*it).contigId].seq, right, left);
+            contigInf = infix(store.contigStore[(*it).contigID].seq, right, left);
             reverseComplement(contigInf);
         }
 
-        readInf = store.readSeqStore[(*it).readId];
+        readInf = store.readSeqStore[(*it).readID];
 
         for (unsigned i = 0; i < length(readInf); ++i)
         {
@@ -357,7 +357,7 @@ countCoocurrences(
 
     for (; it != itEnd; ++it, ++qit)
     {
-        if ((*it).readId == readNo)
+        if ((*it).readID == readNo)
         {
             if (preEditDist > 1)
                 continue;                // || dist > options.errorRate * maxReadLength + 1) continue;
@@ -371,7 +371,7 @@ countCoocurrences(
         }
         else
         {
-            readNo = (*it).readId;
+            readNo = (*it).readID;
             preEditDist = (*qit).errors;
             if (preEditDist <= 1)
                 ++count;
@@ -491,7 +491,7 @@ int dumpMatches(
     typedef typename Value<TContigFileStore>::Type                  TContigFile;
 
     typedef typename Iterator<TAlignedReadStore, Standard>::Type    TAlignedReadIter;
-    //typedef typename Id<TAlignedRead>::Type                         TId;
+    //typedef typename ID<TAlignedRead>::Type                         TID;
     typedef typename GetValue<TAlignQualityStore>::Type             TQuality;
     //typedef typename TFragmentStore::TContigPos                     TGPos;
     typedef BinFunctorDefault<TAlignQualityStore, TRazerSMode>      TBinFunctor;
@@ -596,7 +596,7 @@ int dumpMatches(
 #endif  // #ifdef RAZERS_PROFILE
     */
 
-    String<int> libSize;    // store outer library size for each pair match (indexed by pairMatchId)
+    String<int> libSize;    // store outer library size for each pair match (indexed by pairMatchID)
     calculateInsertSizes(libSize, store);
 
 #ifdef RAZERS_PROFILE
@@ -675,8 +675,8 @@ int dumpMatches(
                 CharString & line = lines[i];
                 TAlignedRead & ar = store.alignedReadStore[fromIdx + i];
                 TQuality qual = getValue(store.alignQualityStore, ar.id);
-                unsigned readLen = length(store.readSeqStore[ar.readId]);
-                double percId = 100.0 * (1.0 - (double)qual.errors / (double)readLen);
+                unsigned readLen = length(store.readSeqStore[ar.readID]);
+                double percID = 100.0 * (1.0 - (double)qual.errors / (double)readLen);
 
                 //strstrm.str(emptyStr);
                 clear(line);
@@ -685,24 +685,24 @@ int dumpMatches(
                 // 0..filename is the read's Fasta id
                 case 0:
                 case 3:          // same as 0 if non-paired
-                    append(line, store.readNameStore[ar.readId]);
-                    //file << store.readNameStore[ar.readId];
+                    append(line, store.readNameStore[ar.readID]);
+                    //file << store.readNameStore[ar.readID];
                     break;
 
                 // 1..filename is the read filename + seqNo
                 case 1:
                     append(line, readName);
                     appendValue(line, '#');
-                    sprintf(intBuf, "%09u", ar.readId + 1);
+                    sprintf(intBuf, "%09u", ar.readID + 1);
                     append(line, intBuf);
                     //file.fill('0');
-                    //file << readName << '#' << std::setw(pzeros) << ar.readId + 1;
+                    //file << readName << '#' << std::setw(pzeros) << ar.readID + 1;
                     break;
 
                 // 2..filename is the read sequence itself
                 case 2:
-                    append(line, store.readSeqStore[ar.readId]);
-                    //file << store.readSeqStore[ar.readId];
+                    append(line, store.readSeqStore[ar.readID]);
+                    //file << store.readSeqStore[ar.readID];
                 }
 
                 //file << _sep_ << options.positionFormat << _sep_ << readLen << _sep_ << ((ar.beginPos < ar.endPos)? 'F': 'R') << _sep_;
@@ -718,20 +718,20 @@ int dumpMatches(
                 {
                 // 0..filename is the genome's Fasta id
                 case 0:
-                    //file << store.contigNameStore[ar.contigId];
-                    append(line, store.contigNameStore[ar.contigId]);
+                    //file << store.contigNameStore[ar.contigID];
+                    append(line, store.contigNameStore[ar.contigID]);
                     break;
 
                 // 1..filename is the genome filename + seqNo
                 case 1:
-                    TContig & contig = store.contigStore[ar.contigId];
-                    TContigFile & contigFile = store.contigFileStore[contig.fileId];
+                    TContig & contig = store.contigStore[ar.contigID];
+                    TContigFile & contigFile = store.contigFileStore[contig.fileID];
                     append(line, contigFile.fileName);
                     appendValue(line, '#');
-                    sprintf(intBuf, "%09u", ar.contigId - contigFile.firstContigId + 1);
+                    sprintf(intBuf, "%09u", ar.contigID - contigFile.firstContigID + 1);
                     append(line, intBuf);
                     //strstrm.fill('0');
-                    //strstrm << contigFile.fileName << '#' << std::setw(gzeros) << (ar.contigId - contigFile.firstContigId + 1);
+                    //strstrm << contigFile.fileName << '#' << std::setw(gzeros) << (ar.contigID - contigFile.firstContigID + 1);
                 }
 
                 appendValue(line, _sep_);
@@ -745,45 +745,45 @@ int dumpMatches(
                 else
                     appendNumber(line, ar.beginPos);
                 appendValue(line, _sep_);
-                sprintf(intBuf, "%.5g", percId);
+                sprintf(intBuf, "%.5g", percID);
                 append(line, intBuf);
                 //if (ar.beginPos < ar.endPos)
-                //	file << _sep_ << (ar.beginPos + options.positionFormat) << _sep_ << ar.endPos << _sep_ << std::setprecision(5) << percId;
+                //	file << _sep_ << (ar.beginPos + options.positionFormat) << _sep_ << ar.endPos << _sep_ << std::setprecision(5) << percID;
                 //else
-                //	file << _sep_ << (ar.endPos + options.positionFormat) << _sep_ << ar.beginPos << _sep_ << std::setprecision(5) << percId;
+                //	file << _sep_ << (ar.endPos + options.positionFormat) << _sep_ << ar.beginPos << _sep_ << std::setprecision(5) << percID;
 
-                if (ar.pairMatchId != TAlignedRead::INVALID_ID)
+                if (ar.pairMatchID != TAlignedRead::INVALID_ID)
                 {
                     appendValue(line, _sep_);
-                    appendNumber(line, ar.pairMatchId);
+                    appendNumber(line, ar.pairMatchID);
                     appendValue(line, _sep_);
                     appendNumber(line, (int)store.alignQualityStore[ar.id].pairScore);
                     appendValue(line, _sep_);
                     if (ar.beginPos < ar.endPos)
-                        appendNumber(line, libSize[ar.pairMatchId]);
+                        appendNumber(line, libSize[ar.pairMatchID]);
                     else
-                        appendNumber(line, -libSize[ar.pairMatchId]);
-                    //file << _sep_ << ar.pairMatchId << _sep_ << (int)store.alignQualityStore[ar.id].pairScore << _sep_;
+                        appendNumber(line, -libSize[ar.pairMatchID]);
+                    //file << _sep_ << ar.pairMatchID << _sep_ << (int)store.alignQualityStore[ar.id].pairScore << _sep_;
                     //if (ar.beginPos < ar.endPos)
-                    //    file << libSize[ar.pairMatchId];
+                    //    file << libSize[ar.pairMatchID];
                     //else
-                    //    file << -libSize[ar.pairMatchId];
+                    //    file << -libSize[ar.pairMatchID];
                 }
                 //strstrm << '\n';
                 appendValue(line, '\n');
 
                 if (options.dumpAlignment)
                 {
-                    assignSource(row(align, 0), store.readSeqStore[ar.readId]);
+                    assignSource(row(align, 0), store.readSeqStore[ar.readID]);
 
                     TContigPos left = ar.beginPos;
                     TContigPos right = ar.endPos;
 
                     if (left < right)
-                        assignSource(row(align, 1), infix(store.contigStore[ar.contigId].seq, left, right));
+                        assignSource(row(align, 1), infix(store.contigStore[ar.contigID].seq, left, right));
                     else
                     {
-                        assignSource(row(align, 1), infix(store.contigStore[ar.contigId].seq, right, left));
+                        assignSource(row(align, 1), infix(store.contigStore[ar.contigID].seq, right, left));
                         reverseComplement(source(row(align, 1)));
                     }
                     globalAlignment(align, scoreType);
@@ -820,23 +820,23 @@ int dumpMatches(
         for (unsigned matchReadNo = -1, matchReadCount = 0; it != itEnd; ++it)
         {
             TQuality    qual = getValue(store.alignQualityStore, (*it).id);
-            unsigned    readLen = length(store.readSeqStore[(*it).readId]);
-            double      percId = 100.0 * (1.0 - (double)qual.errors / (double)readLen);
+            unsigned    readLen = length(store.readSeqStore[(*it).readID]);
+            double      percID = 100.0 * (1.0 - (double)qual.errors / (double)readLen);
 
-            if (matchReadNo != (*it).readId)
+            if (matchReadNo != (*it).readID)
             {
-                matchReadNo = (*it).readId;
+                matchReadNo = (*it).readID;
                 matchReadCount = 0;
             }
             else
                 ++matchReadCount;
 
             std::string fastaID;
-            assign(fastaID, store.readNameStore[(*it).readId]);
+            assign(fastaID, store.readNameStore[(*it).readID]);
 
             std::string id = fastaID;
-            int fragId = (*it).readId;
-            bool appendMatchId = options.maxHits > 1;
+            int fragID = (*it).readID;
+            bool appendMatchID = options.maxHits > 1;
 
             size_t left = fastaID.find_first_of('[');
             size_t right = fastaID.find_last_of(']');
@@ -850,13 +850,13 @@ int dumpMatches(
                 {
                     std::istringstream iss(fastaID.substr(pos + 3));
                     iss >> id;
-//						appendMatchId = false;
+//						appendMatchID = false;
                 }
-                pos = fastaID.find("fragId=");
+                pos = fastaID.find("fragID=");
                 if (pos != fastaID.npos)
                 {
                     std::istringstream iss(fastaID.substr(pos + 7));
-                    iss >> fragId;
+                    iss >> fragID;
                 }
             }
 
@@ -869,17 +869,17 @@ int dumpMatches(
 
             unsigned ambig = 0;
             for (unsigned i = 0; i <= qual.errors && i < length(stats); ++i)
-                ambig += stats[i][(*it).readId];
+                ambig += stats[i][(*it).readID];
 
             file << "[id=" << id;
-            if (appendMatchId)
+            if (appendMatchID)
                 file << "_" << matchReadCount;
-            file << ",fragId=" << fragId;
-            file << ",contigId=" << store.contigNameStore[(*it).contigId];
-            file << ",errors=" << (unsigned)qual.errors << ",percId=" << std::setprecision(5) << percId;
+            file << ",fragID=" << fragID;
+            file << ",contigID=" << store.contigNameStore[(*it).contigID];
+            file << ",errors=" << (unsigned)qual.errors << ",percID=" << std::setprecision(5) << percID;
             file << ",ambiguity=" << ambig << ']' << '\n';
 
-            file << store.readSeqStore[(*it).readId] << '\n';
+            file << store.readSeqStore[(*it).readID] << '\n';
         }
         break;
 
@@ -896,20 +896,20 @@ int dumpMatches(
             // 0..filename is the read's Fasta id
             case 0:
             case 3:          // same as 0 if non-paired
-                file << '>' << store.readNameStore[it->readId] << _sep_;
+                file << '>' << store.readNameStore[it->readID] << _sep_;
                 break;
 
             // 1..filename is the read filename + seqNo
             case 1:
                 file.fill('0');
-                file << readName << '#' << std::setw(pzeros) << it->readId + 1  << _sep_;
+                file << readName << '#' << std::setw(pzeros) << it->readID + 1  << _sep_;
                 break;
             }
 
-            if (it == itEnd || it->readId < (*it).readId)
+            if (it == itEnd || it->readID < (*it).readID)
             {
-                if (!empty(store.readSeqStore[it->readId]))
-                    file << store.readSeqStore[it->readId] << _sep_ << "NM" << _sep_ << '0' << _sep_ << '0' << _sep_ << '0' << '\n';
+                if (!empty(store.readSeqStore[it->readID]))
+                    file << store.readSeqStore[it->readID] << _sep_ << "NM" << _sep_ << '0' << _sep_ << '0' << _sep_ << '0' << '\n';
                 else
                 {
                     for (unsigned i = 0; i < maxReadLength; ++i)
@@ -919,10 +919,10 @@ int dumpMatches(
             }
             else
             {
-                file << store.readSeqStore[it->readId] << _sep_;
+                file << store.readSeqStore[it->readID] << _sep_;
                 unsigned bestMatches = 1;
                 if ((unsigned)qual.errors < length(stats))
-                    bestMatches = stats[qual.errors][it->readId];
+                    bestMatches = stats[qual.errors][it->readID];
 
                 if (bestMatches == 0)
                     file << '?';                        // impossible
@@ -931,7 +931,7 @@ int dumpMatches(
                 if (bestMatches >  1)
                     file << 'R';                        // non-unique best matches
 
-                file << (unsigned)qual.errors << _sep_ << stats[0][it->readId] << _sep_ << stats[1][it->readId] << _sep_ << stats[2][it->readId];
+                file << (unsigned)qual.errors << _sep_ << stats[0][it->readID] << _sep_ << stats[1][it->readID] << _sep_ << stats[2][it->readID];
 
                 if (bestMatches == 1)
                 {
@@ -940,15 +940,15 @@ int dumpMatches(
                     {
                     // 0..filename is the read's Fasta id
                     case 0:
-                        file << store.contigNameStore[(*it).contigId];
+                        file << store.contigNameStore[(*it).contigID];
                         break;
 
                     // 1..filename is the read filename + seqNo
                     case 1:
-                        TContig & contig = store.contigStore[(*it).contigId];
-                        TContigFile & contigFile = store.contigFileStore[contig.fileId];
+                        TContig & contig = store.contigStore[(*it).contigID];
+                        TContigFile & contigFile = store.contigFileStore[contig.fileID];
                         file.fill('0');
-                        file << contigFile.fileName << '#' << std::setw(gzeros) << ((*it).contigId - contigFile.firstContigId + 1);
+                        file << contigFile.fileName << '#' << std::setw(gzeros) << ((*it).contigID - contigFile.firstContigID + 1);
                     }
 
                     if ((*it).beginPos < (*it).endPos)
@@ -962,14 +962,14 @@ int dumpMatches(
                         TContigPos right = (*it).endPos;
 
                         if (left < right)
-                            gInf = infix(store.contigStore[(*it).contigId].seq, left, right);
+                            gInf = infix(store.contigStore[(*it).contigID].seq, left, right);
                         else
                         {
-                            gInf = infix(store.contigStore[(*it).contigId].seq, right, left);
+                            gInf = infix(store.contigStore[(*it).contigID].seq, right, left);
                             reverseComplement(gInf);
                         }
                         for (unsigned i = 0; i < length(gInf); ++i)
-                            if ((options.compMask[ordValue(store.readSeqStore[it->readId][i])] &
+                            if ((options.compMask[ordValue(store.readSeqStore[it->readID][i])] &
                                  options.compMask[ordValue(gInf[i])]) == 0)
                                 file << _sep_ << i + 1 << gInf[i];
                     }
@@ -980,7 +980,7 @@ int dumpMatches(
         break;
 
     /*		case 3: // Gff:  printf "$chr $name_$format read $pos %ld . $dir . ID=$col[0]$unique$rest\n",$pos+$len-1;
-                unsigned curreadId = 0;
+                unsigned curreadID = 0;
                 for (unsigned filecount = 0; filecount < length(genomeFileNameList); ++filecount)
                 {
                     TQuality	qual = getValue(store.alignQualityStore, (*it).id);
@@ -997,13 +997,13 @@ int dumpMatches(
                     Dna5String	currGenome;
 
                     // iterate over genome sequences
-                    for(; !_streamEOF(gFile); ++curreadId)
+                    for(; !_streamEof(gFile); ++curreadID)
                     {
                         read(gFile, currGenome, Fasta());			// read Fasta sequence
-                        while(it != itEnd && (*it).contigId == curreadId)
+                        while(it != itEnd && (*it).contigID == curreadID)
                         {
                             file << (unsigned)qual.errors << "\t";
-                            unsigned currReadNo = (*it).readId;
+                            unsigned currReadNo = (*it).readID;
                             int unique = 1;
                             unsigned bestMatches = 0;
                             //would seedEditDist make more sense here?
@@ -1040,12 +1040,12 @@ int dumpMatches(
                             {
                                 // 0..filename is the read's Fasta id
                                 case 0:
-                                    file << store.contigNameStore[(*it).contigId] <<'\t';
+                                    file << store.contigNameStore[(*it).contigID] <<'\t';
                                     break;
                                 // 1..filename is the read filename + seqNo
                                 case 1:
                                     file.fill('0');
-                                    file << gnoToFileMap[(*it).contigId].i1 << '#' << std::setw(gzeros) << gnoToFileMap[(*it).contigId].i2 + 1 << '\t';
+                                    file << gnoToFileMap[(*it).contigID].i1 << '#' << std::setw(gzeros) << gnoToFileMap[(*it).contigID].i2 + 1 << '\t';
                                     break;
                             }
                         //	std::cout << "hier3\n";
@@ -1059,8 +1059,8 @@ int dumpMatches(
             //					file << '\t' << ((*it).beginPos + options.positionFormat) << '\t' << (*it).endPos <<'\t';
             //				else
             //					file << '\t' << (*it).endPos << '\t'<<((*it).beginPos + options.positionFormat)<< '\t';
-                            double percId = 100.0 * (1.0 - (double)qual.errors / (double)readLen);
-                            file << percId << "\t";
+                            double percID = 100.0 * (1.0 - (double)qual.errors / (double)readLen);
+                            file << percID << "\t";
                         //	std::cout << "hier4\n";
 
                             if ((*it).beginPos < (*it).endPos)
@@ -1096,10 +1096,10 @@ int dumpMatches(
                                     TContigPos right = (*it).endPos;
 
                                     if (left < right)
-                                        gInf = infix(store.contigStore[(*it).contigId].seq, left, right);
+                                        gInf = infix(store.contigStore[(*it).contigID].seq, left, right);
                                     else
                                     {
-                                        gInf = infix(store.contigStore[(*it).contigId].seq, right, left);
+                                        gInf = infix(store.contigStore[(*it).contigID].seq, right, left);
                                         reverseComplement(gInf);
                                     }
                                     bool first = true;

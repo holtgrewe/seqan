@@ -71,7 +71,7 @@ struct SmallVariation
     };
 
     // The idx of the contig the variation is on.  -1 if not set.
-    int rId;
+    int rID;
     // The position of the variation in the sequence.  -1 if not set.
     int pos;
     // The type of the variant.
@@ -81,7 +81,7 @@ struct SmallVariation
     // The sequence that is to be inserted here, if any.
     seqan::Char5String seq;
 
-    SmallVariation() : rId(-1), pos(-1), vType(NONE), len(0)
+    SmallVariation() : rID(-1), pos(-1), vType(NONE), len(0)
     {}
 };
 

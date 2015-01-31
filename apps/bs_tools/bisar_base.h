@@ -15,7 +15,7 @@ using namespace seqan;
 
 
 template <typename TFSSpec, typename TFSConfig, typename TFileName>
-bool loadReadsCroppedId(FragmentStore<TFSSpec, TFSConfig> &store, TFileName &fileName)
+bool loadReadsCroppedID(FragmentStore<TFSSpec, TFSConfig> &store, TFileName &fileName)
 {
     seqan::SeqFileIn seqFileIn;
     if (!open(seqFileIn, toCString(fileName)))
@@ -36,7 +36,7 @@ bool loadReadsCroppedId(FragmentStore<TFSSpec, TFSConfig> &store, TFileName &fil
 
 
 template <typename TFSSpec, typename TFSConfig, typename TFileName>
-bool loadReadsCroppedId(FragmentStore<TFSSpec, TFSConfig> & store,
+bool loadReadsCroppedID(FragmentStore<TFSSpec, TFSConfig> & store,
                         TFileName & fileNameL, TFileName & fileNameR)
 {
     seqan::SeqFileIn seqFileInL, seqFileInR;

@@ -154,8 +154,8 @@ unsigned trimRead(TSeq& seq, unsigned const cutoff, TSpec const & spec)
 	erase(seq, cut_pos, length(seq));
     return ret;
 }
-template <typename TSet, typename TIdSet, typename TSpec>
-unsigned _trimReads(TSet & seqSet, TIdSet& idSet, unsigned const cutoff, TSpec const & spec, bool tagOpt)
+template <typename TSet, typename TIDSet, typename TSpec>
+unsigned _trimReads(TSet & seqSet, TIDSet& idSet, unsigned const cutoff, TSpec const & spec, bool tagOpt)
 {
 	typedef typename seqan::Value<TSet>::Type TSeq;
 	int trimmedReads = 0;
@@ -177,8 +177,8 @@ unsigned _trimReads(TSet & seqSet, TIdSet& idSet, unsigned const cutoff, TSpec c
 	return trimmedReads;
 }
 
-template <typename TId, typename TSeq>
-unsigned dropReads(seqan::StringSet<TId> & idSet, seqan::StringSet<TSeq> & seqSet,
+template <typename TID, typename TSeq>
+unsigned dropReads(seqan::StringSet<TID> & idSet, seqan::StringSet<TSeq> & seqSet,
 		unsigned const min_length, QualityTrimmingStats& stats)
 {
 	int len = length(seqSet);
@@ -217,9 +217,9 @@ unsigned dropReads(seqan::StringSet<TId> & idSet, seqan::StringSet<TSeq> & seqSe
 }
 
 //overload for paired end data
-template <typename TId, typename TSeq>
-unsigned dropReads(seqan::StringSet<TId> & idSet1, seqan::StringSet<TSeq> & seqSet1,
-		  seqan::StringSet<TId> & idSet2, seqan::StringSet<TSeq> & seqSet2, unsigned const min_length, QualityTrimmingStats& stats)
+template <typename TID, typename TSeq>
+unsigned dropReads(seqan::StringSet<TID> & idSet1, seqan::StringSet<TSeq> & seqSet1,
+		  seqan::StringSet<TID> & idSet2, seqan::StringSet<TSeq> & seqSet2, unsigned const min_length, QualityTrimmingStats& stats)
 {
 	// Iterate over the set and drop filter out those reads that are
 	// too short. If only one read of the pair is too short, mark it
@@ -282,17 +282,17 @@ unsigned dropReads(seqan::StringSet<TId> & idSet1, seqan::StringSet<TSeq> & seqS
 	return 0;
 }
 
-template <typename TSeq, typename TId, typename TSpec>
-unsigned trimBatch(seqan::StringSet<TSeq>& seqSet, seqan::StringSet<TId>& idSet, unsigned const cutoff,
+template <typename TSeq, typename TID, typename TSpec>
+unsigned trimBatch(seqan::StringSet<TSeq>& seqSet, seqan::StringSet<TID>& idSet, unsigned const cutoff,
     TSpec const& spec, bool tagOpt)
 {
 	unsigned trimmedReads = _trimReads(seqSet, idSet, cutoff, spec, tagOpt);
 	return trimmedReads;
 }
 
-template <typename TSeq, typename TId, typename TSpec>
-seqan::Pair<unsigned, unsigned> trimPairBatch(seqan::StringSet<TSeq>& seqSet1, seqan::StringSet<TId>& idSet1,
-    seqan::StringSet<TSeq> & seqSet2, seqan::StringSet<TId>& idSet2, unsigned const cutoff,
+template <typename TSeq, typename TID, typename TSpec>
+seqan::Pair<unsigned, unsigned> trimPairBatch(seqan::StringSet<TSeq>& seqSet1, seqan::StringSet<TID>& idSet1,
+    seqan::StringSet<TSeq> & seqSet2, seqan::StringSet<TID>& idSet2, unsigned const cutoff,
     TSpec const & spec, bool tagOpt)
 {
 	unsigned trimmedReads1 = _trimReads(seqSet1, idSet1, cutoff, spec, tagOpt);

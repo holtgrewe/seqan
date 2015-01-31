@@ -235,15 +235,15 @@ struct QualityExtractor : public std::unary_function<TValue, char>
 // Function readRecord(TagSelector); Qualities inside seq
 // ----------------------------------------------------------------------------
 
-template <typename TIdString, typename TSeqString, typename TFwdIterator>
+template <typename TIDString, typename TSeqString, typename TFwdIterator>
 inline void
-readRecord(TIdString & /* meta */, TSeqString & /* seq */, TFwdIterator & /* iter */,
+readRecord(TIDString & /* meta */, TSeqString & /* seq */, TFwdIterator & /* iter */,
            TagSelector<> const & /* format */)
 {}
 
-template <typename TIdString, typename TSeqString, typename TFwdIterator, typename TTagList>
+template <typename TIDString, typename TSeqString, typename TFwdIterator, typename TTagList>
 inline void
-readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, TagSelector<TTagList> const & format)
+readRecord(TIDString & meta, TSeqString & seq, TFwdIterator & iter, TagSelector<TTagList> const & format)
 {
     typedef typename TTagList::Type TFormat;
 
@@ -257,15 +257,15 @@ readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, TagSelector<
 // Function readRecord(TagSelector); Qualities inside qual
 // ----------------------------------------------------------------------------
 
-template <typename TIdString, typename TSeqString, typename TQualString, typename TFwdIterator>
+template <typename TIDString, typename TSeqString, typename TQualString, typename TFwdIterator>
 inline void
-readRecord(TIdString & /* meta */, TSeqString & /* seq */, TQualString & /* qual */, TFwdIterator & /* iter */,
+readRecord(TIDString & /* meta */, TSeqString & /* seq */, TQualString & /* qual */, TFwdIterator & /* iter */,
            TagSelector<> const & /* format */)
 {}
 
-template <typename TIdString, typename TSeqString, typename TQualString, typename TFwdIterator, typename TTagList>
+template <typename TIDString, typename TSeqString, typename TQualString, typename TFwdIterator, typename TTagList>
 inline void
-readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, TagSelector<TTagList> const & format)
+readRecord(TIDString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, TagSelector<TTagList> const & format)
 {
     typedef typename TTagList::Type TFormat;
 
@@ -279,8 +279,8 @@ readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, TFwdIterator 
 // Function readRecord(Raw);
 // ----------------------------------------------------------------------------
 
-template <typename TIdString, typename TSeqString, typename TFwdIterator>
-inline void readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, Raw)
+template <typename TIDString, typename TSeqString, typename TFwdIterator>
+inline void readRecord(TIDString & meta, TSeqString & seq, TFwdIterator & iter, Raw)
 {
     typedef typename Value<TSeqString>::Type                        TAlphabet;
     typedef typename FastaIgnoreOrAssertFunctor_<TAlphabet>::Type   TIgnoreOrAssert;
@@ -295,8 +295,8 @@ inline void readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, 
 // Function readRecord(Raw);
 // ----------------------------------------------------------------------------
 
-template <typename TIdString, typename TSeqString, typename TQualString, typename TFwdIterator>
-inline void readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, Raw const & raw)
+template <typename TIDString, typename TSeqString, typename TQualString, typename TFwdIterator>
+inline void readRecord(TIDString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, Raw const & raw)
 {
     clear(qual);
     readRecord(meta, seq, iter, raw);
@@ -306,8 +306,8 @@ inline void readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, T
 // Function readRecord(Fasta); Qualities inside seq
 // ----------------------------------------------------------------------------
 
-template <typename TIdString, typename TSeqString, typename TFwdIterator>
-inline void readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, Fasta)
+template <typename TIDString, typename TSeqString, typename TFwdIterator>
+inline void readRecord(TIDString & meta, TSeqString & seq, TFwdIterator & iter, Fasta)
 {
     typedef typename Value<TSeqString>::Type                        TAlphabet;
     typedef typename FastaIgnoreOrAssertFunctor_<TAlphabet>::Type   TIgnoreOrAssert;
@@ -327,8 +327,8 @@ inline void readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, 
 // Function readRecord(Fasta); Qualities inside qual
 // ----------------------------------------------------------------------------
 
-template <typename TIdString, typename TSeqString, typename TQualString, typename TFwdIterator>
-inline void readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, Fasta)
+template <typename TIDString, typename TSeqString, typename TQualString, typename TFwdIterator>
+inline void readRecord(TIDString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, Fasta)
 {
     clear(qual);
     readRecord(meta, seq, iter, Fasta());
@@ -338,8 +338,8 @@ inline void readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, T
 // Function readRecord(Fastq); Qualities inside seq
 // ----------------------------------------------------------------------------
 
-template <typename TIdString, typename TSeqString, typename TFwdIterator>
-inline void readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, Fastq)
+template <typename TIDString, typename TSeqString, typename TFwdIterator>
+inline void readRecord(TIDString & meta, TSeqString & seq, TFwdIterator & iter, Fastq)
 {
     typedef typename Value<TSeqString>::Type                                TAlphabet;
     typedef typename FastaIgnoreFunctor_<TAlphabet>::Type                   TIgnore;
@@ -383,8 +383,8 @@ inline void readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, 
 // Function readRecord(Fastq); Qualities inside qual
 // ----------------------------------------------------------------------------
 
-template <typename TIdString, typename TSeqString, typename TQualString, typename TFwdIterator>
-inline void readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, Fastq)
+template <typename TIDString, typename TSeqString, typename TQualString, typename TFwdIterator>
+inline void readRecord(TIDString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, Fastq)
 {
     typedef typename Value<TSeqString>::Type                                TSeqAlphabet;
     typedef typename Value<TQualString>::Type                               TQualAlphabet;
@@ -421,9 +421,9 @@ inline void readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, T
 // Function writeRecord(Raw); Qualities inside seq
 // ----------------------------------------------------------------------------
 
-template <typename TFwdIterator, typename TIdString, typename TSeqString>
+template <typename TFwdIterator, typename TIDString, typename TSeqString>
 inline void
-writeRecord(TFwdIterator & iter, TIdString const & /* meta */, TSeqString const & seq, Raw const &,
+writeRecord(TFwdIterator & iter, TIDString const & /* meta */, TSeqString const & seq, Raw const &,
             SequenceOutputOptions const & = SequenceOutputOptions())
 {
     write(iter, seq);
@@ -434,9 +434,9 @@ writeRecord(TFwdIterator & iter, TIdString const & /* meta */, TSeqString const 
 // Function writeRecord(Raw); Qualities inside qual
 // ----------------------------------------------------------------------------
 
-template <typename TFwdIterator, typename TIdString, typename TSeqString, typename TQualString>
+template <typename TFwdIterator, typename TIDString, typename TSeqString, typename TQualString>
 inline void
-writeRecord(TFwdIterator & iter, TIdString const & /* meta */, TSeqString const & seq, TQualString const & /* qual */, Raw const &,
+writeRecord(TFwdIterator & iter, TIDString const & /* meta */, TSeqString const & seq, TQualString const & /* qual */, Raw const &,
             SequenceOutputOptions const & = SequenceOutputOptions())
 {
     write(iter, seq);
@@ -448,10 +448,10 @@ writeRecord(TFwdIterator & iter, TIdString const & /* meta */, TSeqString const 
 // Function writeRecord(Fasta);
 // ----------------------------------------------------------------------------
 
-template <typename TTarget, typename TIdString, typename TSeqString>
+template <typename TTarget, typename TIDString, typename TSeqString>
 inline void
 writeRecord(TTarget & target,
-            TIdString const & meta,
+            TIDString const & meta,
             TSeqString const & seq,
             Fasta const & /*tag*/,
             SequenceOutputOptions const & options = SequenceOutputOptions())
@@ -463,10 +463,10 @@ writeRecord(TTarget & target,
     writeWrappedString(target, seq, (options.lineLength < 0)? 70 : options.lineLength); // 70bp wrapping, by default
 }
 
-template <typename TTarget, typename TIdString, typename TSeqString, typename TQualString>
+template <typename TTarget, typename TIDString, typename TSeqString, typename TQualString>
 inline void
 writeRecord(TTarget & target,
-            TIdString const & meta,
+            TIDString const & meta,
             TSeqString const & seq,
             TQualString const & /*tag*/,
             Fasta const & fasta,
@@ -480,10 +480,10 @@ writeRecord(TTarget & target,
 // Function writeRecord(Fastq); Qualities inside qual
 // ----------------------------------------------------------------------------
 
-template <typename TTarget, typename TIdString, typename TSeqString, typename TQualString>
+template <typename TTarget, typename TIDString, typename TSeqString, typename TQualString>
 inline void
 writeRecord(TTarget & target,
-            TIdString const & meta,
+            TIDString const & meta,
             TSeqString const & seq,
             TQualString const & qual,
             Fastq const & /*tag*/,
@@ -508,10 +508,10 @@ writeRecord(TTarget & target,
 // Function writeRecord(Fastq); Qualities inside seq
 // ----------------------------------------------------------------------------
 
-template <typename TTarget, typename TIdString, typename TSeqString>
+template <typename TTarget, typename TIDString, typename TSeqString>
 inline void
 writeRecord(TTarget & target,
-            TIdString const & meta,
+            TIDString const & meta,
             TSeqString const & seq,
             Fastq const & tag,
             SequenceOutputOptions const & options = SequenceOutputOptions())
@@ -526,15 +526,15 @@ writeRecord(TTarget & target,
 // Function writeRecord(TagSelector); Qualities inside seq
 // ----------------------------------------------------------------------------
 
-template <typename TFwdIterator, typename TIdString, typename TSeqString>
+template <typename TFwdIterator, typename TIDString, typename TSeqString>
 inline void
-writeRecord(TFwdIterator & /* iter */, TIdString const & /* meta */, TSeqString const & /* seq */,
+writeRecord(TFwdIterator & /* iter */, TIDString const & /* meta */, TSeqString const & /* seq */,
             TagSelector<> const & /* format */, SequenceOutputOptions const & /* options */)
 {}
 
-template <typename TFwdIterator, typename TIdString, typename TSeqString, typename TTagList>
+template <typename TFwdIterator, typename TIDString, typename TSeqString, typename TTagList>
 inline void
-writeRecord(TFwdIterator & iter, TIdString const & meta, TSeqString const & seq,
+writeRecord(TFwdIterator & iter, TIDString const & meta, TSeqString const & seq,
             TagSelector<TTagList> const & format, SequenceOutputOptions const & options = SequenceOutputOptions())
 {
     typedef typename TTagList::Type TFormat;
@@ -549,15 +549,15 @@ writeRecord(TFwdIterator & iter, TIdString const & meta, TSeqString const & seq,
 // Function writeRecord(TagSelector); Qualities inside qual
 // ----------------------------------------------------------------------------
 
-template <typename TFwdIterator, typename TIdString, typename TSeqString, typename TQualString>
+template <typename TFwdIterator, typename TIDString, typename TSeqString, typename TQualString>
 inline void
-writeRecord(TFwdIterator & /* iter */, TIdString const & /* meta */, TSeqString const & /* seq */, TQualString const & /* qual */,
+writeRecord(TFwdIterator & /* iter */, TIDString const & /* meta */, TSeqString const & /* seq */, TQualString const & /* qual */,
             TagSelector<> const & /* format */, SequenceOutputOptions const & /* options */)
 {}
 
-template <typename TFwdIterator, typename TIdString, typename TSeqString, typename TQualString, typename TTagList>
+template <typename TFwdIterator, typename TIDString, typename TSeqString, typename TQualString, typename TTagList>
 inline void
-writeRecord(TFwdIterator & iter, TIdString const & meta, TSeqString const & seq, TQualString const & qual,
+writeRecord(TFwdIterator & iter, TIDString const & meta, TSeqString const & seq, TQualString const & qual,
             TagSelector<TTagList> const & format, SequenceOutputOptions const & options = SequenceOutputOptions())
 {
     typedef typename TTagList::Type TFormat;

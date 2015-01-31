@@ -48,7 +48,7 @@ using namespace seqan;
 class WeightedMatch
 {
 public:
-    size_t contigId;
+    size_t contigID;
     bool isForward;
     size_t pos;
     int distance;
@@ -58,21 +58,21 @@ public:
 
     WeightedMatch() {}
 
-    WeightedMatch(size_t _contigId, bool _isForward, size_t _pos, int _distance, size_t _beginPos) :
-        contigId(_contigId), isForward(_isForward), pos(_pos), distance(_distance), beginPos(_beginPos)
+    WeightedMatch(size_t _contigID, bool _isForward, size_t _pos, int _distance, size_t _beginPos) :
+        contigID(_contigID), isForward(_isForward), pos(_pos), distance(_distance), beginPos(_beginPos)
     {}
 
-    // Order lexicographically by (contigId, pos, -distance).
+    // Order lexicographically by (contigID, pos, -distance).
     bool operator<(WeightedMatch const & other) const
     {
-        if (contigId < other.contigId) return true;
+        if (contigID < other.contigID) return true;
 
-        if (contigId == other.contigId && isForward > other.isForward) return true;
+        if (contigID == other.contigID && isForward > other.isForward) return true;
 
-        if (contigId == other.contigId && isForward == other.isForward &&
+        if (contigID == other.contigID && isForward == other.isForward &&
             pos < other.pos) return true;
 
-        if (contigId == other.contigId && isForward == other.isForward &&
+        if (contigID == other.contigID && isForward == other.isForward &&
             pos == other.pos && distance > other.distance) return true;
 
         return false;
@@ -80,7 +80,7 @@ public:
 
     bool operator==(WeightedMatch const & other) const
     {
-        if (contigId != other.contigId) return false;
+        if (contigID != other.contigID) return false;
 
         if (isForward != other.isForward) return false;
 
@@ -98,15 +98,15 @@ public:
 typedef String<WeightedMatch> TWeightedMatches;
 
 // ----------------------------------------------------------------------------
-// Helper Class WeightedMatchBeginPosNeqOrContigIdNeq
+// Helper Class WeightedMatchBeginPosNeqOrContigIDNeq
 // ----------------------------------------------------------------------------
 
-struct WeightedMatchBeginPosNeqOrContigIdNeq :
+struct WeightedMatchBeginPosNeqOrContigIDNeq :
     std::binary_function<WeightedMatch, WeightedMatch, bool>
 {
     bool operator()(WeightedMatch const & arg1, WeightedMatch const & arg2)
     {
-        return arg1.beginPos != arg2.beginPos || arg1.contigId != arg2.contigId || arg1.isForward != arg2.isForward;
+        return arg1.beginPos != arg2.beginPos || arg1.contigID != arg2.contigID || arg1.isForward != arg2.isForward;
     }
 
 };
@@ -127,7 +127,7 @@ struct WeightedMatchBeginPosNeqOrContigIdNeq :
 template <typename TStream>
 TStream & operator<<(TStream & out, WeightedMatch const & m)
 {
-    out << "(" << m.contigId << ", " << (m.isForward ? "F, " : "R, ")
+    out << "(" << m.contigID << ", " << (m.isForward ? "F, " : "R, ")
     << m.pos << ", " << m.distance << ", " << m.beginPos << ")";
     return out;
 }
@@ -139,7 +139,7 @@ TStream & operator<<(TStream & out, WeightedMatch const & m)
 // Fills gaps in the given error curve.  If there are two adjacent entries in the string that have the same start
 // position but not adjacent end positions then we add an entry for each end position in between.
 
-// errorCurve must be sorted by (contigId, endPosition).
+// errorCurve must be sorted by (contigID, endPosition).
 
 void fillGaps(String<WeightedMatch> & errorCurve)
 {
@@ -153,8 +153,8 @@ void fillGaps(String<WeightedMatch> & errorCurve)
     String<WeightedMatch> buffer;
     for (TIterator it = begin(errorCurve, Standard()); (it + 1) != end(errorCurve, Standard()); ++it)
     {
-        if (value(it).contigId != value(it + 1).contigId)
-            continue;  // Skip if contigId is not equal.
+        if (value(it).contigID != value(it + 1).contigID)
+            continue;  // Skip if contigID is not equal.
         if (value(it).isForward != value(it + 1).isForward)
             continue;  // Skip if direction is not equal.
         if (value(it).pos + 1 == value(it + 1).pos)
@@ -164,7 +164,7 @@ void fillGaps(String<WeightedMatch> & errorCurve)
         // If the code reaches this position then we have a gap and fill it.
         int gapScore = _min(value(it).distance, value(it + 1).distance);
         for (size_t i = value(it).pos + 1; i < value(it + 1).pos; ++i)
-            appendValue(buffer, WeightedMatch(value(it).contigId, value(it).isForward, i, gapScore, value(it).beginPos));
+            appendValue(buffer, WeightedMatch(value(it).contigID, value(it).isForward, i, gapScore, value(it).beginPos));
     }
 
     // Append buffer and sort inserted items to the right position.
@@ -193,7 +193,7 @@ void smoothErrorCurve(String<WeightedMatch> & errorCurve)
     typedef Position<String<WeightedMatch> >::Type TPosition;
 
     // For all intervals with the same beginPosition.
-    WeightedMatchBeginPosNeqOrContigIdNeq pred;
+    WeightedMatchBeginPosNeqOrContigIDNeq pred;
     TIterator itBegin = begin(errorCurve, Standard());
     TIterator itEnd = std::adjacent_find(itBegin, end(errorCurve, Standard()), pred);
     do

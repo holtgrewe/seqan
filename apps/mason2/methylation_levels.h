@@ -151,13 +151,13 @@ public:
     TRng & rng;
 
     // Beta probability density functions for level generation.
-    seqan::Pdf<seqan::Beta> pdfCG, pdfCHG, pdfCHH;
+    seqan::Pdf<seqan::Beta> pdfCG, pdfChg, pdfChh;
 
     MethylationLevelSimulator(TRng & rng, MethylationLevelSimulatorOptions const & options) :
             options(options), rng(rng),
             pdfCG(options.methMuCG, options.methSigmaCG, seqan::MeanStdDev()),
-            pdfCHG(options.methMuCHG, options.methSigmaCHG, seqan::MeanStdDev()),
-            pdfCHH(options.methMuCHH, options.methSigmaCHH, seqan::MeanStdDev())
+            pdfChg(options.methMuCHG, options.methSigmaCHG, seqan::MeanStdDev()),
+            pdfChh(options.methMuCHH, options.methSigmaCHH, seqan::MeanStdDev())
     {}
 
     // Simulate methylation levels for the sequence in contig.  The results are stored in levels.
@@ -219,11 +219,11 @@ public:
             case 27:    // CAG
             case 42:    // CTG
                 // std::cerr << "CHG fw    \t" << dbg << "\t" << dbg2 << "\t" << pos << "\n";
-                levels.setLevelF(pos, pickRandomNumber(rng, pdfCHG));
-                levels.setLevelR(pos + 2, pickRandomNumber(rng, pdfCHG));
+                levels.setLevelF(pos, pickRandomNumber(rng, pdfChg));
+                levels.setLevelR(pos + 2, pickRandomNumber(rng, pdfChg));
                 break;
             case 32:  // CCG
-                levels.setLevelF(pos, pickRandomNumber(rng, pdfCHG));
+                levels.setLevelF(pos, pickRandomNumber(rng, pdfChg));
                 levels.setLevelR(pos + 2, pickRandomNumber(rng, pdfCG)); 
                 break;
             case 25:    // CAA
@@ -236,7 +236,7 @@ public:
             case 41:    // CTC
             case 43:    // CTT
                 // std::cerr << "CHH       \t" << dbg << "\t" << dbg2 << "\t" << pos << "\n";
-                levels.setLevelF(pos, pickRandomNumber(rng, pdfCHH));
+                levels.setLevelF(pos, pickRandomNumber(rng, pdfChh));
                 break;
             case 2:     // AAG
             case 12:    // AGG
@@ -247,7 +247,7 @@ public:
             case 77:    // TAG
             case 87:    // TGG
             case 92:    // TTG
-                levels.setLevelR(pos + 2, pickRandomNumber(rng, pdfCHH));
+                levels.setLevelR(pos + 2, pickRandomNumber(rng, pdfChh));
                 break;
 
             default:

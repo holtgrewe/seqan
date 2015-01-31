@@ -351,7 +351,7 @@ int main(int argc, char const ** argv)
     }
 
     // TODO(holtgrew): This is only suited for the Illumina mate pair protocol at the moment (--> <--).
-    int oldRId = 0;
+    int oldRID = 0;
     int oldPos = 0;
     seqan::BamAlignmentRecord record;
     while (!atEnd(bamFileIn))
@@ -363,12 +363,12 @@ int main(int argc, char const ** argv)
             break;  // Found first unmapped record!
 
         // Check sorting.
-        if (record.rID < oldRId || (record.rID == oldRId && record.beginPos < oldPos))
+        if (record.rID < oldRID || (record.rID == oldRID && record.beginPos < oldPos))
         {
             std::cerr << "\nERROR: The BAM file is not sorted properly!\n";
             return 1;
         }
-        oldRId = record.rID;
+        oldRID = record.rID;
         oldPos = record.beginPos;
 
         // Process record, different cases, depending on strandedness and pairedness.

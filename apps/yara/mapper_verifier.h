@@ -136,7 +136,7 @@ inline void _findMateImpl(AnchorsVerifier<TSpec, Traits> & me, TMatch const & an
     typedef typename Traits::TContigsPos                TContigsPos;
 
     typedef typename Traits::TReadSeqs                  TReadSeqs;
-    typedef typename Size<TReadSeqs>::Type              TReadId;
+    typedef typename Size<TReadSeqs>::Type              TReadID;
     typedef typename Value<TReadSeqs>::Type             TReadSeq;
     typedef typename Size<TReadSeq>::Type               TErrors;
 
@@ -145,19 +145,19 @@ inline void _findMateImpl(AnchorsVerifier<TSpec, Traits> & me, TMatch const & an
 //    typedef Verifier<TContigSeqs, TReadSeq, TAlgorithm> TVerifier;
 
     // Get mate seq.
-    TReadId mateSeqId = getMateSeqId(me.readSeqs, getReadSeqId(anchor, me.readSeqs));
-    TReadSeq const & mateSeq = me.readSeqs[mateSeqId];
+    TReadID mateSeqID = getMateSeqID(me.readSeqs, getReadSeqID(anchor, me.readSeqs));
+    TReadSeq const & mateSeq = me.readSeqs[mateSeqID];
 
     TContigsPos contigBegin;
     TContigsPos contigEnd;
 
-    if (isRevReadSeq(me.readSeqs, mateSeqId))
+    if (isRevReadSeq(me.readSeqs, mateSeqID))
         _getMateContigPos(me, contigBegin, contigEnd, anchor, RightMate());
     else
         _getMateContigPos(me, contigBegin, contigEnd, anchor, LeftMate());
 
-    // Fill readId.
-    setReadId(me.prototype, me.readSeqs, mateSeqId);
+    // Fill readID.
+    setReadID(me.prototype, me.readSeqs, mateSeqID);
 
     // Get absolute number of errors.
     TErrors maxErrors = getReadErrors<TMatch>(me.options, length(mateSeq));
@@ -196,10 +196,10 @@ inline void _getMateContigPos(AnchorsVerifier<TSpec, Traits> const & me,
     typedef typename Traits::TContig                TContig;
     typedef typename Size<TContig>::Type            TContigSize;
 
-    TContigSize contigLength = length(me.contigSeqs[getContigId(anchor)]);
+    TContigSize contigLength = length(me.contigSeqs[getContigID(anchor)]);
 
-    setValueI1(contigBegin, getContigId(anchor));
-    setValueI1(contigEnd, getContigId(anchor));
+    setValueI1(contigBegin, getContigID(anchor));
+    setValueI1(contigEnd, getContigID(anchor));
 
     contigBegin.i2 = 0;
     if (getMember(anchor, ContigBegin()) + me.options.libraryLength > me.options.libraryError)
@@ -219,8 +219,8 @@ inline void _getMateContigPos(AnchorsVerifier<TSpec, Traits> const & me,
                               TMatch const & anchor,
                               LeftMate)
 {
-    setValueI1(contigBegin, getContigId(anchor));
-    setValueI1(contigEnd, getContigId(anchor));
+    setValueI1(contigBegin, getContigID(anchor));
+    setValueI1(contigEnd, getContigID(anchor));
 
     contigBegin.i2 = 0;
     if (getMember(anchor, ContigEnd()) > me.options.libraryLength + me.options.libraryError)

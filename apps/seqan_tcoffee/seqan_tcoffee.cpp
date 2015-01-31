@@ -63,7 +63,7 @@ customizedMsaAlignment(MsaOptions<TAlphabet, TScore> const& msaOpt)
     _loadSequences(sequenceSet, sequenceNames, msaOpt.seqfile.c_str());
 
     // Alignment of the sequences
-    Graph<Alignment<StringSet<TSequence, Dependent<> >, void, WithoutEdgeId> > gAlign;
+    Graph<Alignment<StringSet<TSequence, Dependent<> >, void, WithoutEdgeID> > gAlign;
 
     // MSA
     globalMsaAlignment(gAlign, sequenceSet, sequenceNames, msaOpt);

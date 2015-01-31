@@ -72,7 +72,7 @@ typedef seqan::JournalEntries<seqan::JournalEntry<unsigned, int>, seqan::SortedA
 struct SnpRecord
 {
     // Reference id and position on the reference.
-    int rId;
+    int rID;
     int pos;
 
     // The haplotype that this variation belongs to.
@@ -81,24 +81,24 @@ struct SnpRecord
     // The target nucleotide.
     seqan::Dna5 to;
 
-    SnpRecord() : rId(-1), pos(-1), haplotype(-1), to('\0')
+    SnpRecord() : rID(-1), pos(-1), haplotype(-1), to('\0')
     {}
 
-    SnpRecord(int haplotype, int rId, int pos, char to) :
-            rId(rId), pos(pos), haplotype(haplotype), to(to)
+    SnpRecord(int haplotype, int rID, int pos, char to) :
+            rID(rID), pos(pos), haplotype(haplotype), to(to)
     {}
 
     bool operator<(SnpRecord const & other) const
     {
-        if (rId < other.rId || (rId == other.rId && pos < other.pos) ||
-            (rId == other.rId && pos == other.pos && haplotype < other.haplotype))
+        if (rID < other.rID || (rID == other.rID && pos < other.pos) ||
+            (rID == other.rID && pos == other.pos && haplotype < other.haplotype))
             return true;
         return false;
     }
 
     std::pair<int, int> getPos() const
     {
-        return std::make_pair(rId, pos);
+        return std::make_pair(rID, pos);
     }
 };
 
@@ -115,7 +115,7 @@ std::ostream & operator<<(std::ostream & out, SnpRecord const & record);
 struct SmallIndelRecord
 {
     // Reference id and position on the reference.
-    int rId;
+    int rID;
     int pos;
 
     // The haplotype that this variation belongs to.
@@ -127,11 +127,11 @@ struct SmallIndelRecord
     // The inserted sequence if any.
     seqan::CharString seq;
 
-    SmallIndelRecord() : rId(-1), pos(-1), haplotype(-1), size(0)
+    SmallIndelRecord() : rID(-1), pos(-1), haplotype(-1), size(0)
     {}
 
-    SmallIndelRecord(int haplotype, int rId, int pos, int size, seqan::CharString const & seq) :
-            rId(rId), pos(pos), haplotype(haplotype), size(size), seq(seq)
+    SmallIndelRecord(int haplotype, int rID, int pos, int size, seqan::CharString const & seq) :
+            rID(rID), pos(pos), haplotype(haplotype), size(size), seq(seq)
     {}
 
     bool operator<(SmallIndelRecord const & other) const
@@ -141,7 +141,7 @@ struct SmallIndelRecord
 
     std::pair<int, int> getPos() const
     {
-        return std::make_pair(rId, pos);
+        return std::make_pair(rID, pos);
     }
 };
 
@@ -191,7 +191,7 @@ struct StructuralVariantRecord
     Kind kind;
 
     // Reference id and position on the reference.
-    int rId;
+    int rID;
     int pos;
 
     // The haplotype that this variation belongs to.
@@ -204,19 +204,19 @@ struct StructuralVariantRecord
 
     // Target reference id and position on this reference.  Currently, we only have SVs on the same chromosome.  Used in
     // case of translocation and duplication.
-    int targetRId;
+    int targetRID;
     int targetPos;
 
     // The inserted sequence if any.
     seqan::CharString seq;
 
     StructuralVariantRecord() :
-            kind(INVALID), rId(-1), pos(-1), haplotype(-1), size(0), targetRId(-1), targetPos(-1)
+            kind(INVALID), rID(-1), pos(-1), haplotype(-1), size(0), targetRID(-1), targetPos(-1)
     {}
 
-    StructuralVariantRecord(Kind kind, int haplotype, int rId, int pos, int size,
-                            int targetRId = -1, int targetPos = -1) :
-            kind(kind), rId(rId), pos(pos), haplotype(haplotype), size(size), targetRId(targetRId),
+    StructuralVariantRecord(Kind kind, int haplotype, int rID, int pos, int size,
+                            int targetRID = -1, int targetPos = -1) :
+            kind(kind), rID(rID), pos(pos), haplotype(haplotype), size(size), targetRID(targetRID),
             targetPos(targetPos)
     {}
 
@@ -227,7 +227,7 @@ struct StructuralVariantRecord
 
     std::pair<int, int> getPos() const
     {
-        return std::make_pair(rId, pos);
+        return std::make_pair(rID, pos);
     }
 
     // Returns true if query is within one base of the breakend.
@@ -512,9 +512,9 @@ public:
             std::vector<SmallVarInfo> & smallVars,
             std::vector<std::pair<int, int> > & breakpoints,
             seqan::Dna5String const & refSeq,
-            int haplotypeId)
+            int haplotypeID)
     {
-        return _runImpl(&resultSeq, &posMap, 0, smallVars, breakpoints, &refSeq, 0, haplotypeId);
+        return _runImpl(&resultSeq, &posMap, 0, smallVars, breakpoints, &refSeq, 0, haplotypeID);
     }
 
     // Same as the run() above, but including reference levels.
@@ -525,9 +525,9 @@ public:
             std::vector<std::pair<int, int> > & breakpoints,
             seqan::Dna5String const & refSeq,
             MethylationLevels const & refLvls,
-            int haplotypeId)
+            int haplotypeID)
     {
-        return _runImpl(&resultSeq, &posMap, &resultLvls, smallVars, breakpoints, &refSeq, &refLvls, haplotypeId);
+        return _runImpl(&resultSeq, &posMap, &resultLvls, smallVars, breakpoints, &refSeq, &refLvls, haplotypeID);
     }
 
     // Implementation of the materialization, uses pointers instead of references for deciding whether materializing
@@ -539,7 +539,7 @@ public:
                  std::vector<std::pair<int, int> > & breakpoints,
                  seqan::Dna5String const * ref,
                  MethylationLevels const * refLvls,
-                 int haplotypeId);
+                 int haplotypeID);
 
     // Materialization of the small variants.
     //
@@ -551,7 +551,7 @@ public:
                                   seqan::Dna5String const & contig,
                                   Variants const & variants,
                                   MethylationLevels const * levels,
-                                  int hId);
+                                  int hID);
 
     // Materialization of the large variants.
     //
@@ -566,7 +566,7 @@ public:
                                   std::vector<SmallVarInfo> const & smallVarInfos,
                                   Variants const & variants,
                                   MethylationLevels const * levels,
-                                  int hId);
+                                  int hID);
 };
 
 // ============================================================================

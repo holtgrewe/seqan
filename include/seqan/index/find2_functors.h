@@ -75,7 +75,7 @@ struct OccurrencesCounter_
     inline SEQAN_HOST_DEVICE void
     operator() (TFinder const & finder)
     {
-        counts[getThreadId()] += countOccurrences(_textIterator(finder));
+        counts[getThreadID()] += countOccurrences(_textIterator(finder));
     }
 };
 

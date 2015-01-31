@@ -216,7 +216,7 @@ void readRecord(UcscRecord & record,
     // read column 1: gene name (stored in .transName)
     readUntil(record.transName, iter, nextRecord);
     if (empty(record.transName))
-        SEQAN_THROW(EmptyFieldError("clusterId"));
+        SEQAN_THROW(EmptyFieldError("clusterID"));
     insert(record.transName, 0, "GENE");    // prepend "GENE" for compatibility reasons
     skipOne(iter, IsTab());
 

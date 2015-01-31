@@ -23,18 +23,18 @@ int main()
 
     // Construct the name store.  The name store knows about both "I" and "II".
     TNameStoreCache nameStoreCache(nameStore);
-    success = getIdByName(idx, nameStoreCache, "I");
+    success = getIDByName(idx, nameStoreCache, "I");
     std::cout << "lookup I   => success=" << success << ", idx=" << idx << "\n";
-    success = getIdByName(idx, nameStoreCache, "II");
+    success = getIDByName(idx, nameStoreCache, "II");
     std::cout << "lookup II  => success=" << success << ", idx=" << idx << "\n";
 
     // Append value through cache.
     appendName(nameStoreCache, "III");
-    success = getIdByName(idx, nameStoreCache, "III");
+    success = getIDByName(idx, nameStoreCache, "III");
     std::cout << "lookup III => success=" << success << ", idx=" << idx << "\n";
 
     // Append value and query at the same time.
-    idx = nameToId(nameStoreCache, "IV");
+    idx = nameToID(nameStoreCache, "IV");
     std::cout << "lookup IV  => idx=" << idx << ", length(nameStore)="
               << length(nameStore) << "\n";
 

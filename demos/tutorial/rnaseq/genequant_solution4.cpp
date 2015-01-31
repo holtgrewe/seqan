@@ -10,10 +10,10 @@ using namespace seqan;
 // define used types
 typedef FragmentStore<>                         TStore;
 typedef Value<TStore::TAnnotationStore>::Type   TAnnotation;
-typedef TAnnotation::TId                        TId;
+typedef TAnnotation::TID                        TID;
 typedef TAnnotation::TPos                       TPos;
-typedef IntervalAndCargo<TPos, TId>             TInterval;
-typedef IntervalTree<TPos, TId>                 TIntervalTree;
+typedef IntervalAndCargo<TPos, TID>             TInterval;
+typedef IntervalTree<TPos, TID>                 TIntervalTree;
 typedef Value<TStore::TAlignedReadStore>::Type  TAlignedRead;
 
 // define options
@@ -81,11 +81,11 @@ bool loadFiles(TStore & store, Options const & options)
 }
 
 //
-// 3. Extract intervals from gene annotations (grouped by contigId)
+// 3. Extract intervals from gene annotations (grouped by contigID)
 //
 void extractGeneIntervals(String<String<TInterval> > & intervals, TStore const & store)
 {
-    // extract intervals from gene annotations (grouped by contigId)
+    // extract intervals from gene annotations (grouped by contigID)
     resize(intervals, length(store.contigStore));
 
     Iterator<TStore const, AnnotationTree<> >::Type it = begin(store, AnnotationTree<>());
@@ -99,13 +99,13 @@ void extractGeneIntervals(String<String<TInterval> > & intervals, TStore const &
 
         TPos beginPos = getAnnotation(it).beginPos;
         TPos endPos = getAnnotation(it).endPos;
-        TId contigId = getAnnotation(it).contigId;
+        TID contigID = getAnnotation(it).contigID;
 
         if (beginPos > endPos)
             std::swap(beginPos, endPos);
 
         // insert forward-strand interval of the gene and its annotation id
-        appendValue(intervals[contigId], TInterval(beginPos, endPos, value(it)));
+        appendValue(intervals[contigID], TInterval(beginPos, endPos, value(it)));
     }
     while (goRight(it));
 }
@@ -131,7 +131,7 @@ void constructIntervalTrees(String<TIntervalTree> & intervalTrees,
 void countReadsPerGene(String<unsigned> & readsPerGene, String<TIntervalTree> const & intervalTrees, TStore const & store)
 {
     resize(readsPerGene, length(store.annotationStore), 0);
-    String<TId> result;
+    String<TID> result;
     int numAlignments = length(store.alignedReadStore);
 
     // iterate aligned reads and get search their begin and end positions
@@ -143,7 +143,7 @@ void countReadsPerGene(String<unsigned> & readsPerGene, String<TIntervalTree> co
         TPos queryEnd = _max(ar.beginPos, ar.endPos);
 
         // search read-overlapping genes
-        findIntervals(result, intervalTrees[ar.contigId], queryBegin, queryEnd);
+        findIntervals(result, intervalTrees[ar.contigID], queryBegin, queryEnd);
 
         // increase read counter for each overlapping annotation given the id in the interval tree
         for (unsigned j = 0; j < length(result); ++j)

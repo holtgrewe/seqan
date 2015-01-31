@@ -242,15 +242,15 @@ struct AllowsFastRandomAccess<T const>
 // ============================================================================
 
 // --------------------------------------------------------------------------
-// Function getObjectId()
+// Function getObjectID()
 // --------------------------------------------------------------------------
 
 /*!
- * @fn ContainerConcept#getObjectId
+ * @fn ContainerConcept#getObjectID
  * @headerfile <seqan/sequence.h>
  * @brief A value that identifies the underlying sequence.
  *
- * @signature TVoidPtr getObjectId(cont);
+ * @signature TVoidPtr getObjectID(cont);
  *
  * @param[in] cont The object for which to determine the id.
  *
@@ -265,9 +265,9 @@ struct AllowsFastRandomAccess<T const>
  *
  * @code{.cpp}
  * String<char> str = "hallo seqan";
- * bool b1 = (getObjectId(str) == getObjectId(infix(str, 3, 7));   //true
- * bool b2 = (getObjectId(str) == getObjectId(String<char>(str))); //false
- * bool b3 = (getObjectId(str) == getObjectId(toCString(str)));
+ * bool b1 = (getObjectID(str) == getObjectID(infix(str, 3, 7));   //true
+ * bool b2 = (getObjectID(str) == getObjectID(String<char>(str))); //false
+ * bool b3 = (getObjectID(str) == getObjectID(toCString(str)));
  * @endcode
  *
  * In this example, <tt>b1</tt> is <tt>true</tt., since the segment object returned by <tt>infix()</tt> is just a filter
@@ -281,7 +281,7 @@ struct AllowsFastRandomAccess<T const>
 
 template <typename T>
 inline void const *
-getObjectId(T const & me)
+getObjectID(T const & me)
 {
     SEQAN_CHECKPOINT;
     return end(me, Standard());
@@ -310,7 +310,7 @@ shareResources(T1 const & obj1,
                T2 const & obj2)
 {
     SEQAN_CHECKPOINT;
-    return getObjectId(obj1) == getObjectId(obj2);
+    return getObjectID(obj1) == getObjectID(obj2);
 }
 
 // --------------------------------------------------------------------------

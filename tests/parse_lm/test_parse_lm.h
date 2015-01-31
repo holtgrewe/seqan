@@ -51,10 +51,10 @@ SEQAN_DEFINE_TEST(test_parse_lm_local_match_constructor)
         unsigned const maxU = MaxValue<unsigned>::VALUE;
 
         SEQAN_ASSERT_EQ(maxU, localMatch.id);
-        SEQAN_ASSERT_EQ(maxU, localMatch.subjectId);
+        SEQAN_ASSERT_EQ(maxU, localMatch.subjectID);
         SEQAN_ASSERT_EQ(maxU, localMatch.subjectBeginPos);
         SEQAN_ASSERT_EQ(maxU, localMatch.subjectEndPos);
-        SEQAN_ASSERT_EQ(maxU, localMatch.queryId);
+        SEQAN_ASSERT_EQ(maxU, localMatch.queryID);
         SEQAN_ASSERT_EQ(maxU, localMatch.queryBeginPos);
         SEQAN_ASSERT_EQ(maxU, localMatch.queryEndPos);
     }
@@ -63,10 +63,10 @@ SEQAN_DEFINE_TEST(test_parse_lm_local_match_constructor)
         TLocalMatch localMatch(0, 1, 2, 3, 4, 5, 6);
 
         SEQAN_ASSERT_EQ(0u, localMatch.id);
-        SEQAN_ASSERT_EQ(1u, localMatch.subjectId);
+        SEQAN_ASSERT_EQ(1u, localMatch.subjectID);
         SEQAN_ASSERT_EQ(2u, localMatch.subjectBeginPos);
         SEQAN_ASSERT_EQ(3u, localMatch.subjectEndPos);
-        SEQAN_ASSERT_EQ(4u, localMatch.queryId);
+        SEQAN_ASSERT_EQ(4u, localMatch.queryID);
         SEQAN_ASSERT_EQ(5u, localMatch.queryBeginPos);
         SEQAN_ASSERT_EQ(6u, localMatch.queryEndPos);
     }
@@ -96,10 +96,10 @@ SEQAN_DEFINE_TEST(test_parse_lm_local_match_store_append_local_match)
 
         SEQAN_ASSERT_EQ(length(store.matchStore), 1u);
         SEQAN_ASSERT_EQ(back(store.matchStore).id, 0u);
-        SEQAN_ASSERT_EQ(back(store.matchStore).subjectId, 0u);
+        SEQAN_ASSERT_EQ(back(store.matchStore).subjectID, 0u);
         SEQAN_ASSERT_EQ(back(store.matchStore).subjectBeginPos, 1u);
         SEQAN_ASSERT_EQ(back(store.matchStore).subjectEndPos, 2u);
-        SEQAN_ASSERT_EQ(back(store.matchStore).queryId, 1u);
+        SEQAN_ASSERT_EQ(back(store.matchStore).queryID, 1u);
         SEQAN_ASSERT_EQ(back(store.matchStore).queryBeginPos, 3u);
         SEQAN_ASSERT_EQ(back(store.matchStore).queryEndPos, 4u);
     }
@@ -114,10 +114,10 @@ SEQAN_DEFINE_TEST(test_parse_lm_local_match_store_append_local_match)
 
         SEQAN_ASSERT_EQ(length(store.matchStore), 2u);
         SEQAN_ASSERT_EQ(back(store.matchStore).id, 1u);
-        SEQAN_ASSERT_EQ(back(store.matchStore).subjectId, 0u);
+        SEQAN_ASSERT_EQ(back(store.matchStore).subjectID, 0u);
         SEQAN_ASSERT_EQ(back(store.matchStore).subjectBeginPos, 5u);
         SEQAN_ASSERT_EQ(back(store.matchStore).subjectEndPos, 6u);
-        SEQAN_ASSERT_EQ(back(store.matchStore).queryId, 1u);
+        SEQAN_ASSERT_EQ(back(store.matchStore).queryID, 1u);
         SEQAN_ASSERT_EQ(back(store.matchStore).queryBeginPos, 7u);
         SEQAN_ASSERT_EQ(back(store.matchStore).queryEndPos, 8u);
     }

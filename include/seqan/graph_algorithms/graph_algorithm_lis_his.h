@@ -133,7 +133,7 @@ longestIncreasingSubsequence(TString const& str, TPositions& pos) {
     TSortedSequence list;
 
     // The trace-back graph
-    typedef Graph<Directed<void, WithoutEdgeId> > TGraph;
+    typedef Graph<Directed<void, WithoutEdgeID> > TGraph;
     typedef VertexDescriptor<TGraph>::Type TVertexDescriptor;
     TGraph g;
 
@@ -274,10 +274,10 @@ globalAlignment(TAlign& align,
                 Lcs)
 {
     SEQAN_CHECKPOINT
-    typedef typename Id<TStringSet>::Type TId;
+    typedef typename ID<TStringSet>::Type TID;
     typedef typename Size<TStringSet>::Type TSize;
-    TId id1 = positionToId(str, 0);
-    TId id2 = positionToId(str, 1);
+    TID id1 = positionToID(str, 0);
+    TID id2 = positionToID(str, 1);
 
     // Lcs between first and second string
     String<std::pair<TSize, TSize> > pos1;
@@ -382,7 +382,7 @@ heaviestIncreasingSubsequence(TString const& str,
     TSortedSequence list;
 
     // The trace-back graph
-    typedef Graph<Directed<void, WithoutEdgeId> > TGraph;
+    typedef Graph<Directed<void, WithoutEdgeID> > TGraph;
     typedef VertexDescriptor<TGraph>::Type TVertexDescriptor;
     TGraph g;
 

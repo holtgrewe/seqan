@@ -749,8 +749,8 @@ assignSource(Gaps<TSequence, AnchorGaps<TGapAnchor> > & gaps, TSequence2 const &
  * typedef typename Value<TAlignedReadStore>::Type                      TAlignedRead;
  * typedef typename TAlignedRead::TPos                                  TAlignedReadPos;
  * 
- * unsigned contigId = alignedReadStore[idx].contigId;
- * TContigGaps contigGaps(contigStore[contigId].seq, contigStore[contigId].gaps);
+ * unsigned contigID = alignedReadStore[idx].contigID;
+ * TContigGaps contigGaps(contigStore[contigID].seq, contigStore[contigID].gaps);
  * TAlignedRead const & alignedRead = alignedReadStore[idx];
  * // Translate end position from aligned read record to sequence space in reference.
  * TAlignedReadPos endPos = positionGapToSeq(contigGaps, alignedRead.endPos);
@@ -768,8 +768,8 @@ assignSource(Gaps<TSequence, AnchorGaps<TGapAnchor> > & gaps, TSequence2 const &
  * typedef typename Value<TAlignedReadStore>::Type                      TAlignedRead;
  * typedef typename TAlignedRead::TPos                                  TAlignedReadPos;
  * 
- * unsigned contigId = alignedReadStore[idx].contigId;
- * TContigGaps contigGaps(Nothing(), contigStore[contigId].gaps);
+ * unsigned contigID = alignedReadStore[idx].contigID;
+ * TContigGaps contigGaps(Nothing(), contigStore[contigID].gaps);
  * TAlignedRead const & alignedRead = alignedReadStore[idx];
  * // Translate end position from aligned read record to sequence space in reference.
  * TAlignedReadPos endPos = positionGapToSeq(contigGaps, alignedRead.endPos);
@@ -833,7 +833,7 @@ positionGapToSeq(Gaps<TSource, AnchorGaps<TGapAnchors> > const & me, TPosition p
  *
  * @section Example
  *
- * Convert from gap space to position space on contig $contigId$ when the contigs required to be loaded.
+ * Convert from gap space to position space on contig $contigID$ when the contigs required to be loaded.
  *
  * @code{.cpp}
  * typedef typename TFragmentStore::TContigStore                        TContigStore;
@@ -841,18 +841,18 @@ positionGapToSeq(Gaps<TSource, AnchorGaps<TGapAnchors> > const & me, TPosition p
  * typedef typename TFragmentStore::TContigSeq                          TContigSeq;
  * typedef Gaps<TContigSeq, AnchorGaps<typename TContig::TGapAnchors> > TContigGaps;
  * 
- * TContigGaps contigGaps(contigStore[contigId].seq, contigStore[contigId].gaps);
+ * TContigGaps contigGaps(contigStore[contigID].seq, contigStore[contigID].gaps);
  * TAlignedReadPos pos = positionGapToSeq(contigGaps, 33);
  * @endcode
  *
- * Convert from gap space to position space on contig $contigId$ when the contigs are not required.
+ * Convert from gap space to position space on contig $contigID$ when the contigs are not required.
  *
  * @code{.cpp}
  * typedef typename TFragmentStore::TContigStore                        TContigStore;
  * typedef typename Value<TContigStore>::Type                           TContig;
  * typedef Gaps<Nothing, AnchorGaps<typename TContig::TGapAnchors> > TContigGaps;
  * 
- * TContigGaps contigGaps(Nothing(), contigStore[contigId].gaps);
+ * TContigGaps contigGaps(Nothing(), contigStore[contigID].gaps);
  * TAlignedReadPos endPos = positionGapToSeq(contigGaps, 33);
  * @endcode
  */

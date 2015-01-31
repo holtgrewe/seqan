@@ -83,14 +83,14 @@ int main(int argc, char const ** argv)
     for (unsigned i = 0; i < length(lmStore.matchStore); ++i)
     {
 
-        std::cout << lmStore.sequenceNameStore[lmStore.matchStore[i].subjectId] << "\t"
+        std::cout << lmStore.sequenceNameStore[lmStore.matchStore[i].subjectID] << "\t"
                   << lmStore.matchStore[i].subjectBeginPos << "\t"
                   << lmStore.matchStore[i].subjectEndPos << "\t";
         if (lmStore.matchStore[i].subjectBeginPos < lmStore.matchStore[i].subjectEndPos)
             std::cout << "+\t";
         else
             std::cout << "-\t";
-        std::cout << lmStore.sequenceNameStore[lmStore.matchStore[i].queryId] << "\t"
+        std::cout << lmStore.sequenceNameStore[lmStore.matchStore[i].queryID] << "\t"
                   << lmStore.matchStore[i].queryBeginPos << "\t"
                   << lmStore.matchStore[i].queryEndPos << "\t";
 

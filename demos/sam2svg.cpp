@@ -126,7 +126,7 @@ int main(int argc, char const ** argv)
     TFragStore store;
     BamFileIn samFile(options.fileAliIn.c_str());
     std::ofstream ascii;
-    SVGFile svg;
+    SvgFile svg;
 
     // Optionally load genome file
     if (!options.fileRefIn.empty())

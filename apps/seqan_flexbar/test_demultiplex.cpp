@@ -127,9 +127,9 @@ SEQAN_DEFINE_TEST(check_test)
 	appendValue(exspectedSeqs, "TACGTAGCTACTGACTGACT");
 	appendValue(exspectedSeqs, "TACGTCTGACT");
 
-	StringSet<String<char> > exspectedIds;
-	appendValue(exspectedIds, "ErsteSeq");
-	appendValue(exspectedIds, "ZweiteSeq");
+	StringSet<String<char> > exspectedIDs;
+	appendValue(exspectedIDs, "ErsteSeq");
+	appendValue(exspectedIDs, "ZweiteSeq");
 
 	bool resF = check(seqs, ids, barcodesFalse, generalStats);
 	bool resT = check(seqs, ids, barcodesTrue, generalStats);
@@ -139,9 +139,9 @@ SEQAN_DEFINE_TEST(check_test)
 	SEQAN_ASSERT_EQ(2u, length(seqs));
 	SEQAN_ASSERT_EQ(2u, length(ids));
 	SEQAN_ASSERT_EQ(exspectedSeqs[0], seqs[0]);
-	SEQAN_ASSERT_EQ(exspectedIds[0], ids[0]);
+	SEQAN_ASSERT_EQ(exspectedIDs[0], ids[0]);
 	SEQAN_ASSERT_EQ(exspectedSeqs[1], seqs[1]);
-	SEQAN_ASSERT_EQ(exspectedIds[1], ids[1]);
+	SEQAN_ASSERT_EQ(exspectedIDs[1], ids[1]);
 }
 // Checks the correctness of the getPrefix function which extract the prefices from a set of sequences.
 SEQAN_DEFINE_TEST(getPrefix_test)
@@ -533,7 +533,7 @@ SEQAN_DEFINE_TEST(Input_test)
 	StringSet<String<int> > groups;
     doAll(groups, seqs, bcs, esaFinder, false, demultiplexStats, false);
 	String<StringSet<String<Dna5Q> > > gSeqs;
-	String<StringSet<String<char> > > gIds;
+	String<StringSet<String<char> > > gIDs;
 }
 
 

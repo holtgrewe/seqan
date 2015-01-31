@@ -424,8 +424,8 @@ void simulateReads(
 				//Add read to readSet
 				if(!revComp) id << startPos << ',' << startPos+pos;
 				else id << maxEnd << ',' << maxEnd-pos;
-				id << "[id=" << readCounter << ",fragId=" << readCounter % realNumReads;
-				id << ",repeatId=" << 0 <<",errors=" << countErrors;
+				id << "[id=" << readCounter << ",fragID=" << readCounter % realNumReads;
+				id << ",repeatID=" << 0 <<",errors=" << countErrors;
 				if (revComp) id << ",orientation=R]";
 				else id << ",orientation=F]";
 

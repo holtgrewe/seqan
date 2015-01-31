@@ -380,13 +380,13 @@ extend(Extender<THaystack, TNeedle, TDistance, TSpec> & extender,
     typedef Extender<THaystack, TNeedle, TDistance, TSpec>  TExtender;
     typedef typename TExtender::THaystackInfix              THaystackInfix;
     typedef typename TExtender::TNeedleInfix                TNeedleInfix;
-    typedef typename Id<THaystack>::Type                    THaystackId;
+    typedef typename ID<THaystack>::Type                    THaystackID;
 
     typedef typename Value<THaystack>::Type                 THaystackString;
     typedef typename Size<THaystackString>::Type            THaystackSize;
 
-    THaystackId haystackId = getSeqNo(haystackBegin);
-    THaystackSize haystackLength = length(extender.haystack[haystackId]);
+    THaystackID haystackID = getSeqNo(haystackBegin);
+    THaystackSize haystackLength = length(extender.haystack[haystackID]);
     TNeedlePos needleLength = length(needle);
 
     // Extend left.
@@ -412,7 +412,7 @@ extend(Extender<THaystack, TNeedle, TDistance, TSpec> & extender,
     if (needleEnd < needleLength)
     {
         THaystackSize haystackRightOffset = needleLength - needleBegin + _extendDelta(maxErrors - needleErrors, TDistance());
-        THaystackPos haystackRightEnd = THaystackPos(haystackId, haystackLength);
+        THaystackPos haystackRightEnd = THaystackPos(haystackID, haystackLength);
         if (getSeqOffset(haystackRightEnd) > getSeqOffset(haystackBegin) + haystackRightOffset)
             setSeqOffset(haystackRightEnd, getSeqOffset(haystackBegin) + haystackRightOffset);
 

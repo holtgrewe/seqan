@@ -86,7 +86,7 @@ class RoiBuilder
 public:
     // ID of next ROI to be generated.
     // TODO(holtgrew): Is this the way to go?
-    static int nextId;
+    static int nextID;
 
     // The reference sequence names.
     seqan::StringSet<seqan::CharString> refNames;

@@ -119,10 +119,10 @@ inline double omp_get_wtime()
 #endif  // #ifdef _OPENMP
 
 // ----------------------------------------------------------------------------
-// Function getThreadId()
+// Function getThreadID()
 // ----------------------------------------------------------------------------
 
-SEQAN_HOST_DEVICE inline unsigned getThreadId()
+SEQAN_HOST_DEVICE inline unsigned getThreadID()
 {
 #ifdef __CUDA_ARCH__
     return blockIdx.x * blockDim.x + threadIdx.x;

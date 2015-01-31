@@ -235,7 +235,7 @@ typedef std::bad_cast           BadCast;
 // NOTE(esiragusa): These exceptions can be introduced as long as we need them.
 
 //typedef std::bad_exception      BadException;
-//typedef std::bad_typeid         BadTypeId;
+//typedef std::bad_typeid         BadTypeID;
 //typedef std::bad_function_call  BadFunctionCall;
 //typedef std::bad_weak_ptr       BadWeakPtr;
 

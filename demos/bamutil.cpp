@@ -171,8 +171,8 @@ int _dumpRegion(BamFileIn & in, BamFileOut & out, TOptions const & options)
     {
         // Jump near range.
         CharString refName = options.regions[i].seqName;
-        unsigned refId = 0;
-        if (!getIdByName(refId, contigNamesCache(context(in)), refName))
+        unsigned refID = 0;
+        if (!getIDByName(refID, contigNamesCache(context(in)), refName))
         {
             std::cerr << "[ERROR] Unknown reference " << refName << std::endl;
             return 1;
@@ -180,7 +180,7 @@ int _dumpRegion(BamFileIn & in, BamFileOut & out, TOptions const & options)
         bool hasAlignments = false;
         int beginPos = options.regions[i].beginPos;
         int endPos = options.regions[i].endPos;
-        if (!jumpToRegion(in, hasAlignments, refId, beginPos, endPos, bamIndex))
+        if (!jumpToRegion(in, hasAlignments, refID, beginPos, endPos, bamIndex))
         {
             std::cerr << "[ERROR] Could not jump to " << refName << ":" << beginPos << "-" << endPos << std::endl;
             return 1;

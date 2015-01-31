@@ -44,7 +44,7 @@
 
 // Basic graph stuff
 #include <seqan/graph_types/graph_base.h>
-#include <seqan/graph_types/graph_idmanager.h>	// Id manager
+#include <seqan/graph_types/graph_idmanager.h>	// ID manager
 #include <seqan/graph_types/graph_edgestump.h>	// EdgeStumps
 #include <seqan/graph_types/graph_interface.h>	// Graph metafunctions
 

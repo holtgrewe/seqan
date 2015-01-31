@@ -14,7 +14,7 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ==========================================================================
-  $Id$
+  $ID$
  ==========================================================================*/
 
 #ifndef REPSEP_HEADER_RGRAPH_BASE_H
@@ -28,7 +28,7 @@ using namespace seqan;
 
 template <typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition>
 struct GraphCargo {
-    typedef typename Id < TAlignedReadStoreElement >::Type TId;
+    typedef typename ID < TAlignedReadStoreElement >::Type TID;
     
     // condensed information of the corresponding reads
     TAlignedReadStoreElement alignedRead;
@@ -51,17 +51,17 @@ struct GraphCargo {
 //////////////////////////////////////////////////////////////////////////////
 // for compatibility 
 template <typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition>
-typename Id< GraphCargo<TColumnAlphabet,TAlignedReadStoreElement,TPosition> >::Type & 
+typename ID< GraphCargo<TColumnAlphabet,TAlignedReadStoreElement,TPosition> >::Type & 
 id(GraphCargo<TColumnAlphabet, TAlignedReadStoreElement,TPosition> & me)
 {
-    return me.alignedRead.readId;
+    return me.alignedRead.readID;
 }
 
 template <typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition>
-typename Id< GraphCargo<TColumnAlphabet, TAlignedReadStoreElement,TPosition> >::Type const & 
+typename ID< GraphCargo<TColumnAlphabet, TAlignedReadStoreElement,TPosition> >::Type const & 
 id(GraphCargo<TColumnAlphabet, TAlignedReadStoreElement,TPosition> const & me)
 {
-    return me.alignedRead.readId;
+    return me.alignedRead.readID;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -88,19 +88,19 @@ void addColumn(GraphCargo<TColumnAlphabet, TAlignedReadStoreElement,TPosition> &
 
 template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition>
 struct ReadGraph {
-    typedef typename Id< GraphCargo<TColumnAlphabet, TAlignedReadStoreElement, TPosition> >::Type TId;
+    typedef typename ID< GraphCargo<TColumnAlphabet, TAlignedReadStoreElement, TPosition> >::Type TID;
     typedef Graph<Undirected<double> > TGraph;
     typedef typename VertexDescriptor<TGraph>::Type TVertexDescriptor;
     typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
     typedef String< GraphCargo<TColumnAlphabet,TAlignedReadStoreElement,TPosition> > TVertexCargoMap;
-    typedef map<TId, TVertexDescriptor> TIdVertexMap;
+    typedef map<TID, TVertexDescriptor> TIDVertexMap;
     typedef typename Size<TGraph>::Type TSize;
     typedef String< GraphScoring::TScoreValue > TEdgeScoreMap;
 
 
     TGraph graph;
     TVertexCargoMap vertexCargo;
-    TIdVertexMap idVertexMap;
+    TIDVertexMap idVertexMap;
     TEdgeScoreMap edgeScoreMap;
 };
 
@@ -139,29 +139,29 @@ bool hasMultipleComponents(ReadGraph<TColumnAlphabet, TAlignedReadStoreElement, 
 
 template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition>
 inline bool
-hasRead(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TId readId)
+hasRead(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TID readID)
 {
-    return (me.idVertexMap.count(readId) != 0);
+    return (me.idVertexMap.count(readID) != 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition>
 inline GraphCargo<TColumnAlphabet,TAlignedReadStoreElement, TPosition> &
-getCargo(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TId readId)
+getCargo(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TID readID)
 {
-    return me.vertexCargo[me.idVertexMap[readId]];
+    return me.vertexCargo[me.idVertexMap[readID]];
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition>
 inline typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TVertexDescriptor const
-getVertex(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TId readId) 
+getVertex(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TID readID) 
 {
-    if( hasRead(me, readId) )
+    if( hasRead(me, readID) )
     {
-        return me.idVertexMap[readId];
+        return me.idVertexMap[readID];
     }
     else
     {
@@ -173,14 +173,14 @@ getVertex(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, t
 
 template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition>
 inline GraphCargo<TColumnAlphabet,TAlignedReadStoreElement, TPosition> &
-registerRead(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TId readId) 
+registerRead(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TID readID) 
 {
     typedef typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TVertexDescriptor TVertexDescriptor;
 
-    if( hasRead(me, readId) ) 
+    if( hasRead(me, readID) ) 
     {
-        // readId is already registered -> do nothing, just return cargo
-        return getCargo(me, readId);
+        // readID is already registered -> do nothing, just return cargo
+        return getCargo(me, readID);
     }
     else 
     {
@@ -190,10 +190,10 @@ registerRead(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me
         if(length(me.vertexCargo) <= vd) resize(me.vertexCargo, vd + 1, Generous());
         assignProperty(me.vertexCargo, vd, new_cargo);
 
-        // remember association between readId and cargo
-        insert(me.idVertexMap, readId, vd);
+        // remember association between readID and cargo
+        insert(me.idVertexMap, readID, vd);
 
-        return getCargo(me, readId);
+        return getCargo(me, readID);
     }
 }
 
@@ -202,18 +202,18 @@ registerRead(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me
 template<typename TColumnAlphabet, typename TAlignedReadStoreElement, typename TPosition>
 inline void
 addEdge(ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition> & me, 
-             typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TId readId1, 
-             typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TId readId2)
+             typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TID readID1, 
+             typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement, TPosition>::TID readID2)
 {
     typedef typename ReadGraph<TColumnAlphabet,TAlignedReadStoreElement,TPosition>::TVertexDescriptor TVertexDescriptor;
     
-    TVertexDescriptor vd_readId1 = me.idVertexMap[readId1];
-    TVertexDescriptor vd_readId2 = me.idVertexMap[readId2];
+    TVertexDescriptor vd_readID1 = me.idVertexMap[readID1];
+    TVertexDescriptor vd_readID2 = me.idVertexMap[readID2];
 
     // check if this edge already exists
-    if(findEdge(me.graph, vd_readId1 , vd_readId2) == 0)
+    if(findEdge(me.graph, vd_readID1 , vd_readID2) == 0)
     {    
-      addEdge(me.graph, vd_readId1 , vd_readId2);
+      addEdge(me.graph, vd_readID1 , vd_readID2);
     }
 }
 
@@ -224,7 +224,7 @@ inline void
 setEdgeScore(ReadGraph<TColumnAlphabet, TAlignedReadStoreElement, TPosition> & me,
              TEdgeDescriptor edge, GraphScoring::TScoreValue score)
 {
-    if (length(me.edgeScoreMap) <= _getId(edge)) resize(me.edgeScoreMap, _getId(edge) +1, Generous());
+    if (length(me.edgeScoreMap) <= _getID(edge)) resize(me.edgeScoreMap, _getID(edge) +1, Generous());
     assignProperty(me.edgeScoreMap,edge,score);
 }
 

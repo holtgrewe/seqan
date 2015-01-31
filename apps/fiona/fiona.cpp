@@ -209,7 +209,7 @@ typedef Tag<FionaPoissonClassif_> const FionaPoissonClassif;
 
 struct FionaCorrectedError
 {
-	unsigned int   correctReadId;
+	unsigned int   correctReadID;
 //	unsigned int   occurrences;
 	unsigned short errorPos;
 	unsigned short correctPos;
@@ -470,7 +470,7 @@ struct CorrectionIndelPos
 {
     unsigned int    nextCorrection;    // -1u..last correction
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-    unsigned int    correctReadId;
+    unsigned int    correctReadID;
     unsigned short  correctPos;
 #endif
     unsigned short  errorPos;
@@ -868,7 +868,7 @@ namespace seqan
 template <typename TAlphabet, typename TValue,typename TValue2,typename TFragmentStore>
 inline void getCorrectionString(TAlphabet array[], //the array has to be at least of length abs(indelLength)
                                 signed char indelLength,
-                                TValue correctReadId,
+                                TValue correctReadID,
                                 TValue2 correctPos,
                                 bool strand,
                                 TFragmentStore &store)
@@ -884,13 +884,13 @@ inline void getCorrectionString(TAlphabet array[], //the array has to be at leas
         unsigned readCount = length(store.readSeqStore) / 2;
 
         // switch to reverse-complements
-        if (correctReadId < readCount)
-            correctReadId += readCount;
+        if (correctReadID < readCount)
+            correctReadID += readCount;
         else
-            correctReadId -= readCount;
+            correctReadID -= readCount;
 
         // mirror positions
-        correctPos = length(store.readSeqStore[correctReadId]) - correctPos;
+        correctPos = length(store.readSeqStore[correctReadID]) - correctPos;
 
 		// for insertions the position is correct already
         if (indelLength == 0)
@@ -899,10 +899,10 @@ inline void getCorrectionString(TAlphabet array[], //the array has to be at leas
 
     // from here on the correctPos and the readID should refer
     // to the forward strand respective to the error position
-    TReadIterator it = begin(store.readSeqStore[correctReadId], Standard()) + correctPos;
+    TReadIterator it = begin(store.readSeqStore[correctReadID], Standard()) + correctPos;
     array[0] = *it;    // always copy first char (also for mismatches when indelLength==0)
     for (int i = 1; i < -indelLength; ++i)
-        array[i] = *(++it); //store.readSeqStore[correctReadId][correctPos+i];
+        array[i] = *(++it); //store.readSeqStore[correctReadID][correctPos+i];
 }
 
 /*
@@ -912,11 +912,11 @@ update a Correction entry with a higher overlap sum if necessary
 template <typename TCorrection,typename TValue,typename TValueShort,typename TValue2,typename TAlphabet>
 inline void updateCorrectionEntry(String<TCorrection> &correctionList,
                                   TValue posInCorrectionList,
-                                  //			TValue2 correctReadId,
+                                  //			TValue2 correctReadID,
                                   //			TValue3 correctPos,
                                   TValueShort overlap,
                                   bool strand,
-                                  TValue correctReadId,
+                                  TValue correctReadID,
 				  TValue2 indelLength,
 				  TAlphabet &correctSeq,
                                   TValue2 previousIndelLength)
@@ -936,9 +936,9 @@ inline void updateCorrectionEntry(String<TCorrection> &correctionList,
     if (correctionList[posInCorrectionList].overlap[pos] < overlap)
     {
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-        correctionList[posInCorrectionList].correctReadId = correctReadId;  // for debugging only
+        correctionList[posInCorrectionList].correctReadID = correctReadID;  // for debugging only
 #else
-        (void)correctReadId;
+        (void)correctReadID;
 #endif
         //			correctionList[posInCorrectionList].correctPos= correctPos;
 #ifdef FIONA_NO_SEPARATE_OVERLAPSUM     
@@ -982,9 +982,9 @@ template <
     typename TOverlap,
     typename TIndel,
     typename TSize,
-    typename TId >
+    typename TID >
 inline void fillCorrection(TCorrection &newCorrection,
-                           //	TValue correctReadId,
+                           //	TValue correctReadID,
                            TPos1 correctPos,
                            TPos2 errorPos,
                            TAlphabet correctSeq[],  //this should always be in forward direction
@@ -992,16 +992,16 @@ inline void fillCorrection(TCorrection &newCorrection,
                            bool strand,
                            TIndel indelLength,
                            TSize readLength,
-                           TId correctReadId)
+                           TID correctReadID)
 {
     //TValue empty=maxValue(readLength);
     //fill Correction struct
     newCorrection.nextCorrection = maxValue<unsigned>();  // it will be the last correction in the linked list
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-    newCorrection.correctReadId = correctReadId;        // only for debugging purposes
+    newCorrection.correctReadID = correctReadID;        // only for debugging purposes
     newCorrection.correctPos = correctPos;
 #else
-    (void)correctReadId;
+    (void)correctReadID;
     (void)correctPos;
 #endif
     newCorrection.indelLength = indelLength;
@@ -1066,11 +1066,11 @@ inline void fillCorrection(TCorrection &newCorrection,
 */
 template <typename TValueShort, typename TValueShort2, typename TValueLength,typename TAlphabet, typename TAlphabet2>
 inline bool existsCorrectionAtPos(TValueShort previousErrorPos,
-                                  //	TValue2 previousCorrectReadId,
+                                  //	TValue2 previousCorrectReadID,
                                   signed char previousIndelLength,
                                   TAlphabet2 previousCorrectSeq[],
                                   TValueShort2 errorPos,
-                                  //	TValue3 correctReadId,
+                                  //	TValue3 correctReadID,
                                   bool strand,
                                   signed char indelLength,
                                   TValueLength readLength,
@@ -1226,28 +1226,28 @@ unlockWriting(StringLock &lock)
 new function that returns the number of corrections already entered for a read position
 	
 */
-template <typename TCorrection,typename TValue, typename TId1, typename TPos,typename TReadStore>
+template <typename TCorrection,typename TValue, typename TID1, typename TPos,typename TReadStore>
 inline unsigned
 getFoundCorrections(
     String<TCorrection> const &correctionList,
     String<TValue> &firstCorrectionForRead,
-    TId1 erroneousReadId,
+    TID1 erroneousReadID,
     TPos errorPos,
     TReadStore & store)
 {
     unsigned numReads = length(store.readSeqStore) / 2;
 
     // project errorPos on forward strand
-    if (erroneousReadId >= numReads)
+    if (erroneousReadID >= numReads)
 	{
-        erroneousReadId -= numReads;
+        erroneousReadID -= numReads;
         // mirror positions
-        errorPos = length(store.readSeqStore[erroneousReadId]) - errorPos;
+        errorPos = length(store.readSeqStore[erroneousReadID]) - errorPos;
 	}
 
     unsigned numCorrections = 0;
 
-    TValue currentPos = firstCorrectionForRead[erroneousReadId];
+    TValue currentPos = firstCorrectionForRead[erroneousReadID];
     while (currentPos != maxValue<TValue>())
     {
         if (correctionList[currentPos].errorPos == errorPos)
@@ -1264,11 +1264,11 @@ getFoundCorrections(
 the add new linked list item append a new entry to the correctionList and 
 takes care that the corresponding entries in firstCorrectionForRead are updated	
 */
-template <typename TCorrection,typename TValue, typename TId1, typename TId2, typename TPos1,typename TPos2,typename TOverlap, typename TReadStore, typename TAlphabet>
+template <typename TCorrection,typename TValue, typename TID1, typename TID2, typename TPos1,typename TPos2,typename TOverlap, typename TReadStore, typename TAlphabet>
 inline void addCorrectionEntry(String<TCorrection> &correctionList,
                                String<TValue> &firstCorrectionForRead,
-                               TId1 erroneousReadId,
-                               TId2 correctReadId,
+                               TID1 erroneousReadID,
+                               TID2 correctReadID,
                                TPos1 correctPos,
                                TPos2 errorPos,
                                TOverlap overlap,
@@ -1283,7 +1283,7 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
     //std::cerr <<abs( (int)indelLength) << " lll " << MAX_INDEL_LENGTH<<std::endl;
     // get the correction sequence
     //if(indelLength <= 0) //only get string if insertion in read or mismatch
-    //	getCorrectionString(correctSeq,indelLength,correctReadId,correctPos,strand,store);
+    //	getCorrectionString(correctSeq,indelLength,correctReadID,correctPos,strand,store);
     /*	//DEBUG
      unsigned length2=abs((int)indelLength);
      if(indelLength ==0){
@@ -1294,18 +1294,18 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
      std::cerr << correctSeq[i];
      std::cerr << "errorPos,strand" <<errorPos<<strand<< std::endl;
      //DEBUG */
-    //change the erroneousReadId if necessary
+    //change the erroneousReadID if necessary
     unsigned numReads = length(store.readSeqStore) / 2;
 
     // switch to reverse-complements for strand
-    if (erroneousReadId >= numReads)
-        erroneousReadId -= numReads;
-    //std::cerr << " erroneousReadID and dummy  " <<erroneousReadId<< ","<< dummyErroneousReadId<< std::endl;
-    //TValue empty=maxValue(erroneousReadId);
-    //first check if a Correction for erroneousReadId exists already
+    if (erroneousReadID >= numReads)
+        erroneousReadID -= numReads;
+    //std::cerr << " erroneousReadID and dummy  " <<erroneousReadID<< ","<< dummyErroneousReadID<< std::endl;
+    //TValue empty=maxValue(erroneousReadID);
+    //first check if a Correction for erroneousReadID exists already
 
     TValue insertLinkAt = maxValue<TValue>();
-    TValue currentPos = firstCorrectionForRead[erroneousReadId];
+    TValue currentPos = firstCorrectionForRead[erroneousReadID];
     while (currentPos != maxValue<TValue>())
     {
         TCorrection &corr = correctionList[currentPos];
@@ -1316,7 +1316,7 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
                 errorPos,
                 strand,
                 indelLength,
-                length(store.readSeqStore[erroneousReadId]),
+                length(store.readSeqStore[erroneousReadID]),
                 correctSeq))
         {
 #ifndef FIONA_NOERROROPTIMIZATION
@@ -1325,7 +1325,7 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
                 currentPos,
                 overlap,
                 strand,
-                correctReadId,
+                correctReadID,
                 indelLength,
                 correctSeq,
                 correctionList[currentPos].indelLength);
@@ -1345,8 +1345,8 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
         overlap,
         strand,
         indelLength,
-        length(store.readSeqStore[erroneousReadId]),
-        correctReadId);
+        length(store.readSeqStore[erroneousReadID]),
+        correctReadID);
 
     if (length(correctionList) == capacity(correctionList))
     {
@@ -1357,22 +1357,22 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
     appendValue(correctionList, newCorrection);
 
     if (insertLinkAt == maxValue<TValue>())
-        firstCorrectionForRead[erroneousReadId] = length(correctionList) - 1;
+        firstCorrectionForRead[erroneousReadID] = length(correctionList) - 1;
     else
         correctionList[insertLinkAt].nextCorrection = length(correctionList) - 1;
 
 /*
-    if(firstCorrectionForRead[dummyErroneousReadId] == maxValue<TValue>())
+    if(firstCorrectionForRead[dummyErroneousReadID] == maxValue<TValue>())
     {	//we are going to add the first Correction element for the read at the end later
-        firstCorrectionForRead[dummyErroneousReadId] = (TValue) length(correctionList);
+        firstCorrectionForRead[dummyErroneousReadID] = (TValue) length(correctionList);
     }
     else
     {
-        TValue currentPos = firstCorrectionForRead[dummyErroneousReadId];
+        TValue currentPos = firstCorrectionForRead[dummyErroneousReadID];
         bool nextElem =true;
         while(nextElem)
         {
-			if(existsCorrectionAtPos(correctionList[currentPos].errorPos,correctionList[currentPos].indelLength,correctionList[currentPos].correctSeq, errorPos, strand, indelLength, length(store.readSeqStore[erroneousReadId]),correctSeq) )
+			if(existsCorrectionAtPos(correctionList[currentPos].errorPos,correctionList[currentPos].indelLength,correctionList[currentPos].correctSeq, errorPos, strand, indelLength, length(store.readSeqStore[erroneousReadID]),correctSeq) )
             {
 				// add the new information if the overlap sum is bigger decided by addCorrectionInfo
 
@@ -1380,7 +1380,7 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
 
 
 #ifndef FIONA_NOERROROPTIMIZATION
-				updateCorrectionEntry(correctionList,currentPos,overlap,strand,correctReadId,indelLength,correctSeq,correctionList[currentPos].indelLength);
+				updateCorrectionEntry(correctionList,currentPos,overlap,strand,correctReadID,indelLength,correctSeq,correctionList[currentPos].indelLength);
 #endif
 				return;
 			}
@@ -1403,7 +1403,7 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
 // of the same pos or error type. Therefore we
 // create new Correction struct and add that to the list.
 
-    //std::cerr<< "Put new correction:"<<correctReadId<<","<<correctPos<<","<<errorPos<<","<<overlap<<","<<strand<<","<<(int)indelLength<<std::endl;
+    //std::cerr<< "Put new correction:"<<correctReadID<<","<<correctPos<<","<<errorPos<<","<<overlap<<","<<strand<<","<<(int)indelLength<<std::endl;
     TCorrection newCorrection;
     fillCorrection(
         newCorrection,
@@ -1413,8 +1413,8 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
         overlap,
         strand,
         indelLength,
-        length(store.readSeqStore[erroneousReadId]),
-        correctReadId);
+        length(store.readSeqStore[erroneousReadID]),
+        correctReadID);
     
     appendValue(correctionList,newCorrection);
 */
@@ -1434,8 +1434,8 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
 		unsigned short errorPos =24;
 		unsigned short overlap =5;
 		bool strand = false;
-		unsigned int correctReadId=4;
-		unsigned int erroneousReadId=0;
+		unsigned int correctReadID=4;
+		unsigned int erroneousReadID=0;
 		unsigned int readLength =36; 
 		TCorrection tester;
 		Dna5 correctSeq[MAX_INDEL_LENGTH];
@@ -1445,114 +1445,114 @@ inline void addCorrectionEntry(String<TCorrection> &correctionList,
 		clear(Ovsumcutoffs);
 		resize(Ovsumcutoffs, readLength+1, 0);
 		// test to fill a Corrections we will work with all the time
-		fillCorrection(tester,correctPos,errorPos,correctSeq,overlap,strand,indelLength,readLength,correctReadId); //mismatch
+		fillCorrection(tester,correctPos,errorPos,correctSeq,overlap,strand,indelLength,readLength,correctReadID); //mismatch
 		// add correction to the overall list
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[0],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[0],strand,tester.indelLength,store,correctSeq);
 		
 		//_dumpCorrectionList(correctionList, firstCorrectionForRead);	
 		// create same entry with higher overlap sum
 		tester.overlap[0]=12;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[0],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[0],strand,tester.indelLength,store,correctSeq);
 		
 		//_dumpCorrectionList(correctionList, firstCorrectionForRead);	
 		//test adding same correction on different strand
 		strand = true;
-		erroneousReadId = 6; //because of reverse strand
+		erroneousReadID = 6; //because of reverse strand
 		tester.errorPos=readLength-24-1;
 		correctPos = readLength-12-1;
 		tester.overlap[1]=8;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
 		
 		//_dumpCorrectionList(correctionList, firstCorrectionForRead);	
 		//test adding new correction with indel at same position
 		strand = false;
-		erroneousReadId = 0; //because of forward strand
+		erroneousReadID = 0; //because of forward strand
 		correctPos=12;
 		tester.errorPos=24;
 		tester.overlap[0]=11;
 		tester.indelLength=-2;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[0],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[0],strand,tester.indelLength,store,correctSeq);
 		
 		//_dumpCorrectionList(correctionList, firstCorrectionForRead);	
 		//test adding new correction with indel at same position but on opposite strand
 		strand = true;
-		erroneousReadId = 6; //because of reverse strand
+		erroneousReadID = 6; //because of reverse strand
 		correctPos= readLength - 12 -2;
 		tester.errorPos = readLength - tester.errorPos - 2;
 		tester.overlap[1]=13;
 		tester.indelLength=-2;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
 
 		//_dumpCorrectionList(correctionList, firstCorrectionForRead);	
 		//test adding new correction with insertion at same position
 		strand = false;
-		erroneousReadId = 0; //because of forward strand
+		erroneousReadID = 0; //because of forward strand
 		correctPos = 12;
 		tester.errorPos = 24;
 		tester.overlap[0]=3;
 		tester.indelLength=2;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[0],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[0],strand,tester.indelLength,store,correctSeq);
 
 		//_dumpCorrectionList(correctionList, firstCorrectionForRead);	
 		//test adding new correction with insertion at different position but on opposite strand
 		strand = true;
-		erroneousReadId = 6; //because of reverse strand
+		erroneousReadID = 6; //because of reverse strand
 		correctPos = readLength - correctPos;
 		tester.errorPos = readLength - tester.errorPos;
 		tester.overlap[1]=7;
 		tester.indelLength=2;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
 
 		//_dumpCorrectionList(correctionList, firstCorrectionForRead);	
 		//test adding new correction with insertion at same position but different correction sequence
 		strand = false;
-		erroneousReadId = 0; //because of forward strand
+		erroneousReadID = 0; //because of forward strand
 		correctPos = 2;
 		tester.errorPos = 24;
 		tester.overlap[1]=10;
 		tester.indelLength=2;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
 
 		//_dumpCorrectionList(correctionList, firstCorrectionForRead);	
 
 		//add insertion Correction on reverse strand for new readID
-		erroneousReadId=2;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
+		erroneousReadID=2;
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
 
 		//_dumpCorrectionList(correctionList, firstCorrectionForRead);	
 		//add deletion Correction on reverse strand for new readID
 		tester.errorPos = readLength - 24 - 2;
 		tester.indelLength=-2;
 		tester.overlap[1]=15;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
 
 
 		//adding another mismatch for non-conficting indel correction
-		erroneousReadId =0;
+		erroneousReadID =0;
 		strand = false;
 		correctPos = 13;
 		tester.errorPos = 13;
 		tester.overlap[1]=97;
 		tester.indelLength=0;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
 
 		//adding yet another mismatch to test if several corrections are done for non-conficting indel correction
-		erroneousReadId =0;
+		erroneousReadID =0;
 		strand = false;
 		correctPos = 5;
 		tester.errorPos = 7;
 		tester.overlap[1]=90;
 		tester.indelLength=0;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
 		
 		//adding another deletion for testing of output
-		erroneousReadId =1;
+		erroneousReadID =1;
 		strand = false;
 		correctPos = 12;
 		tester.errorPos = 11;
 		tester.overlap[1]=20;
 		tester.indelLength=2;
-		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadId,correctReadId,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
+		addCorrectionEntry(correctionList,firstCorrectionForRead,erroneousReadID,correctReadID,correctPos,tester.errorPos,tester.overlap[1],strand,tester.indelLength,store,correctSeq);
         _dumpCorrectionList(correctionList, firstCorrectionForRead,store);	
 
 		//test non Conflicitng Correction selection
@@ -1593,14 +1593,14 @@ inline void _dumpCorrectionList(
 template <typename TCorrection, typename TStore>
 inline void _dumpCorrectionIndelPos(
 	TCorrection const &correction,
-	unsigned errorReadId,
+	unsigned errorReadID,
 	TStore& store)
 {
-	std::cerr << "error___read_id\t" << errorReadId << std::endl;
+	std::cerr << "error___read_id\t" << errorReadID << std::endl;
 	std::cerr << "error_pos      \t" << correction.errorPos << std::endl;
 	std::cerr << "next correction\t" << correction.nextCorrection << std::endl;
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-	std::cerr << "correct_read_id\t" << correction.correctReadId << std::endl;
+	std::cerr << "correct_read_id\t" << correction.correctReadID << std::endl;
 	std::cerr << "correct_pos    \t" << correction.correctPos << std::endl;
 #endif
 	std::cerr << "overlap        \t F:" << correction.overlap[0] << " R: " << correction.overlap[1] << std::endl;
@@ -1613,17 +1613,17 @@ inline void _dumpCorrectionIndelPos(
 	for(unsigned i =0;i<length;++i)
 		std::cerr << correction.correctSeq[i];
 	std::cerr << std::endl;
-	std::cerr << "error___read   \t" << store.readSeqStore[errorReadId][correction.errorPos] << '\t';
+	std::cerr << "error___read   \t" << store.readSeqStore[errorReadID][correction.errorPos] << '\t';
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
          for (unsigned i = 0; i < correction.correctPos; ++i)
                  std::cerr << ' ';
 #endif
-     std::cerr << store.readSeqStore[errorReadId] << std::endl;
+     std::cerr << store.readSeqStore[errorReadID] << std::endl;
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-         std::cerr << "correct_read   \t" << store.readSeqStore[correction.correctReadId][correction.correctPos] << '\t';
+         std::cerr << "correct_read   \t" << store.readSeqStore[correction.correctReadID][correction.correctPos] << '\t';
          for (unsigned i = 0; i < correction.errorPos; ++i)
                  std::cerr << ' ';
-     std::cerr << store.readSeqStore[correction.correctReadId] << std::endl;
+     std::cerr << store.readSeqStore[correction.correctReadID] << std::endl;
 #endif
 }
 
@@ -1697,18 +1697,18 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
     String<unsigned int> correctionsToSave;
 
     SEQAN_OMP_PRAGMA(parallel for schedule(guided) private(correctionsToSave, possibleCorrections) reduction(+ : numberCorrections))
-    for (int readId = 0; readId < (int)length(firstCorrectionForRead); ++readId)
+    for (int readID = 0; readID < (int)length(firstCorrectionForRead); ++readID)
     {
         // descend if correction exists
-        TValue corrId = firstCorrectionForRead[readId];
-        if (corrId == maxValue<TValue>())
+        TValue corrID = firstCorrectionForRead[readID];
+        if (corrID == maxValue<TValue>())
             continue;
 
         // step through linked list and collect corrections
         clear(possibleCorrections);
         do
         {
-            appendValue(possibleCorrections, correctionList[corrId]);
+            appendValue(possibleCorrections, correctionList[corrID]);
             TCorrection & correction = back(possibleCorrections);
 
             //add the overlap values for both strand for the new object in the string
@@ -1717,9 +1717,9 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
 #else
             correction.overlap[0] += correction.overlap[1];
 #endif
-            //_dumpCorrectionIndelPos(correction, readId);
-            corrId = correction.nextCorrection;
-        } while (corrId != maxValue<TValue>());
+            //_dumpCorrectionIndelPos(correction, readID);
+            corrID = correction.nextCorrection;
+        } while (corrID != maxValue<TValue>());
 
         //sorting by Position first to get the best correction per Position
         //sorting is done arbitrarily from large to small(right to left)
@@ -1729,13 +1729,13 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
 #ifndef FIONA_NO_SEPARATE_OVERLAPSUM
 	//only remove if several corrections per position are saved
 
-        if (readId == options.debugRead)
+        if (readID == options.debugRead)
         {
             std::cerr << "output after sorting for positions and removal of positions"<<std::endl;
             for (unsigned j=0;j<length(possibleCorrections);++j)
             {
-                std::cerr << "Output for read "<<readId<<"entry "<<j<<std::endl;
-                _dumpCorrectionIndelPos(possibleCorrections[j],readId,store);
+                std::cerr << "Output for read "<<readID<<"entry "<<j<<std::endl;
+                _dumpCorrectionIndelPos(possibleCorrections[j],readID,store);
             }
         }  //output for read
 
@@ -1768,7 +1768,7 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
          std::cerr << "output after sorting for positions and removal of positions"<<std::endl;
          for(unsigned j=0;j<length(possibleCorrections);++j){
          std::cerr << "entry "<<j<<std::endl;
-         _dumpCorrectionIndelPos(possibleCorrections[j],readId);
+         _dumpCorrectionIndelPos(possibleCorrections[j],readID);
 
          }*/
 
@@ -1785,7 +1785,7 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
 
 #ifndef FIONA_NOERROROPTIMIZATION
 
-        unsigned errorReadLength = length(store.readSeqStore[readId]);
+        unsigned errorReadLength = length(store.readSeqStore[readID]);
 
 #ifndef FIONA_DISTANCE_BASED_ERROR_OPTIMIZATION
         // if indel use just the first correction except there are Ns
@@ -1802,7 +1802,7 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
                 && possibleCorrections[j].overlap[0] > options.overlapSumCutoffs(errorReadLength, possibleCorrections[j].errorPos))
             {
                 // if not too many corrections are found do the correction and proceed
-                if (length(correctionsToSave) < (unsigned) options.allowedCorrectionsPerRead[readId])
+                if (length(correctionsToSave) < (unsigned) options.allowedCorrectionsPerRead[readID])
                 {
                     appendValue(correctionsToSave, j);
                     continue;
@@ -1813,7 +1813,7 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
             }
 
             // special test to check for letter N corrections which where not detected above
-            if (ordValue(store.readSeqStore[readId][possibleCorrections[j].errorPos]) == 4)
+            if (ordValue(store.readSeqStore[readID][possibleCorrections[j].errorPos]) == 4)
                 appendValue(correctionsToSave, j);
         }
         }//endif
@@ -1852,7 +1852,7 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
 #endif
 
         //decrease the number of allowed Corrections
-        options.allowedCorrectionsPerRead[readId] -= length(correctionsToSave);
+        options.allowedCorrectionsPerRead[readID] -= length(correctionsToSave);
 
         // apply the corrections this part is very similar to the original end of the function applyReadErrorCorrections
         // in the first Fiona version but that we dont need to copy the original reads as we have saved the correction string in the
@@ -1866,14 +1866,14 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
             correction = correctionsToSave[count]; //set the position in the CorrectionString we are executing now
 //	    SEQAN_OMP_PRAGMA(critical) {	
 //	    std::cout << "found " << (unsigned ) getFoundCorrections(correctionList,firstCorrectionForRead,
-//                                 (unsigned) readId, possibleCorrections[correction].errorPos, false, store)<< "corrections read:" << readId<< " pos:" << possibleCorrections[correction].errorPos << std::endl;
+//                                 (unsigned) readID, possibleCorrections[correction].errorPos, false, store)<< "corrections read:" << readID<< " pos:" << possibleCorrections[correction].errorPos << std::endl;
 //	    }
 
-            if ((unsigned)readId == (unsigned) options.debugRead)
-                //if(readId == 18473)
+            if ((unsigned)readID == (unsigned) options.debugRead)
+                //if(readID == 18473)
             {
                 std::cerr << "BEFORE:" << std::endl;
-                _dumpCorrectionIndelPos(possibleCorrections[correction], readId,store);
+                _dumpCorrectionIndelPos(possibleCorrections[correction], readID,store);
             }
             //SEQAN_OMP_PRAGMA(critical) {
             //    _dumpCorrectionsIndelPos(possibleCorrections[]
@@ -1883,7 +1883,7 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
             if (options.appendCorrectionInfo)
             {
                 // Start the read correction information with the common prefix " corrected:\t" if it is empty.
-                if (empty(store.readNameStore[readId]))
+                if (empty(store.readNameStore[readID]))
                     m << " corrected:\t";
                 else
                     m << "\t";
@@ -1892,24 +1892,24 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
             if (possibleCorrections[correction].indelLength == 0)
             {
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] << ","<<possibleCorrections[correction].correctReadId<<"):" << store.readSeqStore[readId][possibleCorrections[correction].errorPos] << "->" << possibleCorrections[correction].correctSeq[0];
+                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] << ","<<possibleCorrections[correction].correctReadID<<"):" << store.readSeqStore[readID][possibleCorrections[correction].errorPos] << "->" << possibleCorrections[correction].correctSeq[0];
 #else
-                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] << ",???"<<"):" << store.readSeqStore[readId][possibleCorrections[correction].errorPos] << "->" << possibleCorrections[correction].correctSeq[0];
+                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] << ",???"<<"):" << store.readSeqStore[readID][possibleCorrections[correction].errorPos] << "->" << possibleCorrections[correction].correctSeq[0];
 #endif
-                store.readSeqStore[readId][possibleCorrections[correction].errorPos] = possibleCorrections[correction].correctSeq[0];
+                store.readSeqStore[readID][possibleCorrections[correction].errorPos] = possibleCorrections[correction].correctSeq[0];
             }
 #ifdef FIONA_ALLOWINDELS
             else if (possibleCorrections[correction].indelLength > 0)
             {
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] << ","<<possibleCorrections[correction].correctReadId<<"):-" << infix(store.readSeqStore[readId], possibleCorrections[correction].errorPos, possibleCorrections[correction].errorPos + possibleCorrections[correction].indelLength);
+                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] << ","<<possibleCorrections[correction].correctReadID<<"):-" << infix(store.readSeqStore[readID], possibleCorrections[correction].errorPos, possibleCorrections[correction].errorPos + possibleCorrections[correction].indelLength);
 #else
-                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] << ",???"<<"):-" << infix(store.readSeqStore[readId], possibleCorrections[correction].errorPos, possibleCorrections[correction].errorPos + possibleCorrections[correction].indelLength);
+                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] << ",???"<<"):-" << infix(store.readSeqStore[readID], possibleCorrections[correction].errorPos, possibleCorrections[correction].errorPos + possibleCorrections[correction].indelLength);
 #endif
-                erase(store.readSeqStore[readId], possibleCorrections[correction].errorPos, possibleCorrections[correction].errorPos + possibleCorrections[correction].indelLength);
+                erase(store.readSeqStore[readID], possibleCorrections[correction].errorPos, possibleCorrections[correction].errorPos + possibleCorrections[correction].indelLength);
             } else {
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] <<","<<possibleCorrections[correction].correctReadId<<"):+";
+                m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] <<","<<possibleCorrections[correction].correctReadID<<"):+";
 #else
                 m << possibleCorrections[correction].errorPos << "(" << options.cycle <<',' <<possibleCorrections[correction].overlap[0] <<",??"<<"):+";
 #endif
@@ -1917,21 +1917,21 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
                 resize(proxy,abs(possibleCorrections[correction].indelLength),Exact());
                 proxy=infix(possibleCorrections[correction].correctSeq,0,(unsigned) abs(possibleCorrections[correction].indelLength));
                 m << proxy;
-                insert(store.readSeqStore[readId], possibleCorrections[correction].errorPos,proxy);
+                insert(store.readSeqStore[readID], possibleCorrections[correction].errorPos,proxy);
             }
 #endif
 #ifdef FIONA_DISTANCE_BASED_ERROR_OPTIMIZATION
             //correct offset of subsequent error positions downstream of the current pos after indel corrections
             if(possibleCorrections[correction].indelLength != 0){
 		//SEQAN_OMP_PRAGMA(critical) {     
-		//std::cerr << "Did (read/length) " << readId << "/"<<length(store.readSeqStore[readId])<< " ) e-pos/indel " << possibleCorrections[correction].errorPos << "/" << (int)possibleCorrections[correction].indelLength << std::endl;
+		//std::cerr << "Did (read/length) " << readID << "/"<<length(store.readSeqStore[readID])<< " ) e-pos/indel " << possibleCorrections[correction].errorPos << "/" << (int)possibleCorrections[correction].indelLength << std::endl;
 		//}
                   for(unsigned nextcount = count+1; nextcount < length(correctionsToSave); ++nextcount)
                   {
              	      unsigned nextcorrection = correctionsToSave[nextcount];
                       if(possibleCorrections[nextcorrection].errorPos > possibleCorrections[correction].errorPos){
                           possibleCorrections[nextcorrection].errorPos -= (int) possibleCorrections[correction].indelLength;  
-		//SEQAN_OMP_PRAGMA(critical) {     std::cerr << readId << " changed occurrence " << " ) e-pos/indel " << possibleCorrections[nextcorrection].errorPos << "/" << (int)possibleCorrections[nextcorrection].indelLength << std::endl; }
+		//SEQAN_OMP_PRAGMA(critical) {     std::cerr << readID << " changed occurrence " << " ) e-pos/indel " << possibleCorrections[nextcorrection].errorPos << "/" << (int)possibleCorrections[nextcorrection].indelLength << std::endl; }
                         }
                   }
             }
@@ -1939,7 +1939,7 @@ inline unsigned applyReadErrorCorrections(String<TCorrection> const &correctionL
 
             // Extend the read correction information if configured to do so.
             if (options.appendCorrectionInfo)
-                append(store.readNameStore[readId], m.str());
+                append(store.readNameStore[readID], m.str());
         }
     }
     //give her the number of corrections
@@ -3033,30 +3033,30 @@ template <typename TFragmentStore, typename TCorrection>
 inline void _dumpCorrection(
 	TFragmentStore &store,
 	TCorrection const &correction,
-	unsigned errorReadId)
+	unsigned errorReadID)
 {
 	std::cerr << std::endl;
-	std::cerr << "error___read_id\t" << errorReadId << std::endl;
+	std::cerr << "error___read_id\t" << errorReadID << std::endl;
     std::cerr << "error_pos      \t" << correction.errorPos << std::endl;
-    std::cerr << "error_read length \t"<<length(store.readSeqStore[errorReadId])<<std::endl;
+    std::cerr << "error_read length \t"<<length(store.readSeqStore[errorReadID])<<std::endl;
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-    std::cerr << "correct_read_id\t" << correction.correctReadId << std::endl;
+    std::cerr << "correct_read_id\t" << correction.correctReadID << std::endl;
 	std::cerr << "correct_pos    \t" << correction.correctPos << std::endl;
-    std::cerr << "correct_read length \t"<<length(store.readSeqStore[correction.correctReadId])<<std::endl;
+    std::cerr << "correct_read length \t"<<length(store.readSeqStore[correction.correctReadID])<<std::endl;
 #endif
 	std::cerr << "overlap        \t" << correction.overlap << std::endl;
 	std::cerr << "indel_len      \t" << (int)correction.indelLength << std::endl;
-	std::cerr << "error___read   \t" << store.readSeqStore[errorReadId][correction.errorPos] << '\t';
+	std::cerr << "error___read   \t" << store.readSeqStore[errorReadID][correction.errorPos] << '\t';
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
 	for (unsigned i = 0; i < correction.correctPos; ++i)
 		std::cerr << ' ';
 #endif
-    std::cerr << store.readSeqStore[errorReadId] << std::endl;
+    std::cerr << store.readSeqStore[errorReadID] << std::endl;
 #ifndef FIONA_CONSENSUS_REDUCE_MEMORY
-	std::cerr << "correct_read   \t" << store.readSeqStore[correction.correctReadId][correction.correctPos] << '\t';
+	std::cerr << "correct_read   \t" << store.readSeqStore[correction.correctReadID][correction.correctPos] << '\t';
 	for (unsigned i = 0; i < correction.errorPos; ++i)
 		std::cerr << ' ';
-    std::cerr << store.readSeqStore[correction.correctReadId] << std::endl;
+    std::cerr << store.readSeqStore[correction.correctReadID] << std::endl;
 #endif
 }	
 
@@ -3075,65 +3075,65 @@ void applyReadErrorCorrections(
 	resize(originalReads, length(store.readSeqStore), Exact());
 
 	SEQAN_OMP_PRAGMA(parallel for schedule(guided))
-	for (int readId = 0; readId < readCount; ++readId)
+	for (int readID = 0; readID < readCount; ++readID)
 	{
-		TCorrection const &corr = corrections[readId];
+		TCorrection const &corr = corrections[readID];
 		if (corr.overlap != 0 && corr.indelLength <= 0)
-			originalReads[corr.correctReadId] = store.readSeqStore[corr.correctReadId];
+			originalReads[corr.correctReadID] = store.readSeqStore[corr.correctReadID];
 	}
 
 	SEQAN_OMP_PRAGMA(parallel for)
-	for (int readId = 0; readId < readCount; ++readId)
+	for (int readID = 0; readID < readCount; ++readID)
 	{
 #ifdef SEQAN_VERBOSE
-		std::cerr << "at readID: "<<readId<<std::endl;
+		std::cerr << "at readID: "<<readID<<std::endl;
 #endif
-		TCorrection const &corr = corrections[readId];
+		TCorrection const &corr = corrections[readID];
 		if (corr.overlap == 0) continue;
 
-        if (readId == options.debugRead)
+        if (readID == options.debugRead)
         {
             std::cerr << "BEFORE:" << std::endl;
-            _dumpCorrection(store, corr, readId);
+            _dumpCorrection(store, corr, readID);
         }
 
     std::ostringstream m;
-		if (strContains(toCString(store.readNameStore[readId]), "corrected"))
+		if (strContains(toCString(store.readNameStore[readID]), "corrected"))
 			m << "\t";
 		else
 			m << " corrected:\t";
 
 #ifdef SEQAN_VERBOSE
-		_dumpCorrection(store, corr, readId);
+		_dumpCorrection(store, corr, readID);
 #endif
 
 		if (corr.indelLength == 0)
 		{	
 
-			m << corr.errorPos <<  "(" << options.cycle <<',' <<corr.overlap << ","<< corr.correctReadId<<"):" << store.readSeqStore[readId][corr.errorPos] << "->" << originalReads[corr.correctReadId][corr.correctPos];
-			store.readSeqStore[readId][corr.errorPos] = originalReads[corr.correctReadId][corr.correctPos];
+			m << corr.errorPos <<  "(" << options.cycle <<',' <<corr.overlap << ","<< corr.correctReadID<<"):" << store.readSeqStore[readID][corr.errorPos] << "->" << originalReads[corr.correctReadID][corr.correctPos];
+			store.readSeqStore[readID][corr.errorPos] = originalReads[corr.correctReadID][corr.correctPos];
 		}
 #ifdef FIONA_ALLOWINDELS
 		else if (corr.indelLength > 0)
 		{
-			m << corr.errorPos << "(" << options.cycle <<',' <<corr.overlap << ","<< corr.correctReadId<<"):-" << infix(store.readSeqStore[readId], corr.errorPos, corr.errorPos + corr.indelLength);
-            erase(store.readSeqStore[readId], corr.errorPos, corr.errorPos + corr.indelLength);
+			m << corr.errorPos << "(" << options.cycle <<',' <<corr.overlap << ","<< corr.correctReadID<<"):-" << infix(store.readSeqStore[readID], corr.errorPos, corr.errorPos + corr.indelLength);
+            erase(store.readSeqStore[readID], corr.errorPos, corr.errorPos + corr.indelLength);
 		} else {
-			m << corr.errorPos << "(" << options.cycle <<',' <<corr.overlap << ","<< corr.correctReadId<<"):+" << infix(originalReads[corr.correctReadId], corr.correctPos, corr.correctPos + -corr.indelLength);
-			insert(store.readSeqStore[readId], corr.errorPos, infix(originalReads[corr.correctReadId], corr.correctPos, corr.correctPos + -corr.indelLength));
+			m << corr.errorPos << "(" << options.cycle <<',' <<corr.overlap << ","<< corr.correctReadID<<"):+" << infix(originalReads[corr.correctReadID], corr.correctPos, corr.correctPos + -corr.indelLength);
+			insert(store.readSeqStore[readID], corr.errorPos, infix(originalReads[corr.correctReadID], corr.correctPos, corr.correctPos + -corr.indelLength));
 		}
 #endif
-		append(store.readNameStore[readId], m.str());
-        if (readId == options.debugRead)
+		append(store.readNameStore[readID], m.str());
+        if (readID == options.debugRead)
         {
             std::cerr << "AFTER:" << std::endl;
-            _dumpCorrection(store, corr, readId);
+            _dumpCorrection(store, corr, readID);
         }
 #ifdef SEQAN_VERBOSE
 		std::cerr << "corrected:";
 		for (unsigned i = 0; i < corr.correctPos; ++i)
 			std::cerr << ' ';
-		std::cerr << store.readSeqStore[readId] << std::endl;
+		std::cerr << store.readSeqStore[readID] << std::endl;
 #endif
 	}
 }
@@ -3300,7 +3300,7 @@ struct Overlap  // for each operation (substitution/deletion/insert) there is on
 {
     unsigned overlapSumLeft;
     unsigned overlapSumRight;
-    unsigned readId;                // the readId of one correct candidate
+    unsigned readID;                // the readID of one correct candidate
     unsigned short correctPos;      // the position of the correct base in this candidate (reads shouldn't be longer than 65536bp)
 #ifdef FIONA_MAXIMIZE_SUPPORT
     unsigned short _errorsRight;    // temporary
@@ -3414,13 +3414,13 @@ template <
     typename TTreeIterator,
     typename TFragmentStore,
     typename TCorrections,
-    typename TValueId,
+    typename TValueID,
     typename TAlgorithm >
 void traverseAndSearchCorrections(
 	TTreeIterator iter,
 	TFragmentStore &store,
 	String<TCorrections> & correctionList,
-	String<TValueId> &firstCorrectionForRead,
+	String<TValueID> &firstCorrectionForRead,
 	FionaOptions & options,
 	Tag<TAlgorithm> const,
 	unsigned readLength,
@@ -3599,29 +3599,29 @@ if (LOOP_LEVEL != 0)
             TOccsIterator errorReadEnd = end(errorCandidates, Standard());
             for (; errorRead != errorReadEnd; ++errorRead)
             {
-                unsigned errorReadId = (*errorRead).i1; //debug?
-                unsigned fwdReadId = errorReadId;
+                unsigned errorReadID = (*errorRead).i1; //debug?
+                unsigned fwdReadID = errorReadID;
                 // swap to forward read ID because the allowed errors are only saved for the forward read IDs
-                if (fwdReadId >= readCount)
-                      fwdReadId -= readCount;
+                if (fwdReadID >= readCount)
+                      fwdReadID -= readCount;
 
                 //check here if the max number of corrections was made already 
-                if (options.allowedCorrectionsPerRead[fwdReadId] == 0)
+                if (options.allowedCorrectionsPerRead[fwdReadID] == 0)
                     continue;
 
                 unsigned positionError = (*errorRead).i2 + commonPrefix;
 
 #ifdef FIONA_MAX_CORRECTIONS_PER_BASE
                 lockReading(correctionListLock);
-                unsigned foundCorr = getFoundCorrections(correctionList, firstCorrectionForRead, errorReadId, positionError, store);
+                unsigned foundCorr = getFoundCorrections(correctionList, firstCorrectionForRead, errorReadID, positionError, store);
                 unlockReading(correctionListLock);
                 if (foundCorr >= FIONA_MAX_CORRECTIONS_PER_BASE)
                     continue;
 #endif
 
-                TReadIterator itEBegin = begin(store.readSeqStore[errorReadId], Standard());
+                TReadIterator itEBegin = begin(store.readSeqStore[errorReadID], Standard());
                 TReadIterator itEPrefixBegin = itEBegin + (*errorRead).i2;
-                TReadIterator itEEnd = end(store.readSeqStore[errorReadId], Standard());
+                TReadIterator itEEnd = end(store.readSeqStore[errorReadID], Standard());
 
     if (LOOP_LEVEL == 1)
         continue;
@@ -3658,7 +3658,7 @@ if (LOOP_LEVEL != 0)
     if (LOOP_LEVEL == 2)
         continue;
 
-//               bool debug = (errorReadId == (unsigned int)options.debugRead || errorReadId-length(store.readSeqStore)/2 == (unsigned int)options.debugRead);
+//               bool debug = (errorReadID == (unsigned int)options.debugRead || errorReadID-length(store.readSeqStore)/2 == (unsigned int)options.debugRead);
 //               if (debug)
 //               {
 //               std::cout<<"found"<<std::endl;
@@ -3855,10 +3855,10 @@ if (LOOP_LEVEL != 0)
                             ignoreUnusedVariableWarning(errorsRight);
                         #endif
 
-//               bool debug = (errorReadId == (unsigned int)options.debugRead || errorReadId-length(store.readSeqStore)/2 == (unsigned int)options.debugRead);
+//               bool debug = (errorReadID == (unsigned int)options.debugRead || errorReadID-length(store.readSeqStore)/2 == (unsigned int)options.debugRead);
 //                            if(debug)
 //                            {
-//                                 std::cerr << "error_read     \t" << indel << '\t' << suffix(store.readSeqStore[errorReadId],positionError) << '\t' << errorReadId << '\t' << (acceptedMismatchesLeft-acceptedMismatches) << '\n';
+//                                 std::cerr << "error_read     \t" << indel << '\t' << suffix(store.readSeqStore[errorReadID],positionError) << '\t' << errorReadID << '\t' << (acceptedMismatchesLeft-acceptedMismatches) << '\n';
 //                                 std::cerr << "correct_read   \t" << indel << '\t' << suffix(store.readSeqStore[(*corrRead).i1],positionCorrect) << '\t' << (*corrRead).i1 << '\n';
 //                                 //std::cerr << store.readSeqStore[(*corrRead).i1] << std::endl;
 //                            }
@@ -3874,7 +3874,7 @@ if (LOOP_LEVEL != 0)
                                 overlapRight -= (int)(acceptedMismatchesLeft - acceptedMismatches);
                             overlap.overlapSumRight += overlapRight;
 
-                            overlap.readId = (*corrRead).i1;
+                            overlap.readID = (*corrRead).i1;
                             overlap.correctPos = positionCorrect;
 
 //                            if (debug)
@@ -3941,7 +3941,7 @@ if (LOOP_LEVEL != 0)
                     // new linked list (correctionList) with CorrectionIndelPos structs
                     // but instead of choosing the Correction with the highest Overlapsum from each error type
                     // we treat each of theses cases by using addCorrectionEntry
-                    bool strand = (errorReadId >= readCount);
+                    bool strand = (errorReadID >= readCount);
 
                 #ifdef FIONA_MAXIMIZE_SUPPORT
                     int i = bestOperation;
@@ -3993,7 +3993,7 @@ if (LOOP_LEVEL != 0)
 
                  /*      SEQAN_OMP_PRAGMA(critical(TestConsensusOverlapsum))
                                     {
-                                           std::cout << "normCorrect: " << errorReadId<< " "<< positionError<< " " << overlapSum<< " " <<  options.overlapSumCutoffs[positionError+1]<< " " << cycle<< std::endl;
+                                           std::cout << "normCorrect: " << errorReadID<< " "<< positionError<< " " << overlapSum<< " " <<  options.overlapSumCutoffs[positionError+1]<< " " << cycle<< std::endl;
                                     } */
 
                         // 1. add major mismatch/indel correction
@@ -4003,8 +4003,8 @@ if (LOOP_LEVEL != 0)
                             addCorrectionEntry(
                                 correctionList,
                                 firstCorrectionForRead,
-                                errorReadId,
-                                bestCorrection[i].readId,
+                                errorReadID,
+                                bestCorrection[i].readID,
                                 bestCorrection[i].correctPos,
                                 positionError,
                                 overlapSum,
@@ -4039,7 +4039,7 @@ if (LOOP_LEVEL != 0)
                                     //unsigned testOverlapSum = (unsigned)((frequency * overlapSum) / totalCount(front(itCons)));
                                   /*  SEQAN_OMP_PRAGMA(critical(TestConsensusOverlapsum))
                                     {
-                                           std::cout << "overCorrect: " << errorReadId<< " "<< maxBase << " " <<itE-itEBegin<< " " << overlapSum << " " << consOverlapSum << " "   << frequency <<" overcutoff: " << options.overlapSumCutoffs[itE-itEBegin+1]<< " " << cycle << std::endl;
+                                           std::cout << "overCorrect: " << errorReadID<< " "<< maxBase << " " <<itE-itEBegin<< " " << overlapSum << " " << consOverlapSum << " "   << frequency <<" overcutoff: " << options.overlapSumCutoffs[itE-itEBegin+1]<< " " << cycle << std::endl;
                                     } */
                                     correctSeq[0] = (Dna5)maxBase;
                                     if (strand)
@@ -4047,10 +4047,10 @@ if (LOOP_LEVEL != 0)
                                     SEQAN_OMP_PRAGMA(critical(addCorrection))
                                     {
                                         ++resources.putCorrections;
-                                        addCorrectionEntry(correctionList,firstCorrectionForRead,errorReadId,bestCorrection[i].readId,bestCorrection[i].correctPos,itE-itEBegin,consOverlapSum,strand,indel,store,correctSeq);
+                                        addCorrectionEntry(correctionList,firstCorrectionForRead,errorReadID,bestCorrection[i].readID,bestCorrection[i].correctPos,itE-itEBegin,consOverlapSum,strand,indel,store,correctSeq);
                                     }
 
-                                    //std::cout << "replace " << *itE << " at position " << (itE - itEBegin) << " in read " << errorReadId;
+                                    //std::cout << "replace " << *itE << " at position " << (itE - itEBegin) << " in read " << errorReadID;
                                     //std::cout << " by " << (Dna5)maxBase << " (support=" << (*itCons).count[maxBase] << ")" << std::endl;
                                     //debugConsensus = true;
                                 }
@@ -4073,7 +4073,7 @@ if (LOOP_LEVEL != 0)
 
 
                             for(int xx=0; xx<indel; ++xx) std::cout << ' ';
-                            std::cout << prefix(store.readSeqStore[errorReadId], positionError) << ' ';
+                            std::cout << prefix(store.readSeqStore[errorReadID], positionError) << ' ';
                             for(unsigned xa=0; xa<length(bestCorrection[i].consensus); ++xa)
                             {
                                 unsigned maxBase = getMaxIndex(bestCorrection[i].consensus[xa]);
@@ -4082,24 +4082,24 @@ if (LOOP_LEVEL != 0)
                             }
                             std::cout << std::endl;
 
-                            std::cout << prefix(store.readSeqStore[errorReadId], positionError) << ' ';
+                            std::cout << prefix(store.readSeqStore[errorReadID], positionError) << ' ';
                             for(int xy=0; xy<-indel; ++xy) std::cout << ' ';
-                            std::cout << suffix(store.readSeqStore[errorReadId], positionError + _max(0, -indel)) << std::endl;
+                            std::cout << suffix(store.readSeqStore[errorReadID], positionError + _max(0, -indel)) << std::endl;
                             std::cout << std::endl;
                         }
 */
                        
 #else // FIONA_CONSENSUS
                         if (indel <= 0) //only get string if insertion in read or mismatch
-                            getCorrectionString(correctSeq,indel,bestCorrection[i].readId,bestCorrection[i].correctPos,strand,store);
+                            getCorrectionString(correctSeq,indel,bestCorrection[i].readID,bestCorrection[i].correctPos,strand,store);
                         SEQAN_OMP_PRAGMA(critical(addCorrection))
                         {
              /*std::ofstream myfile;
 myfile.open ("EntryOutput.txt",std::ios::app);
-myfile << "beforeEntry " << " "<< errorReadId<< " "<<bestCorrection[i].readId<< " "<<bestCorrection[i].correctPos<< " "<<positionError<< " "<<(int)indel << " " << overlapSum << " " <<representative(iter) <<"endEntry" << std::endl;
+myfile << "beforeEntry " << " "<< errorReadID<< " "<<bestCorrection[i].readID<< " "<<bestCorrection[i].correctPos<< " "<<positionError<< " "<<(int)indel << " " << overlapSum << " " <<representative(iter) <<"endEntry" << std::endl;
 myfile.close();*/
                             ++resources.putCorrections;
-                            addCorrectionEntry(correctionList,firstCorrectionForRead,errorReadId,bestCorrection[i].readId,bestCorrection[i].correctPos,positionError,overlapSum,strand,indel,store,correctSeq);
+                            addCorrectionEntry(correctionList,firstCorrectionForRead,errorReadID,bestCorrection[i].readID,bestCorrection[i].correctPos,positionError,overlapSum,strand,indel,store,correctSeq);
                         }
 #endif // FIONA_CONSENSUS
                     }

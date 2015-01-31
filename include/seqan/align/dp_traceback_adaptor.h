@@ -120,12 +120,12 @@ _adaptTraceSegmentsTo(Gaps<TSourceHorizontal, TGapsSpecHorizontal> & gapsHorizon
 // Function _adaptTraceSegmentsTo()                            [AlignmentGraph]
 // ----------------------------------------------------------------------------
 
-template <typename TStringSet, typename TCargo, typename TSpec, typename TSequenceIdH, typename TSequenceIdV,
+template <typename TStringSet, typename TCargo, typename TSpec, typename TSequenceIDH, typename TSequenceIDV,
           typename TPosition, typename TSize, typename TStringSpec>
 inline void
 _adaptTraceSegmentsTo(Graph<Alignment<TStringSet, TCargo, TSpec> > & g,
-                      TSequenceIdH const & seqHId,
-                      TSequenceIdV const & seqVId,
+                      TSequenceIDH const & seqHID,
+                      TSequenceIDV const & seqVID,
                       String<TraceSegment_<TPosition, TSize>, TStringSpec> const & traceSegments)
 {
     typedef TraceSegment_<TPosition, TSize> TTraceSegment;
@@ -139,9 +139,9 @@ _adaptTraceSegmentsTo(Graph<Alignment<TStringSet, TCargo, TSpec> > & g,
     // insert leading gaps
     TTraceSegment traceBegin = traceSegments[length(traceSegments) - 1];
     if (_getBeginVertical(traceBegin) != 0)
-        addVertex(g, seqVId, 0, _getBeginVertical(traceBegin));
+        addVertex(g, seqVID, 0, _getBeginVertical(traceBegin));
     if (_getBeginHorizontal(traceBegin) != 0)
-        addVertex(g, seqHId, 0, _getBeginHorizontal(traceBegin));
+        addVertex(g, seqHID, 0, _getBeginHorizontal(traceBegin));
 
 
     for (TSize i = 0; i < length(traceSegments); ++i)
@@ -150,29 +150,29 @@ _adaptTraceSegmentsTo(Graph<Alignment<TStringSet, TCargo, TSpec> > & g,
         switch (traceSegments[i]._traceValue)
         {
         case TraceBitMap_::DIAGONAL:
-            addEdge(g, addVertex(g, seqHId, traceSegments[i]._horizontalBeginPos, traceSegments[i]._length),
-                    addVertex(g, seqVId, traceSegments[i]._verticalBeginPos, traceSegments[i]._length));
+            addEdge(g, addVertex(g, seqHID, traceSegments[i]._horizontalBeginPos, traceSegments[i]._length),
+                    addVertex(g, seqVID, traceSegments[i]._verticalBeginPos, traceSegments[i]._length));
             break;
 
         case TraceBitMap_::VERTICAL:
-            addVertex(g, seqVId, traceSegments[i]._verticalBeginPos, traceSegments[i]._length);
+            addVertex(g, seqVID, traceSegments[i]._verticalBeginPos, traceSegments[i]._length);
             break;
 
         case TraceBitMap_::HORIZONTAL:
-            addVertex(g, seqHId, traceSegments[i]._horizontalBeginPos, traceSegments[i]._length);
+            addVertex(g, seqHID, traceSegments[i]._horizontalBeginPos, traceSegments[i]._length);
         }
     }
 
     // insert trailing gaps
     TTraceSegment traceEnd = traceSegments[0];
 
-    if (_getEndVertical(traceEnd) != length(value(stringSet(g), idToPosition(stringSet(g), seqVId))))
-        addVertex(g, seqVId, _getEndVertical(traceEnd),
-                  length(value(stringSet(g), idToPosition(stringSet(g), seqVId))) - _getEndVertical(traceEnd));
+    if (_getEndVertical(traceEnd) != length(value(stringSet(g), idToPosition(stringSet(g), seqVID))))
+        addVertex(g, seqVID, _getEndVertical(traceEnd),
+                  length(value(stringSet(g), idToPosition(stringSet(g), seqVID))) - _getEndVertical(traceEnd));
 
-    if (_getEndHorizontal(traceEnd) != length(value(stringSet(g), idToPosition(stringSet(g), seqHId))))
-        addVertex(g, seqHId, _getEndHorizontal(traceEnd),
-                  length(value(stringSet(g), idToPosition(stringSet(g), seqHId))) - _getEndHorizontal(traceEnd));
+    if (_getEndHorizontal(traceEnd) != length(value(stringSet(g), idToPosition(stringSet(g), seqHID))))
+        addVertex(g, seqHID, _getEndHorizontal(traceEnd),
+                  length(value(stringSet(g), idToPosition(stringSet(g), seqHID))) - _getEndHorizontal(traceEnd));
 }
 
 // ----------------------------------------------------------------------------
@@ -226,8 +226,8 @@ template <typename TSize, typename TFragmentSpec, typename TStringSpec, typename
           typename TPosition, typename TSize2, typename TStringSpec2>
 inline void
 _adaptTraceSegmentsTo(String<Fragment<TSize, TFragmentSpec>, TStringSpec> & matches,
-                      TSequenceH const & seqHId,
-                      TSequenceV const & seqVId,
+                      TSequenceH const & seqHID,
+                      TSequenceV const & seqVID,
                       String<TraceSegment_<TPosition, TSize2>, TStringSpec2> const & traceSegments)
 {
     typedef Fragment<TSize, TFragmentSpec> TFragment;
@@ -236,7 +236,7 @@ _adaptTraceSegmentsTo(String<Fragment<TSize, TFragmentSpec>, TStringSpec> & matc
         if (traceSegments[i]._traceValue == TraceBitMap_::DIAGONAL)
             appendValue(
                 matches,
-                TFragment(seqHId, traceSegments[i]._horizontalBeginPos, seqVId,
+                TFragment(seqHID, traceSegments[i]._horizontalBeginPos, seqVID,
                           traceSegments[i]._verticalBeginPos, traceSegments[i]._length),
                 Generous());
 }

@@ -149,8 +149,8 @@ verify(Verifier<THaystack, TNeedle, Filter<TSpec> > & verifier,
     reserve(verifier.seeds, seedsCount, Exact());
     setHost(verifier.seeds, needle);
 
-    for (TNeedleSize seedId = 0; seedId < seedsCount; ++seedId)
-        appendInfixWithLength(verifier.seeds, seedId * seedLength, seedLength, Exact());
+    for (TNeedleSize seedID = 0; seedID < seedsCount; ++seedID)
+        appendInfixWithLength(verifier.seeds, seedID * seedLength, seedLength, Exact());
 
     THaystackInfix haystackInfix = infix(verifier.haystack, haystackBegin, haystackEnd);
 

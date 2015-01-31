@@ -62,7 +62,7 @@ namespace SEQAN_NAMESPACE_MAIN
  *
  * @signature ContigStoreElement::ContigStoreElement();
  *
- * Set fileId to INVALID_ID and usage, fileBeginPos, fileEndPos to 0.
+ * Set fileID to INVALID_ID and usage, fileBeginPos, fileEndPos to 0.
  */
 
 /*!
@@ -102,7 +102,7 @@ namespace SEQAN_NAMESPACE_MAIN
  *
  * @see FragmentStore#lockContig
  *
- * @var TId ContigStoreElement::fileId;
+ * @var TID ContigStoreElement::fileID;
  * @brief Refers to a file in the @link FragmentStore::contigFileStore @endlink or is INVALID_ID if the contig has no
  *        file association.
  *
@@ -112,14 +112,14 @@ namespace SEQAN_NAMESPACE_MAIN
  * @var TPos ContigStoreElement::fileEndPos
  * @brief End position of the contig sequence fragment in the file.
  *
- * @var TId ContigStoreElement::INVALID_ID;
+ * @var TID ContigStoreElement::INVALID_ID;
  * @brief Constant to represent an invalid.
  */
 
 template <typename TContigSeq_, typename TGapAnchor_, typename TSpec_ = void>
 struct ContigStoreElement
 {
-	typedef typename Id<ContigStoreElement>::Type	TId;
+	typedef typename ID<ContigStoreElement>::Type	TID;
 	
 	typedef TContigSeq_			TContigSeq;
 	typedef TGapAnchor_			TGapAnchor;
@@ -127,23 +127,23 @@ struct ContigStoreElement
 	typedef __int64				TPos;
 	typedef String<TGapAnchor>	TGapAnchors;
 
-	static const TId INVALID_ID;
+	static const TID INVALID_ID;
 
 	TContigSeq	seq;
 	TGapAnchors	gaps;
 	
 // dynamic loading and disposing of contigs
 	unsigned	usage;			// number of threads,... using this contig
-	TId			fileId;
+	TID			fileID;
 	TPos		fileBeginPos;
 	TPos		fileEndPos;
 
-	ContigStoreElement() : usage(0), fileId(INVALID_ID), fileBeginPos(0), fileEndPos(0) {}
+	ContigStoreElement() : usage(0), fileID(INVALID_ID), fileBeginPos(0), fileEndPos(0) {}
 
     inline bool operator==(ContigStoreElement const & other) const
     {
         return usage == other.usage &&
-                fileId == other.fileId &&
+                fileID == other.fileID &&
                 fileBeginPos == other.fileBeginPos &&
                 fileEndPos == other.fileEndPos &&
                 seq == other.seq &&
@@ -154,8 +154,8 @@ struct ContigStoreElement
 //////////////////////////////////////////////////////////////////////////////
 
 template <typename TContigSeq_, typename TGapAnchor_, typename TSpec_> 
-const typename Id<ContigStoreElement<TContigSeq_, TGapAnchor_, TSpec_> >::Type 
-ContigStoreElement<TContigSeq_, TGapAnchor_, TSpec_>::INVALID_ID = MaxValue<typename Id<ContigStoreElement<TContigSeq_, TGapAnchor_, TSpec_> >::Type>::VALUE; 
+const typename ID<ContigStoreElement<TContigSeq_, TGapAnchor_, TSpec_> >::Type 
+ContigStoreElement<TContigSeq_, TGapAnchor_, TSpec_>::INVALID_ID = MaxValue<typename ID<ContigStoreElement<TContigSeq_, TGapAnchor_, TSpec_> >::Type>::VALUE; 
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -179,35 +179,35 @@ ContigStoreElement<TContigSeq_, TGapAnchor_, TSpec_>::INVALID_ID = MaxValue<type
  * @var AutoSeqFormat ContigFile::format;
  * @brief Stores the contig file format, auto-detect in @link FragmentStore#loadContigs @endlink.
  *
- * @var TId ContigFile::firstContigId;
- * @brief The contigId of the first sequence in the file.  Subsequent contig sequences have an increasing contigId.
+ * @var TID ContigFile::firstContigID;
+ * @brief The contigID of the first sequence in the file.  Subsequent contig sequences have an increasing contigID.
  */
 
 template <typename TSpec_ = void>
 struct ContigFile
 {
 //IOREV instead of storing filename and format store TFile ?
-	typedef typename Id<ContigFile>::Type	TId;
+	typedef typename ID<ContigFile>::Type	TID;
 
-	static const TId INVALID_ID;
+	static const TID INVALID_ID;
 
 	CharString		fileName;
 	AutoSeqFormat	format;
-	TId				firstContigId;	// first sequence of the file corresponds to this contigId
+	TID				firstContigID;	// first sequence of the file corresponds to this contigID
 
     inline bool operator==(ContigFile const & other) const
     {
         return fileName == other.fileName &&
                 format == other.format &&
-                firstContigId == other.firstContigId;
+                firstContigID == other.firstContigID;
     }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 template <typename TSpec_> 
-const typename Id<ContigFile<TSpec_> >::Type 
-ContigFile<TSpec_>::INVALID_ID = MaxValue<typename Id<ContigFile<TSpec_> >::Type>::VALUE; 
+const typename ID<ContigFile<TSpec_> >::Type 
+ContigFile<TSpec_>::INVALID_ID = MaxValue<typename ID<ContigFile<TSpec_> >::Type>::VALUE; 
 
 //////////////////////////////////////////////////////////////////////////////
 

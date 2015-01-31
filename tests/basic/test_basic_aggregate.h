@@ -48,31 +48,31 @@ using namespace seqan;
 // ==========================================================================
 
 // Helper type for testing transports.  Each constructed objects gets an id
-// and increases the static nextId member.  Assignment only updates the id,
+// and increases the static nextID member.  Assignment only updates the id,
 // setting sets the id as well and movement copies id and value and sets the
 // id of the other to -1 to signal emptiness.
 
 struct Transportable_
 {
-    static int nextId;
+    static int nextID;
     int id;
     int value;
 
     Transportable_()
     {
-        id = nextId++;
+        id = nextID++;
     }
 
     explicit
     Transportable_(int i)
     {
-        id = nextId++;
+        id = nextID++;
         value = i;
     }
     
     Transportable_(const Transportable_ & other)
     {
-        id = nextId++;
+        id = nextID++;
         value = other.value;
     }
 
@@ -90,7 +90,7 @@ struct Transportable_
     }
 };
 
-int Transportable_::nextId = 0;
+int Transportable_::nextID = 0;
 
 void assign(Transportable_ & target, Transportable_ & source)
 {
@@ -252,14 +252,14 @@ SEQAN_DEFINE_TEST(test_basic_aggregates_pair_base_move)
     {
         Pair<Transportable_, Transportable_> p1;
         Pair<Transportable_, Transportable_> p2(Transportable_(1), Transportable_(2));
-        int p2I1Id = p2.i1.id;
+        int p2I1ID = p2.i1.id;
         int p2I1Value = p2.i1.value;
-        int p2I2Id = p2.i2.id;
+        int p2I2ID = p2.i2.id;
         int p2I2Value = p2.i2.value;
         move(p1, p2);
-        SEQAN_ASSERT_EQ(p1.i1.id, p2I1Id);
+        SEQAN_ASSERT_EQ(p1.i1.id, p2I1ID);
         SEQAN_ASSERT_EQ(p1.i1.value, p2I1Value);
-        SEQAN_ASSERT_EQ(p1.i2.id, p2I2Id);
+        SEQAN_ASSERT_EQ(p1.i2.id, p2I2ID);
         SEQAN_ASSERT_EQ(p1.i2.value, p2I2Value);
         SEQAN_ASSERT_EQ(p2.i1.id, -1);
         SEQAN_ASSERT_EQ(p2.i2.id, -1);
@@ -296,23 +296,23 @@ SEQAN_DEFINE_TEST(test_basic_aggregates_pair_base_assign_value)
     {
         Pair<Transportable_, Transportable_> p1;
         Pair<Transportable_, Transportable_> p2(Transportable_(1), Transportable_(2));
-        int p1I1Id = p1.i1.id;
-        int p1I2Id = p1.i2.id;
-        int p2I1Id = p2.i1.id;
+        int p1I1ID = p1.i1.id;
+        int p1I2ID = p1.i2.id;
+        int p2I1ID = p2.i1.id;
         int p2I1Value = p2.i1.value;
-        int p2I2Id = p2.i2.id;
+        int p2I2ID = p2.i2.id;
         int p2I2Value = p2.i2.value;
 
         assignValueI1(p1, p2.i1);
         assignValueI2(p1, p2.i2);
 
-        SEQAN_ASSERT_EQ(p1.i1.id, p1I1Id);
+        SEQAN_ASSERT_EQ(p1.i1.id, p1I1ID);
         SEQAN_ASSERT_EQ(p1.i1.value, p2I1Value);
-        SEQAN_ASSERT_EQ(p1.i2.id, p1I2Id);
+        SEQAN_ASSERT_EQ(p1.i2.id, p1I2ID);
         SEQAN_ASSERT_EQ(p1.i2.value, p2I2Value);
-        SEQAN_ASSERT_EQ(p2.i1.id, p2I1Id);
+        SEQAN_ASSERT_EQ(p2.i1.id, p2I1ID);
         SEQAN_ASSERT_EQ(p2.i1.value, p2I1Value);
-        SEQAN_ASSERT_EQ(p2.i2.id, p2I2Id);
+        SEQAN_ASSERT_EQ(p2.i2.id, p2I2ID);
         SEQAN_ASSERT_EQ(p2.i2.value, p2I2Value);
     }
 }
@@ -335,21 +335,21 @@ SEQAN_DEFINE_TEST(test_basic_aggregates_pair_base_set_value)
     {
         Pair<Transportable_, Transportable_> p1;
         Pair<Transportable_, Transportable_> p2(Transportable_(1), Transportable_(2));
-        int p2I1Id = p2.i1.id;
+        int p2I1ID = p2.i1.id;
         int p2I1Value = p2.i1.value;
-        int p2I2Id = p2.i2.id;
+        int p2I2ID = p2.i2.id;
         int p2I2Value = p2.i2.value;
 
         setValueI1(p1, p2.i1);
         setValueI2(p1, p2.i2);
 
-        SEQAN_ASSERT_EQ(p1.i1.id, p2I1Id);
+        SEQAN_ASSERT_EQ(p1.i1.id, p2I1ID);
         SEQAN_ASSERT_EQ(p1.i1.value, p2I1Value);
-        SEQAN_ASSERT_EQ(p1.i2.id, p2I2Id);
+        SEQAN_ASSERT_EQ(p1.i2.id, p2I2ID);
         SEQAN_ASSERT_EQ(p1.i2.value, p2I2Value);
-        SEQAN_ASSERT_EQ(p2.i1.id, p2I1Id);
+        SEQAN_ASSERT_EQ(p2.i1.id, p2I1ID);
         SEQAN_ASSERT_EQ(p2.i1.value, p2I1Value);
-        SEQAN_ASSERT_EQ(p2.i2.id, p2I2Id);
+        SEQAN_ASSERT_EQ(p2.i2.id, p2I2ID);
         SEQAN_ASSERT_EQ(p2.i2.value, p2I2Value);
     }
 }
@@ -372,17 +372,17 @@ SEQAN_DEFINE_TEST(test_basic_aggregates_pair_base_move_value)
     {
         Pair<Transportable_, Transportable_> p1;
         Pair<Transportable_, Transportable_> p2(Transportable_(1), Transportable_(2));
-        int p2I1Id = p2.i1.id;
+        int p2I1ID = p2.i1.id;
         int p2I1Value = p2.i1.value;
-        int p2I2Id = p2.i2.id;
+        int p2I2ID = p2.i2.id;
         int p2I2Value = p2.i2.value;
 
         moveValueI1(p1, p2.i1);
         moveValueI2(p1, p2.i2);
 
-        SEQAN_ASSERT_EQ(p1.i1.id, p2I1Id);
+        SEQAN_ASSERT_EQ(p1.i1.id, p2I1ID);
         SEQAN_ASSERT_EQ(p1.i1.value, p2I1Value);
-        SEQAN_ASSERT_EQ(p1.i2.id, p2I2Id);
+        SEQAN_ASSERT_EQ(p1.i2.id, p2I2ID);
         SEQAN_ASSERT_EQ(p1.i2.value, p2I2Value);
         SEQAN_ASSERT_EQ(p2.i1.id, -1);
         SEQAN_ASSERT_EQ(p2.i1.value, p2I1Value);
@@ -1401,16 +1401,16 @@ SEQAN_DEFINE_TEST(test_basic_aggregates_tuple_base_move)
         Tuple<Transportable_, 2> t2;
         t2.i[0] = Transportable_(1);
         t2.i[1] = Transportable_(2);
-        int t2I1Id = t2.i[0].id;
+        int t2I1ID = t2.i[0].id;
         int t2I1Value = t2.i[0].value;
-        int t2I2Id = t2.i[1].id;
+        int t2I2ID = t2.i[1].id;
         int t2I2Value = t2.i[1].value;
 
         move(t1, t2);
 
-        SEQAN_ASSERT_EQ(t1.i[0].id, t2I1Id);
+        SEQAN_ASSERT_EQ(t1.i[0].id, t2I1ID);
         SEQAN_ASSERT_EQ(t1.i[0].value, t2I1Value);
-        SEQAN_ASSERT_EQ(t1.i[1].id, t2I2Id);
+        SEQAN_ASSERT_EQ(t1.i[1].id, t2I2ID);
         SEQAN_ASSERT_EQ(t1.i[1].value, t2I2Value);
         SEQAN_ASSERT_EQ(t2.i[0].id, -1);
         SEQAN_ASSERT_EQ(t2.i[1].id, -1);
@@ -1450,23 +1450,23 @@ SEQAN_DEFINE_TEST(test_basic_aggregates_tuple_base_assign_value)
         Tuple<Transportable_, 2> t2;
         t2.i[0] = Transportable_(1);
         t2.i[1] = Transportable_(-1);
-        int t1I1Id = t1.i[0].id;
-        int t1I2Id = t1.i[1].id;
-        int t2I1Id = t2.i[0].id;
+        int t1I1ID = t1.i[0].id;
+        int t1I2ID = t1.i[1].id;
+        int t2I1ID = t2.i[0].id;
         int t2I1Value = t2.i[0].value;
-        int t2I2Id = t2.i[1].id;
+        int t2I2ID = t2.i[1].id;
         int t2I2Value = t2.i[1].value;
 
         assignValue(t1, 0, t2.i[0]);
         assignValue(t1, 1, t2.i[1]);
 
-        SEQAN_ASSERT_EQ(t1.i[0].id, t1I1Id);
+        SEQAN_ASSERT_EQ(t1.i[0].id, t1I1ID);
         SEQAN_ASSERT_EQ(t1.i[0].value, t2I1Value);
-        SEQAN_ASSERT_EQ(t1.i[1].id, t1I2Id);
+        SEQAN_ASSERT_EQ(t1.i[1].id, t1I2ID);
         SEQAN_ASSERT_EQ(t1.i[1].value, t2I2Value);
-        SEQAN_ASSERT_EQ(t2.i[0].id, t2I1Id);
+        SEQAN_ASSERT_EQ(t2.i[0].id, t2I1ID);
         SEQAN_ASSERT_EQ(t2.i[0].value, t2I1Value);
-        SEQAN_ASSERT_EQ(t2.i[1].id, t2I2Id);
+        SEQAN_ASSERT_EQ(t2.i[1].id, t2I2ID);
         SEQAN_ASSERT_EQ(t2.i[1].value, t2I2Value);
     }
 }
@@ -1493,21 +1493,21 @@ SEQAN_DEFINE_TEST(test_basic_aggregates_tuple_base_set_value)
         Tuple<Transportable_, 2> t2;
         t2.i[0] = Transportable_(1);
         t2.i[1] = Transportable_(2);
-        int t2I1Id = t2.i[0].id;
+        int t2I1ID = t2.i[0].id;
         int t2I1Value = t2.i[0].value;
-        int t2I2Id = t2.i[1].id;
+        int t2I2ID = t2.i[1].id;
         int t2I2Value = t2.i[1].value;
 
         setValue(t1, 0, t2.i[0]);
         setValue(t1, 1, t2.i[1]);
 
-        SEQAN_ASSERT_EQ(t1.i[0].id, t2I1Id);
+        SEQAN_ASSERT_EQ(t1.i[0].id, t2I1ID);
         SEQAN_ASSERT_EQ(t1.i[0].value, t2I1Value);
-        SEQAN_ASSERT_EQ(t1.i[1].id, t2I2Id);
+        SEQAN_ASSERT_EQ(t1.i[1].id, t2I2ID);
         SEQAN_ASSERT_EQ(t1.i[1].value, t2I2Value);
-        SEQAN_ASSERT_EQ(t2.i[0].id, t2I1Id);
+        SEQAN_ASSERT_EQ(t2.i[0].id, t2I1ID);
         SEQAN_ASSERT_EQ(t2.i[0].value, t2I1Value);
-        SEQAN_ASSERT_EQ(t2.i[1].id, t2I2Id);
+        SEQAN_ASSERT_EQ(t2.i[1].id, t2I2ID);
         SEQAN_ASSERT_EQ(t2.i[1].value, t2I2Value);
     }
 }
@@ -1534,17 +1534,17 @@ SEQAN_DEFINE_TEST(test_basic_aggregates_tuple_base_move_value)
         Tuple<Transportable_, 2> t2;
         t2.i[0] = Transportable_(1);
         t2.i[1] = Transportable_(2);
-        int t2I1Id = t2.i[0].id;
+        int t2I1ID = t2.i[0].id;
         int t2I1Value = t2.i[0].value;
-        int t2I2Id = t2.i[1].id;
+        int t2I2ID = t2.i[1].id;
         int t2I2Value = t2.i[1].value;
 
         moveValue(t1, 0, t2.i[0]);
         moveValue(t1, 1, t2.i[1]);
 
-        SEQAN_ASSERT_EQ(t1.i[0].id, t2I1Id);
+        SEQAN_ASSERT_EQ(t1.i[0].id, t2I1ID);
         SEQAN_ASSERT_EQ(t1.i[0].value, t2I1Value);
-        SEQAN_ASSERT_EQ(t1.i[1].id, t2I2Id);
+        SEQAN_ASSERT_EQ(t1.i[1].id, t2I2ID);
         SEQAN_ASSERT_EQ(t1.i[1].value, t2I2Value);
         SEQAN_ASSERT_EQ(t2.i[0].id, -1);
         SEQAN_ASSERT_EQ(t2.i[0].value, t2I1Value);

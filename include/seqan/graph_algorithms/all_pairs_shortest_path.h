@@ -67,7 +67,7 @@ _printAllPairsShortestPath(Graph<TSpec> const& g,
                            TVertexDescriptor const j)
 {
     typedef typename Size<TPredecessor>::Type TSize;
-    TSize len = getIdUpperBound(g.data_id_managerV);
+    TSize len = getIDUpperBound(g.data_id_managerV);
     if (i==j) {
         std::cout << i;
     } else if (getValue(predecessor, i*len+j) == getNil<typename VertexDescriptor<Graph<TSpec> >::Type>()) {
@@ -94,7 +94,7 @@ _initializeAllPairs(Graph<TSpec> const& g,
     typedef typename Value<TPredecessor>::Type TPredVal;
 
     // Create adjacency-like matrix
-    TSize len = getIdUpperBound(g.data_id_managerV);
+    TSize len = getIDUpperBound(g.data_id_managerV);
     resize(matrix, len * len);
     resize(predecessor, len * len);
     TWeightVal infWeight = _getInfinityDistance(weight);

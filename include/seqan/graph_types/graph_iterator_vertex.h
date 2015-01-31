@@ -84,7 +84,7 @@ public:
 	
 	Iter(TGraph const& _graph) : 
 		data_host(&_graph), 
-		data_pos(getIdLowerBound(_getVertexIdManager(*data_host))) 
+		data_pos(getIDLowerBound(_getVertexIDManager(*data_host))) 
 	{
 		SEQAN_CHECKPOINT
 	}
@@ -238,7 +238,7 @@ inline bool
 atBegin(Iter<TGraph, GraphIterator<InternalVertexIterator<TSpec> > >& it)
 {
 SEQAN_CHECKPOINT
-	return (getValue(it) == getIdLowerBound(_getVertexIdManager(*it.data_host)));	
+	return (getValue(it) == getIDLowerBound(_getVertexIDManager(*it.data_host)));	
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -248,7 +248,7 @@ inline void
 goBegin(Iter<TGraph, GraphIterator<InternalVertexIterator<TSpec> > >& it)
 {
 	SEQAN_CHECKPOINT
-	it.data_pos = getIdLowerBound(_getVertexIdManager(*it.data_host));
+	it.data_pos = getIDLowerBound(_getVertexIDManager(*it.data_host));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ inline bool
 atEnd(Iter<TGraph, GraphIterator<InternalVertexIterator<TSpec> > >& it)
 {
 SEQAN_CHECKPOINT
-	return (getValue(it) >= getIdUpperBound(_getVertexIdManager(*it.data_host)));	
+	return (getValue(it) >= getIDUpperBound(_getVertexIDManager(*it.data_host)));	
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ inline void
 goEnd(Iter<TGraph, GraphIterator<InternalVertexIterator<TSpec> > >& it)
 {
 	SEQAN_CHECKPOINT
-	it.data_pos = getIdUpperBound(_getVertexIdManager(*it.data_host));
+	it.data_pos = getIDUpperBound(_getVertexIDManager(*it.data_host));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -279,7 +279,7 @@ goNext(Iter<TGraph, GraphIterator<InternalVertexIterator<TSpec> > >& it)
 {
 	SEQAN_CHECKPOINT
 	if (!atEnd(it)) ++it.data_pos;
-	while ((!atEnd(it)) && (!idInUse(_getVertexIdManager(*it.data_host), it.data_pos))) ++it.data_pos;
+	while ((!atEnd(it)) && (!idInUse(_getVertexIDManager(*it.data_host), it.data_pos))) ++it.data_pos;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -313,7 +313,7 @@ goPrevious(Iter<TGraph, GraphIterator<InternalVertexIterator<TSpec> > >& it)
 {
 	SEQAN_CHECKPOINT
 	if (!atBegin(it)) --it.data_pos;
-	while ((!atBegin(it)) && (!idInUse(_getVertexIdManager(*it.data_host), it.data_pos))) --it.data_pos;
+	while ((!atBegin(it)) && (!idInUse(_getVertexIDManager(*it.data_host), it.data_pos))) --it.data_pos;
 }
 
 //////////////////////////////////////////////////////////////////////////////

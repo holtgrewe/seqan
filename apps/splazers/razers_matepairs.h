@@ -445,22 +445,22 @@ bool loadReads(
     if (!success)
         return false;
 
-	CharString fastaId[2];
+	CharString fastaID[2];
 	String<Dna5Q> seq[2];
 	CharString qual[2];
 	
 	unsigned kickoutcount = 0;
 	while (!atEnd(leftMates) && !atEnd(rightMates))
 	{
-        readRecord(fastaId[0], seq[0], qual[0], leftMates);         // read Fasta id, sequence and qualities
-        readRecord(fastaId[1], seq[1], qual[1], rightMates);        // read Fasta id, sequence and qualities
+        readRecord(fastaID[0], seq[0], qual[0], leftMates);         // read Fasta id, sequence and qualities
+        readRecord(fastaID[1], seq[1], qual[1], rightMates);        // read Fasta id, sequence and qualities
 
 		if (options.readNaming == 0)
 		{
-            append(fastaId[0], "/L");
-            append(fastaId[1], "/R");
-			appendValue(fastaIDs, fastaId[0]);
-			appendValue(fastaIDs, fastaId[1]);
+            append(fastaID[0], "/L");
+            append(fastaID[1], "/R");
+			appendValue(fastaIDs, fastaID[0]);
+			appendValue(fastaIDs, fastaID[1]);
 		}
 		
 		reverseComplement(seq[1]);
@@ -522,7 +522,7 @@ bool loadReads(
 #ifdef RAZERS_MATEPAIRS
 			if (a.pairScore > b.pairScore) return true;
 			if (a.pairScore < b.pairScore) return false;
-			return a.pairId < b.pairId;
+			return a.pairID < b.pairID;
 #else
 			return a.editDist < b.editDist;
 #endif
@@ -848,9 +848,9 @@ void mapMatePairReads(
 					}
 
 					// set a unique pair id
-					fL.i2.pairId = mR.pairId = options.nextMatePairId;
-					if (++options.nextMatePairId == 0)
-						options.nextMatePairId = 1;
+					fL.i2.pairID = mR.pairID = options.nextMatePairID;
+					if (++options.nextMatePairID == 0)
+						options.nextMatePairID = 1;
 
 					// score the whole match pair
 					fL.i2.pairScore = mR.pairScore = 0 - fL.i2.editDist - mR.editDist;

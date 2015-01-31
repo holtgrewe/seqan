@@ -418,13 +418,13 @@ onFind(DbFinder<TText, TIndex, TDbQuerySpec, TDelegate, TSpec> & dbFinder,
     for (TSize i = 0; i < textOccurrencesCount; ++i)
         for (TSize j = 0; j < patternOccurrencesCount; ++j)
         {
-            TSize dbId1 = getSeqNo(textOccurrences[i]);
-            TSize dbId2 = getSeqNo(patternOccurrences[j]);
+            TSize dbID1 = getSeqNo(textOccurrences[i]);
+            TSize dbID2 = getSeqNo(patternOccurrences[j]);
             TSize pos1 = getSeqOffset(textOccurrences[i]);
             TSize pos2 = getSeqOffset(patternOccurrences[j]);
 
-            if (_validHit(dbFinder, dbId1, dbId2, pos1, pos2))
-                dbFinder.verifier(dbId1, dbId2, dbFinder.delegate);
+            if (_validHit(dbFinder, dbID1, dbID2, pos1, pos2))
+                dbFinder.verifier(dbID1, dbID2, dbFinder.delegate);
         }
 }
 
@@ -435,17 +435,17 @@ onFind(DbFinder<TText, TIndex, TDbQuerySpec, TDelegate, TSpec> & dbFinder,
 template <typename TText, typename TIndex, typename TDbQuerySpec, typename TDelegate, typename TSpec>
 inline bool
 _validHit(DbFinder<TText, TIndex, TDbQuerySpec, TDelegate, TSpec> const & dbFinder,
-          typename Size<TIndex>::Type dbId1,
-          typename Size<TIndex>::Type dbId2,
+          typename Size<TIndex>::Type dbID1,
+          typename Size<TIndex>::Type dbID2,
           typename Size<TIndex>::Type pos1,
           typename Size<TIndex>::Type pos2)
 {
-    if (dbId1 >= dbId2)
+    if (dbID1 >= dbID2)
         return false;
 
-    int maxErrors = getErrors(value(dbFinder.query), dbId2);
-    int dbLen1 = length(dbFinder.db.text[dbId1]);
-    int dbLen2 = length(dbFinder.db.text[dbId2]);
+    int maxErrors = getErrors(value(dbFinder.query), dbID2);
+    int dbLen1 = length(dbFinder.db.text[dbID1]);
+    int dbLen2 = length(dbFinder.db.text[dbID2]);
 
     // Check maximal length difference.
     if (dbLen1 + maxErrors < dbLen2 || dbLen2 + maxErrors < dbLen1)
@@ -462,14 +462,14 @@ _validHit(DbFinder<TText, TIndex, TDbQuerySpec, TDelegate, TSpec> const & dbFind
 template <typename TText, typename TIndex, typename TDelegate, typename TSpec>
 inline bool
 _validHit(DbFinder<TText, TIndex, Query, TDelegate, TSpec> const & dbFinder,
-          typename Size<TIndex>::Type dbId1,
-          typename Size<TIndex>::Type dbId2,
+          typename Size<TIndex>::Type dbID1,
+          typename Size<TIndex>::Type dbID2,
           typename Size<TIndex>::Type pos1,
           typename Size<TIndex>::Type pos2)
 {
-    int maxErrors = getErrors(value(dbFinder.query), dbId2);
-    int dbLen1 = length(dbFinder.db.text[dbId1]);
-    int dbLen2 = length(value(dbFinder.query).text[dbId2]);
+    int maxErrors = getErrors(value(dbFinder.query), dbID2);
+    int dbLen1 = length(dbFinder.db.text[dbID1]);
+    int dbLen2 = length(value(dbFinder.query).text[dbID2]);
 
     // Check maximal length difference.
     if (dbLen1 + maxErrors < dbLen2 || dbLen2 + maxErrors < dbLen1)
@@ -790,9 +790,9 @@ void execute(DbFinder<TText, TIndex, TDbQuerySpec, TDelegate, Online> & dbFinder
     TDbSSize dbQuerySize = length(value(dbFinder.query).text);
 
     SEQAN_OMP_PRAGMA(parallel for schedule(dynamic))
-    for (TDbSSize dbId1 = 0; dbId1 < dbSize; ++dbId1)
-        for (TDbSSize dbId2 = dbId1 + 1; dbId2 < dbQuerySize; ++dbId2)
-            dbFinder.verifier(dbId1, dbId2, dbFinder.delegate);
+    for (TDbSSize dbID1 = 0; dbID1 < dbSize; ++dbID1)
+        for (TDbSSize dbID2 = dbID1 + 1; dbID2 < dbQuerySize; ++dbID2)
+            dbFinder.verifier(dbID1, dbID2, dbFinder.delegate);
 }
 
 template <typename TText, typename TIndex, typename TDelegate>
@@ -809,9 +809,9 @@ void execute(DbFinder<TText, TIndex, Query, TDelegate, Online> & dbFinder)
     TDbQuerySSize dbQuerySize = length(value(dbFinder.query).text);
 
     SEQAN_OMP_PRAGMA(parallel for schedule(dynamic))
-    for (TDbSSize dbId = 0; dbId < dbSize; ++dbId)
-        for (TDbQuerySSize queryId = 0; queryId < dbQuerySize; ++queryId)
-            dbFinder.verifier(dbId, queryId, dbFinder.delegate);
+    for (TDbSSize dbID = 0; dbID < dbSize; ++dbID)
+        for (TDbQuerySSize queryID = 0; queryID < dbQuerySize; ++queryID)
+            dbFinder.verifier(dbID, queryID, dbFinder.delegate);
 }
 
 #endif  // #ifndef SANDBOX_ESIRAGUSA_APPS_SEARCHJOIN_DBFINDER_H_

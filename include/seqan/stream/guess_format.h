@@ -71,7 +71,7 @@ inline bool guessFormatFromStream(TFileSeq &seq, TagSelector<TTagList> &format)
 
     if (value(format) == -1 || isEqual(format, TFormat()))
     {
-        // if tagId is set to -1 (auto-detect) or the current format (TFormatTag) then test for TFormatTag format
+        // if tagID is set to -1 (auto-detect) or the current format (TFormatTag) then test for TFormatTag format
         if (guessFormatFromStream(seq, TFormat()))
         {
             assign(format, TFormat());
@@ -110,7 +110,7 @@ inline bool guessFormatFromFilename(TFilename const &fname, TagSelector<TTagList
 
     if (value(format) == -1 || isEqual(format, TFormat()))
     {
-        // if tagId is set to -1 (auto-detect) or the current format (TFormatTag) then test for TFormatTag format
+        // if tagID is set to -1 (auto-detect) or the current format (TFormatTag) then test for TFormatTag format
         if (guessFormatFromFilename(fname, TFormat()))
         {
             assign(format, TFormat());

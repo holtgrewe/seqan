@@ -205,35 +205,35 @@ extractAlignIntervals(TIntervals & contigIntervals, TAlignedReadStoreElement & a
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	///////// get contig intervals in ungapped sequence:
 	
-	typedef typename TAlignedReadStoreElement::TId 				TId;
+	typedef typename TAlignedReadStoreElement::TID 				TID;
 	typedef typename FragmentStore<TSpec, TConfig>::TContigGapAnchor 	TContigGapAnchor;
 	typedef		 String<TContigGapAnchor> 				TContigGaps;
 	typedef typename Iterator<TContigGaps const>::Type 			TContigGapsIter;
 	typedef typename Iterator<TIntervals>::Type 				TReadIntervalIter;
 	
 	
-	TId contigId = align.contigId;
+	TID contigID = align.contigID;
 	
-	if (empty(getValue(me.contigStore, contigId).gaps))
+	if (empty(getValue(me.contigStore, contigID).gaps))
 	{
 		contigIntervals = readIntervals;
 	}
 	else
 	{
-		if (front(getValue(me.contigStore, contigId).gaps).seqPos != 0) 
+		if (front(getValue(me.contigStore, contigID).gaps).seqPos != 0) 
 		{
 			TContigGapAnchor pseudoGapAnchor;
 			pseudoGapAnchor.seqPos = 0;
 			pseudoGapAnchor.gapPos = 0;
-			insertValue(value(me.contigStore, contigId).gaps, 0, pseudoGapAnchor, Generous());
+			insertValue(value(me.contigStore, contigID).gaps, 0, pseudoGapAnchor, Generous());
 		}
 		
 		TReadIntervalIter itI = begin(readIntervals);
 		TReadIntervalIter itIEnd = end(readIntervals);
 		
-		TContigGapsIter it1Gap = begin(getValue(me.contigStore, contigId).gaps);
-		TContigGapsIter it2Gap = begin(getValue(me.contigStore, contigId).gaps);
-		TContigGapsIter it2GapEnd = end(getValue(me.contigStore, contigId).gaps);
+		TContigGapsIter it1Gap = begin(getValue(me.contigStore, contigID).gaps);
+		TContigGapsIter it2Gap = begin(getValue(me.contigStore, contigID).gaps);
+		TContigGapsIter it2GapEnd = end(getValue(me.contigStore, contigID).gaps);
 		goNext(it2Gap);
 		TInterval contigInterval;
 		TInterval readInterval;

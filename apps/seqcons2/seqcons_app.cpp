@@ -139,7 +139,7 @@ void SeqConsAppImpl::writeAlignments()
         {
             int endPos = 0;
             for (unsigned i = 0; i < length(store.alignedReadStore); ++i)
-                if (store.alignedReadStore[i].contigId == contigID)
+                if (store.alignedReadStore[i].contigID == contigID)
                     endPos = std::max(endPos, (int)store.alignedReadStore[i].endPos);
             out << ">consensus_" << contigID << "\n";
             printAlignment(out, layout, store, /*contigID=*/contigID, /*beginPos=*/0, /*endPos=*/endPos, 0, 100);

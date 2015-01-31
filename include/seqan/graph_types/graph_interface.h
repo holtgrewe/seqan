@@ -139,13 +139,13 @@ struct EdgeDescriptor<Graph<TSpec> const>
 template<typename TSpec>
 struct VertexDescriptor<Graph<TSpec> > 
 {
-	typedef typename Id<Graph<TSpec> >::Type Type;
+	typedef typename ID<Graph<TSpec> >::Type Type;
 };
 
 template<typename TSpec>
 struct VertexDescriptor<Graph<TSpec> const>
 {
-	typedef typename Id<Graph<TSpec> >::Type Type;
+	typedef typename ID<Graph<TSpec> >::Type Type;
 };
 
 
@@ -166,15 +166,15 @@ struct EdgeType<Graph<Directed<TCargo, TSpec> > const> {
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo>
-struct EdgeType<Graph<Directed<TCargo, WithoutEdgeId> > > {
-	typedef EdgeStump<TCargo, true, false, false, WithoutEdgeId> Type;
+struct EdgeType<Graph<Directed<TCargo, WithoutEdgeID> > > {
+	typedef EdgeStump<TCargo, true, false, false, WithoutEdgeID> Type;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo>
-struct EdgeType<Graph<Directed<TCargo, WithoutEdgeId> > const> {
-	typedef EdgeStump<TCargo, true, false, false, WithoutEdgeId> const Type;
+struct EdgeType<Graph<Directed<TCargo, WithoutEdgeID> > const> {
+	typedef EdgeStump<TCargo, true, false, false, WithoutEdgeID> const Type;
 };
 
 
@@ -209,15 +209,15 @@ struct EdgeType<Graph<Undirected<TCargo, TSpec> > const> {
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo>
-struct EdgeType<Graph<Undirected<TCargo, WithoutEdgeId> > > {
-	typedef EdgeStump<TCargo, true, true, false, WithoutEdgeId> Type;
+struct EdgeType<Graph<Undirected<TCargo, WithoutEdgeID> > > {
+	typedef EdgeStump<TCargo, true, true, false, WithoutEdgeID> Type;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TCargo>
-struct EdgeType<Graph<Undirected<TCargo, WithoutEdgeId> > const> {
-	typedef EdgeStump<TCargo, true, true, false, WithoutEdgeId> const Type;
+struct EdgeType<Graph<Undirected<TCargo, WithoutEdgeID> > const> {
+	typedef EdgeStump<TCargo, true, true, false, WithoutEdgeID> const Type;
 };
 
 
@@ -238,15 +238,15 @@ struct EdgeType<Graph<Automaton<TAlphabet, TCargo, TSpec> > const> {
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TAlphabet, typename TCargo>
-struct EdgeType<Graph<Automaton<TAlphabet, TCargo, WithoutEdgeId> > > {
-	typedef EdgeStump<TCargo, false, false, false, WithoutEdgeId> Type;
+struct EdgeType<Graph<Automaton<TAlphabet, TCargo, WithoutEdgeID> > > {
+	typedef EdgeStump<TCargo, false, false, false, WithoutEdgeID> Type;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TAlphabet, typename TCargo>
-struct EdgeType<Graph<Automaton<TAlphabet, TCargo, WithoutEdgeId> > const> {
-	typedef EdgeStump<TCargo, false, false, false, WithoutEdgeId> const Type;
+struct EdgeType<Graph<Automaton<TAlphabet, TCargo, WithoutEdgeID> > const> {
+	typedef EdgeStump<TCargo, false, false, false, WithoutEdgeID> const Type;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -281,15 +281,15 @@ struct Cargo<Graph<TSpec> const> {
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TSpec>
-struct EdgeIdHandler<Graph<TSpec> const> {
-	typedef typename EdgeIdHandler<typename EdgeType<Graph<TSpec> const>::Type>::Type Type;
+struct EdgeIDHandler<Graph<TSpec> const> {
+	typedef typename EdgeIDHandler<typename EdgeType<Graph<TSpec> const>::Type>::Type Type;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 template<typename TSpec>
-struct EdgeIdHandler<Graph<TSpec> > {
-	typedef typename EdgeIdHandler<typename EdgeType<Graph<TSpec> >::Type>::Type Type;
+struct EdgeIDHandler<Graph<TSpec> > {
+	typedef typename EdgeIDHandler<typename EdgeType<Graph<TSpec> >::Type>::Type Type;
 };
 
 
@@ -656,10 +656,10 @@ _getInfinityDistance()
 
 //////////////////////////////////////////////////////////////////////////////
 
-// Simple _getId function to get the id for a vertex descriptor which is the id!
-template<typename TId>
-inline TId
-_getId(TId const id)
+// Simple _getID function to get the id for a vertex descriptor which is the id!
+template<typename TID>
+inline TID
+_getID(TID const id)
 {
 	SEQAN_CHECKPOINT
 	return id;
@@ -670,10 +670,10 @@ _getId(TId const id)
 template<typename TSpec, typename TVertexDescriptor>
 inline void
 _createVertices(Graph<TSpec>& g,
-				TVertexDescriptor const maxId) 
+				TVertexDescriptor const maxID) 
 {
 		// Create missing vertices
-		while (maxId >= getIdUpperBound(g.data_id_managerV)) addVertex(g);
+		while (maxID >= getIDUpperBound(g.data_id_managerV)) addVertex(g);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -199,9 +199,9 @@ readRecord(TSeqString & seq, TFwdIterator & iter, GenBankSequence)
 
 // readRecord() for GenBank id/seq pairs.
 
-template <typename TIdString, typename TSeqString, typename TFwdIterator>
+template <typename TIDString, typename TSeqString, typename TFwdIterator>
 inline void
-readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, GenBank)
+readRecord(TIDString & meta, TSeqString & seq, TFwdIterator & iter, GenBank)
 {
     IsWhitespace isWhite;
     IsBlank isBlank;
@@ -234,9 +234,9 @@ readRecord(TIdString & meta, TSeqString & seq, TFwdIterator & iter, GenBank)
     readRecord(seq, iter, GenBankSequence());
 }
 
-template <typename TIdString, typename TSeqString, typename TQualString, typename TFwdIterator>
+template <typename TIDString, typename TSeqString, typename TQualString, typename TFwdIterator>
 inline void
-readRecord(TIdString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, GenBank)
+readRecord(TIDString & meta, TSeqString & seq, TQualString & qual, TFwdIterator & iter, GenBank)
 {
     clear(qual);
     readRecord(meta, seq, iter, GenBank());

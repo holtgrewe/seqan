@@ -264,10 +264,10 @@ qualityDistributionFromFastQFile(TFile & file, TDistribution & avg, ParamChooser
     resize(count, pm_options.totalN, 0);
 
     SeqFileIn reader(file);
-    CharString fastaId, seq, qual;
+    CharString fastaID, seq, qual;
     while (!atEnd(reader))
     {
-        readRecord(fastaId, seq, qual, reader);
+        readRecord(fastaID, seq, qual, reader);
 
         for (unsigned i = 0; i != pm_options.totalN && i != length(qual); ++i)
         {
@@ -781,7 +781,7 @@ _parse_readShape(TFile & file, TChar & c, CharString & str)
 //IOREV if shapes are relevant and format standardized move to io module
     // Read word
     append(str, c);
-    while (!_streamEOF(file))
+    while (!_streamEof(file))
     {
         c = _streamGet(file);
         if (!(c == '1' || c == '0'))

@@ -45,18 +45,18 @@ using namespace seqan;
 // Imports mate pairs from two files, joins them, stores the joining position in
 // String readJoinPositions, and stores the sequences in the StringSet seqs and
 // their identifiers in the StringSet ids
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 inline bool
 _importSequences(CharString const & fileNameL,
                  CharString const & fileNameR,
                  bool revCompl,
                  StringSet<TSequence> & seqs,
-                 StringSet<TId> & ids,
+                 StringSet<TID> & ids,
                  StringSet<CharString> & quals,
                  String<unsigned> & readJoinPositions
                  )
 {
-    typedef typename Iterator<StringSet<TId>, Standard>::Type TIdSetIterator;
+    typedef typename Iterator<StringSet<TID>, Standard>::Type TIDSetIterator;
 
     seqan::SeqFileIn l, r;
     if (!open(l, toCString(fileNameL)) || !open(r, toCString(fileNameR)))
@@ -68,8 +68,8 @@ _importSequences(CharString const & fileNameL,
     TSequence seq;
     TSequence seqL;
     TSequence seqR;
-    TId id;
-    TId sId;
+    TID id;
+    TID sID;
     CharString qual;
     CharString qualL;
     CharString qualR;
@@ -100,17 +100,17 @@ _importSequences(CharString const & fileNameL,
         appendValue(seqs, seq, Generous());
         appendValue(quals, qual, Generous());
 
-        _getShortId(sId, id);
-        appendValue(ids, sId, Generous());
+        _getShortID(sID, id);
+        appendValue(ids, sID, Generous());
         clear(seq);
         clear(qual);
     }
     
     // Check for dupliacte id entries.
-    StringSet<TId> uniqueIds = ids;
-    std::sort(begin(uniqueIds, Standard()), end(uniqueIds, Standard()), IdComparator<TId>());  // O(n*log(n))
-    TIdSetIterator itOldEnd = end(uniqueIds, Standard());
-    TIdSetIterator itNewEnd = std::unique(begin(uniqueIds, Standard()), end(uniqueIds, Standard()), IdComparator<TId>());  // O(n)
+    StringSet<TID> uniqueIDs = ids;
+    std::sort(begin(uniqueIDs, Standard()), end(uniqueIDs, Standard()), IDComparator<TID>());  // O(n*log(n))
+    TIDSetIterator itOldEnd = end(uniqueIDs, Standard());
+    TIDSetIterator itNewEnd = std::unique(begin(uniqueIDs, Standard()), end(uniqueIDs, Standard()), IDComparator<TID>());  // O(n)
 
     --itNewEnd;
     unsigned diff = itOldEnd - itNewEnd;
@@ -127,17 +127,17 @@ _importSequences(CharString const & fileNameL,
 // Imports mate pairs from two files, joins them, stores the joining position in
 // String readJoinPositions, and stores the sequences in the StringSet seqs and
 // their identifiers in the StringSet ids
-template <typename TSequence, typename TId>
+template <typename TSequence, typename TID>
 inline bool
 _importSequences(CharString const & fileNameL,
                  CharString const & fileNameR,
                  bool revCompl,
                  StringSet<TSequence> & seqs,
-                 StringSet<TId> & ids,
+                 StringSet<TID> & ids,
                  String<unsigned> & readJoinPositions
                  )
 {
-    typedef typename Iterator<StringSet<TId>, Standard>::Type TIdSetIterator;
+    typedef typename Iterator<StringSet<TID>, Standard>::Type TIDSetIterator;
 
     seqan::SeqFileIn leftMates, rightMates;
     if (!open(leftMates, toCString(fileNameL)))
@@ -154,9 +154,9 @@ _importSequences(CharString const & fileNameL,
     TSequence seq;
     TSequence seqL;
     TSequence seqR;
-    TId idL;
-    TId idR;
-    TId sId;
+    TID idL;
+    TID idR;
+    TID sID;
     unsigned seqCount = 0;
     for (unsigned i = 0; !atEnd(leftMates) && !atEnd(rightMates); ++i, ++seqCount)
     {
@@ -179,8 +179,8 @@ _importSequences(CharString const & fileNameL,
         // Note: saving ID of right(!) mate per default
         appendValue(seqs, seq, Generous());
 
-        _getShortId(sId, idR);
-        appendValue(ids, sId, Generous());
+        _getShortID(sID, idR);
+        appendValue(ids, sID, Generous());
         clear(seq);
     }
     if (!atEnd(leftMates) || !atEnd(rightMates))
@@ -191,11 +191,11 @@ _importSequences(CharString const & fileNameL,
 
     std::cout << "Loaded " << seqCount << " mate pair sequence" << ((seqCount > 1) ? "s." : ".") << std::endl;
 
-    StringSet<TId> uniqueIds = ids;
+    StringSet<TID> uniqueIDs = ids;
     // Check for dupliacte id entries.
-    std::sort(begin(uniqueIds, Standard()), end(uniqueIds, Standard()), IdComparator<TId>());  // O(n*log(n))
-    TIdSetIterator itOldEnd = end(uniqueIds, Standard());
-    TIdSetIterator itNewEnd = std::unique(begin(uniqueIds, Standard()), end(uniqueIds, Standard()), IdComparator<TId>());  // O(n)
+    std::sort(begin(uniqueIDs, Standard()), end(uniqueIDs, Standard()), IDComparator<TID>());  // O(n*log(n))
+    TIDSetIterator itOldEnd = end(uniqueIDs, Standard());
+    TIDSetIterator itNewEnd = std::unique(begin(uniqueIDs, Standard()), end(uniqueIDs, Standard()), IDComparator<TID>());  // O(n)
 
     --itNewEnd;
     unsigned diff = itOldEnd - itNewEnd;
@@ -207,9 +207,9 @@ _importSequences(CharString const & fileNameL,
     std::cout << "Loaded " << length(ids) << " paired sequences" << std::endl;
     return true;
 }
-template <typename TSequence, typename TId, typename TPos>
+template <typename TSequence, typename TID, typename TPos>
 inline bool
-_isLeftMate(StellarMatch<TSequence, TId> const & sMatch, TPos const & joiningPos)
+_isLeftMate(StellarMatch<TSequence, TID> const & sMatch, TPos const & joiningPos)
 {
     if (sMatch.begin2 > joiningPos)
         return false;
@@ -220,9 +220,9 @@ _isLeftMate(StellarMatch<TSequence, TId> const & sMatch, TPos const & joiningPos
     return false;
 }
 
-template <typename TString, typename TId, typename TMatch>
+template <typename TString, typename TID, typename TMatch>
 inline bool
-_countMateMatches(TString const & confMateMatches, String<TMatch> const & queryMatches, TId & dbID, unsigned support)
+_countMateMatches(TString const & confMateMatches, String<TMatch> const & queryMatches, TID & dbID, unsigned support)
 {
     unsigned count = 0;
     // StellarMatches in confMateMatches have the correct mate distance, but the IntervalTree does not check for correct
@@ -321,15 +321,15 @@ _artificialBP(TMatch const & sMatch1, TMatch const & sMatch2, TMSplazerChain con
 
 
 // Intitialisation of graph structure for combinable StellarMatches of a read
-template <typename TSequence, typename TId, typename TMSplazerChain>
-void _initialiseGraphMatePairsNoBreakends(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
+template <typename TSequence, typename TID, typename TMSplazerChain>
+void _initialiseGraphMatePairsNoBreakends(QueryMatches<StellarMatch<TSequence, TID> > & queryMatches,
                       TMSplazerChain & chain,
                       MSplazerOptions const & options)
 {
     // std::cerr << " Initialising graph structure " << std::endl;
     typedef typename TMSplazerChain::TGraph TGraph;
     typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
-    typedef typename Iterator<String<StellarMatch<TSequence, TId> > >::Type TIterator;
+    typedef typename Iterator<String<StellarMatch<TSequence, TID> > >::Type TIterator;
     typedef typename TMSplazerChain::TInterval TInterval;
 
     String<TInterval> leftMateMatches;
@@ -401,9 +401,9 @@ void _initialiseGraphMatePairsNoBreakends(QueryMatches<StellarMatch<TSequence, T
 
 // Intitialisation of graph structure for combinable StellarMatches of a read
 // including breakends
-template <typename TSequence, typename TId, typename TMSplazerChain>
-void _initialiseGraphMatePairs(QueryMatches<StellarMatch<TSequence, TId> > & queryMatches,
-                      TId & queryId,
+template <typename TSequence, typename TID, typename TMSplazerChain>
+void _initialiseGraphMatePairs(QueryMatches<StellarMatch<TSequence, TID> > & queryMatches,
+                      TID & queryID,
                       TMSplazerChain & chain,
                       MSplazerOptions const & options)
 {
@@ -411,9 +411,9 @@ void _initialiseGraphMatePairs(QueryMatches<StellarMatch<TSequence, TId> > & que
     // std::cerr << " Initialising graph structure " << std::endl;
     typedef typename TMSplazerChain::TGraph TGraph;
     typedef typename EdgeDescriptor<TGraph>::Type TEdgeDescriptor;
-    typedef typename Iterator<String<StellarMatch<TSequence, TId> > >::Type TIterator;
+    typedef typename Iterator<String<StellarMatch<TSequence, TID> > >::Type TIterator;
     typedef typename TMSplazerChain::TInterval TInterval;
-    typedef Breakpoint<TSequence, TId> TBreakpoint;
+    typedef Breakpoint<TSequence, TID> TBreakpoint;
 
     String<TInterval> leftMateMatches;
     String<TInterval> rightMateMatches;
@@ -472,7 +472,7 @@ void _initialiseGraphMatePairs(QueryMatches<StellarMatch<TSequence, TId> > & que
                                queryMatches.matches[i].begin1,
                                queryMatches.matches[i].begin2,
                                queryMatches.matches[i].begin2,
-                               queryId);
+                               queryID);
                 bp.svtype = TBreakpoint::BREAKEND;
                 // bp.imprecise = true;
                 bp.breakend = 0; // left breakend
@@ -498,7 +498,7 @@ void _initialiseGraphMatePairs(QueryMatches<StellarMatch<TSequence, TId> > & que
                                queryMatches.matches[i].end1,
                                queryMatches.matches[i].end2,
                                queryMatches.matches[i].end2,
-                               queryId);
+                               queryID);
                 bp.svtype = TBreakpoint::BREAKEND;
                 // bp.imprecise = true;
                 bp.breakend = 1; // right breakend

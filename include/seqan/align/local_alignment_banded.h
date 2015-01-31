@@ -160,8 +160,8 @@ TScoreValue localAlignment(Graph<Alignment<TStringSet, TCargo, TGraphSpec> > & a
                                             value(stringSet(alignmentGraph), 1), scoringScheme,
                                             TAlignConfig2(lowerDiag, upperDiag), tag);
 
-    _adaptTraceSegmentsTo(alignmentGraph, positionToId(stringSet(alignmentGraph), 0),
-                          positionToId(stringSet(alignmentGraph), 1), trace);
+    _adaptTraceSegmentsTo(alignmentGraph, positionToID(stringSet(alignmentGraph), 0),
+                          positionToID(stringSet(alignmentGraph), 1), trace);
     return res;
 }
 
@@ -203,7 +203,7 @@ TScoreValue localAlignment(String<Fragment<TSize, TFragmentSpec>, TStringSpec> &
     DPScoutState_<Default> dpScoutState;
     TScoreValue res = _setUpAndRunAlignment(trace, dpScoutState, value(strings, 0), value(strings, 1), scoringScheme,
                                             TAlignConfig2(lowerDiag, upperDiag), tag);
-    _adaptTraceSegmentsTo(fragmentString, positionToId(strings, 0), positionToId(strings, 1), trace);
+    _adaptTraceSegmentsTo(fragmentString, positionToID(strings, 0), positionToID(strings, 1), trace);
     return res;
 }
 

@@ -76,11 +76,11 @@ SEQAN_CHECKPOINT
 
 // returns node begin or end position closest to pos
 // i.e. closest refined position 
-template<typename TAliGraph, typename TVertexDescriptor, typename TId, typename TPosition>
+template<typename TAliGraph, typename TVertexDescriptor, typename TID, typename TPosition>
 TPosition
 _getClosestRefinedNeighbor(TAliGraph & ali_g,
 						   TVertexDescriptor & vd,
-						   TId /*seq*/,
+						   TID /*seq*/,
 						   TPosition pos)
 {
 SEQAN_CHECKPOINT
@@ -93,11 +93,11 @@ SEQAN_CHECKPOINT
 
 // get closest refined position to end position of fragment (cut_end_pos)
 // and corresponding node (end_knot)
-template<typename TAliGraph, typename TId, typename TPosition>
+template<typename TAliGraph, typename TID, typename TPosition>
 void
 _getCutEndPos(TAliGraph & ali_g, 
 			  typename VertexDescriptor<TAliGraph>::Type & end_knot,
-			  TId seq,
+			  TID seq,
 			  TPosition act_begin_pos,
 			  TPosition end_pos,
 			  TPosition & cut_end_pos)
@@ -121,11 +121,11 @@ SEQAN_CHECKPOINT
 
 // get closest refined position to begin position of fragment (cut_act_pos)
 // and corresponding node (act_knot)
-template<typename TAliGraph, typename TId, typename TPosition>
+template<typename TAliGraph, typename TID, typename TPosition>
 void
 _getCutBeginPos(TAliGraph & ali_g, 
 			  typename VertexDescriptor<TAliGraph>::Type & act_knot,
-			  TId seq,
+			  TID seq,
 			  TPosition act_end_pos,
 			  TPosition act_pos,
 			  TPosition & cut_act_pos)
@@ -166,7 +166,7 @@ _makeRefinedGraphEdges(TAlignmentString & alis,
 SEQAN_CHECKPOINT
 	typedef typename Value<TAlignmentString>::Type TAlign;
 	typedef typename Position<TAlign>::Type TPosition;
-	typedef typename Id<TAlign>::Type TId;
+	typedef typename ID<TAlign>::Type TID;
 	typedef typename Iterator<TAlignmentString, Rooted>::Type TAliIterator;
 	typedef typename VertexDescriptor<TAliGraph>::Type TVertexDescriptor;
 	typedef typename EdgeDescriptor<TAliGraph>::Type TEdgeDescriptor;
@@ -180,14 +180,14 @@ SEQAN_CHECKPOINT
 	while(ali_it != ali_end)
 	{
 		//get first sequence that takes part in the alignment + boundaries of the ali
-		TId seq1;
+		TID seq1;
         TPosition begin_pos1,end_pos1;
-		_getSeqBeginAndEnd(*ali_it,seq_map,seq1,begin_pos1,end_pos1,(TId)0);
+		_getSeqBeginAndEnd(*ali_it,seq_map,seq1,begin_pos1,end_pos1,(TID)0);
 
 		//get second sequence that takes part in the alignment + boundaries of the ali
-		TId seq2;
+		TID seq2;
         TPosition begin_pos2,end_pos2;
-		_getSeqBeginAndEnd(*ali_it,seq_map,seq2,begin_pos2,end_pos2,(TId)1);
+		_getSeqBeginAndEnd(*ali_it,seq_map,seq2,begin_pos2,end_pos2,(TID)1);
 
 		//get the last node that is within the current ali
 		TVertexDescriptor end_knot1;
@@ -209,7 +209,7 @@ SEQAN_CHECKPOINT
 		while (true)
 		{
 			//get other sequence and projected position
-			//TId seq2;
+			//TID seq2;
             TPosition act_pos2;
 			_getOtherSequenceAndProject(*ali_it,0,seq_map,seq1,act_pos1,seq2,act_pos2);
 		

@@ -44,17 +44,17 @@
 using namespace seqan;
 
 // ----------------------------------------------------------------------------
-// Function _getShortId()
+// Function _getShortID()
 // ----------------------------------------------------------------------------
 
-// Creates a short Id out of a long one (i.e. it takes the prefix til the first white space)
-template <typename TId>
-inline void _getShortId(TId & shortId, TId const & longId)
+// Creates a short ID out of a long one (i.e. it takes the prefix til the first white space)
+template <typename TID>
+inline void _getShortID(TID & shortID, TID const & longID)
 {
-    clear(shortId);
-    for (typename Position<TId>::Type i = 0; i < length(longId) && isgraph(value(longId, i)); ++i)
+    clear(shortID);
+    for (typename Position<TID>::Type i = 0; i < length(longID) && isgraph(value(longID, i)); ++i)
     {
-        appendValue(shortId, value(longId, i));
+        appendValue(shortID, value(longID, i));
     }
 }
 
@@ -64,18 +64,18 @@ inline void _getShortId(TId & shortId, TId const & longId)
 
 // Takes the values from the localMatchStore and creates a Stellar match out of them.
 // The Stellar match is, sorted by read, appended to stQueryMatches. Reads are identified by their short query IDs
-// (sQueryIds), the correct database by their short database IDs (databaseIds), which are both given in the GFF file
-template <typename TSequence, typename TId>
+// (sQueryIDs), the correct database by their short database IDs (databaseIDs), which are both given in the GFF file
+template <typename TSequence, typename TID>
 bool _createStellarMatches(StringSet<TSequence> & queries,
-                           StringSet<TId> const & sQueryIds,
+                           StringSet<TID> const & sQueryIDs,
                            StringSet<TSequence> & databases,
-                           StringSet<TId> const & databaseIds,
+                           StringSet<TID> const & databaseIDs,
                            LocalMatchStore<> & lmStore,
-                           StringSet<QueryMatches<StellarMatch<TSequence, TId> > > & stQueryMatches,
+                           StringSet<QueryMatches<StellarMatch<TSequence, TID> > > & stQueryMatches,
                            unsigned numThreads)
 {
     typedef typename Infix<TSequence>::Type TInfix;
-    typedef typename StellarMatch<TSequence, TId>::TAlign TAlign;
+    typedef typename StellarMatch<TSequence, TID>::TAlign TAlign;
     typedef typename Row<TAlign>::Type TRow;
     typedef typename LocalMatchStore<>::TMatchStore TMatchStore;
     typedef typename Iterator<TMatchStore, Standard>::Type TMatchStoreIterator;
@@ -84,9 +84,9 @@ bool _createStellarMatches(StringSet<TSequence> & queries,
     Splitter<TMatchStoreIterator> setSplitter(begin(lmStore.matchStore, Standard()), end(lmStore.matchStore, Standard())); 
 
     SEQAN_OMP_PRAGMA(parallel for shared(stQueryMatches))
-    for (int jobId = 0; jobId < static_cast<int>(length(setSplitter)); ++jobId)
+    for (int jobID = 0; jobID < static_cast<int>(length(setSplitter)); ++jobID)
     {
-            for (TMatchStoreIterator it = setSplitter[jobId]; it != setSplitter[jobId + 1]; ++it)
+            for (TMatchStoreIterator it = setSplitter[jobID]; it != setSplitter[jobID + 1]; ++it)
 	    {
 		TInfix dbInf;
 		TInfix queryInf;
@@ -95,34 +95,34 @@ bool _createStellarMatches(StringSet<TSequence> & queries,
 		unsigned iDB = maxValue<unsigned>();     // position of database sequence in databases
 		unsigned iQuery = maxValue<unsigned>();  // position of query/read sequence in queries
 
-		// Takes the short chromosome Id (from the Stellar match file) and looks up the corresponding long chromosome
-		// Id entry from the reference input file
-		for (unsigned j = 0; j < length(databaseIds); ++j)
+		// Takes the short chromosome ID (from the Stellar match file) and looks up the corresponding long chromosome
+		// ID entry from the reference input file
+		for (unsigned j = 0; j < length(databaseIDs); ++j)
 		{
-		    if (lmStore.sequenceNameStore[(*it).subjectId] == databaseIds[j])
+		    if (lmStore.sequenceNameStore[(*it).subjectID] == databaseIDs[j])
 		    {
 			iDB = j;
 			break;
 		    }
 		}
 
-		// Takes the short read Id (from the Stellar match file) and looks up the corresponding long read Id entry
+		// Takes the short read ID (from the Stellar match file) and looks up the corresponding long read ID entry
 		// from the read input file
-		for (unsigned j = 0; j < length(sQueryIds); ++j)
+		for (unsigned j = 0; j < length(sQueryIDs); ++j)
 		{
-		    if (lmStore.sequenceNameStore[(*it).queryId] == sQueryIds[j])
+		    if (lmStore.sequenceNameStore[(*it).queryID] == sQueryIDs[j])
 		    {
 			iQuery = j;
 			break;
 		    }
 		}
-		// Sanity check for read and query Id:
+		// Sanity check for read and query ID:
 		// skips entry if no corresponding entry in the input file could not be found, else creates StellarMatch object
 		if (iDB == maxValue<unsigned>() || iQuery == maxValue<unsigned>())
 		{
 		    std::cerr << "Read or database does not exist for match: " << it - begin(lmStore.matchStore, Standard())
-			      << " subjectId: " << lmStore.sequenceNameStore[(*it).subjectId]
-			      << " queryId: " << lmStore.sequenceNameStore[(*it).queryId] << std::endl;
+			      << " subjectID: " << lmStore.sequenceNameStore[(*it).subjectID]
+			      << " queryID: " << lmStore.sequenceNameStore[(*it).queryID] << std::endl;
 		    std::cerr << "Skipping entry" << std::endl;
 		    continue;
 		}
@@ -150,7 +150,7 @@ bool _createStellarMatches(StringSet<TSequence> & queries,
 		{
 		    std::cerr << "Match begin or end position exceeds query length! Wrong read/contig sequence?" << std::endl;
 		    std::cerr <<  (*it).queryBeginPos << " " << (*it).queryEndPos << " " <<
-		    length(queries[iQuery]) << " " << sQueryIds[iQuery] << std::endl;
+		    length(queries[iQuery]) << " " << sQueryIDs[iQuery] << std::endl;
 		    //return 1;
 		}
 
@@ -214,7 +214,7 @@ bool _createStellarMatches(StringSet<TSequence> & queries,
 		    }
 		}
 		// Create Stellar match and append it to stQueryMatches
-		StellarMatch<TSequence, TId> match(localAlign, databaseIds[iDB], orientation);
+		StellarMatch<TSequence, TID> match(localAlign, databaseIDs[iDB], orientation);
 		appendValue(stQueryMatches[iQuery].matches, match);
 	    }
     }
@@ -226,11 +226,11 @@ bool _createStellarMatches(StringSet<TSequence> & queries,
 // ----------------------------------------------------------------------------
 
 // Reads in a file with Stellar matches in gff format and creates StellarMatch object from the entries
-template <typename TSequence, typename TId, typename TMatches>
+template <typename TSequence, typename TID, typename TMatches>
 bool _getStellarMatchesFromFile(StringSet<TSequence> & queries,
-                                StringSet<TId> & sQueryIds,
+                                StringSet<TID> & sQueryIDs,
                                 StringSet<TSequence> & databases,
-                                StringSet<TId> & databaseIDs,
+                                StringSet<TID> & databaseIDs,
                                 CharString const & smFileName,
                                 TMatches & stQueryMatches,
                                 unsigned numThreads)
@@ -261,7 +261,7 @@ bool _getStellarMatchesFromFile(StringSet<TSequence> & queries,
     // Creating Stellar Matches from input
     resize(stQueryMatches, length(queries));
     
-    if (!_createStellarMatches(queries, sQueryIds, databases, databaseIDs, lmStore, stQueryMatches, numThreads))
+    if (!_createStellarMatches(queries, sQueryIDs, databases, databaseIDs, lmStore, stQueryMatches, numThreads))
         return 1;
 
     return 0;

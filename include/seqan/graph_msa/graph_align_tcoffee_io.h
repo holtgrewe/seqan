@@ -328,8 +328,8 @@ void write(TFile & file,
 		TSize fragLen = fragmentLength(g,sV);
 		TSize fragPos1 = fragmentBegin(g,sV);
 		TSize fragPos2 = fragmentBegin(g,tV);
-		TSize seq1 = sequenceId(g,sV);
-		TSize seq2 = sequenceId(g,tV);
+		TSize seq1 = sequenceID(g,sV);
+		TSize seq2 = sequenceID(g,tV);
 		TCargo my_carg =  getCargo(*it);
 		if (my_carg <= 0) my_carg = 1;
 		else my_carg = (TCargo) ((double) my_carg / (double) fragLen);
@@ -577,16 +577,16 @@ read(TFile & file,
 template<typename TSizeSpec, typename TSpec1, typename TSpec2, typename TSize>
 inline void 
 _appendFragment(String<Fragment<TSizeSpec, ExactReversableFragment<TSpec1> >, TSpec2>& matches, 
-				  TSize seq1Id, 
+				  TSize seq1ID, 
 				  TSize beg1, 
-				  TSize seq2Id, 
+				  TSize seq2ID, 
 				  TSize beg2, 
 				  TSize len, 
 				  bool reversed)
 {
 	SEQAN_CHECKPOINT
 	typedef Fragment<TSizeSpec, ExactReversableFragment<TSpec1> > TFragment;
-	appendValue(matches, TFragment(seq1Id, beg1, seq2Id, beg2, len, reversed));
+	appendValue(matches, TFragment(seq1ID, beg1, seq2ID, beg2, len, reversed));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -594,16 +594,16 @@ _appendFragment(String<Fragment<TSizeSpec, ExactReversableFragment<TSpec1> >, TS
 template<typename TSizeSpec, typename TSpec1, typename TSpec2, typename TSize>
 inline void 
 _appendFragment(String<Fragment<TSizeSpec, ExactFragment<TSpec1> >, TSpec2>& matches, 
-				  TSize seq1Id, 
+				  TSize seq1ID, 
 				  TSize beg1, 
-				  TSize seq2Id, 
+				  TSize seq2ID, 
 				  TSize beg2, 
 				  TSize len, 
 				  bool reversed)
 {
 	SEQAN_CHECKPOINT
 	typedef Fragment<TSizeSpec, ExactFragment<TSpec1> > TFragment;
-	if (!reversed) appendValue(matches, TFragment(seq1Id, beg1, seq2Id, beg2, len));
+	if (!reversed) appendValue(matches, TFragment(seq1ID, beg1, seq2ID, beg2, len));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -648,8 +648,8 @@ read(TFile & file,
             skipLine(reader);
 			continue;
 		}
-		TSize seq1Id = namePosMap[seq1];
-		TSize seq2Id = namePosMap[seq2];
+		TSize seq1ID = namePosMap[seq1];
+		TSize seq2ID = namePosMap[seq2];
         skipUntil(reader, NotFunctor<IsWhitespace>());
 
         // We skip the data from the file, buffer is only rarely used.
@@ -690,11 +690,11 @@ read(TFile & file,
 		if (beg1 > end1) { TSize tmp = beg1; beg1 = end1; end1 = tmp; reversed = !reversed; }
 		if (beg2 > end2) { TSize tmp = beg2; beg2 = end2; end2 = tmp; reversed = !reversed; }
 		//// Debug code
-		//std::cout << seq1Id << ',' << beg1 << ',' << seq2Id << ',' << beg2 << ',' << len << std::endl;
-		//std::cout << infix(strSet[seq1Id], beg1, beg1+len) << std::endl;
-		//std::cout << infix(strSet[seq2Id], beg2, beg2+len) << std::endl;
+		//std::cout << seq1ID << ',' << beg1 << ',' << seq2ID << ',' << beg2 << ',' << len << std::endl;
+		//std::cout << infix(strSet[seq1ID], beg1, beg1+len) << std::endl;
+		//std::cout << infix(strSet[seq2ID], beg2, beg2+len) << std::endl;
 
-		_appendFragment(matches, seq1Id, --beg1, seq2Id, --beg2, len, reversed);
+		_appendFragment(matches, seq1ID, --beg1, seq2ID, --beg2, len, reversed);
 		appendValue(scores, rawScore);
 		skipLine(reader);
 	}
@@ -724,7 +724,7 @@ void write(TFile & file,
 	for(;!atEnd(it);++it) {
 		TVertexDescriptor sV = sourceVertex(it);
 		TVertexDescriptor tV = targetVertex(it);
-		if (sequenceId(g,sV) < sequenceId(g,tV)) {
+		if (sequenceID(g,sV) < sequenceID(g,tV)) {
 			TVertexDescriptor tmp = sV;
 			sV = tV;
 			tV = tmp;
@@ -732,8 +732,8 @@ void write(TFile & file,
 		TSize fragLen = fragmentLength(g,sV);
 		TSize fragPos1 = fragmentBegin(g,sV);
 		TSize fragPos2 = fragmentBegin(g,tV);
-		TSize seq1 = idToPosition(str, sequenceId(g,sV));
-		TSize seq2 = idToPosition(str, sequenceId(g,tV));
+		TSize seq1 = idToPosition(str, sequenceID(g,sV));
+		TSize seq2 = idToPosition(str, sequenceID(g,tV));
 		TCargo my_carg =  getCargo(*it);
 		write(file, names[seq1]);
 		writeValue(file, '\t');	
@@ -773,7 +773,7 @@ void write(TFile & file,
 //IOREV _nodoc_ _notinlined_ specialization not documented
 	SEQAN_CHECKPOINT
 	String<bool> edgeMap;
-	resize(edgeMap, getIdUpperBound(_getEdgeIdManager(g)), false);
+	resize(edgeMap, getIDUpperBound(_getEdgeIDManager(g)), false);
 	write(file, g, names, edgeMap, BlastLib());
 }
 
@@ -786,30 +786,30 @@ void write(TFile & file,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TPos, typename TSpec2, typename TSpec1, typename TScores, typename TId, typename TSize>
+template<typename TPos, typename TSpec2, typename TSpec1, typename TScores, typename TID, typename TSize>
 inline void 
 _appendNewMatch(String<Fragment<TPos, ExactReversableFragment<TSpec2> >, TSpec1>& matches,
 				 TScores& scores,
-				 TId seq1Id,
-				 TId seq2Id,
+				 TID seq1ID,
+				 TID seq2ID,
 				 TSize beg1,
 				 TSize beg2,
 				 TSize len,
 				 bool) 
 {
 	typedef Fragment<TPos, ExactReversableFragment<TSpec2> > TFragment;
-	appendValue(matches, TFragment(seq1Id, beg1, seq2Id, beg2, len));
+	appendValue(matches, TFragment(seq1ID, beg1, seq2ID, beg2, len));
 	appendValue(scores, len * len);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-template<typename TPos, typename TSpec2, typename TSpec1, typename TScores, typename TId, typename TSize>
+template<typename TPos, typename TSpec2, typename TSpec1, typename TScores, typename TID, typename TSize>
 inline void 
 _appendNewMatch(String<Fragment<TPos, ExactFragment<TSpec2> >, TSpec1>& matches,
 				 TScores& scores,
-				 TId seq1Id,
-				 TId seq2Id,
+				 TID seq1ID,
+				 TID seq2ID,
 				 TSize beg1,
 				 TSize beg2,
 				 TSize len,
@@ -817,7 +817,7 @@ _appendNewMatch(String<Fragment<TPos, ExactFragment<TSpec2> >, TSpec1>& matches,
 {
 	typedef Fragment<TPos, ExactFragment<TSpec2> > TFragment;
 	if (!reversed) {
-		appendValue(matches, TFragment(seq1Id, beg1, seq2Id, beg2, len));
+		appendValue(matches, TFragment(seq1ID, beg1, seq2ID, beg2, len));
 		appendValue(scores, len * len);
 	}
 }
@@ -852,8 +852,8 @@ read(TFile & file,
         return ;
 	TName seq1;
 	TName seq2;
-	TSize seq1Id = 0;
-	TSize seq2Id = 0;
+	TSize seq1ID = 0;
+	TSize seq2ID = 0;
 	bool reversed = false;
 	while (!atEnd(reader))
     {
@@ -863,7 +863,7 @@ read(TFile & file,
             skipUntil(reader, NotFunctor<IsWhitespace>());
             clear(seq1);
             readUntil(seq1, reader, IsWhitespace());
-            seq1Id = namePosMap[seq1];
+            seq1ID = namePosMap[seq1];
             skipUntil(reader, NotFunctor<IsWhitespace>());
             if (value(reader) == 'R')
             {
@@ -882,7 +882,7 @@ read(TFile & file,
                 break;
             clear(seq2);
             readUntil(seq2, reader, IsWhitespace());
-			seq2Id = namePosMap[seq2];
+			seq2ID = namePosMap[seq2];
             skipUntil(reader, NotFunctor<IsWhitespace>());
             clear(buffer);
             readUntil(buffer, reader, IsWhitespace());
@@ -896,13 +896,13 @@ read(TFile & file,
             readUntil(buffer, reader, IsWhitespace());
             TSize len = lexicalCast<TSize>(buffer);
             skipLine(reader);
-			if (seq1Id == seq2Id)
+			if (seq1ID == seq2ID)
                 continue;
 			
 			if (!reversed)
-                _appendNewMatch(matches, scores, seq1Id, seq2Id, --beg1, --beg2, len, reversed);
+                _appendNewMatch(matches, scores, seq1ID, seq2ID, --beg1, --beg2, len, reversed);
 			else
-                _appendNewMatch(matches, scores, seq1Id, seq2Id, (length(value(strSet, seq1Id)) - (--beg1 + len)), --beg2, len, reversed);
+                _appendNewMatch(matches, scores, seq1ID, seq2ID, (length(value(strSet, seq1ID)) - (--beg1 + len)), --beg2, len, reversed);
 		}
 	}
 }
@@ -925,7 +925,7 @@ read(TFile & file,
 	typedef typename VertexDescriptor<TGuideTree>::Type TVertexDescriptor;
 	//typedef typename EdgeDescriptor<TGuideTree>::Type TEdgeDescriptor;
 	//typedef typename Size<TGuideTree>::Type TSize;
-	typedef typename Id<TGuideTree>::Type TId;
+	typedef typename ID<TGuideTree>::Type TID;
 	//typedef typename Position<TFile>::Type TPosition;
 	//typedef typename Value<TFile>::Type TValue;
 	typedef typename Value<TNames>::Type TName;
@@ -943,11 +943,11 @@ read(TFile & file,
 		return;
 	}
 
-	typedef std::map<TName, TId> TNameToId;
-	TNameToId nameToId;
-	for(TId i=0; i<length(names);++i) {
+	typedef std::map<TName, TID> TNameToID;
+	TNameToID nameToID;
+	for(TID i=0; i<length(names);++i) {
 		addVertex(guideTree);	// Create the sequence vertices
-		nameToId.insert(std::make_pair(names[i], i));
+		nameToID.insert(std::make_pair(names[i], i));
 	}
 
     CharString buffer;
@@ -1005,11 +1005,11 @@ read(TFile & file,
 				lastVertex = length(names);
 				assignRoot(guideTree, addVertex(guideTree));
 				addEdge(guideTree, getRoot(guideTree), lastVertex);
-				addEdge(guideTree, getRoot(guideTree), nameToId[tmp]);
+				addEdge(guideTree, getRoot(guideTree), nameToID[tmp]);
 			} else {
-				addEdge(guideTree, lastVertex, nameToId[tmp]);
+				addEdge(guideTree, lastVertex, nameToID[tmp]);
 			}
-			lastChild = nameToId[tmp];
+			lastChild = nameToID[tmp];
 		}
 	}
 	

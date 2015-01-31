@@ -191,13 +191,13 @@ value(StringSet<TString, Dependent<Generous> > const & me, TPos pos)
 }
 
 // --------------------------------------------------------------------------
-// Function getValueById()
+// Function getValueByID()
 // --------------------------------------------------------------------------
 
-template <typename TString, typename TId>
+template <typename TString, typename TID>
 inline typename Reference<StringSet<TString, Dependent<Generous> > >::Type
-getValueById(StringSet<TString, Dependent<Generous> >& me,
-            TId const id)
+getValueByID(StringSet<TString, Dependent<Generous> >& me,
+            TID const id)
 {
     SEQAN_CHECKPOINT;
     if (me.strings[id])
@@ -207,18 +207,18 @@ getValueById(StringSet<TString, Dependent<Generous> >& me,
 }
 
 // --------------------------------------------------------------------------
-// Function assignValueById()
+// Function assignValueByID()
 // --------------------------------------------------------------------------
 
-template<typename TString, typename TId>
-inline typename Id<StringSet<TString, Dependent<Generous> > >::Type
-assignValueById(StringSet<TString, Dependent<Generous> >& me,
+template<typename TString, typename TID>
+inline typename ID<StringSet<TString, Dependent<Generous> > >::Type
+assignValueByID(StringSet<TString, Dependent<Generous> >& me,
                 TString& obj,
-                TId id)
+                TID id)
 {
     SEQAN_CHECKPOINT;
     SEQAN_ASSERT_EQ(length(stringSetLimits(me)), length(me) + 1);
-    if (id >= (TId) length(me.strings)) resize(me.strings, id+1, (TString*) 0);
+    if (id >= (TID) length(me.strings)) resize(me.strings, id+1, (TString*) 0);
     if ((TString*) me.strings[id] == (TString*) 0)
         resize(me.limits, length(me.limits) + 1, Generous());
     me.strings[id] = &obj;
@@ -228,12 +228,12 @@ assignValueById(StringSet<TString, Dependent<Generous> >& me,
 }
 
 // --------------------------------------------------------------------------
-// Function removeValueById()
+// Function removeValueByID()
 // --------------------------------------------------------------------------
 
-template<typename TString, typename TId>
+template<typename TString, typename TID>
 inline void
-removeValueById(StringSet<TString, Dependent<Generous> >& me, TId const id)
+removeValueByID(StringSet<TString, Dependent<Generous> >& me, TID const id)
 {
     SEQAN_CHECKPOINT;
     if (me.strings[id] != (TString*) 0)
@@ -247,12 +247,12 @@ removeValueById(StringSet<TString, Dependent<Generous> >& me, TId const id)
 }
 
 // --------------------------------------------------------------------------
-// Function positionToId()
+// Function positionToID()
 // --------------------------------------------------------------------------
 
 template <typename TString, typename TPos>
-inline typename Id<StringSet<TString, Dependent<Generous> > >::Type
-positionToId(StringSet<TString, Dependent<Generous> >& me,
+inline typename ID<StringSet<TString, Dependent<Generous> > >::Type
+positionToID(StringSet<TString, Dependent<Generous> >& me,
         TPos const pos)
 {
     SEQAN_CHECKPOINT;
@@ -260,8 +260,8 @@ positionToId(StringSet<TString, Dependent<Generous> >& me,
 }
 
 template <typename TString, typename TPos>
-inline typename Id<StringSet<TString, Dependent<Generous> > >::Type
-positionToId(StringSet<TString, Dependent<Generous> > const& me,
+inline typename ID<StringSet<TString, Dependent<Generous> > >::Type
+positionToID(StringSet<TString, Dependent<Generous> > const& me,
             TPos const pos)
 {
     SEQAN_CHECKPOINT;
@@ -272,10 +272,10 @@ positionToId(StringSet<TString, Dependent<Generous> > const& me,
 // Function idToPosition()
 // --------------------------------------------------------------------------
 
-template <typename TString, typename TId>
-inline typename Id<StringSet<TString, Dependent<Generous> > >::Type
+template <typename TString, typename TID>
+inline typename ID<StringSet<TString, Dependent<Generous> > >::Type
 idToPosition(StringSet<TString, Dependent<Generous> > const& me,
-            TId const id)
+            TID const id)
 {
     SEQAN_CHECKPOINT;
     return _countNonZeroValues(me.strings,id);

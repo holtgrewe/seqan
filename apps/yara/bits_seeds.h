@@ -53,53 +53,53 @@ getHostPos(StringSet<THost, Segment<TSpec> > const & me, TPos pos)
 }
 
 // ----------------------------------------------------------------------------
-// Function getSeedIds()
+// Function getSeedIDs()
 // ----------------------------------------------------------------------------
 // getSeqNosByHostSeqNo(seqNo)
 
-template <typename THost, typename TSpec, typename TReadId>
-inline Pair<typename Id<StringSet<THost, Segment<TSpec> > const>::Type>
-getSeedIds(StringSet<THost, Segment<TSpec> > const & seeds, TReadId readId)
+template <typename THost, typename TSpec, typename TReadID>
+inline Pair<typename ID<StringSet<THost, Segment<TSpec> > const>::Type>
+getSeedIDs(StringSet<THost, Segment<TSpec> > const & seeds, TReadID readID)
 {
     typedef StringSet<THost, Segment<TSpec> > const         TStringSet;
-    typedef typename Id<TStringSet>::Type                   TId;
+    typedef typename ID<TStringSet>::Type                   TID;
     typedef typename StringSetPositions<THost>::Type const  TPositions;
     typedef typename Iterator<TPositions, Standard>::Type   TPositionsIter;
     typedef typename Value<TPositions>::Type                TPos;
 
     TPositionsIter posBegin = begin(seeds.positions, Standard());
     TPositionsIter posEnd = end(seeds.positions, Standard());
-    TPos pos(readId, 0);
+    TPos pos(readID, 0);
 
-    TPositionsIter seedsBegin = std::lower_bound(posBegin, posEnd, TPos(readId, 0));
-    TPositionsIter seedsEnd = std::lower_bound(posBegin, posEnd, TPos(readId + 1, 0));
+    TPositionsIter seedsBegin = std::lower_bound(posBegin, posEnd, TPos(readID, 0));
+    TPositionsIter seedsEnd = std::lower_bound(posBegin, posEnd, TPos(readID + 1, 0));
 
-    return Pair<TId>(position(seedsBegin, seeds.positions), position(seedsEnd, seeds.positions));
+    return Pair<TID>(position(seedsBegin, seeds.positions), position(seedsEnd, seeds.positions));
 }
 
 // ----------------------------------------------------------------------------
-// Function getReadSeqId()
+// Function getReadSeqID()
 // ----------------------------------------------------------------------------
 
-template <typename THost, typename TSpec, typename TSeedId>
-inline typename Id<THost>::Type
-getReadSeqId(StringSet<THost, Segment<TSpec> > const & seeds, TSeedId seedId)
+template <typename THost, typename TSpec, typename TSeedID>
+inline typename ID<THost>::Type
+getReadSeqID(StringSet<THost, Segment<TSpec> > const & seeds, TSeedID seedID)
 {
-    return getSeqNo(getHostPos(seeds, seedId));
+    return getSeqNo(getHostPos(seeds, seedID));
 }
 
 // ----------------------------------------------------------------------------
 // Function getPosInRead()
 // ----------------------------------------------------------------------------
 
-template <typename THost, typename TSpec, typename TSeedId>
+template <typename THost, typename TSpec, typename TSeedID>
 inline Pair<typename Position<typename Value<THost>::Type>::Type>
-getPosInRead(StringSet<THost, Segment<TSpec> > const & seeds, TSeedId seedId)
+getPosInRead(StringSet<THost, Segment<TSpec> > const & seeds, TSeedID seedID)
 {
     typedef typename Position<typename Value<THost>::Type>::Type TPos;
 
-    TPos seedBegin = getSeqOffset(getHostPos(seeds, seedId));
-    TPos seedEnd = seedBegin + length(value(seeds, seedId));
+    TPos seedBegin = getSeqOffset(getHostPos(seeds, seedID));
+    TPos seedEnd = seedBegin + length(value(seeds, seedID));
 
     return Pair<TPos>(seedBegin, seedEnd);
 }

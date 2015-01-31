@@ -154,7 +154,7 @@ template <typename T, typename TPosition> inline void erase(T const & me, TPosit
 template <typename T> inline void eraseBack(T & me);
 template <typename T> inline typename Reference<T>::Type front(T & me);
 template <typename T> inline typename Reference<T const>::Type front(T const & me);
-template <typename T> inline void const * getObjectId(T const & me);
+template <typename T> inline void const * getObjectID(T const & me);
 template <typename T, typename TPos> inline typename GetValue<T>::Type getValue(T & me, TPos pos);
 template <typename T, typename TPos> inline typename GetValue<T const>::Type getValue(T const & me, TPos pos);
 template <typename T, typename TPosition, typename TSeq, typename TExpand> inline void insert(T & me, TPosition pos, TSeq const & insertSeq, Tag<TExpand>);
@@ -220,7 +220,7 @@ template <typename TChar, typename TAlloc> inline bool empty(std::vector<TChar, 
 template <typename TChar, typename TAlloc> inline typename Iterator< std::vector<TChar, TAlloc>, Standard>::Type end(std::vector<TChar, TAlloc> & me, Standard);
 template <typename TChar, typename TAlloc> inline typename Iterator< std::vector<TChar, TAlloc> const, Standard>::Type end(std::vector<TChar, TAlloc> const & me, Standard);
 template <typename TChar, typename TAlloc, typename TSize, typename TExpand> inline typename Size< std::vector<TChar, TAlloc> >::Type fill( std::vector<TChar, TAlloc> & me, TSize new_length, TChar const & val, Tag<TExpand>);
-template <typename TChar, typename TAlloc> inline void const * getObjectId(std::vector<TChar, TAlloc> const & me);
+template <typename TChar, typename TAlloc> inline void const * getObjectID(std::vector<TChar, TAlloc> const & me);
 template <typename TChar, typename TAlloc> inline typename Size< std::vector<TChar, TAlloc> >::Type length(std::vector<TChar, TAlloc> const & me);
 template <typename TChar, typename TAlloc, typename TSource> inline void replace(std::vector<TChar, TAlloc> & target, typename Position< std::vector<TChar, TAlloc> >::Type pos_begin, typename Position< std::vector<TChar, TAlloc> >::Type pos_end, TSource const & source, Generous);
 template <typename TChar, typename TAlloc, typename TSource> inline void replace(std::vector<TChar, TAlloc> & target, typename Position< std::vector<TChar, TAlloc> >::Type pos_begin, typename Position< std::vector<TChar, TAlloc> >::Type pos_end, TSource const & source, typename Size< std::vector<TChar, TAlloc> >::Type limit, Generous);
@@ -264,7 +264,7 @@ template <typename TChar, typename TCharTraits, typename TAlloc> inline void cle
 template <typename TChar, typename TCharTraits, typename TAlloc> inline bool empty(std::basic_string<TChar, TCharTraits, TAlloc> const & me);
 template <typename TChar, typename TCharTraits, typename TAlloc> inline typename Iterator< std::basic_string<TChar, TCharTraits, TAlloc>, Standard>::Type end(std::basic_string<TChar, TCharTraits, TAlloc> & me, Standard);
 template <typename TChar, typename TCharTraits, typename TAlloc> inline typename Iterator< std::basic_string<TChar, TCharTraits, TAlloc> const, Standard>::Type end(std::basic_string<TChar, TCharTraits, TAlloc> const & me, Standard);
-template <typename TChar, typename TCharTraits, typename TAlloc> inline void const * getObjectId(std::basic_string<TChar, TCharTraits, TAlloc> const & me);
+template <typename TChar, typename TCharTraits, typename TAlloc> inline void const * getObjectID(std::basic_string<TChar, TCharTraits, TAlloc> const & me);
 template <typename TChar, typename TCharTraits, typename TAlloc> inline typename std::basic_string<TChar, TCharTraits, TAlloc>::size_type length(std::basic_string<TChar, TCharTraits, TAlloc> const & me);
 template <typename TChar, typename TCharTraits, typename TAlloc, typename TSource> inline void replace(std::basic_string<TChar, TCharTraits, TAlloc> & target, typename Position< std::basic_string<TChar, TCharTraits, TAlloc> >::Type pos_begin, typename Position< std::basic_string<TChar, TCharTraits, TAlloc> >::Type pos_end, TSource const & source, Generous);
 template <typename TChar, typename TCharTraits, typename TAlloc, typename TSource> inline void replace(std::basic_string<TChar, TCharTraits, TAlloc> & target, typename Position< std::basic_string<TChar, TCharTraits, TAlloc> >::Type pos_begin, typename Position< std::basic_string<TChar, TCharTraits, TAlloc> >::Type pos_end, TSource const & source, typename Size< std::basic_string<TChar, TCharTraits, TAlloc> >::Type limit, Generous);
@@ -341,7 +341,7 @@ template <typename TValue, typename TPos> inline TValue const & value(TValue con
 // --------------------------------------------------------------------------
 
 #ifdef PLATFORM_CUDA
-template <typename TChar,  typename TAlloc> inline void const * getObjectId(thrust::device_vector<TChar, TAlloc> const & me);
+template <typename TChar,  typename TAlloc> inline void const * getObjectID(thrust::device_vector<TChar, TAlloc> const & me);
 template <typename TChar,  typename TAlloc> inline typename Iterator<thrust::device_vector<TChar, TAlloc>, Standard>::Type begin(thrust::device_vector<TChar, TAlloc> & me, Standard);
 template <typename TChar,  typename TAlloc> inline typename Iterator<thrust::device_vector<TChar, TAlloc> const, Standard>::Type begin(thrust::device_vector<TChar, TAlloc> const & me, Standard);
 template <typename TChar, typename TAlloc> inline typename Iterator<thrust::device_vector<TChar, TAlloc>, Standard>::Type end(thrust::device_vector<TChar, TAlloc> & me, Standard);

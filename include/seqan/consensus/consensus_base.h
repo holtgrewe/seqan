@@ -151,12 +151,12 @@ public:
 // Copy reads for the whole contig out of fragStore and into strSet.  The start and end
 // positions of the alignments go into startEndPos.
 
-template<typename TValue, typename TStrSpec, typename TPosPair, typename TStringSpec, typename TSpec, typename TConfig, typename TId>
+template<typename TValue, typename TStrSpec, typename TPosPair, typename TStringSpec, typename TSpec, typename TConfig, typename TID>
 inline void 
 _loadContigReads(StringSet<TValue, Owner<TStrSpec> > & strSet,
 				 String<TPosPair, TStringSpec> & startEndPos,
 				 FragmentStore<TSpec, TConfig> const & fragStore,
-				 TId const contigId)
+				 TID const contigID)
 {
 	typedef FragmentStore<TSpec, TConfig> const TFragmentStore;
 	typedef typename Size<TFragmentStore>::Type TSize;
@@ -164,13 +164,13 @@ _loadContigReads(StringSet<TValue, Owner<TStrSpec> > & strSet,
 
 
 	// Sort aligned reads according to contig id
-	sortAlignedReads(fragStore.alignedReadStore, SortContigId());
+	sortAlignedReads(fragStore.alignedReadStore, SortContigID());
 	resize(strSet, length(fragStore.alignedReadStore));
 
 	// Retrieve all reads, limit them to the clear range and if required reverse complement them
 	typedef typename Iterator<typename TFragmentStore::TAlignedReadStore const>::Type TAlignIter;
-	TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
-	TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
+	TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
+	TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
 	TSize numRead = 0;
 	TReadPos begClr = 0;
 	TReadPos endClr = 0;
@@ -179,7 +179,7 @@ _loadContigReads(StringSet<TValue, Owner<TStrSpec> > & strSet,
 	for(;alignIt != alignItEnd; ++alignIt) {
 		offset = _min(alignIt->beginPos, alignIt->endPos);
 		getClrRange(fragStore, *alignIt, begClr, endClr);
-		strSet[numRead] = infix(fragStore.readSeqStore[alignIt->readId], begClr, endClr);
+		strSet[numRead] = infix(fragStore.readSeqStore[alignIt->readID], begClr, endClr);
 		lenRead = endClr - begClr;
 		if (alignIt->beginPos < alignIt->endPos) appendValue(startEndPos, TPosPair(offset, offset + lenRead), Generous());
 		else {
@@ -200,7 +200,7 @@ template<typename TSpec, typename TConfig, typename TMatrix, typename TSize2, ty
 inline bool
 convertAlignment(FragmentStore<TSpec, TConfig>& fragStore,
 				 TMatrix& mat,
-				 TSize2 contigId,
+				 TSize2 contigID,
 				 TSize& coverage,
 				 TReadSlot& slot)
 {
@@ -211,18 +211,18 @@ convertAlignment(FragmentStore<TSpec, TConfig>& fragStore,
 	// Gap char
 	TValue gapChar = gapValue<TValue>();
 
-	// Sort according to contigId
-	sortAlignedReads(fragStore.alignedReadStore, SortContigId());
+	// Sort according to contigID
+	sortAlignedReads(fragStore.alignedReadStore, SortContigID());
 	
 	// Find range of the given contig
 	typedef typename Iterator<typename TFragmentStore::TAlignedReadStore, Standard>::Type TAlignIter;
-	TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
-	TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
+	TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
+	TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
 
 	// Sort the reads according to the begin position
 	sortAlignedReads(infix(fragStore.alignedReadStore, alignIt - begin(fragStore.alignedReadStore, Standard()), alignItEnd - begin(fragStore.alignedReadStore, Standard())), SortBeginPos());
-	TAlignIter alignItBegin = alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
-	alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
+	TAlignIter alignItBegin = alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
+	alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
 
 	// Get the maximum coverage and the slot for each read
 	typedef String<TSize> TFirstFreePos;
@@ -260,7 +260,7 @@ convertAlignment(FragmentStore<TSpec, TConfig>& fragStore,
 		TReadGapsIter itGapsEnd = end(alignIt->gaps, Standard());
 		
 		// Place each read inside the matrix
-		myRead = fragStore.readSeqStore[alignIt->readId];
+		myRead = fragStore.readSeqStore[alignIt->readID];
 		TSize lenRead = length(myRead);
 		TSize offset = alignIt->beginPos;
 		if (alignIt->beginPos > alignIt->endPos) {
@@ -315,11 +315,11 @@ template<typename TSpec, typename TConfig, typename TMatrix, typename TSize2, ty
 inline bool
 convertAlignment(FragmentStore<TSpec, TConfig>& fragStore,
 				 TMatrix& mat,
-				 TSize2 contigId,
+				 TSize2 contigID,
 				 TSize& coverage)
 {
 	String<TSize> slot;
-	return convertAlignment(fragStore, mat, contigId, coverage, slot);
+	return convertAlignment(fragStore, mat, contigID, coverage, slot);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -341,7 +341,7 @@ template<typename TSpec, typename TConfig, typename TGappedConsensus, typename T
 inline void
 getGappedConsensus(FragmentStore<TSpec, TConfig>& fragStore,
 				   TGappedConsensus& gappedConsensus,
-				   TSize contigId)
+				   TSize contigID)
 {
 	typedef FragmentStore<TSpec, TConfig> TFragmentStore;
 	typedef typename Value<TGappedConsensus>::Type TValue;
@@ -349,11 +349,11 @@ getGappedConsensus(FragmentStore<TSpec, TConfig>& fragStore,
 	
 	TValue gapChar = gapValue<TValue>();
 	typedef typename Iterator<typename TFragmentStore::TContigSeq, Standard>::Type TContigIter;
-	TContigIter seqContigIt = begin(fragStore.contigStore[contigId].seq, Standard());
-	TContigIter seqContigItEnd = end(fragStore.contigStore[contigId].seq, Standard());
+	TContigIter seqContigIt = begin(fragStore.contigStore[contigID].seq, Standard());
+	TContigIter seqContigItEnd = end(fragStore.contigStore[contigID].seq, Standard());
 	typedef typename Iterator<String<typename TFragmentStore::TContigGapAnchor>, Standard>::Type TGapsIter;
-	TGapsIter itGaps = begin(fragStore.contigStore[contigId].gaps, Standard());
-	TGapsIter itGapsEnd = end(fragStore.contigStore[contigId].gaps, Standard());
+	TGapsIter itGaps = begin(fragStore.contigStore[contigID].gaps, Standard());
+	TGapsIter itGapsEnd = end(fragStore.contigStore[contigID].gaps, Standard());
 	int diff = 0;
 	TContigPos mySeqPos = 0;
 	for(;itGaps != itGapsEnd; goNext(itGaps)) {
@@ -375,7 +375,7 @@ template<typename TSpec, typename TConfig, typename TGappedConsensus, typename T
 inline void
 assignGappedConsensus(FragmentStore<TSpec, TConfig>& fragStore,
 					  TGappedConsensus& gappedCons,
-					  TSize contigId)
+					  TSize contigID)
 {
 	typedef FragmentStore<TSpec, TConfig> TFragmentStore;
 	typedef typename Value<TGappedConsensus>::Type TValue;
@@ -383,7 +383,7 @@ assignGappedConsensus(FragmentStore<TSpec, TConfig>& fragStore,
 
 	// Update the contig
 	typedef typename Value<typename TFragmentStore::TContigStore>::Type TContigStoreElement;
-	TContigStoreElement& contigEl = fragStore.contigStore[contigId];
+	TContigStoreElement& contigEl = fragStore.contigStore[contigID];
 	clear(contigEl.gaps);
 	clear(contigEl.seq);
 
@@ -440,7 +440,7 @@ assignGappedConsensus(FragmentStore<TSpec, TConfig>& fragStore,
  *     using namespace seqan;
  *  
  *     typedef StringSet<Dna5String> TStringSet;
- *     typedef Graph<Alignment<TStringSet, void, WithoutEdgeId> > TAlignGraph;
+ *     typedef Graph<Alignment<TStringSet, void, WithoutEdgeID> > TAlignGraph;
  *  
  *     TStringSet readSet;
  *     String<Pair<TSize> > begEndPos;
@@ -465,13 +465,13 @@ consensusAlignment(Graph<Alignment<TStringSet, TCargo, TSpec> >& gOut,
 				   TConfigOptions const& consOpt) 
 {
 	typedef Graph<Alignment<TStringSet, TCargo, TSpec> > TOutGraph;
-	typedef typename Id<TOutGraph>::Type TId;
+	typedef typename ID<TOutGraph>::Type TID;
 
 	// Initialization
 	TStringSet& seqSet = stringSet(gOut);
 
 	// Select all overlapping reads and record the diagonals of the band
-	String<Pair<TId, TId> > pList;
+	String<Pair<TID, TID> > pList;
 	String<Pair<int, int> > diagList;
 	if (consOpt.window == 0)
         selectPairsAssembly(seqSet, begEndPos, consOpt.bandwidth, pList, diagList);
@@ -531,11 +531,11 @@ consensusAlignment(Graph<Alignment<TStringSet, TCargo, TSpec> >& gOut,
 
 //////////////////////////////////////////////////////////////////////////////
 
-template <typename TFragSpec, typename TConfig, typename TStringSet, typename TCargo, typename TSpec, typename TContigId>
+template <typename TFragSpec, typename TConfig, typename TStringSet, typename TCargo, typename TSpec, typename TContigID>
 inline void
 updateContig(FragmentStore<TFragSpec, TConfig>& fragStore,
 			 Graph<Alignment<TStringSet, TCargo, TSpec> > const& g,
-			 TContigId contigId)
+			 TContigID contigID)
 {
 	SEQAN_CHECKPOINT
 	typedef Graph<Alignment<TStringSet, TCargo, TSpec> > TGraph;
@@ -580,7 +580,7 @@ updateContig(FragmentStore<TFragSpec, TConfig>& fragStore,
 		TVertexIterator itVertex(g);
 		for(;!atEnd(itVertex);++itVertex) {
 			TVertexDescriptor vert = value(itVertex);
-			TSize seq = idToPosition(strSet, sequenceId(g, vert));
+			TSize seq = idToPosition(strSet, sequenceID(g, vert));
 			if (fragmentBegin(g, vert) == 0) 
 				seqToRank[seq].i1 = std::lower_bound(begin(compToRank, Standard()), end(compToRank, Standard()), std::make_pair((TSize) component[vert], (TSize) 0))->second;
 			if (fragmentBegin(g, vert) + fragmentLength(g, vert) == length(strSet[seq]))
@@ -643,9 +643,9 @@ updateContig(FragmentStore<TFragSpec, TConfig>& fragStore,
 			TSize c = property(component, it->second);
 			TSize row = seqToRow[idToPosition(strSet, it->first.first)];
 			//if (row == 0) {
-			//	std::cout << sequenceId(g, it->second) << ':' << str << ',' << strSet[sequenceId(g, it->second)] << std::endl;
+			//	std::cout << sequenceID(g, it->second) << ':' << str << ',' << strSet[sequenceID(g, it->second)] << std::endl;
 			//	std::cout << getProperty(component, it->second) << ',' << order[compIndex] << std::endl;
-			//	std::cout << (seqToRank[sequenceId(g, it->second)]).i1 << ',' << (seqToRank[sequenceId(g, it->second)]).i2 << std::endl;
+			//	std::cout << (seqToRank[sequenceID(g, it->second)]).i1 << ',' << (seqToRank[sequenceID(g, it->second)]).i2 << std::endl;
 			//}
 			TInfixIter sIt = begin(str, Standard());
 			TInfixIter sItEnd = end(str, Standard());
@@ -678,8 +678,8 @@ updateContig(FragmentStore<TFragSpec, TConfig>& fragStore,
 
 		// Get the new begin and end positions
 		for(TSize i=0;i<nseq; ++i) {
-			TVertexDescriptor lastVertex = findVertex(const_cast<TGraph&>(g), positionToId(strSet, i), length(strSet[i]) - 1);
-			TSize readBegin = compOffset[getProperty(component, findVertex(const_cast<TGraph&>(g), positionToId(strSet, i), 0))];
+			TVertexDescriptor lastVertex = findVertex(const_cast<TGraph&>(g), positionToID(strSet, i), length(strSet[i]) - 1);
+			TSize readBegin = compOffset[getProperty(component, findVertex(const_cast<TGraph&>(g), positionToID(strSet, i), 0))];
 			TSize readEnd = compOffset[getProperty(component, lastVertex)] + fragmentLength(const_cast<TGraph&>(g), lastVertex);
 			readBegEndRowPos[3*i] = readBegin;
 			readBegEndRowPos[3*i+1] = readEnd;
@@ -706,7 +706,7 @@ updateContig(FragmentStore<TFragSpec, TConfig>& fragStore,
 	consensusCalling(mat, gappedCons, maxCoverage, TAlphabet(), MajorityVote());
 
 	// Assign new consensus
-	assignGappedConsensus(fragStore, gappedCons, contigId);
+	assignGappedConsensus(fragStore, gappedCons, contigID);
 
 	// Update all aligned reads
 	typedef FragmentStore<TSpec, TConfig> TFragmentStore;
@@ -715,14 +715,14 @@ updateContig(FragmentStore<TFragSpec, TConfig>& fragStore,
 	typedef typename TFragmentStore::TContigGapAnchor TContigGapAnchor;
 	//typedef typename Value<typename TFragmentStore::TAlignedReadStore>::Type TAlignedElement;
 	typedef typename Iterator<typename TFragmentStore::TAlignedReadStore>::Type TAlignIter;
-	sortAlignedReads(fragStore.alignedReadStore, SortContigId());
-	TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
-	TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigId, SortContigId());
+	sortAlignedReads(fragStore.alignedReadStore, SortContigID());
+	TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
+	TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, contigID, SortContigID());
 	TReadPos ungappedPos = 0;
 	TReadPos gappedPos = 0;
 	bool gapOpen;
 	for(TSize i = 0;alignIt != alignItEnd; ++alignIt, ++i) {
-		TSize lenRead = length(fragStore.readSeqStore[alignIt->readId]);
+		TSize lenRead = length(fragStore.readSeqStore[alignIt->readID]);
 		TReadPos begClr = 0;
 		TReadPos endClr = 0;
 		getClrRange(fragStore, *alignIt, begClr, endClr);
@@ -1012,10 +1012,10 @@ consensusCalling(String<TValue, TSpec> const& mat,
 //////////////////////////////////////////////////////////////////////////////
 
 
-template <typename TFragSpec, typename TConfig, typename TContigId>
+template <typename TFragSpec, typename TConfig, typename TContigID>
 inline void
 consensusCalling(FragmentStore<TFragSpec, TConfig>& fragStore,
-				 TContigId contigId,
+				 TContigID contigID,
 				 Bayesian)
 {
 	SEQAN_CHECKPOINT
@@ -1030,14 +1030,14 @@ consensusCalling(FragmentStore<TFragSpec, TConfig>& fragStore,
 	typedef String<TValue> TAlignMat;
 	TAlignMat mat;
 	TSize maxCoverage;
-	convertAlignment(fragStore, mat, contigId, maxCoverage);
+	convertAlignment(fragStore, mat, contigID, maxCoverage);
 
 	// Call the consensus
 	String<TValue> gappedConsensus;
 	consensusCalling(mat, gappedConsensus, maxCoverage, TAlphabet(), Bayesian());
 
 	// Assign the new consensus
-	assignGappedConsensus(fragStore, gappedConsensus, contigId);
+	assignGappedConsensus(fragStore, gappedConsensus, contigID);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1088,10 +1088,10 @@ consensusCalling(String<TValue, TSpec> const& mat,
 //////////////////////////////////////////////////////////////////////////////
 
 
-template <typename TFragSpec, typename TConfig, typename TContigId>
+template <typename TFragSpec, typename TConfig, typename TContigID>
 inline void
 consensusCalling(FragmentStore<TFragSpec, TConfig>& fragStore,
-				 TContigId contigId,
+				 TContigID contigID,
 				 MajorityVote)
 {
 	typedef FragmentStore<TFragSpec, TConfig> TFragmentStore;
@@ -1104,14 +1104,14 @@ consensusCalling(FragmentStore<TFragSpec, TConfig>& fragStore,
 	typedef String<TValue> TAlignMat;
 	TAlignMat mat;
 	TSize maxCoverage;
-	convertAlignment(fragStore, mat, contigId, maxCoverage);
+	convertAlignment(fragStore, mat, contigID, maxCoverage);
 
 	// Call the consensus
 	String<TValue> gappedConsensus;
 	consensusCalling(mat, gappedConsensus, maxCoverage, TAlphabet(), MajorityVote());
 
 	// Assign the new consensus
-	assignGappedConsensus(fragStore, gappedConsensus, contigId);
+	assignGappedConsensus(fragStore, gappedConsensus, contigID);
 }
 
 
@@ -1236,18 +1236,18 @@ write(
 
 		// Print all aligned reads belonging to this contig
 
-		// Sort according to contigId
-		sortAlignedReads(fragStore.alignedReadStore, SortContigId());
+		// Sort according to contigID
+		sortAlignedReads(fragStore.alignedReadStore, SortContigID());
 	
 		// Find range of the given contig
 		typedef typename Iterator<typename TFragmentStore::TAlignedReadStore, Standard>::Type TAlignIter;
-		TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigId());
-		TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigId());
+		TAlignIter alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigID());
+		TAlignIter alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigID());
 
 		// Sort the reads according to the begin position
 		sortAlignedReads(infix(fragStore.alignedReadStore, alignIt - begin(fragStore.alignedReadStore, Standard()), alignItEnd - begin(fragStore.alignedReadStore, Standard())), SortBeginPos());
-		TAlignIter alignItTmp = lowerBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigId());
-		TAlignIter alignItTmpEnd = upperBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigId());
+		TAlignIter alignItTmp = lowerBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigID());
+		TAlignIter alignItTmpEnd = upperBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigID());
 		String<std::pair<TSize, TSize> > idToPos;
 		reserve(idToPos, alignItTmpEnd - alignItTmp);
 		for(TSize iCount = 0; alignItTmp!=alignItTmpEnd; ++iCount, ++alignItTmp) 
@@ -1255,9 +1255,9 @@ write(
 		std::sort(begin(idToPos, Standard()), end(idToPos, Standard()));
 
 		// Sort the reads according to the id
-		sortAlignedReads(infix(fragStore.alignedReadStore, alignIt - begin(fragStore.alignedReadStore, Standard()), alignItEnd - begin(fragStore.alignedReadStore, Standard())), SortId());
-		alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigId());
-		alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigId());
+		sortAlignedReads(infix(fragStore.alignedReadStore, alignIt - begin(fragStore.alignedReadStore, Standard()), alignItEnd - begin(fragStore.alignedReadStore, Standard())), SortID());
+		alignIt = lowerBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigID());
+		alignItEnd = upperBoundAlignedReads(fragStore.alignedReadStore, idCount, SortContigID());
 
 		bool noNamesPresent = (length(fragStore.readNameStore) == 0);
 		for(TSize iCount = 0;alignIt != alignItEnd; ++alignIt, ++iCount) {
@@ -1271,10 +1271,10 @@ write(
 			}
             else
             {
-                write(target, fragStore.readNameStore[alignIt->readId]);
+                write(target, fragStore.readNameStore[alignIt->readID]);
             }
 			write(target, "\nseq:");
-			write(target, fragStore.readSeqStore[alignIt->readId]);
+			write(target, fragStore.readSeqStore[alignIt->readID]);
 			write(target, "\nPos:");
 			appendNumber(target, alignIt->beginPos);
 			writeValue(target, ',');
@@ -1329,7 +1329,7 @@ return;
 ////IOREV _nodoc_ huge undocumented function, uses custom IO based on iostream and FILE* :S
 //	// Basic types
 //	typedef FragmentStore<TSpec, TConfig> TFragmentStore;
-//	typedef typename Id<TFragmentStore>::Type TId;
+//	typedef typename ID<TFragmentStore>::Type TID;
 //	typedef typename Size<TFragmentStore>::Type TSize;
 //	//typedef typename Value<TFile>::Type TValue;
 //	typedef typename TFragmentStore::TContigPos TPos;
@@ -1344,10 +1344,10 @@ return;
 //	
 //
 //	// All maps to mirror file ids to our internal ids
-//	typedef std::map<TId, TId> TIdMap;
-//	TIdMap libIdMap;
-//	TIdMap frgIdMap;
-//	TIdMap readIdMap;
+//	typedef std::map<TID, TID> TIDMap;
+//	TIDMap libIDMap;
+//	TIDMap frgIDMap;
+//	TIDMap readIDMap;
 //
 //    // Create RecordReader object.
 //    typename DirectionIterator<TFile, Input>::Type reader = directionIterator(file, Input());
@@ -1355,7 +1355,7 @@ return;
 //	// Parse the file and convert the internal ids
 //	TPos maxPos = 0;
 //	TPos minPos = MaxValue<TPos>::VALUE;
-//	TId count = 0;
+//	TID count = 0;
 //    if (atEnd(reader))
 //        return false;
 //    CharString buffer;
@@ -1365,9 +1365,9 @@ return;
 //		if (value(reader) == '>')
 //        {
 //			TAlignedElement alignEl;
-//			TId id = count;
-//			TId fragId = TReadStoreElement::INVALID_ID;
-//			TId repeatId = 0;
+//			TID id = count;
+//			TID fragID = TReadStoreElement::INVALID_ID;
+//			TID repeatID = 0;
 //
 //            goNext(reader);
 //            if (skipWhitespaces(reader) != 0)
@@ -1411,17 +1411,17 @@ return;
 //                            return 1;
 //                        if (!lexicalCast2(id, buffer))
 //                            return 1;
-//					} else if (fdIdentifier == "fragId") {
+//					} else if (fdIdentifier == "fragID") {
 //                        clear(buffer);
 //                        if (readDigits(buffer, reader) != 0)
 //                            return 1;
-//                        if (!lexicalCast2(fragId, buffer))
+//                        if (!lexicalCast2(fragID, buffer))
 //                            return 1;
-//					} else if (fdIdentifier == "repeatId") {
+//					} else if (fdIdentifier == "repeatID") {
 //                        clear(buffer);
 //                        if (readDigits(buffer, reader) != 0)
 //                            return 1;
-//                        if (!lexicalCast2(repeatId, buffer))
+//                        if (!lexicalCast2(repeatID, buffer))
 //                            return 1;
 //					} else if (fdIdentifier == "eid") {
 //                        if (readUntilOneOf(eid, reader, ',', ']') != 0)
@@ -1467,13 +1467,13 @@ return;
 //			if (empty(eid)) {
 //				std::stringstream input;
 //				input << "R" << id;
-//				input << "-" << repeatId;
+//				input << "-" << repeatID;
 //				eid = input.str().c_str();
 //			}
 //
 //			// Insert the read
-//			readIdMap.insert(std::make_pair(id, static_cast<TId>(length(fragStore.readStore))));
-//			appendRead(fragStore, seq, fragId);
+//			readIDMap.insert(std::make_pair(id, static_cast<TID>(length(fragStore.readStore))));
+//			appendRead(fragStore, seq, fragID);
 //			appendValue(fragStore.readNameStore, eid, Generous());
 //
 //			// Insert an aligned read
@@ -1491,9 +1491,9 @@ return;
 //				if (alignEl.endPos < minPos) minPos = alignEl.endPos;
 //				if (alignEl.beginPos > maxPos) maxPos = alignEl.beginPos;
 //			}
-//			alignEl.readId = id;
-//			alignEl.pairMatchId =  fragId;
-//			alignEl.contigId = 0;
+//			alignEl.readID = id;
+//			alignEl.pairMatchID =  fragID;
+//			alignEl.contigID = 0;
 //			alignEl.id = length(fragStore.alignedReadStore);
 //			appendValue(fragStore.alignedReadStore, alignEl, Generous());
 //			++count;
@@ -1543,7 +1543,7 @@ return;
 //            clear(buffer);
 //            if (readDigits(buffer, readerFrag) != 0)
 //                return 1;
-//            TId id = 0;
+//            TID id = 0;
 //            if (!lexicalCast2(id, buffer))
 //                return 1;
 //			
@@ -1563,12 +1563,12 @@ return;
 //                    if (readAlphaNums(fdIdentifier, readerFrag) != 0)
 //                        return 1;
 //                    goNext(readerFrag);
-//                    if (fdIdentifier == "libId")
+//                    if (fdIdentifier == "libID")
 //                    {
 //                        clear(buffer);
 //                        if (readDigits(buffer, readerFrag) != 0)
 //                            return 1;
-//                        if (!lexicalCast2(matePairEl.libId, buffer))
+//                        if (!lexicalCast2(matePairEl.libID, buffer))
 //                            return 1;
 //                    } else if (fdIdentifier == "eid") {
 //                        clear(eid);
@@ -1593,7 +1593,7 @@ return;
 //                clear(buffer);
 //                if (readDigits(buffer, readerFrag) != 0)
 //                    return 1;
-//                if (!lexicalCast2(matePairEl.readId[i], buffer))
+//                if (!lexicalCast2(matePairEl.readID[i], buffer))
 //                    return 1;
 //                if (!i)  // Skip ','.
 //                    goNext(readerFrag);
@@ -1603,8 +1603,8 @@ return;
 //                return 1;
 //
 //            // Insert mate pair
-//            if (matePairEl.readId[0] != matePairEl.readId[1]) {
-//                frgIdMap.insert(std::make_pair(id, static_cast<TId>(length(fragStore.matePairStore))));
+//            if (matePairEl.readID[0] != matePairEl.readID[1]) {
+//                frgIDMap.insert(std::make_pair(id, static_cast<TID>(length(fragStore.matePairStore))));
 //                appendValue(fragStore.matePairStore, matePairEl, Generous());
 //                appendValue(fragStore.matePairNameStore, eid, Generous());
 //            }
@@ -1635,7 +1635,7 @@ return;
 //            clear(buffer);
 //            if (readDigits(buffer, readerLib) != 0)
 //                return 1;
-//            TId id = 0;
+//            TID id = 0;
 //            if (!lexicalCast2(id, buffer))
 //                return 1;
 //			
@@ -1691,7 +1691,7 @@ return;
 //                return 1;
 //
 //            // Insert mate pair
-//            libIdMap.insert(std::make_pair(id, static_cast<TId>(length(fragStore.libraryStore))));
+//            libIDMap.insert(std::make_pair(id, static_cast<TID>(length(fragStore.libraryStore))));
 //            appendValue(fragStore.libraryStore, libEl, Generous());
 //            appendValue(fragStore.libraryNameStore, eid, Generous());
 //        } else {
@@ -1703,45 +1703,45 @@ return;
 //    fclose(strmLib);
 //	
 //	// Renumber all ids
-//	typedef typename TIdMap::const_iterator TIdMapIter;
+//	typedef typename TIDMap::const_iterator TIDMapIter;
 //	typedef typename Iterator<typename TFragmentStore::TMatePairStore>::Type TMateIter;
 //	TMateIter mateIt = begin(fragStore.matePairStore);
 //	TMateIter mateItEnd = end(fragStore.matePairStore);
 //	for(;mateIt != mateItEnd; goNext(mateIt)) {
-//		if (mateIt->libId != TMatePairElement::INVALID_ID) {
-//			TIdMapIter libIdPos = libIdMap.find(mateIt->libId);
-//			if (libIdPos != libIdMap.end()) mateIt->libId = libIdPos->second;
-//			else mateIt->libId = TMatePairElement::INVALID_ID;
+//		if (mateIt->libID != TMatePairElement::INVALID_ID) {
+//			TIDMapIter libIDPos = libIDMap.find(mateIt->libID);
+//			if (libIDPos != libIDMap.end()) mateIt->libID = libIDPos->second;
+//			else mateIt->libID = TMatePairElement::INVALID_ID;
 //		}
-//		if (mateIt->readId[0] != TMatePairElement::INVALID_ID) {
-//			TIdMapIter readIdPos = readIdMap.find(mateIt->readId[0]);
-//			if (readIdPos != readIdMap.end()) mateIt->readId[0] = readIdPos->second;
-//			else mateIt->readId[0] = TMatePairElement::INVALID_ID;
+//		if (mateIt->readID[0] != TMatePairElement::INVALID_ID) {
+//			TIDMapIter readIDPos = readIDMap.find(mateIt->readID[0]);
+//			if (readIDPos != readIDMap.end()) mateIt->readID[0] = readIDPos->second;
+//			else mateIt->readID[0] = TMatePairElement::INVALID_ID;
 //		}
-//		if (mateIt->readId[1]!= TMatePairElement::INVALID_ID) {
-//			TIdMapIter readIdPos = readIdMap.find(mateIt->readId[1]);
-//			if (readIdPos != readIdMap.end()) mateIt->readId[1] = readIdPos->second;
-//			else mateIt->readId[0] = TMatePairElement::INVALID_ID;
+//		if (mateIt->readID[1]!= TMatePairElement::INVALID_ID) {
+//			TIDMapIter readIDPos = readIDMap.find(mateIt->readID[1]);
+//			if (readIDPos != readIDMap.end()) mateIt->readID[1] = readIDPos->second;
+//			else mateIt->readID[0] = TMatePairElement::INVALID_ID;
 //		}
 //	}
 //	typedef typename Iterator<typename TFragmentStore::TReadStore>::Type TReadIter;
 //	TReadIter readIt = begin(fragStore.readStore);
 //	TReadIter readItEnd = end(fragStore.readStore);
 //	for(;readIt != readItEnd; goNext(readIt)) {
-//		if (readIt->matePairId != TReadStoreElement::INVALID_ID) {
-//			TIdMapIter mateIdPos = frgIdMap.find(readIt->matePairId);
-//			if (mateIdPos != frgIdMap.end()) readIt->matePairId = mateIdPos->second;
-//			else readIt->matePairId = TReadStoreElement::INVALID_ID;
+//		if (readIt->matePairID != TReadStoreElement::INVALID_ID) {
+//			TIDMapIter mateIDPos = frgIDMap.find(readIt->matePairID);
+//			if (mateIDPos != frgIDMap.end()) readIt->matePairID = mateIDPos->second;
+//			else readIt->matePairID = TReadStoreElement::INVALID_ID;
 //		}
 //	}
 //	typedef typename Iterator<typename TFragmentStore::TAlignedReadStore>::Type TAlignIter;
 //	TAlignIter alignIt = begin(fragStore.alignedReadStore);
 //	TAlignIter alignItEnd = end(fragStore.alignedReadStore);
 //	for(;alignIt != alignItEnd; goNext(alignIt)) {
-//		if (alignIt->readId != TAlignedElement::INVALID_ID) {
-//			TIdMapIter readIdPos = readIdMap.find(alignIt->readId);
-//			if (readIdPos != readIdMap.end()) alignIt->readId = readIdPos->second;
-//			else alignIt->readId = TAlignedElement::INVALID_ID;
+//		if (alignIt->readID != TAlignedElement::INVALID_ID) {
+//			TIDMapIter readIDPos = readIDMap.find(alignIt->readID);
+//			if (readIDPos != readIDMap.end()) alignIt->readID = readIDPos->second;
+//			else alignIt->readID = TAlignedElement::INVALID_ID;
 //		}
 //		if (moveToFront) {
 //			alignIt->beginPos -= minPos;
@@ -1780,7 +1780,7 @@ _writeCeleraFrg(TFile& file,
 		TReadPos begClr = 0;
 		TReadPos endClr = 0;
 		getClrRange(fragStore, value(alignIt), begClr, endClr);
-		value(clearStr, alignIt->readId) = TClrRange(begClr, endClr);
+		value(clearStr, alignIt->readID) = TClrRange(begClr, endClr);
 	}
 
 	// Write Reads
@@ -1828,20 +1828,20 @@ _writeCeleraCgb(TFile& file,
 {
     typedef FragmentStore<TSpec, TConfig> TFragmentStore;
 	typedef typename Size<TFragmentStore>::Type TSize;
-	typedef typename Id<TFragmentStore>::Type TId;
+	typedef typename ID<TFragmentStore>::Type TID;
 	//typedef typename TFragmentStore::TReadPos TReadPos;
 
     typename DirectionIterator<TFile, Output>::Type target = directionIterator(file, Output());
 
 	// Write the first contig
-	TId contigId = 0;
+	TID contigID = 0;
 
 	// Sort the reads according to position
 	sortAlignedReads(fragStore.alignedReadStore, SortBeginPos());
 
 	// Write Header
 	write(target, "{IUM\nacc:0\nsrc:\ngen> @@ [0,0]\n.\ncov:0.000\nsta:X\nfur:X\nabp:0\nbbp:0\nlen:");
-	appendNumber(target, length((value(fragStore.contigStore, contigId)).seq));
+	appendNumber(target, length((value(fragStore.contigStore, contigID)).seq));
 	write(target, "\ncns:\n.\nqlt:\n.\nfor:0\nnfr:");
 	appendNumber(target, length(fragStore.readStore));
 	writeValue(target, '\n');
@@ -1853,10 +1853,10 @@ _writeCeleraCgb(TFile& file,
 	TSize offsetLeft = _min(alignIt->beginPos, alignIt->endPos);
 	for (;alignIt != alignItEnd; goNext(alignIt))
     {
-		if (contigId != alignIt->contigId)
+		if (contigID != alignIt->contigID)
             continue;
 		write(target, "{IMP\ntyp:R\nmid:");
-		appendNumber(target, alignIt->readId + 1);
+		appendNumber(target, alignIt->readID + 1);
 		write(target, "\ncon:0\npos:");
 		appendNumber(target, alignIt->beginPos - offsetLeft);
 		writeValue(target, ',');

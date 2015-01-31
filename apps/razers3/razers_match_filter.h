@@ -28,13 +28,13 @@ public:
     // Count matches for each read
     String<unsigned> hitCount;
     // Map from read number to histogram id.
-    std::unordered_map<unsigned, unsigned> readIdToHistogramId;
-    // Id manager for histogram.
-    IdManager<unsigned> idManager;
+    std::unordered_map<unsigned, unsigned> readIDToHistogramID;
+    // ID manager for histogram.
+    IDManager<unsigned> idManager;
     // Histograms.
     String<String<unsigned> > histograms;
-    // Ids of the reads that are purged.
-    String<unsigned> purgedReadIds;
+    // IDs of the reads that are purged.
+    String<unsigned> purgedReadIDs;
     // The callback context object.
     Holder<TCallback> callback;
     // Read ID offset.
@@ -66,35 +66,35 @@ const int CAN_BE_PURGED = -2;
 
 template <typename TOptionsSpec, typename TReadSeqSet, typename TCallback>
 inline unsigned
-_createHistogram(MatchFilter<TOptionsSpec, TReadSeqSet, TCallback> & filter, unsigned readId)
+_createHistogram(MatchFilter<TOptionsSpec, TReadSeqSet, TCallback> & filter, unsigned readID)
 {
-    unsigned result = obtainId(filter.idManager);
+    unsigned result = obtainID(filter.idManager);
     if (result >= length(filter.histograms))
         resize(filter.histograms, length(filter.histograms) + 1);
-    resize(filter.histograms[result], 1 + (int)(filter.options.errorRate * length(filter.readSeqs[readId])), 0, Exact());
+    resize(filter.histograms[result], 1 + (int)(filter.options.errorRate * length(filter.readSeqs[readID])), 0, Exact());
     SEQAN_ASSERT_LT(result, length(filter.histograms));
     return result;
 }
 
 template <typename TMatchFilter>
 inline void
-_freeHistogram(TMatchFilter & filter, unsigned histogramId)
+_freeHistogram(TMatchFilter & filter, unsigned histogramID)
 {
-    clear(filter.histograms[histogramId]);
-    releaseId(filter.idManager, histogramId);
+    clear(filter.histograms[histogramID]);
+    releaseID(filter.idManager, histogramID);
 }
 
 template <typename TMatchFilter>
 inline void
-_incrementCount(TMatchFilter & filter, unsigned histogramId, int score)
+_incrementCount(TMatchFilter & filter, unsigned histogramID, int score)
 {
     SEQAN_ASSERT_LEQ(score, 0);
-    ++filter.histograms[histogramId][-score];
+    ++filter.histograms[histogramID][-score];
 }
 
 template <typename TMatchFilter>
 inline int
-_newLimit(TMatchFilter const & filter, unsigned histogramId)
+_newLimit(TMatchFilter const & filter, unsigned histogramID)
 {
     // TODO(holtgrew): This could be speeded up if using prefix sum data structures for histograms.
     typedef typename Iterator<String<unsigned> const, Standard>::Type TIter;
@@ -107,7 +107,7 @@ _newLimit(TMatchFilter const & filter, unsigned histogramId)
     if (filter.options.purgeAmbiguous)
         ++max;
 
-    String<unsigned> const & hist = filter.histograms[histogramId];
+    String<unsigned> const & hist = filter.histograms[histogramID];
     TIter itBeg = begin(hist, Standard());
     TIter itEnd = end(hist, Standard());
 
@@ -122,12 +122,12 @@ _newLimit(TMatchFilter const & filter, unsigned histogramId)
 
 template <typename TMatchFilter>
 inline int
-_newLimitDistRange(TMatchFilter const & filter, unsigned histogramId)
+_newLimitDistRange(TMatchFilter const & filter, unsigned histogramID)
 {
     // TODO(holtgrew): This could be speeded up if using prefix sum data structures for histograms.
     typedef typename Iterator<String<unsigned> const, Standard>::Type TIter;
 
-    String<unsigned> const & hist = filter.histograms[histogramId];
+    String<unsigned> const & hist = filter.histograms[histogramID];
 
     register int max = filter.options.maxHits;
     TIter itBeg = begin(hist, Standard());
@@ -171,90 +171,90 @@ _newLimitDistRange(TMatchFilter const & filter, unsigned histogramId)
 
 template <typename TOptionsSpec, typename TReadSeqSet, typename TCallback>
 inline void
-registerRead(MatchFilter<TOptionsSpec, TReadSeqSet, TCallback> & filter, unsigned readId, int score)
+registerRead(MatchFilter<TOptionsSpec, TReadSeqSet, TCallback> & filter, unsigned readID, int score)
 {
-    // std::cerr << "registering read " << readId << std::endl;
-    if (filter.hitCount[readId - filter.readOffset] == MaxValue<unsigned>::VALUE)
+    // std::cerr << "registering read " << readID << std::endl;
+    if (filter.hitCount[readID - filter.readOffset] == MaxValue<unsigned>::VALUE)
         return;
 
-    if (++filter.hitCount[readId - filter.readOffset] < filter.matchThreshold)
+    if (++filter.hitCount[readID - filter.readOffset] < filter.matchThreshold)
         return;
 
     // TODO(holtgrew): Maybe global read to histogram map; faster?
 
     // Get histogram id, insert new histogram if necessary, exit if no histogram yet.
-    unsigned histogramId = 0;
-    if (filter.hitCount[readId - filter.readOffset] == filter.matchThreshold)
+    unsigned histogramID = 0;
+    if (filter.hitCount[readID - filter.readOffset] == filter.matchThreshold)
     {
-        // std::cerr << "new histogram for read " << readId << std::endl;
-        histogramId = _createHistogram(filter, readId);
-        filter.readIdToHistogramId[readId] = histogramId;
+        // std::cerr << "new histogram for read " << readID << std::endl;
+        histogramID = _createHistogram(filter, readID);
+        filter.readIDToHistogramID[readID] = histogramID;
     }
     else
     {
-        // std::cerr << "updating histogram for read " << readId << std::endl;
+        // std::cerr << "updating histogram for read " << readID << std::endl;
         typedef typename std::unordered_map<unsigned, unsigned>::iterator TIterator;
-        TIterator it = filter.readIdToHistogramId.find(readId);
-        SEQAN_ASSERT(it != filter.readIdToHistogramId.end());
-        histogramId = it->second;
+        TIterator it = filter.readIDToHistogramID.find(readID);
+        SEQAN_ASSERT(it != filter.readIDToHistogramID.end());
+        histogramID = it->second;
     }
 
     // Insert value into histogram.
-    _incrementCount(filter, histogramId, score);
+    _incrementCount(filter, histogramID, score);
 }
 
 template <typename TOptionsSpec, typename TReadSeqSet, typename TCallback>
 inline bool
-processRead(MatchFilter<TOptionsSpec, TReadSeqSet, TCallback> & filter, unsigned readId)
+processRead(MatchFilter<TOptionsSpec, TReadSeqSet, TCallback> & filter, unsigned readID)
 {
     typedef typename std::unordered_map<unsigned, unsigned>::iterator TIterator;
 
-    if (filter.hitCount[readId - filter.readOffset] < filter.matchThreshold)
+    if (filter.hitCount[readID - filter.readOffset] < filter.matchThreshold)
         return false;
 
-    // std::cerr << "processing read " << readId << std::endl;
+    // std::cerr << "processing read " << readID << std::endl;
     // Get histogram id, insert new histogram if necessary, exit if no histogram yet.
-    TIterator it = filter.readIdToHistogramId.find(readId);
-    if (it == filter.readIdToHistogramId.end())
+    TIterator it = filter.readIDToHistogramID.find(readID);
+    if (it == filter.readIDToHistogramID.end())
         return false;  // Must have been disabled before.
 
-    unsigned histogramId = it->second;
+    unsigned histogramID = it->second;
 
     // Perform actions.
     int newLimit;
 
     if (filter.options.scoreDistanceRange == 0)
     {
-        newLimit = _newLimit(filter, histogramId);
+        newLimit = _newLimit(filter, histogramID);
         if (newLimit == NO_NEW_LIMIT)
             return false;
 
         if (filter.options.purgeAmbiguous)
         {
-//            std::cerr << "PURGED " << readId << std::endl;
-            appendValue(filter.purgedReadIds, readId);
+//            std::cerr << "PURGED " << readID << std::endl;
+            appendValue(filter.purgedReadIDs, readID);
             newLimit = 0;
         }
     }
     else
     {
-        newLimit = _newLimitDistRange(filter, histogramId);
+        newLimit = _newLimitDistRange(filter, histogramID);
         if (newLimit == CAN_BE_PURGED)
         {
-            // std::cerr << "PURGED " << readId << std::endl;
-            appendValue(filter.purgedReadIds, readId);
+            // std::cerr << "PURGED " << readID << std::endl;
+            appendValue(filter.purgedReadIDs, readID);
             newLimit = 0;
         }
     }
 
-//    std::cerr << "LIMITING " << readId << "\t" << filter.histograms[histogramId][0] << "\t" << filter.hitCount[readId - filter.readOffset] << "\t" << newLimit << std::endl;
-    limitRead(value(filter.callback), readId, newLimit - 1);
-    filter.options.errorCutOff[readId] = newLimit;
+//    std::cerr << "LIMITING " << readID << "\t" << filter.histograms[histogramID][0] << "\t" << filter.hitCount[readID - filter.readOffset] << "\t" << newLimit << std::endl;
+    limitRead(value(filter.callback), readID, newLimit - 1);
+    filter.options.errorCutOff[readID] = newLimit;
     if (newLimit == 0)
     {
-        _freeHistogram(filter, histogramId);
-        filter.readIdToHistogramId.erase(readId);
-        filter.hitCount[readId - filter.readOffset] = MaxValue<unsigned>::VALUE;
+        _freeHistogram(filter, histogramID);
+        filter.readIDToHistogramID.erase(readID);
+        filter.hitCount[readID - filter.readOffset] = MaxValue<unsigned>::VALUE;
         return true;
     }
     return false;

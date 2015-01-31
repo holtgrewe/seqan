@@ -188,7 +188,7 @@ pairwise_align(TScore const& sc,
     high = _min(high, (int) length(sequenceSet[0]));
 
     // Align the sequences
-    Graph<Alignment<StringSet<TSequence, Dependent<> >, void, WithoutEdgeId> > gAlign(sequenceSet);
+    Graph<Alignment<StringSet<TSequence, Dependent<> >, void, WithoutEdgeID> > gAlign(sequenceSet);
 
     int aliScore = _alignHelper(gAlign, sc, TAlignConfig(), low, high, banded, method);
 

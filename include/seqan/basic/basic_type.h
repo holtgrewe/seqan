@@ -209,11 +209,11 @@ struct VertexDescriptor<T const>:
 //____________________________________________________________________________
 
 /*!
- * @mfn Id
+ * @mfn ID
  * @headerfile <seqan/basic.h>
  * @brief Type of an object that represents an id.
  *
- * @signature Id<T>::Type
+ * @signature ID<T>::Type
  *
  * @tparam T The type to query for its id type.
  *
@@ -223,12 +223,12 @@ struct VertexDescriptor<T const>:
 // TODO(holtgrew): Should this have a default implementation?
 
 template<typename T>
-struct Id {
+struct ID {
     typedef unsigned int Type;
 };
 
 template<typename T>
-struct Id<T const> : Id<T> {};
+struct ID<T const> : ID<T> {};
 
 //____________________________________________________________________________
 

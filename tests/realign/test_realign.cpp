@@ -53,7 +53,7 @@ void addGaps(TFragmentStore & store, unsigned alignID, unsigned pos)
     typedef typename seqan::Value<TReadSeqStore>::Type     TReadSeq;
     typedef seqan::Gaps<TReadSeq, seqan::AnchorGaps<TGapAnchors> > TGaps;
 
-    TGaps gaps(store.readSeqStore[store.alignedReadStore[alignID].readId], store.alignedReadStore[alignID].gaps);
+    TGaps gaps(store.readSeqStore[store.alignedReadStore[alignID].readID], store.alignedReadStore[alignID].gaps);
     insertGap(gaps, pos);
 }
 
