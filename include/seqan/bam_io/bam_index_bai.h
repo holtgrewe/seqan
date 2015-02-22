@@ -334,7 +334,7 @@ jumpToRegion(FormattedFile<Bam, Input, TSpec> & bamFile,
  * @param[in]     index          The @link BamIndex @endlink to use for jumping.
  */
 
-template <typename TSpec, typename TNameStore, typename TNameStoreCache>
+template <typename TSpec, typename TNameStoreCache>
 bool jumpToOrphans(FormattedFile<Bam, Input, TSpec> & bamFile,
                    bool & hasAlignments,
                    BamIndex<Bai> const & index)
