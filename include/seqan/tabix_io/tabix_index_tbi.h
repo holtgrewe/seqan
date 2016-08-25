@@ -472,7 +472,24 @@ open(TabixIndex & index, char const * filename)
 
     // Split concatenated names at \0's.
     clear(index._nameStore);
-    strSplit(index._nameStore, tmp, EqualsChar<'\0'>(), true, nRef - 1);
+    CharString buffer;
+    for (unsigned i = 0; i < length(tmp); ++i)
+    {
+        if (tmp[i] == '\0')
+        {
+            if (!empty(buffer))
+            {
+                appendValue(index._nameStore, buffer);
+                clear(buffer);
+            }
+        }
+        else
+        {
+            appendValue(buffer, tmp[i]);
+        }
+    }
+    if (!empty(buffer))
+        appendValue(index._nameStore, buffer);
     refresh(index._nameStoreCache);
 
     clear(index._linearIndices);
